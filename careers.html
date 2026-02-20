@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Careers — African Market Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400;1,600&family=Spectral:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>const SUPABASE_URL='YOUR_SUPABASE_URL';const SUPABASE_ANON='YOUR_SUPABASE_ANON_KEY';const STRIPE_PREMIUM='https://buy.stripe.com/YOUR_PREMIUM_LINK';const SECTION_FILTER='all';</script>
+<style>
+:root{--gold:#C9A84C;--gold-light:#E8C97A;--gold-pale:#FDF6E3;--terra:#B85C38;--ink:#1A1208;--ink-mid:#3D2B1F;--ink-soft:#6B5344;--cream:#FAF7F0;--cream-dark:#F0EAD9;--border:#D4C4A0;--bg:var(--cream);--surface:#fff;--text:var(--ink);--text-soft:var(--ink-soft);--nav-bg:var(--ink);--nav-text:var(--cream);--divider:var(--border);--card-bg:#fff;--accent:#1B6B3A}
+[data-theme="dark"]{--bg:#0F0A06;--surface:#1A1208;--text:#EDE5D5;--text-soft:#A89070;--nav-bg:#080502;--nav-text:#EDE5D5;--divider:#3D2B1F;--card-bg:#1F1610;--border:#3D2B1F;--gold-pale:#2A1F10}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Spectral',Georgia,serif;background:var(--bg);color:var(--text);font-size:16px;line-height:1.6;transition:background .3s,color .3s}
+a{color:inherit;text-decoration:none}button{cursor:pointer;border:none;background:none;font-family:inherit}
+.ticker-bar{background:var(--ink);color:#C9A84C;font-family:'DM Mono',monospace;font-size:11px;padding:6px 0;overflow:hidden;white-space:nowrap}
+.ticker-inner{display:inline-flex;gap:48px;animation:ticker 40s linear infinite}
+.ticker-item .sym{color:#888}.up{color:#4CAF50}.dn{color:#F44336}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.top-nav{background:var(--nav-bg);color:var(--nav-text);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:48px;border-bottom:2px solid var(--gold);position:sticky;top:0;z-index:100}
+.nav-logo{font-family:'Playfair Display',serif;font-size:18px;font-weight:800;color:var(--gold)}
+.nav-logo span{color:var(--nav-text)}
+.nav-links{display:flex;align-items:center}
+.nav-link{color:var(--nav-text);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:0 14px;height:48px;display:flex;align-items:center;border-right:1px solid #333;transition:color .2s}
+.nav-link:first-child{border-left:1px solid #333}.nav-link:hover,.nav-link.active{color:var(--gold)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.btn-subscribe{background:var(--gold);color:var(--ink);font-family:'DM Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:8px 16px;border-radius:2px;display:inline-block;transition:background .2s}
+.btn-subscribe:hover{background:var(--gold-light)}
+.dark-toggle{color:var(--nav-text);font-size:16px;padding:8px;line-height:1;transition:color .2s}
+.dark-toggle:hover{color:var(--gold)}
+.section-masthead{background:var(--nav-bg);border-bottom:4px solid var(--accent);padding:36px 24px 32px}
+.section-masthead-inner{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1fr auto;gap:32px;align-items:end}
+@media(max-width:700px){.section-masthead-inner{grid-template-columns:1fr}}
+.section-eyebrow{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.section-title-xl{font-family:'Playfair Display',serif;font-size:clamp(40px,7vw,80px);font-weight:800;color:white;line-height:.95;letter-spacing:-.03em;margin-bottom:14px}
+.section-title-xl span{color:var(--accent)}
+.section-strapline{font-family:'Spectral',serif;font-size:15px;color:#999;font-style:italic;font-weight:300;max-width:560px;line-height:1.7}
+.section-right{text-align:right}
+.section-stat-num{font-family:'Playfair Display',serif;font-size:48px;font-weight:800;color:var(--accent);line-height:1}
+.section-stat-label{font-family:'DM Mono',monospace;font-size:10px;color:#666;letter-spacing:.1em;text-transform:uppercase;margin-top:4px}
+.sub-nav{background:var(--surface);border-bottom:2px solid var(--divider);overflow-x:auto;scrollbar-width:none}
+.sub-nav-inner{display:flex;padding:0 24px;max-width:1280px;margin:0 auto}
+.sub-tab{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-soft);padding:12px 18px;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;cursor:pointer;transition:color .2s,border-color .2s}
+.sub-tab:hover,.sub-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.page-wrapper{max-width:1280px;margin:0 auto;padding:40px 24px;display:grid;grid-template-columns:1fr 300px;gap:48px;align-items:start}
+@media(max-width:900px){.page-wrapper{grid-template-columns:1fr;padding:24px 16px}}
+.results-bar{display:flex;align-items:center;justify-content:space-between;padding:0 0 20px;border-bottom:2px solid var(--accent);margin-bottom:24px;flex-wrap:wrap;gap:10px}
+.results-count{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-soft)}
+.results-count strong{color:var(--accent)}
+.sort-select{font-family:'DM Mono',monospace;font-size:11px;background:var(--card-bg);border:1px solid var(--divider);color:var(--text);padding:6px 12px;border-radius:2px;cursor:pointer;outline:none}
+.featured-card{background:var(--card-bg);border:1px solid var(--divider);border-top:4px solid var(--accent);margin-bottom:28px;overflow:hidden;cursor:pointer;transition:border-color .2s}
+.featured-card:hover{border-top-color:var(--gold)}
+.featured-card:hover .fcard-headline{color:var(--accent)}
+.fcard-img{width:100%;height:260px;object-fit:cover;display:block}
+.fcard-img-ph{width:100%;height:200px;background:linear-gradient(135deg,var(--ink),var(--ink-mid));display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:12px;color:#555;letter-spacing:.1em}
+.fcard-body{padding:24px}
+.fcard-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;background:var(--accent);color:var(--ink);padding:3px 10px;display:inline-block;margin-bottom:12px}
+.fcard-headline{font-family:'Playfair Display',serif;font-size:clamp(18px,3vw,26px);font-weight:700;line-height:1.25;margin-bottom:10px;transition:color .2s}
+.fcard-standfirst{font-size:14px;color:var(--text-soft);line-height:1.7;font-weight:300;font-style:italic;margin-bottom:14px}
+.fcard-meta{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);display:flex;gap:14px;flex-wrap:wrap}
+.fcard-meta .author{color:var(--accent)}
+.article-list{list-style:none}
+.article-row-item{display:grid;grid-template-columns:1fr auto;gap:20px;padding:20px 0;border-bottom:1px solid var(--divider);align-items:start;cursor:pointer;transition:background .15s}
+.article-row-item:first-child{border-top:1px solid var(--divider)}
+.article-row-item:hover{background:var(--gold-pale);margin:0 -16px;padding-left:16px;padding-right:16px}
+[data-theme="dark"] .article-row-item:hover{background:#2A1F10}
+.row-kicker{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+.row-headline{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;line-height:1.3;margin-bottom:8px;transition:color .2s}
+.article-row-item:hover .row-headline{color:var(--accent)}
+.row-standfirst{font-size:14px;color:var(--text-soft);line-height:1.65;font-weight:300;margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.row-meta{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);display:flex;gap:12px;flex-wrap:wrap}
+.row-meta .author{color:var(--accent)}
+.row-img{width:120px;height:90px;object-fit:cover;border:1px solid var(--divider);flex-shrink:0}
+.row-img-ph{width:120px;height:90px;background:linear-gradient(135deg,var(--ink-mid),var(--ink));display:flex;align-items:center;justify-content:center;font-size:20px;opacity:.4;flex-shrink:0}
+@media(max-width:600px){.row-img,.row-img-ph{display:none}}
+.pagination-bar{display:flex;align-items:center;justify-content:center;gap:6px;padding:32px 0 8px;flex-wrap:wrap}
+.page-btn{font-family:'DM Mono',monospace;font-size:12px;min-width:38px;height:38px;display:flex;align-items:center;justify-content:center;border:1px solid var(--divider);background:var(--card-bg);color:var(--text-soft);border-radius:2px;cursor:pointer;transition:all .2s;text-decoration:none;padding:0 10px}
+.page-btn:hover{border-color:var(--accent);color:var(--accent)}
+.page-btn.active{background:var(--accent);border-color:var(--accent);color:white}
+.page-btn.disabled{opacity:.35;cursor:not-allowed;pointer-events:none}
+.page-ellipsis{font-family:'DM Mono',monospace;font-size:12px;color:var(--text-soft);padding:0 4px}
+.skeleton{background:linear-gradient(90deg,var(--divider) 25%,var(--card-bg) 50%,var(--divider) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:2px;margin-bottom:10px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.sidebar-sticky{position:sticky;top:72px}
+.sidebar-widget{border:1px solid var(--divider);border-top:3px solid var(--accent);background:var(--card-bg);padding:20px;margin-bottom:24px}
+.widget-title{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-soft);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--divider)}
+.top-story{padding:10px 0;border-bottom:1px solid var(--divider);cursor:pointer}
+.top-story:last-child{border-bottom:none;padding-bottom:0}
+.top-story-num{font-family:'DM Mono',monospace;font-size:20px;font-weight:500;color:var(--divider);line-height:1;margin-bottom:3px}
+.top-story-hl{font-family:'Playfair Display',serif;font-size:13px;font-weight:600;line-height:1.35;transition:color .2s}
+.top-story:hover .top-story-hl{color:var(--accent)}
+.data-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--divider);font-family:'DM Mono',monospace;font-size:11px}
+.data-row:last-child{border-bottom:none}
+.data-label{color:var(--text-soft)}.data-value{font-weight:500}
+.newsletter-mini{background:linear-gradient(135deg,#1A1208,#3D2B1F);padding:20px;margin-bottom:24px}
+.nw-title{font-family:'Playfair Display',serif;font-size:17px;color:var(--gold);margin-bottom:6px}
+.nw-sub{font-size:12px;color:#999;margin-bottom:12px;font-weight:300}
+.nw-input{width:100%;background:rgba(255,255,255,.08);border:1px solid #444;color:white;padding:9px 12px;border-radius:2px;font-family:'DM Mono',monospace;font-size:11px;margin-bottom:8px;outline:none}
+.nw-input::placeholder{color:#666}
+.nw-btn{width:100%;background:var(--gold);color:var(--ink);font-family:'DM Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;padding:9px;border-radius:2px;cursor:pointer;border:none}
+.nw-btn:hover{background:var(--gold-light)}
+.empty-state{text-align:center;padding:64px 24px;color:var(--text-soft)}
+.empty-icon{font-size:48px;margin-bottom:16px;opacity:.4}
+.empty-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;margin-bottom:8px}
+.empty-sub{font-size:14px;font-weight:300}
+.toast{position:fixed;bottom:28px;right:28px;z-index:9999;background:#1B4D1B;border:1px solid #4CAF50;color:#4CAF50;font-family:'DM Mono',monospace;font-size:12px;padding:12px 22px;border-radius:2px;opacity:0;transform:translateY(16px);transition:all .3s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+footer{background:var(--ink);color:#888;padding:40px 24px 24px;margin-top:48px}
+.footer-inner{max-width:1280px;margin:0 auto}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;padding-bottom:32px;border-bottom:1px solid #333;margin-bottom:24px}
+@media(max-width:768px){.footer-top{grid-template-columns:1fr 1fr}}
+.footer-brand{font-family:'Playfair Display',serif;font-size:20px;font-weight:800;color:var(--gold);margin-bottom:10px}
+.footer-about{font-size:13px;line-height:1.7;font-weight:300;max-width:260px}
+.footer-col-title{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.footer-links{list-style:none}
+.footer-links li{padding:4px 0}
+.footer-links a{font-size:13px;transition:color .2s;font-weight:300}
+.footer-links a:hover{color:var(--gold)}
+.footer-bottom{display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:10px;flex-wrap:wrap;gap:10px}
+
+.prose{max-width:720px}.prose p{font-size:17px;line-height:1.85;font-weight:300;margin-bottom:22px}.prose h2{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;margin:40px 0 16px}
+.job-card{background:var(--card-bg);border:1px solid var(--divider);border-left:4px solid var(--accent);padding:24px;margin-bottom:16px;transition:border-color .2s;cursor:pointer}
+.job-card:hover{border-left-color:var(--gold)}
+.job-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:6px;transition:color .2s}
+.job-card:hover .job-title{color:var(--accent)}
+.job-meta{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);letter-spacing:.1em;text-transform:uppercase;display:flex;gap:16px;margin-bottom:12px;flex-wrap:wrap}
+.job-meta span{background:var(--gold-pale);padding:2px 8px;border-radius:1px}[data-theme="dark"] .job-meta span{background:#2A1F10;color:var(--gold-light)}
+.job-desc{font-size:14px;color:var(--text-soft);line-height:1.65;font-weight:300}
+.apply-btn{display:inline-block;margin-top:14px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;background:var(--accent);color:white;padding:9px 20px;border-radius:2px;transition:opacity .2s}
+.apply-btn:hover{opacity:.85}
+.perks-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin:32px 0}@media(max-width:700px){.perks-grid{grid-template-columns:1fr 1fr}}
+.perk-item{text-align:center;padding:24px 16px}.perk-icon{font-size:32px;margin-bottom:10px}.perk-title{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:6px}.perk-desc{font-size:13px;color:var(--text-soft);font-weight:300;line-height:1.6}
+</style>
+</head><body>
+<div class="toast" id="toast"></div>
+
+<div class="ticker-bar"><div class="ticker-inner" id="tickerInner">
+  <span style="font-family:'DM Mono',monospace;font-size:11px;padding:0 24px;color:#888">Loading markets…</span>
+</div></div>
+<nav class="top-nav">
+  <div style="display:flex;align-items:center">
+    <a href="index.html" class="nav-logo"><span>African Market </span>Intelligence</a>
+    <div class="nav-links" style="margin-left:4px">
+      <a href="markets.html"     class="nav-link ">Markets</a>
+      <a href="politics.html"    class="nav-link ">Politics</a>
+      <a href="economy.html"     class="nav-link ">Economy</a>
+      <a href="energy.html"      class="nav-link ">Energy</a>
+      <a href="archive.html"     class="nav-link">Archive</a>
+    </div>
+  </div>
+  <div class="nav-right">
+    <button class="dark-toggle" onclick="toggleDark()" id="themeBtn">🌙</button>
+    <a href="index.html" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--nav-text);letter-spacing:.08em;text-transform:uppercase;padding:8px 14px;border:1px solid #444;border-radius:2px;transition:all .2s" onmouseover="this.style.borderColor='#C9A84C'" onmouseout="this.style.borderColor='#444'">← Home</a>
+    <a href="#" id="subscribeBtn" target="_blank" class="btn-subscribe">Subscribe</a>
+  </div>
+</nav>
+
+<div class="section-masthead" style="--accent:#1B6B3A">
+  <div style="max-width:1280px;margin:0 auto">
+    <div class="section-eyebrow">Company</div>
+    <div class="section-title-xl">Join <span>AMI</span></div>
+    <div class="section-strapline">We are building the definitive financial news organisation for the African continent. We are looking for exceptional journalists, analysts and technologists.</div>
+  </div>
+</div>
+<div style="max-width:1280px;margin:0 auto;padding:48px 24px">
+  <div class="perks-grid">
+    <div class="perk-item"><div class="perk-icon">🌍</div><div class="perk-title">Pan-African Remit</div><div class="perk-desc">Cover stories that matter across 54 countries with real continental impact.</div></div>
+    <div class="perk-item"><div class="perk-icon">📍</div><div class="perk-title">Remote-First</div><div class="perk-desc">Work from anywhere on the continent. We have correspondents in 6 cities and growing.</div></div>
+    <div class="perk-item"><div class="perk-icon">📈</div><div class="perk-title">Growth-Stage</div><div class="perk-desc">Join early and help shape the editorial direction of a fast-growing publication.</div></div>
+    <div class="perk-item"><div class="perk-icon">🎓</div><div class="perk-title">Training & Development</div><div class="perk-desc">Access to data journalism tools, financial analysis training and industry conferences.</div></div>
+    <div class="perk-item"><div class="perk-icon">💰</div><div class="perk-title">Competitive Pay</div><div class="perk-desc">Market-rate salaries benchmarked against leading African and international media organisations.</div></div>
+    <div class="perk-item"><div class="perk-icon">✍️</div><div class="perk-title">Editorial Independence</div><div class="perk-desc">Your journalism is yours. We do not let commercial interests interfere with editorial decisions.</div></div>
+  </div>
+  <div class="prose"><h2>Open Positions</h2></div>
+  <div class="job-card">
+    <div class="job-title">Senior Markets Reporter</div>
+    <div class="job-meta"><span>Lagos or Nairobi</span><span>Full-time</span><span>Senior</span></div>
+    <div class="job-desc">We are looking for an experienced financial journalist to lead our markets desk coverage. You will report on equity markets, currencies and fixed income across West and East Africa, with a focus on breaking news and in-depth analysis.</div>
+    <a href="contact.html" class="apply-btn">Apply Now →</a>
+  </div>
+  <div class="job-card">
+    <div class="job-title">East Africa Correspondent</div>
+    <div class="job-meta"><span>Nairobi</span><span>Full-time</span><span>Mid-level</span></div>
+    <div class="job-desc">Based in Nairobi, you will cover Kenya, Ethiopia, Tanzania and Uganda — from monetary policy decisions to infrastructure deals and the region's fast-growing tech sector.</div>
+    <a href="contact.html" class="apply-btn">Apply Now →</a>
+  </div>
+  <div class="job-card">
+    <div class="job-title">Data Journalist</div>
+    <div class="job-meta"><span>Remote</span><span>Full-time</span><span>Mid-level</span></div>
+    <div class="job-desc">You will build the data infrastructure behind AMI's market coverage — scraping, cleaning and visualising economic data from central banks, statistical agencies and financial exchanges across the continent.</div>
+    <a href="contact.html" class="apply-btn">Apply Now →</a>
+  </div>
+  <div class="job-card">
+    <div class="job-title">North Africa Correspondent</div>
+    <div class="job-meta"><span>Cairo or Casablanca</span><span>Full-time</span><span>Mid-level</span></div>
+    <div class="job-desc">Cover Egypt, Morocco, Algeria and the broader MENA-Africa interface. Arabic language skills are a strong advantage. You will report on macroeconomics, sovereign finance and the energy sector.</div>
+    <a href="contact.html" class="apply-btn">Apply Now →</a>
+  </div>
+  <div class="prose" style="margin-top:40px">
+    <h2>Speculative Applications</h2>
+    <p>Do not see a role that fits? We are always interested in hearing from exceptional candidates. Send your CV and a brief note to <a href="contact.html" style="color:var(--accent)">our editorial team</a>.</p>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand">African Market Intelligence</div>
+        <p class="footer-about">The continent's most trusted source for financial news, market data and business intelligence across Africa's 54 markets.</p>
+      </div>
+      <div>
+        <div class="footer-col-title">Sections</div>
+        <ul class="footer-links">
+          <li><a href="markets.html">Markets</a></li>
+          <li><a href="economy.html">Economy</a></li>
+          <li><a href="politics.html">Politics</a></li>
+          <li><a href="energy.html">Energy</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Regions</div>
+        <ul class="footer-links">
+          <li><a href="west-africa.html">West Africa</a></li>
+          <li><a href="east-africa.html">East Africa</a></li>
+          <li><a href="north-africa.html">North Africa</a></li>
+          <li><a href="southern-africa.html">Southern Africa</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Company</div>
+        <ul class="footer-links">
+          <li><a href="archive.html">Full Archive</a></li>
+          <li><a href="about.html">About AMI</a></li>
+          <li><a href="careers.html">Careers</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="privacy.html">Privacy Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 African Market Intelligence Ltd. All rights reserved.</span>
+      <span>Terms · <a href="privacy.html" style="color:inherit">Privacy</a> · Cookie Policy</span>
+    </div>
+  </div>
+</footer>
+
+<script>function toggleDark(){const h=document.documentElement,d=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',d?'light':'dark');document.getElementById('themeBtn').textContent=d?'🌙':'☀️';}document.getElementById('subscribeBtn').href=STRIPE_PREMIUM;</script>
+</body></html>
