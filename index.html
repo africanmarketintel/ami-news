@@ -439,7 +439,7 @@ footer{background:var(--ink);color:#888;padding:40px 24px 24px;margin-top:48px}
   <div class="nav-right">
     <input class="nav-search" type="text" placeholder="Search AMI…" oninput="searchArticles(this.value)">
     <button class="dark-toggle" onclick="toggleDark()" id="themeBtn">🌙</button>
-    <button class="admin-btn" onclick="openAdmin()">⚙ Admin</button>
+    <button class="admin-btn" onclick="promptAdmin()">⚙ Admin</button>
     <a href="#" id="navSubscribeBtn" class="btn-subscribe">Subscribe</a>
   </div>
 </nav>
@@ -664,11 +664,7 @@ let totalArticles  = 0;
 document.getElementById('mastDate').textContent =
   new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
 
-document.querySelectorAll('.section-tab').forEach(t=>t.addEventListener('click',e=>{
-  e.preventDefault();
-  document.querySelectorAll('.section-tab').forEach(x=>x.classList.remove('active'));
-  t.classList.add('active');
-}));
+// section tabs handled by filterSection()
 
 // Stripe links
 document.getElementById('stripeDigital').href = STRIPE_DIGITAL;
@@ -916,11 +912,18 @@ function applySettings(settings) {
 // ════════════════════════════════════════════════════════════
 function filterSection(e, section) {
   e.preventDefault();
+  e.stopPropagation();
   document.querySelectorAll('.section-tab').forEach(x=>x.classList.remove('active'));
   e.target.classList.add('active');
   filterActive = section;
   currentPage  = 1;
+  // Update URL
+  const q = searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : '';
+  const newUrl = section === 'all' ? window.location.pathname : `?section=${encodeURIComponent(section)}${q}`;
+  history.pushState({page:1, filterActive:section, searchQuery}, '', newUrl);
   applyFilters();
+  // Scroll to articles
+  document.getElementById('archiveHeader')?.scrollIntoView({behavior:'smooth', block:'start'});
 }
 function searchArticles(q) {
   searchQuery  = q.toLowerCase();
@@ -938,6 +941,19 @@ function applyFilters(preservePage=false) {
 // ════════════════════════════════════════════════════════════
 // ADMIN
 // ════════════════════════════════════════════════════════════
+// ── Admin password gate ──────────────────────────────────────
+const ADMIN_PASSWORD = 'ami2024'; // ← CHANGE THIS to your own password
+
+function promptAdmin() {
+  const pwd = prompt('Enter admin password:');
+  if(pwd === null) return; // cancelled
+  if(pwd === ADMIN_PASSWORD) {
+    openAdmin();
+  } else {
+    alert('Incorrect password. Access denied.');
+  }
+}
+
 async function openAdmin() {
   document.getElementById('adminOverlay').classList.add('open');
   document.body.style.overflow='hidden';
