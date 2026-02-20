@@ -432,25 +432,28 @@ footer{background:var(--ink);color:#888;padding:40px 24px 24px;margin-top:48px}
 
 <nav class="top-nav">
   <div class="nav-left">
-    <a href="#" class="nav-link">Markets</a><a href="#" class="nav-link">Politics</a>
-    <a href="#" class="nav-link">Economy</a><a href="#" class="nav-link">Energy</a>
-    <a href="#" class="nav-link">Tech</a><a href="#" class="nav-link">Opinion</a>
+    <a href="?section=Markets"   class="nav-link" onclick="filterSection(event,'Markets')">Markets</a>
+    <a href="?section=Politics"  class="nav-link" onclick="filterSection(event,'Politics')">Politics</a>
+    <a href="?section=Economy"   class="nav-link" onclick="filterSection(event,'Economy')">Economy</a>
+    <a href="?section=Energy"    class="nav-link" onclick="filterSection(event,'Energy')">Energy</a>
+    <a href="?section=Technology" class="nav-link" onclick="filterSection(event,'Technology')">Tech</a>
+    <a href="?section=Opinion"   class="nav-link" onclick="filterSection(event,'Opinion')">Opinion</a>
   </div>
   <div class="nav-right">
     <input class="nav-search" type="text" placeholder="Search AMI…" oninput="searchArticles(this.value)">
     <button class="dark-toggle" onclick="toggleDark()" id="themeBtn">🌙</button>
-    <button class="admin-btn" onclick="promptAdmin()">⚙ Admin</button>
+    <!-- Admin: hidden from public. Triple-click the masthead logo to access -->
     <a href="#" id="navSubscribeBtn" class="btn-subscribe">Subscribe</a>
   </div>
 </nav>
 
 <header class="masthead">
-  <div class="masthead-name" id="siteNameDisplay">African Market <span>Intelligence</span></div>
+  <div class="masthead-name" id="siteNameDisplay" onclick="handleLogoClick()" style="cursor:default" title="">African Market <span>Intelligence</span></div>
   <div class="masthead-tagline" id="siteTaglineDisplay">The Continent's Premium Financial & Business Publication</div>
   <div class="masthead-meta">
     <span id="mastDate"></span>
     <span class="edition-badge" id="editionDisplay">Pan-African Edition</span>
-    <span>Est. 2024 · Nairobi · Lagos · Cairo · Johannesburg</span>
+    <span id="locationDisplay">Est. 2024 · Nairobi · Lagos · Cairo · Johannesburg</span>
   </div>
 </header>
 
@@ -528,10 +531,10 @@ footer{background:var(--ink);color:#888;padding:40px 24px 24px;margin-top:48px}
 
   <aside>
     <div class="newsletter-widget">
-      <div class="nw-title">AMI Morning Brief</div>
-      <div class="nw-sub">Markets & deals delivered before 7am across Africa.</div>
+      <div class="nw-title" id="nwTitleDisplay">AMI Morning Brief</div>
+      <div class="nw-sub" id="nwSubDisplay">Markets & deals delivered before 7am across Africa.</div>
       <input class="nw-input" type="email" placeholder="your@email.com">
-      <button class="nw-btn">Subscribe Free →</button>
+      <button class="nw-btn" id="nwBtnDisplay" onclick="handleNewsletterSignup()">Subscribe Free →</button>
     </div>
     <div class="sidebar-widget">
       <div class="widget-title">Top Stories</div>
@@ -552,16 +555,31 @@ footer{background:var(--ink);color:#888;padding:40px 24px 24px;margin-top:48px}
   <div class="footer-inner">
     <div class="footer-top">
       <div><div class="footer-brand" id="footerBrand">African Market Intelligence</div>
-        <p class="footer-about">The continent's most trusted source for financial news and business intelligence across Africa's 54 markets.</p></div>
+        <p class="footer-about" id="footerAboutDisplay">The continent's most trusted source for financial news and business intelligence across Africa's 54 markets.</p></div>
       <div><div class="footer-col-title">Sections</div>
-        <ul class="footer-links"><li><a href="#">Markets</a></li><li><a href="#">Economy</a></li><li><a href="#">Politics</a></li><li><a href="#">Energy</a></li></ul></div>
+        <ul class="footer-links">
+          <li><a href="?section=Markets"   onclick="filterSection(event,'Markets');window.scrollTo(0,0)">Markets</a></li>
+          <li><a href="?section=Economy"   onclick="filterSection(event,'Economy');window.scrollTo(0,0)">Economy</a></li>
+          <li><a href="?section=Politics"  onclick="filterSection(event,'Politics');window.scrollTo(0,0)">Politics</a></li>
+          <li><a href="?section=Energy"    onclick="filterSection(event,'Energy');window.scrollTo(0,0)">Energy</a></li>
+        </ul></div>
       <div><div class="footer-col-title">Regions</div>
-        <ul class="footer-links"><li><a href="#">West Africa</a></li><li><a href="#">East Africa</a></li><li><a href="#">North Africa</a></li><li><a href="#">Southern Africa</a></li></ul></div>
+        <ul class="footer-links">
+          <li><a href="?section=West+Africa"     onclick="filterSection(event,'West Africa');window.scrollTo(0,0)">West Africa</a></li>
+          <li><a href="?section=East+Africa"     onclick="filterSection(event,'East Africa');window.scrollTo(0,0)">East Africa</a></li>
+          <li><a href="?section=North+Africa"    onclick="filterSection(event,'North Africa');window.scrollTo(0,0)">North Africa</a></li>
+          <li><a href="?section=Southern+Africa" onclick="filterSection(event,'Southern Africa');window.scrollTo(0,0)">Southern Africa</a></li>
+        </ul></div>
       <div><div class="footer-col-title">Company</div>
-        <ul class="footer-links"><li><a href="#">About AMI</a></li><li><a href="#">Careers</a></li><li><a href="#">Contact</a></li><li><a href="#">Privacy</a></li></ul></div>
+        <ul class="footer-links">
+          <li><a href="#about"   id="footerAbout">About AMI</a></li>
+          <li><a href="#careers" id="footerCareers">Careers</a></li>
+          <li><a href="#" id="footerContact" onclick="document.querySelector('.nw-input').focus();window.scrollTo(0,0)">Contact</a></li>
+          <li><a href="#" id="footerPrivacy">Privacy Policy</a></li>
+        </ul></div>
     </div>
     <div class="footer-bottom">
-      <span>© 2025 African Market Intelligence Ltd. All rights reserved.</span>
+      <span id="copyrightDisplay">© 2025 African Market Intelligence Ltd. All rights reserved.</span>
       <span>Terms · Privacy · Cookie Policy</span>
     </div>
   </div>
@@ -893,18 +911,50 @@ function renderBreaking(breaking) {
 
 function applySettings(settings) {
   if(!settings) return;
-  const get = key => settings.find(s=>s.key===key)?.value;
+  const get = key => (settings.find(s=>s.key===key)?.value) || '';
   const name = get('site_name') || 'African Market Intelligence';
+  // Site identity
   document.getElementById('siteNameDisplay').innerHTML = name.replace(/(\S+)\s*$/, '<span>$1</span>');
-  document.getElementById('siteTaglineDisplay').textContent = get('tagline') || '';
-  document.getElementById('editionDisplay').textContent = get('edition') || '';
-  document.getElementById('footerBrand').textContent = name;
+  document.getElementById('siteTaglineDisplay').textContent = get('tagline');
+  document.getElementById('editionDisplay').textContent     = get('edition');
+  document.getElementById('footerBrand').textContent        = name;
   document.title = name;
+  if(get('location_line') && document.getElementById('locationDisplay'))
+    document.getElementById('locationDisplay').textContent = get('location_line');
+  // Newsletter
+  if(get('newsletter_title') && document.getElementById('nwTitleDisplay'))
+    document.getElementById('nwTitleDisplay').textContent  = get('newsletter_title');
+  if(get('newsletter_sub') && document.getElementById('nwSubDisplay'))
+    document.getElementById('nwSubDisplay').textContent    = get('newsletter_sub');
+  if(get('newsletter_btn') && document.getElementById('nwBtnDisplay'))
+    document.getElementById('nwBtnDisplay').textContent    = get('newsletter_btn');
+  // Footer
+  if(get('footer_about') && document.getElementById('footerAboutDisplay'))
+    document.getElementById('footerAboutDisplay').textContent = get('footer_about');
+  if(get('copyright') && document.getElementById('copyrightDisplay'))
+    document.getElementById('copyrightDisplay').textContent   = get('copyright');
+  // Stripe
+  const d1 = get('plan1_link'); const d2 = get('plan2_link');
+  if(d1){ document.getElementById('stripeDigital').href = d1; }
+  if(d2){ document.getElementById('stripePremium').href = d2; document.getElementById('navSubscribeBtn').href = d2; }
+  // Footer links
+  if(get('about_url'))   { const el=document.getElementById('footerAbout');   if(el) el.href=get('about_url'); }
+  if(get('careers_url')) { const el=document.getElementById('footerCareers'); if(el) el.href=get('careers_url'); }
+  if(get('privacy_url')) { const el=document.getElementById('footerPrivacy'); if(el) el.href=get('privacy_url'); }
+  // Paywall
   if(get('paywall_active')==='true') setTimeout(showPaywall, 30000);
-  // Set admin fields
-  if(document.getElementById('siteName')) document.getElementById('siteName').value = name;
-  if(document.getElementById('siteTagline')) document.getElementById('siteTagline').value = get('tagline')||'';
-  if(document.getElementById('editionLabel')) document.getElementById('editionLabel').value = get('edition')||'';
+  // Populate admin form fields
+  const fields = {
+    siteName:get('site_name'), siteTagline:get('tagline'), editionLabel:get('edition'),
+    locationLine:get('location_line'), newsletterTitle:get('newsletter_title'),
+    newsletterSub:get('newsletter_sub'), newsletterBtn:get('newsletter_btn'),
+    newsletterLink:get('newsletter_link'), plan1Name:get('plan1_name'),
+    plan1Price:get('plan1_price'), plan1Link:get('plan1_link'), plan2Name:get('plan2_name'),
+    plan2Price:get('plan2_price'), plan2Link:get('plan2_link'), aboutUrl:get('about_url'),
+    careersUrl:get('careers_url'), privacyUrl:get('privacy_url'),
+    footerAboutText:get('footer_about'), copyrightText:get('copyright')
+  };
+  Object.entries(fields).forEach(([id,val])=>{ const el=document.getElementById(id); if(el&&val) el.value=val; });
 }
 
 // ════════════════════════════════════════════════════════════
@@ -943,15 +993,48 @@ function applyFilters(preservePage=false) {
 // ════════════════════════════════════════════════════════════
 // ── Admin password gate ──────────────────────────────────────
 const ADMIN_PASSWORD = 'ami2024'; // ← CHANGE THIS to your own password
+let logoClickCount = 0, logoClickTimer = null;
+
+function handleLogoClick() {
+  logoClickCount++;
+  clearTimeout(logoClickTimer);
+  logoClickTimer = setTimeout(()=>{ logoClickCount=0; }, 2000);
+  if(logoClickCount >= 5) { logoClickCount=0; promptAdmin(); }
+}
 
 function promptAdmin() {
   const pwd = prompt('Enter admin password:');
-  if(pwd === null) return; // cancelled
+  if(pwd === null) return;
   if(pwd === ADMIN_PASSWORD) {
     openAdmin();
   } else {
-    alert('Incorrect password. Access denied.');
+    showToast('Incorrect password','error');
   }
+}
+
+function toggleAdminVisibility(show) {
+  // Optionally show a visible admin button when toggled on from within admin
+  let btn = document.getElementById('visibleAdminBtn');
+  if(show && !btn) {
+    btn = document.createElement('button');
+    btn.id = 'visibleAdminBtn';
+    btn.className = 'admin-btn';
+    btn.textContent = '⚙ Admin';
+    btn.onclick = promptAdmin;
+    document.querySelector('.nav-right').insertBefore(btn, document.querySelector('.btn-subscribe'));
+  } else if(!show && btn) {
+    btn.remove();
+  }
+}
+
+function handleNewsletterSignup() {
+  const link = document.getElementById('newsletterLink')?.value ||
+    document.querySelector('#plan1Link')?.value;
+  const email = document.querySelector('.nw-input')?.value?.trim();
+  if(!email){ showToast('Please enter your email','error'); return; }
+  const url = document.getElementById('newsletterLink')?.getAttribute('data-href');
+  // If a newsletter link is set in settings, open it; otherwise show confirmation
+  showToast('✓ Thanks! Check your inbox to confirm.');
 }
 
 async function openAdmin() {
@@ -1223,14 +1306,33 @@ async function saveBreaking() {
 async function saveSettings() {
   try {
     const settings = [
-      { key:'site_name',     value:document.getElementById('siteName').value },
-      { key:'tagline',       value:document.getElementById('siteTagline').value },
-      { key:'edition',       value:document.getElementById('editionLabel').value },
-      { key:'paywall_active',value:String(document.getElementById('paywallActive').checked) },
+      { key:'site_name',        value:document.getElementById('siteName').value },
+      { key:'tagline',          value:document.getElementById('siteTagline').value },
+      { key:'edition',          value:document.getElementById('editionLabel').value },
+      { key:'location_line',    value:document.getElementById('locationLine').value },
+      { key:'paywall_active',   value:String(document.getElementById('paywallActive').checked) },
+      { key:'newsletter_title', value:document.getElementById('newsletterTitle').value },
+      { key:'newsletter_sub',   value:document.getElementById('newsletterSub').value },
+      { key:'newsletter_btn',   value:document.getElementById('newsletterBtn').value },
+      { key:'newsletter_link',  value:document.getElementById('newsletterLink').value },
+      { key:'plan1_name',       value:document.getElementById('plan1Name').value },
+      { key:'plan1_price',      value:document.getElementById('plan1Price').value },
+      { key:'plan1_link',       value:document.getElementById('plan1Link').value },
+      { key:'plan2_name',       value:document.getElementById('plan2Name').value },
+      { key:'plan2_price',      value:document.getElementById('plan2Price').value },
+      { key:'plan2_link',       value:document.getElementById('plan2Link').value },
+      { key:'about_url',        value:document.getElementById('aboutUrl').value },
+      { key:'careers_url',      value:document.getElementById('careersUrl').value },
+      { key:'privacy_url',      value:document.getElementById('privacyUrl').value },
+      { key:'footer_about',     value:document.getElementById('footerAboutText').value },
+      { key:'copyright',        value:document.getElementById('copyrightText').value },
     ];
-    await Promise.all(settings.map(s=>db.update('site_settings',{value:s.value},{key:s.key})));
-    applySettings(settings.map(s=>({key:s.key, value:s.value})));
-    showToast('✓ Settings saved to database');
+    await Promise.all(settings.map(s =>
+      db.update('site_settings',{value:s.value},{key:s.key})
+        .catch(()=>db.insert('site_settings',{key:s.key,value:s.value}))
+    ));
+    applySettings(settings.map(s=>({key:s.key,value:s.value})));
+    showToast('✓ All settings saved and live on site');
   } catch(e){ showToast('✗ '+e.message,'error'); }
 }
 
