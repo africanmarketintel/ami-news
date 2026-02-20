@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Archive — African Market Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400;1,600&family=Spectral:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<script>
+  const SUPABASE_URL  = 'YOUR_SUPABASE_URL';
+  const SUPABASE_ANON = 'YOUR_SUPABASE_ANON_KEY';
+  const STRIPE_PREMIUM = 'https://buy.stripe.com/YOUR_PREMIUM_LINK';
+</script>
+
+<style>
+:root{--gold:#C9A84C;--gold-light:#E8C97A;--gold-pale:#FDF6E3;--terra:#B85C38;--terra-dark:#8C3A1F;--ink:#1A1208;--ink-mid:#3D2B1F;--ink-soft:#6B5344;--cream:#FAF7F0;--cream-dark:#F0EAD9;--border:#D4C4A0;--bg:var(--cream);--surface:#fff;--text:var(--ink);--text-soft:var(--ink-soft);--nav-bg:var(--ink);--nav-text:var(--cream);--divider:var(--border);--card-bg:#fff}
+[data-theme="dark"]{--bg:#0F0A06;--surface:#1A1208;--text:#EDE5D5;--text-soft:#A89070;--nav-bg:#080502;--nav-text:#EDE5D5;--divider:#3D2B1F;--card-bg:#1F1610;--border:#3D2B1F;--gold-pale:#2A1F10}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Spectral',Georgia,serif;background:var(--bg);color:var(--text);font-size:16px;line-height:1.6;transition:background .3s,color .3s}
+a{color:inherit;text-decoration:none}button{cursor:pointer;border:none;background:none;font-family:inherit}
+
+/* Ticker */
+.ticker-bar{background:var(--ink);color:#C9A84C;font-family:'DM Mono',monospace;font-size:11px;padding:6px 0;overflow:hidden;white-space:nowrap}
+.ticker-inner{display:inline-flex;gap:48px;animation:ticker 40s linear infinite}
+.ticker-item{display:flex;gap:8px;align-items:center}.ticker-item .sym{color:#888}
+.up{color:#4CAF50}.dn{color:#F44336}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* Nav */
+.top-nav{background:var(--nav-bg);color:var(--nav-text);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:48px;border-bottom:2px solid var(--gold);position:sticky;top:0;z-index:100}
+.nav-logo{font-family:'Playfair Display',serif;font-size:18px;font-weight:800;color:var(--gold);white-space:nowrap}
+.nav-logo span{color:var(--nav-text)}
+.nav-left{display:flex;align-items:center}
+.nav-link{color:var(--nav-text);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:0 14px;height:48px;display:flex;align-items:center;border-right:1px solid #333;transition:color .2s}
+.nav-link:first-child{border-left:1px solid #333}.nav-link:hover{color:var(--gold)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.btn-subscribe{background:var(--gold);color:var(--ink);font-family:'DM Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:8px 16px;border-radius:2px;display:inline-block}
+.btn-subscribe:hover{background:var(--gold-light)}
+.dark-toggle{color:var(--nav-text);font-size:16px;padding:8px;line-height:1}
+
+/* Section header — FT style */
+.section-masthead{background:var(--nav-bg);border-bottom:4px solid var(--gold);padding:28px 24px 24px}
+.section-masthead-inner{max-width:1280px;margin:0 auto;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.section-title-large{font-family:'Playfair Display',serif;font-size:clamp(32px,6vw,64px);font-weight:800;color:white;line-height:1;letter-spacing:-.02em}
+.section-title-large span{color:var(--gold)}
+.section-desc{font-family:'Spectral',serif;font-size:14px;color:#999;font-style:italic;font-weight:300;max-width:480px;line-height:1.6;margin-top:8px}
+.section-meta{font-family:'DM Mono',monospace;font-size:10px;color:#666;letter-spacing:.1em;text-transform:uppercase;text-align:right}
+.section-meta strong{color:var(--gold);display:block;font-size:18px;font-family:'Playfair Display',serif;letter-spacing:0;text-transform:none}
+
+/* Sub-navigation */
+.sub-nav{background:var(--surface);border-bottom:1px solid var(--divider);overflow-x:auto;scrollbar-width:none}
+.sub-nav-inner{display:flex;padding:0 24px;max-width:1280px;margin:0 auto}
+.sub-tab{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-soft);padding:12px 18px;border-bottom:3px solid transparent;margin-bottom:-1px;white-space:nowrap;cursor:pointer;transition:color .2s,border-color .2s}
+.sub-tab:hover,.sub-tab.active{color:var(--terra);border-bottom-color:var(--terra)}
+
+/* Main layout */
+.archive-wrapper{max-width:1280px;margin:0 auto;padding:32px 24px;display:grid;grid-template-columns:1fr 300px;gap:48px;align-items:start}
+@media(max-width:900px){.archive-wrapper{grid-template-columns:1fr;padding:24px 16px}}
+
+/* Results info bar */
+.results-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 0 20px;border-bottom:2px solid var(--gold);margin-bottom:24px;flex-wrap:wrap;gap:10px}
+.results-count{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-soft)}
+.results-count strong{color:var(--terra);font-size:15px}
+.sort-select{font-family:'DM Mono',monospace;font-size:11px;background:var(--card-bg);border:1px solid var(--divider);color:var(--text);padding:6px 12px;border-radius:2px;cursor:pointer;outline:none}
+.sort-select:focus{border-color:var(--gold)}
+
+/* Search bar */
+.archive-search{width:100%;background:var(--card-bg);border:1px solid var(--divider);border-left:3px solid var(--gold);color:var(--text);padding:12px 16px;font-family:'Spectral',serif;font-size:15px;outline:none;margin-bottom:24px;transition:border-color .2s}
+.archive-search:focus{border-color:var(--gold)}
+.archive-search::placeholder{color:var(--text-soft);font-style:italic}
+
+/* Article list — FT style rows */
+.article-list{list-style:none}
+.article-row-item{display:grid;grid-template-columns:1fr auto;gap:20px;padding:20px 0;border-bottom:1px solid var(--divider);align-items:start;transition:background .15s;cursor:pointer}
+.article-row-item:first-child{border-top:1px solid var(--divider)}
+.article-row-item:hover{background:var(--gold-pale);margin:0 -16px;padding-left:16px;padding-right:16px}
+[data-theme="dark"] .article-row-item:hover{background:#2A1F10}
+.article-row-main{min-width:0}
+.article-row-kicker{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.article-row-kicker::before{content:'';display:inline-block;width:16px;height:2px;background:var(--gold)}
+.article-row-headline{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;line-height:1.3;color:var(--text);margin-bottom:8px;transition:color .2s}
+.article-row-item:hover .article-row-headline{color:var(--terra)}
+.article-row-standfirst{font-size:14px;color:var(--text-soft);line-height:1.65;font-weight:300;margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.article-row-meta{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.article-row-meta .author{color:var(--terra)}
+.article-row-meta .lock{color:var(--gold)}
+.article-row-img{width:120px;height:90px;object-fit:cover;flex-shrink:0;border:1px solid var(--divider)}
+.article-row-img-placeholder{width:120px;height:90px;background:linear-gradient(135deg,var(--ink-mid),var(--ink));display:flex;align-items:center;justify-content:center;font-size:20px;opacity:.4;flex-shrink:0}
+@media(max-width:600px){.article-row-img,.article-row-img-placeholder{display:none}}
+
+/* Featured top story */
+.featured-story{background:var(--card-bg);border:1px solid var(--divider);border-top:4px solid var(--terra);padding:0;margin-bottom:24px;overflow:hidden;cursor:pointer;transition:border-color .2s}
+.featured-story:hover{border-top-color:var(--gold)}
+.featured-img{width:100%;height:280px;object-fit:cover;display:block}
+.featured-img-placeholder{width:100%;height:200px;background:linear-gradient(135deg,var(--ink),var(--ink-mid));display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:12px;color:#555;letter-spacing:.1em}
+.featured-body{padding:24px}
+.featured-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;background:var(--terra);color:white;padding:3px 10px;display:inline-block;margin-bottom:12px}
+.featured-headline{font-family:'Playfair Display',serif;font-size:clamp(18px,3vw,26px);font-weight:700;line-height:1.25;margin-bottom:10px;transition:color .2s}
+.featured-story:hover .featured-headline{color:var(--terra)}
+.featured-standfirst{font-size:14px;color:var(--text-soft);line-height:1.65;font-weight:300;margin-bottom:12px;font-style:italic}
+.featured-meta{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);display:flex;gap:12px;flex-wrap:wrap}
+.featured-meta .author{color:var(--terra)}
+
+/* Pagination */
+.pagination-bar{display:flex;align-items:center;justify-content:center;gap:6px;padding:32px 0 8px;flex-wrap:wrap}
+.page-btn{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;min-width:38px;height:38px;display:flex;align-items:center;justify-content:center;border:1px solid var(--divider);background:var(--card-bg);color:var(--text-soft);border-radius:2px;cursor:pointer;transition:all .2s;text-decoration:none;padding:0 10px}
+.page-btn:hover{border-color:var(--gold);color:var(--gold)}
+.page-btn.active{background:var(--terra);border-color:var(--terra);color:white}
+.page-btn.disabled{opacity:.35;cursor:not-allowed;pointer-events:none}
+.page-ellipsis{font-family:'DM Mono',monospace;font-size:12px;color:var(--text-soft);padding:0 4px}
+
+/* Skeleton */
+.skeleton{background:linear-gradient(90deg,var(--divider) 25%,var(--card-bg) 50%,var(--divider) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:2px;margin-bottom:10px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* Sidebar */
+.sidebar-widget{border:1px solid var(--divider);border-top:3px solid var(--gold);background:var(--card-bg);padding:20px;margin-bottom:24px}
+.widget-title{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-soft);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--divider)}
+.sidebar-sticky{position:sticky;top:72px}
+.top-story{padding:10px 0;border-bottom:1px solid var(--divider);cursor:pointer}
+.top-story:last-child{border-bottom:none;padding-bottom:0}
+.top-story-num{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:var(--divider);line-height:1;margin-bottom:3px}
+.top-story-headline{font-family:'Playfair Display',serif;font-size:13px;font-weight:600;line-height:1.35;transition:color .2s}
+.top-story:hover .top-story-headline{color:var(--terra)}
+.tag-cloud{display:flex;flex-wrap:wrap;gap:6px}
+.tag-pill{background:var(--gold-pale);color:var(--ink-mid);padding:4px 10px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;border-left:2px solid var(--gold);cursor:pointer;transition:background .2s}
+[data-theme="dark"] .tag-pill{background:#2A1F10;color:var(--gold-light)}
+.tag-pill:hover{background:var(--gold);color:var(--ink)}
+.data-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--divider);font-family:'DM Mono',monospace;font-size:11px}
+.data-row:last-child{border-bottom:none}
+.data-label{color:var(--text-soft)}.data-value{font-weight:500}
+.newsletter-mini{background:linear-gradient(135deg,#1A1208,#3D2B1F);padding:20px;margin-bottom:24px}
+.nw-title{font-family:'Playfair Display',serif;font-size:17px;color:var(--gold);margin-bottom:6px}
+.nw-sub{font-size:12px;color:#999;margin-bottom:12px;font-weight:300}
+.nw-input{width:100%;background:rgba(255,255,255,.08);border:1px solid #444;color:white;padding:9px 12px;border-radius:2px;font-family:'DM Mono',monospace;font-size:11px;margin-bottom:8px;outline:none}
+.nw-input::placeholder{color:#666}
+.nw-btn{width:100%;background:var(--gold);color:var(--ink);font-family:'DM Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;padding:9px;border-radius:2px}
+.nw-btn:hover{background:var(--gold-light)}
+
+/* Empty state */
+.empty-state{text-align:center;padding:64px 24px}
+.empty-icon{font-size:48px;margin-bottom:16px;opacity:.4}
+.empty-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--text-soft);margin-bottom:8px}
+.empty-sub{font-size:14px;color:var(--text-soft);font-weight:300}
+
+/* Toast */
+.toast{position:fixed;bottom:28px;right:28px;z-index:9999;background:#1B4D1B;border:1px solid #4CAF50;color:#4CAF50;font-family:'DM Mono',monospace;font-size:12px;padding:12px 22px;border-radius:2px;opacity:0;transform:translateY(16px);transition:all .3s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+
+/* Footer */
+footer{background:var(--ink);color:#888;padding:32px 24px;margin-top:48px}
+.footer-inner{max-width:1280px;margin:0 auto;display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:10px;flex-wrap:wrap;gap:10px;align-items:center}
+.footer-logo{font-family:'Playfair Display',serif;font-size:18px;color:var(--gold);font-weight:800}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- Ticker -->
+<div class="ticker-bar"><div class="ticker-inner" id="tickerInner">
+  <span class="ticker-item"><span class="sym">Loading…</span></span>
+</div></div>
+
+<!-- Nav -->
+<nav class="top-nav">
+  <div style="display:flex;align-items:center;gap:0">
+    <a href="index.html" class="nav-logo"><span>AMI</span></a>
+    <div class="nav-left" style="margin-left:8px">
+      <a href="index.html?section=Markets"    class="nav-link">Markets</a>
+      <a href="index.html?section=Politics"   class="nav-link">Politics</a>
+      <a href="index.html?section=Economy"    class="nav-link">Economy</a>
+      <a href="index.html?section=Energy"     class="nav-link">Energy</a>
+      <a href="index.html?section=Technology" class="nav-link">Tech</a>
+      <a href="index.html?section=Opinion"    class="nav-link">Opinion</a>
+    </div>
+  </div>
+  <div class="nav-right">
+    <button class="dark-toggle" onclick="toggleDark()" id="themeBtn">🌙</button>
+    <a href="index.html" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--nav-text);letter-spacing:.08em;text-transform:uppercase;padding:8px 14px;border:1px solid #444;border-radius:2px;transition:border-color .2s" onmouseover="this.style.borderColor='#C9A84C'" onmouseout="this.style.borderColor='#444'">← Home</a>
+    <a href="#" id="subscribeBtn" target="_blank" class="btn-subscribe">Subscribe</a>
+  </div>
+</nav>
+
+<!-- Section Masthead -->
+<div class="section-masthead">
+  <div class="section-masthead-inner">
+    <div>
+      <div class="section-title-large" id="sectionTitle">All <span>Articles</span></div>
+      <div class="section-desc" id="sectionDesc">Every article published by African Market Intelligence — the continent's premium source for financial news and business intelligence.</div>
+    </div>
+    <div class="section-meta">
+      <strong id="articleCountDisplay">—</strong>
+      articles published
+    </div>
+  </div>
+</div>
+
+<!-- Sub nav — sections -->
+<div class="sub-nav">
+  <div class="sub-nav-inner">
+    <div class="sub-tab active" onclick="setSection(event,'all')">All</div>
+    <div class="sub-tab" onclick="setSection(event,'Markets')">Markets</div>
+    <div class="sub-tab" onclick="setSection(event,'Politics')">Politics</div>
+    <div class="sub-tab" onclick="setSection(event,'Economy')">Economy</div>
+    <div class="sub-tab" onclick="setSection(event,'West Africa')">West Africa</div>
+    <div class="sub-tab" onclick="setSection(event,'East Africa')">East Africa</div>
+    <div class="sub-tab" onclick="setSection(event,'Southern Africa')">Southern Africa</div>
+    <div class="sub-tab" onclick="setSection(event,'North Africa')">North Africa</div>
+    <div class="sub-tab" onclick="setSection(event,'Commodities')">Commodities</div>
+    <div class="sub-tab" onclick="setSection(event,'Technology')">Technology</div>
+    <div class="sub-tab" onclick="setSection(event,'Opinion')">Opinion</div>
+  </div>
+</div>
+
+<div class="archive-wrapper">
+  <main>
+    <!-- Search -->
+    <input class="archive-search" type="text" id="archiveSearch" placeholder="Search all articles…" oninput="handleSearch(this.value)">
+
+    <!-- Results bar -->
+    <div class="results-bar">
+      <div class="results-count" id="resultsCount">Loading articles…</div>
+      <select class="sort-select" id="sortSelect" onchange="handleSort(this.value)">
+        <option value="newest">Newest first</option>
+        <option value="oldest">Oldest first</option>
+        <option value="section">By section</option>
+      </select>
+    </div>
+
+    <!-- Featured top article -->
+    <div id="featuredContainer"></div>
+
+    <!-- Article list -->
+    <ul class="article-list" id="articleList">
+      <!-- Skeletons -->
+      ${[...Array(8)].map(()=>`
+      <li style="padding:20px 0;border-bottom:1px solid var(--divider)">
+        <div class="skeleton" style="height:13px;width:120px"></div>
+        <div class="skeleton" style="height:22px;width:85%;margin-top:8px"></div>
+        <div class="skeleton" style="height:14px;width:100%;margin-top:8px"></div>
+        <div class="skeleton" style="height:14px;width:70%;margin-top:4px"></div>
+      </li>`).join('')}
+    </ul>
+
+    <div id="paginationBar" class="pagination-bar"></div>
+  </main>
+
+  <aside class="sidebar-sticky">
+    <div class="newsletter-mini">
+      <div class="nw-title">AMI Morning Brief</div>
+      <div class="nw-sub">Markets & analysis before 7am.</div>
+      <input class="nw-input" type="email" id="nwEmail" placeholder="your@email.com">
+      <button class="nw-btn" onclick="subscribe()">Subscribe Free →</button>
+    </div>
+
+    <div class="sidebar-widget">
+      <div class="widget-title">Most Read</div>
+      <div id="mostReadList">
+        <div class="skeleton" style="height:60px"></div>
+        <div class="skeleton" style="height:60px"></div>
+        <div class="skeleton" style="height:60px"></div>
+      </div>
+    </div>
+
+    <div class="sidebar-widget">
+      <div class="widget-title">Browse by Tag</div>
+      <div class="tag-cloud" id="tagCloud">
+        <div class="skeleton" style="height:24px;width:70px"></div>
+        <div class="skeleton" style="height:24px;width:90px"></div>
+        <div class="skeleton" style="height:24px;width:60px"></div>
+      </div>
+    </div>
+
+    <div class="sidebar-widget">
+      <div class="widget-title">Key Economic Data</div>
+      <div class="data-row"><span class="data-label">Nigeria Inflation</span><span class="data-value dn">31.70%</span></div>
+      <div class="data-row"><span class="data-label">SA Unemployment</span><span class="data-value dn">32.1%</span></div>
+      <div class="data-row"><span class="data-label">Kenya GDP Growth</span><span class="data-value up">5.4%</span></div>
+      <div class="data-row"><span class="data-label">Egypt Inflation</span><span class="data-value dn">24.1%</span></div>
+      <div class="data-row"><span class="data-label">Ghana Prime Rate</span><span class="data-value">29.0%</span></div>
+    </div>
+  </aside>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <span class="footer-logo">African Market Intelligence</span>
+    <span>© 2025 AMI Ltd. All rights reserved.</span>
+    <a href="index.html" style="color:var(--gold)">← Back to Homepage</a>
+  </div>
+</footer>
+
+<script>
+// ── Supabase client ───────────────────────────────────────────
+const db = {
+  async get(path) {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+      headers:{apikey:SUPABASE_ANON, Authorization:'Bearer '+SUPABASE_ANON}
+    });
+    if(!r.ok) throw new Error('DB error: '+r.status);
+    return r.json();
+  },
+  async insert(table, data) {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
+      method:'POST',
+      headers:{apikey:SUPABASE_ANON, Authorization:'Bearer '+SUPABASE_ANON, 'Content-Type':'application/json', Prefer:'return=representation'},
+      body: JSON.stringify(data)
+    });
+    if(!r.ok) throw new Error(await r.text());
+    return r.json();
+  }
+};
+
+// ── State ─────────────────────────────────────────────────────
+let allArticles  = [];
+let filtered     = [];
+let currentPage  = 1;
+let activeSection = 'all';
+let searchQuery  = '';
+let sortOrder    = 'newest';
+const PER_PAGE   = 20; // FT shows ~20 per page
+
+// ── Init ─────────────────────────────────────────────────────
+document.getElementById('subscribeBtn').href = STRIPE_PREMIUM;
+
+async function init() {
+  // Read URL params
+  const params = new URLSearchParams(window.location.search);
+  currentPage   = parseInt(params.get('page')) || 1;
+  if(params.get('section')) activeSection = params.get('section');
+  if(params.get('q'))       searchQuery   = params.get('q');
+
+  // Activate correct sub-tab
+  if(activeSection !== 'all') {
+    document.querySelectorAll('.sub-tab').forEach(t => {
+      t.classList.toggle('active', t.textContent.trim() === activeSection);
+    });
+  }
+
+  // Set search input if query in URL
+  if(searchQuery) document.getElementById('archiveSearch').value = searchQuery;
+
+  try {
+    const [articles, markets] = await Promise.all([
+      db.get('articles?is_published=eq.true&select=*&order=created_at.desc'),
+      db.get('markets?select=*')
+    ]);
+    allArticles = articles;
+    renderTicker(markets);
+    applyFilters();
+    renderMostRead();
+    renderTagCloud();
+  } catch(e) {
+    document.getElementById('articleList').innerHTML =
+      `<div style="padding:48px;text-align:center;color:var(--text-soft)">
+        <div style="font-size:32px;margin-bottom:12px">⚠</div>
+        <div style="font-family:'DM Mono',monospace;font-size:12px">Could not connect to database.<br>Check your Supabase credentials.</div>
+      </div>`;
+  }
+}
+
+// ── Filters & sorting ─────────────────────────────────────────
+function applyFilters(resetPage=true) {
+  if(resetPage) currentPage = 1;
+  let result = [...allArticles];
+
+  // Section filter
+  if(activeSection !== 'all') {
+    result = result.filter(a =>
+      (a.section||'').toLowerCase().includes(activeSection.toLowerCase()) ||
+      (a.tags||'').toLowerCase().includes(activeSection.toLowerCase())
+    );
+  }
+
+  // Search filter
+  if(searchQuery) {
+    const q = searchQuery.toLowerCase();
+    result = result.filter(a =>
+      (a.headline||'').toLowerCase().includes(q) ||
+      (a.standfirst||'').toLowerCase().includes(q) ||
+      (a.author_name||'').toLowerCase().includes(q) ||
+      (a.tags||'').toLowerCase().includes(q)
+    );
+  }
+
+  // Sort
+  if(sortOrder === 'oldest') result.reverse();
+  else if(sortOrder === 'section') result.sort((a,b)=>(a.section||'').localeCompare(b.section||''));
+
+  filtered = result;
+  updateSectionHeader();
+  renderPage();
+  updateURL();
+}
+
+function updateSectionHeader() {
+  const titleEl = document.getElementById('sectionTitle');
+  const descEl  = document.getElementById('sectionDesc');
+  const countEl = document.getElementById('articleCountDisplay');
+  countEl.textContent = filtered.length;
+
+  if(searchQuery) {
+    titleEl.innerHTML = `Search: <span>${searchQuery}</span>`;
+    descEl.textContent = `${filtered.length} result${filtered.length!==1?'s':''} for "${searchQuery}"`;
+  } else if(activeSection !== 'all') {
+    const words = activeSection.split(' ');
+    const last  = words.pop();
+    titleEl.innerHTML = `${words.join(' ')} <span>${last}</span>`;
+    descEl.textContent = `All ${activeSection} coverage from African Market Intelligence.`;
+  } else {
+    titleEl.innerHTML = `All <span>Articles</span>`;
+    descEl.textContent = `Every article published by African Market Intelligence — the continent's premium source for financial news and business intelligence.`;
+  }
+}
+
+// ── Render ────────────────────────────────────────────────────
+function renderPage() {
+  const total     = filtered.length;
+  const totalPages = Math.ceil(total / PER_PAGE);
+  const start     = (currentPage - 1) * PER_PAGE;
+  const pageItems = filtered.slice(start, start + PER_PAGE);
+
+  // Results count bar
+  const from = start + 1;
+  const to   = Math.min(start + PER_PAGE, total);
+  document.getElementById('resultsCount').innerHTML =
+    total === 0
+      ? 'No articles found'
+      : `Showing <strong>${from}–${to}</strong> of <strong>${total}</strong> articles`;
+
+  if(!pageItems.length) {
+    document.getElementById('featuredContainer').innerHTML = '';
+    document.getElementById('articleList').innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">📰</div>
+        <div class="empty-title">No articles found</div>
+        <div class="empty-sub">Try a different section or search term</div>
+      </div>`;
+    document.getElementById('paginationBar').innerHTML = '';
+    return;
+  }
+
+  // First item on page 1 gets featured treatment
+  let listItems = pageItems;
+  if(currentPage === 1 && pageItems.length > 0) {
+    const featured = pageItems[0];
+    listItems = pageItems.slice(1);
+    document.getElementById('featuredContainer').innerHTML = renderFeatured(featured);
+  } else {
+    document.getElementById('featuredContainer').innerHTML = '';
+  }
+
+  // Article list rows
+  document.getElementById('articleList').innerHTML = listItems.map(a => renderRow(a)).join('');
+
+  // Pagination
+  renderPagination(totalPages);
+
+  // Scroll to top of list on page change
+  if(!resetPage) document.getElementById('archiveSearch').scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function renderFeatured(a) {
+  const url = `article.html?id=${a.id}`;
+  return `
+    <div class="featured-story" onclick="window.location.href='${url}'">
+      ${a.hero_image
+        ? `<img src="${a.hero_image}" class="featured-img" alt="${a.headline}" onerror="this.outerHTML='<div class=featured-img-placeholder>📰 ${a.section||''}</div>'">`
+        : `<div class="featured-img-placeholder">📰 ${a.section||''}</div>`}
+      <div class="featured-body">
+        <span class="featured-label">Latest</span>
+        <div class="featured-headline">${a.headline}</div>
+        <div class="featured-standfirst">${a.standfirst||''}</div>
+        <div class="featured-meta">
+          <span class="author">By ${a.author_name||'AMI Staff'}</span>
+          <span>${a.published_date||''}</span>
+          <span>${a.read_time||''} read</span>
+          ${a.is_locked ? '<span style="color:var(--gold)">🔒 Premium</span>' : ''}
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderRow(a) {
+  const url = `article.html?id=${a.id}`;
+  return `
+    <li class="article-row-item" onclick="window.location.href='${url}'">
+      <div class="article-row-main">
+        <div class="article-row-kicker">${a.section||'News'}</div>
+        <div class="article-row-headline">${a.is_locked?'🔒 ':''}${a.headline}</div>
+        <div class="article-row-standfirst">${a.standfirst||''}</div>
+        <div class="article-row-meta">
+          <span class="author">By ${a.author_name||'AMI Staff'}</span>
+          <span>${a.published_date||''}</span>
+          <span>${a.read_time||''} read</span>
+          ${a.is_locked ? '<span class="lock">Premium</span>' : ''}
+        </div>
+      </div>
+      ${a.hero_image
+        ? `<img src="${a.hero_image}" class="article-row-img" alt="" onerror="this.outerHTML='<div class=article-row-img-placeholder>📰</div>'">`
+        : `<div class="article-row-img-placeholder">📰</div>`}
+    </li>`;
+}
+
+function renderPagination(totalPages) {
+  const bar = document.getElementById('paginationBar');
+  if(totalPages <= 1){ bar.innerHTML=''; return; }
+
+  const pages = buildPageNums(currentPage, totalPages);
+  const sec = activeSection !== 'all' ? `&section=${encodeURIComponent(activeSection)}` : '';
+  const q   = searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : '';
+
+  bar.innerHTML = `
+    <a class="page-btn ${currentPage===1?'disabled':''}"
+       href="archive.html?page=${currentPage-1}${sec}${q}"
+       onclick="goTo(event,${currentPage-1})">← Prev</a>
+    ${pages.map(p => p==='...'
+      ? `<span class="page-ellipsis">…</span>`
+      : `<a class="page-btn ${p===currentPage?'active':''}"
+           href="archive.html?page=${p}${sec}${q}"
+           onclick="goTo(event,${p})">${p}</a>`
+    ).join('')}
+    <a class="page-btn ${currentPage===totalPages?'disabled':''}"
+       href="archive.html?page=${currentPage+1}${sec}${q}"
+       onclick="goTo(event,${currentPage+1})">Next →</a>`;
+}
+
+function buildPageNums(cur, total) {
+  if(total <= 7) return Array.from({length:total},(_,i)=>i+1);
+  const p = [1];
+  if(cur > 3) p.push('...');
+  for(let i=Math.max(2,cur-1); i<=Math.min(total-1,cur+1); i++) p.push(i);
+  if(cur < total-2) p.push('...');
+  p.push(total);
+  return p;
+}
+
+function goTo(e, page) {
+  e.preventDefault();
+  const total = Math.ceil(filtered.length / PER_PAGE);
+  if(page < 1 || page > total) return;
+  currentPage = page;
+  renderPage();
+  updateURL();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function updateURL() {
+  const sec = activeSection !== 'all' ? `&section=${encodeURIComponent(activeSection)}` : '';
+  const q   = searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : '';
+  const pg  = currentPage > 1 ? `page=${currentPage}` : '';
+  const qs  = [pg, sec.slice(1), q.slice(1)].filter(Boolean).join('&');
+  history.pushState({currentPage, activeSection, searchQuery}, '',
+    qs ? `archive.html?${qs}` : 'archive.html');
+}
+
+// ── Event handlers ────────────────────────────────────────────
+function setSection(e, section) {
+  e.preventDefault();
+  document.querySelectorAll('.sub-tab').forEach(t=>t.classList.remove('active'));
+  e.target.classList.add('active');
+  activeSection = section;
+  applyFilters();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function handleSearch(val) {
+  searchQuery = val.trim();
+  applyFilters();
+}
+
+function handleSort(val) {
+  sortOrder = val;
+  applyFilters();
+}
+
+// ── Sidebar ───────────────────────────────────────────────────
+function renderMostRead() {
+  const top = allArticles.slice(0, 5);
+  document.getElementById('mostReadList').innerHTML = top.map((a,i) => `
+    <div class="top-story" onclick="window.location.href='article.html?id=${a.id}'">
+      <div class="top-story-num">0${i+1}</div>
+      <div class="top-story-headline">${a.headline}</div>
+    </div>`).join('');
+}
+
+function renderTagCloud() {
+  const tagSet = new Set();
+  allArticles.forEach(a => {
+    (a.tags||'').split(',').map(t=>t.trim()).filter(Boolean).forEach(t=>tagSet.add(t));
+  });
+  const tags = [...tagSet].slice(0, 24);
+  document.getElementById('tagCloud').innerHTML = tags.length
+    ? tags.map(t=>`<span class="tag-pill" onclick="searchByTag('${t}')">${t}</span>`).join('')
+    : '<span style="font-family:DM Mono,monospace;font-size:11px;color:var(--text-soft)">No tags yet</span>';
+}
+
+function searchByTag(tag) {
+  document.getElementById('archiveSearch').value = tag;
+  searchQuery = tag;
+  applyFilters();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ── Ticker ────────────────────────────────────────────────────
+function renderTicker(markets) {
+  if(!markets || !markets.length) return;
+  const items = markets.map(m =>
+    `<span class="ticker-item"><span class="sym">${m.id.toUpperCase()}</span> ${m.value} <span class="${m.direction}">${m.direction==='up'?'▲':'▼'} ${m.change}</span></span>`
+  ).join('');
+  document.getElementById('tickerInner').innerHTML = items + items;
+}
+
+// ── Newsletter ────────────────────────────────────────────────
+async function subscribe() {
+  const input = document.getElementById('nwEmail');
+  const email = input.value.trim();
+  if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    showToast('Please enter a valid email address','error'); return;
+  }
+  try {
+    const existing = await db.get(`subscribers?email=eq.${encodeURIComponent(email)}&select=id`);
+    if(existing && existing.length){
+      showToast('You are already subscribed!'); input.value=''; return;
+    }
+    await db.insert('subscribers', {email, source:'archive_page', subscribed_at: new Date().toISOString()});
+    showToast('✓ Subscribed! Welcome to AMI Morning Brief.');
+    input.closest('.newsletter-mini').innerHTML = `
+      <div style="text-align:center;padding:8px 0">
+        <div style="font-size:28px;margin-bottom:8px">📬</div>
+        <div style="font-family:'Playfair Display',serif;font-size:17px;color:#C9A84C;margin-bottom:6px">You're in!</div>
+        <div style="font-size:12px;color:#999;font-weight:300">First briefing arrives tomorrow morning.</div>
+      </div>`;
+  } catch(e) { showToast('Could not subscribe: '+e.message,'error'); }
+}
+
+// ── Helpers ───────────────────────────────────────────────────
+function toggleDark(){
+  const h=document.documentElement, dark=h.getAttribute('data-theme')==='dark';
+  h.setAttribute('data-theme', dark?'light':'dark');
+  document.getElementById('themeBtn').textContent = dark?'🌙':'☀️';
+}
+
+function showToast(msg, type='success'){
+  const t=document.getElementById('toast'); t.textContent=msg;
+  t.style.cssText = type==='error'
+    ? 'background:#4D1B1B;border-color:#F44336;color:#F44336'
+    : 'background:#1B4D1B;border-color:#4CAF50;color:#4CAF50';
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 4000);
+}
+
+window.addEventListener('popstate', e => {
+  if(e.state){ currentPage=e.state.currentPage||1; activeSection=e.state.activeSection||'all'; searchQuery=e.state.searchQuery||''; applyFilters(false); }
+});
+
+init();
+</script>
+</body>
+</html>
