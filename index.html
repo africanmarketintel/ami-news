@@ -293,6 +293,7 @@ footer{background:var(--ink);color:#888;padding:40px 24px 24px;margin-top:48px}
       <div class="admin-tab" onclick="switchTab(event,'markets')">Markets</div>
       <div class="admin-tab" onclick="switchTab(event,'breaking')">Breaking</div>
       <div class="admin-tab" onclick="switchTab(event,'settings')">Settings</div>
+      <div class="admin-tab" onclick="switchTab(event,'subscribers')">Subscribers</div>
     </div>
 
     <!-- ARTICLES TAB -->
@@ -397,6 +398,37 @@ footer{background:var(--ink);color:#888;padding:40px 24px 24px;margin-top:48px}
     </div>
   </div>
 
+  <!-- SUBSCRIBERS TAB -->
+  <div class="admin-section" id="tab-subscribers">
+    <div class="admin-section-title">Newsletter Subscribers</div>
+    <div style="display:flex;gap:10px;margin-bottom:16px">
+      <button class="btn-save" style="flex:1;margin:0" onclick="loadSubscribers()">Refresh List</button>
+      <button class="btn-save" style="flex:1;margin:0;background:#1B3A6B" onclick="exportSubscribersCSV()">Export CSV</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px">
+      <div style="background:#0F0A06;border:1px solid #3D2B1F;border-top:2px solid #C9A84C;padding:14px;text-align:center">
+        <div id="subTotal" style="font-size:24px;font-weight:700;color:#EDE5D5;font-family:Georgia,serif">-</div>
+        <div style="font-size:9px;color:#888;text-transform:uppercase;letter-spacing:.1em;margin-top:4px">Total</div>
+      </div>
+      <div style="background:#0F0A06;border:1px solid #3D2B1F;border-top:2px solid #4CAF50;padding:14px;text-align:center">
+        <div id="subThisWeek" style="font-size:24px;font-weight:700;color:#4CAF50;font-family:Georgia,serif">-</div>
+        <div style="font-size:9px;color:#888;text-transform:uppercase;letter-spacing:.1em;margin-top:4px">This Week</div>
+      </div>
+      <div style="background:#0F0A06;border:1px solid #3D2B1F;border-top:2px solid #B85C38;padding:14px;text-align:center">
+        <div id="subThisMonth" style="font-size:24px;font-weight:700;color:#B85C38;font-family:Georgia,serif">-</div>
+        <div style="font-size:9px;color:#888;text-transform:uppercase;letter-spacing:.1em;margin-top:4px">This Month</div>
+      </div>
+    </div>
+    <div style="background:#0F0A06;border:1px solid #3D2B1F;overflow:hidden">
+      <div style="display:grid;grid-template-columns:1fr 80px 100px;padding:8px 14px;border-bottom:1px solid #3D2B1F;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:#555">
+        <span>Email</span><span>Source</span><span>Date</span>
+      </div>
+      <div id="subscriberList" style="max-height:380px;overflow-y:auto;font-size:11px">
+        <div style="padding:24px;text-align:center;color:#555">Click Refresh to load subscribers</div>
+      </div>
+    </div>
+  </div>
+
   <!-- Dashboard right panel -->
   <div class="admin-right">
     <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#EDE5D5;margin-bottom:6px">Dashboard</div>
@@ -406,6 +438,7 @@ footer{background:var(--ink);color:#888;padding:40px 24px 24px;margin-top:48px}
       <div class="stat-card"><div class="stat-num" id="statLocked">—</div><div class="stat-label">Premium Locked</div></div>
       <div class="stat-card"><div class="stat-num" id="statMarkets">8</div><div class="stat-label">Market Indices</div></div>
       <div class="stat-card"><div class="stat-num" id="statImages">—</div><div class="stat-label">Images Stored</div></div>
+      <div class="stat-card" style="border-top-color:#C9A84C"><div class="stat-num" id="statSubscribers">—</div><div class="stat-label">Subscribers</div></div>
     </div>
     <div style="background:#0F0A06;border:1px solid #3D2B1F;padding:18px">
       <div style="font-family:'DM Mono',monospace;font-size:11px;color:#C9A84C;letter-spacing:.15em;text-transform:uppercase;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #3D2B1F">Supabase Connection</div>
@@ -1027,14 +1060,97 @@ function toggleAdminVisibility(show) {
   }
 }
 
-function handleNewsletterSignup() {
-  const link = document.getElementById('newsletterLink')?.value ||
-    document.querySelector('#plan1Link')?.value;
-  const email = document.querySelector('.nw-input')?.value?.trim();
-  if(!email){ showToast('Please enter your email','error'); return; }
-  const url = document.getElementById('newsletterLink')?.getAttribute('data-href');
-  // If a newsletter link is set in settings, open it; otherwise show confirmation
-  showToast('✓ Thanks! Check your inbox to confirm.');
+async function handleNewsletterSignup() {
+  const input = document.querySelector('.nw-input');
+  const email = input?.value?.trim();
+  if(!email){ showToast('Please enter your email address','error'); return; }
+  // Basic email validation
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    showToast('Please enter a valid email address','error'); return;
+  }
+  const btn = document.getElementById('nwBtnDisplay');
+  const origText = btn.textContent;
+  btn.textContent = 'Subscribing…';
+  btn.disabled = true;
+  try {
+    // Check if already subscribed
+    const existing = await db.query('subscribers', { select:'id', eq:{email} });
+    if(existing && existing.length > 0){
+      showToast('✓ You are already subscribed!');
+      input.value = '';
+    } else {
+      await db.insert('subscribers', {
+        email,
+        source: 'homepage_widget',
+        subscribed_at: new Date().toISOString()
+      });
+      showToast('✓ Subscribed! Welcome to the AMI Morning Brief.');
+      input.value = '';
+      // Show thank you state
+      const widget = input.closest('.newsletter-widget');
+      if(widget){
+        widget.innerHTML = `
+          <div style="text-align:center;padding:12px 0">
+            <div style="font-size:28px;margin-bottom:8px">📬</div>
+            <div style="font-family:'Playfair Display',serif;font-size:18px;color:#C9A84C;margin-bottom:6px">You're in!</div>
+            <div style="font-size:13px;color:#999;font-weight:300">Check your inbox tomorrow morning for your first briefing.</div>
+          </div>`;
+      }
+    }
+  } catch(e){
+    showToast('✗ Could not subscribe: '+e.message,'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = origText;
+  }
+}
+
+// ── Subscriber management (admin) ────────────────────────────
+async function loadSubscribers() {
+  document.getElementById('subscriberList').innerHTML =
+    '<div style="padding:24px;text-align:center;color:#888">Loading…</div>';
+  try {
+    const subs = await db.query('subscribers', { select:'*', order:'subscribed_at.desc' });
+    const now  = new Date();
+    const weekAgo  = new Date(now - 7*24*60*60*1000);
+    const monthAgo = new Date(now.getFullYear(), now.getMonth(), 1);
+    const thisWeek  = subs.filter(s=>new Date(s.subscribed_at)>=weekAgo).length;
+    const thisMonth = subs.filter(s=>new Date(s.subscribed_at)>=monthAgo).length;
+    document.getElementById('subTotal').textContent     = subs.length;
+    document.getElementById('subThisWeek').textContent  = thisWeek;
+    document.getElementById('subThisMonth').textContent = thisMonth;
+    document.getElementById('statSubscribers').textContent = subs.length;
+    if(!subs.length){
+      document.getElementById('subscriberList').innerHTML =
+        '<div style="padding:24px;text-align:center;color:#555">No subscribers yet.</div>';
+      return;
+    }
+    document.getElementById('subscriberList').innerHTML = subs.map(s=>`
+      <div style="display:grid;grid-template-columns:1fr auto auto;gap:12px;padding:10px 14px;border-bottom:1px solid #1A1208;align-items:center">
+        <span style="color:#EDE5D5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.email}</span>
+        <span style="color:#555;font-size:10px;letter-spacing:.05em">${s.source||'widget'}</span>
+        <span style="color:#555;font-size:10px;white-space:nowrap">${new Date(s.subscribed_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</span>
+      </div>`).join('');
+  } catch(e){
+    document.getElementById('subscriberList').innerHTML =
+      '<div style="padding:24px;color:#F44336;font-size:11px">Error: '+e.message+'</div>';
+  }
+}
+
+function exportSubscribersCSV() {
+  const rows = document.querySelectorAll('#subscriberList > div');
+  if(!rows.length){ showToast('Load subscribers first','error'); return; }
+  const lines = ['Email,Source,Date'];
+  rows.forEach(row=>{
+    const cells = row.querySelectorAll('span');
+    if(cells.length>=3) lines.push([cells[0].textContent,cells[1].textContent,cells[2].textContent].join(','));
+  });
+  const blob = new Blob([lines.join('\n')], {type:'text/csv'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a'); a.href=url;
+  a.download = 'ami-subscribers-'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click(); URL.revokeObjectURL(url);
+  showToast('✓ CSV downloaded');
 }
 
 async function openAdmin() {
@@ -1057,6 +1173,7 @@ function switchTab(e,tab){
   document.querySelectorAll('.admin-section').forEach(s=>s.classList.remove('active'));
   e.target.classList.add('active');
   document.getElementById('tab-'+tab).classList.add('active');
+  if(tab==='subscribers') loadSubscribers();
 }
 
 async function loadAdminData() {
@@ -1076,6 +1193,11 @@ async function loadAdminData() {
   document.getElementById('statArticles').textContent = arts.filter(a=>a.is_published).length;
   document.getElementById('statLocked').textContent   = arts.filter(a=>a.is_locked).length;
   document.getElementById('statImages').textContent   = arts.filter(a=>a.hero_image).length;
+  // Load subscriber count
+  try {
+    const subs = await db.query('subscribers', { select:'id' });
+    document.getElementById('statSubscribers').textContent = subs.length;
+  } catch(e){}
 }
 
 function renderAdminArticleList(articles) {
