@@ -19,5 +19,5 @@
 
 const SUPABASE_URL   = 'https://ucpjwyghwxjalkfvmbro.supabase.co';       // https://xxxx.supabase.co
 const SUPABASE_ANON  = 'sb_publishable_7cI4RoxyLr88DhwDWRC1vg_DSpczsHt';  // eyJh…
-const STRIPE_DIGITAL = 'https://buy.stripe.com/YOUR_DIGITAL_LINK';
-const STRIPE_PREMIUM = 'https://buy.stripe.com/YOUR_PREMIUM_LINK';
+const STRIPE_DIGITAL = 'https://buy.stripe.com/6oUaEQ59MbmG18hc1uaVa0b';
+const STRIPE_PREMIUM = 'https://buy.stripe.com/6oUaEQ59MbmG18hc1uaVa0b';
