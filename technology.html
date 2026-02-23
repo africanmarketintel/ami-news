@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Contact | African Market Intelligence</title>
+<title>Technology | African Market Intelligence</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400;1,600&family=Spectral:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 
@@ -465,14 +465,14 @@ footer{background:var(--ink);color:#888;padding:40px 24px 24px;margin-top:48px}
     <a href="politics.html"   class="nav-link">Politics</a>
     <a href="economy.html"    class="nav-link">Economy</a>
     <a href="energy.html"     class="nav-link">Energy</a>
-    <a href="technology.html" class="nav-link">Tech</a>
+    <a href="technology.html" class="nav-link" style="color:var(--gold);border-bottom:2px solid var(--gold)">Tech</a>
     <a href="opinion.html"    class="nav-link">Opinion</a>
   </div>
   <div class="nav-right">
     <input class="nav-search" type="text" placeholder="Search AMI…" oninput="searchArticles(this.value)">
     <a href="about.html"      class="nav-link" style="border-left:1px solid #333">About</a>
     <a href="membership.html" class="nav-link">Membership</a>
-    <a href="contact.html"    class="nav-link" style="color:var(--gold)">Contact</a>
+    <a href="contact.html"    class="nav-link">Contact</a>
     <button class="dark-toggle" onclick="toggleDark()" id="themeBtn">🌙</button>
     <a href="membership.html" id="navSubscribeBtn" class="btn-subscribe">Subscribe</a>
   </div>
@@ -501,118 +501,64 @@ footer{background:var(--ink);color:#888;padding:40px 24px 24px;margin-top:48px}
 
 <div class="main-wrapper">
   <main>
-<style>
-.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:40px}
-@media(max-width:680px){.contact-grid{grid-template-columns:1fr}}
-.contact-form h1{font-family:"Playfair Display",serif;font-size:clamp(22px,4vw,36px);font-weight:800;margin-bottom:8px;color:var(--text)}
-.contact-form .lede{font-size:15px;line-height:1.7;color:var(--text-soft);font-style:italic;margin-bottom:28px}
-.cf-group{margin-bottom:16px}
-.cf-label{font-family:"DM Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-soft);display:block;margin-bottom:6px}
-.cf-input,.cf-textarea,.cf-select{width:100%;background:var(--card-bg);border:1px solid var(--divider);color:var(--text);padding:10px 14px;font-family:"Spectral",serif;font-size:14px;outline:none;border-radius:2px;transition:border-color .2s}
-.cf-input:focus,.cf-textarea:focus,.cf-select:focus{border-color:var(--gold)}
-.cf-textarea{min-height:120px;resize:vertical;line-height:1.6}
-.cf-select{font-family:"DM Mono",monospace;font-size:12px}
-.cf-btn{background:var(--gold);color:var(--ink);font-family:"DM Mono",monospace;font-size:12px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;padding:13px 28px;border-radius:2px;cursor:pointer;border:none;transition:background .2s;width:100%}
-.cf-btn:hover{background:var(--gold-light)}
-.contact-info{padding-top:12px}
-.contact-info h2{font-family:"Playfair Display",serif;font-size:18px;font-weight:700;margin-bottom:20px;color:var(--text)}
-.ci-item{display:flex;gap:14px;margin-bottom:22px;align-items:flex-start}
-.ci-icon{font-size:18px;margin-top:2px;flex-shrink:0}
-.ci-label{font-family:"DM Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-soft);margin-bottom:4px}
-.ci-value{font-size:14px;color:var(--text);line-height:1.6}
-.ci-value a{color:var(--terra)}
-.topic-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
-.topic-tag{background:var(--gold-pale);color:var(--ink-mid);font-family:"DM Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:6px 12px;border-left:2px solid var(--gold)}
-[data-theme="dark"] .topic-tag{background:#2A1F10;color:var(--gold-light)}
-.kicker-bar{font-family:"DM Mono",monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
-</style>
-
-<div class="kicker-bar">Contact</div>
-<div class="contact-grid">
-  <div class="contact-form">
-    <h1>Get in touch</h1>
-    <p class="lede">Whether you have a story tip, a subscription query, or a partnership enquiry — we read everything sent to us.</p>
-    <form onsubmit="handleContactForm(event)">
-      <div class="cf-group">
-        <label class="cf-label">Your Name</label>
-        <input class="cf-input" type="text" id="cf_name" placeholder="Full name" required>
+    <!-- Hero -->
+    <div class="hero-grid" id="heroGrid">
+      <!-- Skeleton loader -->
+      <div class="hero-main" style="background:var(--card-bg)">
+        <div class="hero-img-placeholder">Loading…</div>
+        <div class="hero-content">
+          <div class="skeleton skel-headline" style="width:90%;height:36px"></div>
+          <div class="skeleton skel-text" style="margin-top:16px"></div>
+          <div class="skeleton skel-text"></div>
+          <div class="skeleton skel-text-short"></div>
+        </div>
       </div>
-      <div class="cf-group">
-        <label class="cf-label">Email Address</label>
-        <input class="cf-input" type="email" id="cf_email" placeholder="your@email.com" required>
+      <div class="hero-side-1" style="background:var(--card-bg)">
+        <div class="skeleton skel-headline"></div>
+        <div class="skeleton skel-text"></div>
+        <div class="skeleton skel-text-short"></div>
       </div>
-      <div class="cf-group">
-        <label class="cf-label">Subject</label>
-        <select class="cf-select" id="cf_subject">
-          <option value="editorial">Editorial enquiry / story tip</option>
-          <option value="subscription">Subscription support</option>
-          <option value="partnership">Partnership or advertising</option>
-          <option value="corporate">Corporate / team membership</option>
-          <option value="other">Other</option>
-        </select>
-      </div>
-      <div class="cf-group">
-        <label class="cf-label">Message</label>
-        <textarea class="cf-textarea" id="cf_message" placeholder="How can we help?" required></textarea>
-      </div>
-      <button type="submit" class="cf-btn">Send Message →</button>
-    </form>
-  </div>
-
-  <div class="contact-info">
-    <h2>Direct contacts</h2>
-    <div class="ci-item">
-      <div class="ci-icon">✉️</div>
-      <div>
-        <div class="ci-label">General Enquiries</div>
-        <div class="ci-value"><a href="mailto:dayo.abinusawa@gmail.com">dayo.abinusawa@gmail.com</a></div>
+      <div class="hero-side-2" style="background:var(--card-bg)">
+        <div class="skeleton skel-headline"></div>
+        <div class="skeleton skel-text"></div>
+        <div class="skeleton skel-text-short"></div>
       </div>
     </div>
-    <div class="ci-item">
-      <div class="ci-icon">📍</div>
-      <div>
-        <div class="ci-label">Registered Office</div>
-        <div class="ci-value">85 Great Portland Street<br>London, W1W 7LT<br>United Kingdom</div>
-      </div>
-    </div>
-    <div class="ci-item">
-      <div class="ci-icon">🏢</div>
-      <div>
-        <div class="ci-label">Company</div>
-        <div class="ci-value">African Business Trade Association<br>Company No. 16401954</div>
-      </div>
-    </div>
-    <div>
-      <div class="ci-label" style="margin-bottom:10px">We cover</div>
-      <div class="topic-tags">
-        <span class="topic-tag">Markets</span>
-        <span class="topic-tag">Energy</span>
-        <span class="topic-tag">Politics</span>
-        <span class="topic-tag">Economy</span>
-        <span class="topic-tag">Trade</span>
-        <span class="topic-tag">Technology</span>
-      </div>
-    </div>
-  </div>
-</div>
 
-<script>
-function handleContactForm(e) {
-  e.preventDefault();
-  const name    = document.getElementById('cf_name').value;
-  const email   = document.getElementById('cf_email').value;
-  const subject = document.getElementById('cf_subject').value;
-  const message = document.getElementById('cf_message').value;
-  // Build mailto link as fallback (replace with Supabase insert or email API)
-  const body = encodeURIComponent("Name: " + name + "
-Email: " + email + "
+    <!-- Markets strip -->
+    <div class="markets-strip">
+      <div class="strip-title">African Markets at a Glance</div>
+      <div class="markets-grid" id="marketsDisplay">
+        <div class="skeleton" style="height:60px;border-radius:4px"></div>
+        <div class="skeleton" style="height:60px;border-radius:4px"></div>
+        <div class="skeleton" style="height:60px;border-radius:4px"></div>
+        <div class="skeleton" style="height:60px;border-radius:4px"></div>
+      </div>
+    </div>
 
-" + message);
-  const subj = encodeURIComponent("AMI Contact: " + subject);
-  window.location.href = "mailto:dayo.abinusawa@gmail.com?subject=" + subj + "&body=" + body;
-}
-</script>
-</main>
+    <div class="section-header">
+      <h2 class="section-title">Latest News</h2><div class="section-line"></div>
+      <a href="#" class="view-more" id="viewAllLink">View all →</a>
+    </div>
+    <div class="archive-header" id="archiveHeader" style="display:none">
+      <span class="archive-title" id="archiveTitle">All Articles</span>
+      <span class="archive-count" id="archiveCount"></span>
+    </div>
+    <div id="articleCardsContainer">
+      <div class="article-row">
+        <div class="article-card"><div class="card-img-placeholder">⏳</div><div class="card-content"><div class="skeleton skel-headline"></div><div class="skeleton skel-text"></div></div></div>
+        <div class="article-card"><div class="card-img-placeholder">⏳</div><div class="card-content"><div class="skeleton skel-headline"></div><div class="skeleton skel-text"></div></div></div>
+        <div class="article-card"><div class="card-img-placeholder">⏳</div><div class="card-content"><div class="skeleton skel-headline"></div><div class="skeleton skel-text"></div></div></div>
+      </div>
+    </div>
+
+    <!-- Most Read -->
+    <div id="paginationBar" class="pagination-bar"></div>
+    <div class="section-header" style="margin-top:32px">
+      <h2 class="section-title">Most Read</h2><div class="section-line"></div>
+    </div>
+    <div id="mostReadContainer" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--divider);border:1px solid var(--divider);margin-bottom:32px"></div>
+  </main>
 
   <aside>
     <div class="newsletter-widget">

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Contact | African Market Intelligence</title>
+<title>Membership | African Market Intelligence</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400;1,600&family=Spectral:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 
@@ -471,8 +471,8 @@ footer{background:var(--ink);color:#888;padding:40px 24px 24px;margin-top:48px}
   <div class="nav-right">
     <input class="nav-search" type="text" placeholder="Search AMI…" oninput="searchArticles(this.value)">
     <a href="about.html"      class="nav-link" style="border-left:1px solid #333">About</a>
-    <a href="membership.html" class="nav-link">Membership</a>
-    <a href="contact.html"    class="nav-link" style="color:var(--gold)">Contact</a>
+    <a href="membership.html" class="nav-link" style="color:var(--gold)">Membership</a>
+    <a href="contact.html"    class="nav-link">Contact</a>
     <button class="dark-toggle" onclick="toggleDark()" id="themeBtn">🌙</button>
     <a href="membership.html" id="navSubscribeBtn" class="btn-subscribe">Subscribe</a>
   </div>
@@ -502,115 +502,92 @@ footer{background:var(--ink);color:#888;padding:40px 24px 24px;margin-top:48px}
 <div class="main-wrapper">
   <main>
 <style>
-.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:40px}
-@media(max-width:680px){.contact-grid{grid-template-columns:1fr}}
-.contact-form h1{font-family:"Playfair Display",serif;font-size:clamp(22px,4vw,36px);font-weight:800;margin-bottom:8px;color:var(--text)}
-.contact-form .lede{font-size:15px;line-height:1.7;color:var(--text-soft);font-style:italic;margin-bottom:28px}
-.cf-group{margin-bottom:16px}
-.cf-label{font-family:"DM Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-soft);display:block;margin-bottom:6px}
-.cf-input,.cf-textarea,.cf-select{width:100%;background:var(--card-bg);border:1px solid var(--divider);color:var(--text);padding:10px 14px;font-family:"Spectral",serif;font-size:14px;outline:none;border-radius:2px;transition:border-color .2s}
-.cf-input:focus,.cf-textarea:focus,.cf-select:focus{border-color:var(--gold)}
-.cf-textarea{min-height:120px;resize:vertical;line-height:1.6}
-.cf-select{font-family:"DM Mono",monospace;font-size:12px}
-.cf-btn{background:var(--gold);color:var(--ink);font-family:"DM Mono",monospace;font-size:12px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;padding:13px 28px;border-radius:2px;cursor:pointer;border:none;transition:background .2s;width:100%}
-.cf-btn:hover{background:var(--gold-light)}
-.contact-info{padding-top:12px}
-.contact-info h2{font-family:"Playfair Display",serif;font-size:18px;font-weight:700;margin-bottom:20px;color:var(--text)}
-.ci-item{display:flex;gap:14px;margin-bottom:22px;align-items:flex-start}
-.ci-icon{font-size:18px;margin-top:2px;flex-shrink:0}
-.ci-label{font-family:"DM Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-soft);margin-bottom:4px}
-.ci-value{font-size:14px;color:var(--text);line-height:1.6}
-.ci-value a{color:var(--terra)}
-.topic-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
-.topic-tag{background:var(--gold-pale);color:var(--ink-mid);font-family:"DM Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:6px 12px;border-left:2px solid var(--gold)}
-[data-theme="dark"] .topic-tag{background:#2A1F10;color:var(--gold-light)}
+.memb-hero{margin-bottom:36px}
+.memb-hero h1{font-family:"Playfair Display",serif;font-size:clamp(24px,4vw,40px);font-weight:800;margin-bottom:8px;color:var(--text)}
+.memb-hero .lede{font-size:16px;line-height:1.7;color:var(--text-soft);font-style:italic;font-weight:300;max-width:600px}
+.plans-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:40px}
+.plan-box{border:1px solid var(--divider);background:var(--card-bg);padding:28px;position:relative}
+.plan-box.featured{border-color:var(--gold);border-top:4px solid var(--gold)}
+.plan-badge2{position:absolute;top:-12px;left:24px;background:var(--terra);color:white;font-family:"DM Mono",monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;padding:3px 12px}
+.plan-name2{font-family:"DM Mono",monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-soft);margin-bottom:10px}
+.plan-price2{font-family:"Playfair Display",serif;font-size:40px;font-weight:800;color:var(--text);line-height:1}
+.plan-period2{font-family:"DM Mono",monospace;font-size:11px;color:var(--text-soft);margin-bottom:20px;margin-top:4px}
+.plan-divider{height:1px;background:var(--divider);margin:18px 0}
+.plan-feat{list-style:none;margin-bottom:24px}
+.plan-feat li{font-size:13px;color:var(--text-soft);padding:6px 0;border-bottom:1px solid var(--divider);display:flex;align-items:center;gap:10px}
+.plan-feat li:last-child{border-bottom:none}
+.plan-feat li::before{content:"✓";color:var(--gold);font-weight:700;flex-shrink:0}
+.plan-cta{display:block;text-align:center;padding:13px;font-family:"DM Mono",monospace;font-size:12px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;border-radius:2px;transition:background .2s}
+.plan-cta.gold{background:var(--gold);color:var(--ink)}.plan-cta.gold:hover{background:var(--gold-light)}
+.plan-cta.terra{background:var(--terra);color:white}.plan-cta.terra:hover{background:var(--terra-dark)}
+.memb-guarantee{background:var(--card-bg);border:1px solid var(--divider);border-left:4px solid var(--gold);padding:18px 22px;margin-bottom:32px;font-size:13px;color:var(--text-soft);line-height:1.7}
+.memb-guarantee strong{color:var(--text);font-family:"DM Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:6px}
+.faq-item{border-bottom:1px solid var(--divider);padding:16px 0}
+.faq-q{font-family:"Playfair Display",serif;font-size:15px;font-weight:700;margin-bottom:8px;cursor:pointer;color:var(--text)}
+.faq-a{font-size:13px;color:var(--text-soft);line-height:1.7}
 .kicker-bar{font-family:"DM Mono",monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
 </style>
 
-<div class="kicker-bar">Contact</div>
-<div class="contact-grid">
-  <div class="contact-form">
-    <h1>Get in touch</h1>
-    <p class="lede">Whether you have a story tip, a subscription query, or a partnership enquiry — we read everything sent to us.</p>
-    <form onsubmit="handleContactForm(event)">
-      <div class="cf-group">
-        <label class="cf-label">Your Name</label>
-        <input class="cf-input" type="text" id="cf_name" placeholder="Full name" required>
-      </div>
-      <div class="cf-group">
-        <label class="cf-label">Email Address</label>
-        <input class="cf-input" type="email" id="cf_email" placeholder="your@email.com" required>
-      </div>
-      <div class="cf-group">
-        <label class="cf-label">Subject</label>
-        <select class="cf-select" id="cf_subject">
-          <option value="editorial">Editorial enquiry / story tip</option>
-          <option value="subscription">Subscription support</option>
-          <option value="partnership">Partnership or advertising</option>
-          <option value="corporate">Corporate / team membership</option>
-          <option value="other">Other</option>
-        </select>
-      </div>
-      <div class="cf-group">
-        <label class="cf-label">Message</label>
-        <textarea class="cf-textarea" id="cf_message" placeholder="How can we help?" required></textarea>
-      </div>
-      <button type="submit" class="cf-btn">Send Message →</button>
-    </form>
-  </div>
+<div class="memb-hero">
+  <div class="kicker-bar">Membership</div>
+  <h1>Invest in the intelligence<br>your decisions deserve.</h1>
+  <p class="lede">Join investors, executives, and policymakers across Africa who rely on AMI to stay ahead of the continent's markets, policy shifts, and business opportunities.</p>
+</div>
 
-  <div class="contact-info">
-    <h2>Direct contacts</h2>
-    <div class="ci-item">
-      <div class="ci-icon">✉️</div>
-      <div>
-        <div class="ci-label">General Enquiries</div>
-        <div class="ci-value"><a href="mailto:dayo.abinusawa@gmail.com">dayo.abinusawa@gmail.com</a></div>
-      </div>
-    </div>
-    <div class="ci-item">
-      <div class="ci-icon">📍</div>
-      <div>
-        <div class="ci-label">Registered Office</div>
-        <div class="ci-value">85 Great Portland Street<br>London, W1W 7LT<br>United Kingdom</div>
-      </div>
-    </div>
-    <div class="ci-item">
-      <div class="ci-icon">🏢</div>
-      <div>
-        <div class="ci-label">Company</div>
-        <div class="ci-value">African Business Trade Association<br>Company No. 16401954</div>
-      </div>
-    </div>
-    <div>
-      <div class="ci-label" style="margin-bottom:10px">We cover</div>
-      <div class="topic-tags">
-        <span class="topic-tag">Markets</span>
-        <span class="topic-tag">Energy</span>
-        <span class="topic-tag">Politics</span>
-        <span class="topic-tag">Economy</span>
-        <span class="topic-tag">Trade</span>
-        <span class="topic-tag">Technology</span>
-      </div>
-    </div>
+<div class="plans-grid">
+  <div class="plan-box">
+    <div class="plan-name2">Digital</div>
+    <div class="plan-price2">$29</div>
+    <div class="plan-period2">per month · billed monthly</div>
+    <div class="plan-divider"></div>
+    <ul class="plan-feat">
+      <li>Unlimited access to all AMI articles</li>
+      <li>AMI Morning Brief — daily newsletter</li>
+      <li>African markets data dashboard</li>
+      <li>AI-powered article summaries</li>
+      <li>Search &amp; archive access</li>
+    </ul>
+    <a id="memberDigitalBtn" href="#" target="_blank" class="plan-cta gold">Get Digital Access →</a>
+  </div>
+  <div class="plan-box featured">
+    <div class="plan-badge2">Most Popular</div>
+    <div class="plan-name2">Premium</div>
+    <div class="plan-price2">$59</div>
+    <div class="plan-period2">per month · billed monthly</div>
+    <div class="plan-divider"></div>
+    <ul class="plan-feat">
+      <li>Everything in Digital</li>
+      <li>Exclusive research reports &amp; deep dives</li>
+      <li>Events, webinars &amp; roundtables</li>
+      <li>Data downloads &amp; exports</li>
+      <li>Priority access to new features</li>
+      <li>ABTA trade intelligence briefings</li>
+    </ul>
+    <a id="memberPremiumBtn" href="#" target="_blank" class="plan-cta terra">Get Premium Access →</a>
   </div>
 </div>
 
-<script>
-function handleContactForm(e) {
-  e.preventDefault();
-  const name    = document.getElementById('cf_name').value;
-  const email   = document.getElementById('cf_email').value;
-  const subject = document.getElementById('cf_subject').value;
-  const message = document.getElementById('cf_message').value;
-  // Build mailto link as fallback (replace with Supabase insert or email API)
-  const body = encodeURIComponent("Name: " + name + "
-Email: " + email + "
+<div class="memb-guarantee">
+  <strong>Our commitment to you</strong>
+  AMI is ad-free. We do not accept sponsored content or branded partnerships that could compromise our editorial independence. Your subscription funds the journalism directly — nothing else.
+</div>
 
-" + message);
-  const subj = encodeURIComponent("AMI Contact: " + subject);
-  window.location.href = "mailto:dayo.abinusawa@gmail.com?subject=" + subj + "&body=" + body;
-}
+<div style="margin-bottom:32px">
+  <div class="kicker-bar" style="margin-bottom:16px">Frequently Asked Questions</div>
+  <div class="faq-item"><div class="faq-q">Can I cancel at any time?</div><div class="faq-a">Yes. There are no contracts. You can cancel your subscription at any time and you will retain access until the end of your billing period.</div></div>
+  <div class="faq-item"><div class="faq-q">What payment methods do you accept?</div><div class="faq-a">We accept all major credit and debit cards via Stripe. Payments are processed securely and your card details are never stored by AMI.</div></div>
+  <div class="faq-item"><div class="faq-q">Is there a team or corporate plan?</div><div class="faq-a">Yes — for teams of 5 or more, contact us at <a href="mailto:dayo.abinusawa@gmail.com" style="color:var(--terra)">dayo.abinusawa@gmail.com</a> to discuss a tailored corporate rate.</div></div>
+  <div class="faq-item" style="border-bottom:none"><div class="faq-q">What is the ABTA trade intelligence briefing?</div><div class="faq-a">Premium members receive exclusive briefings from ABTA's trade research team on African export opportunities, DCTS updates, and market-entry intelligence — not available anywhere else.</div></div>
+</div>
+
+<script>
+// Wire up Stripe links on membership page
+document.addEventListener('DOMContentLoaded',()=>{
+  const d=document.getElementById('memberDigitalBtn');
+  const p=document.getElementById('memberPremiumBtn');
+  if(d) d.href = typeof STRIPE_DIGITAL!=='undefined' ? STRIPE_DIGITAL : '#';
+  if(p) p.href = typeof STRIPE_PREMIUM!=='undefined' ? STRIPE_PREMIUM : '#';
+});
 </script>
 </main>
 

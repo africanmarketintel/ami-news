@@ -8,12 +8,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400;1,600&family=Spectral:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <!-- ✅ SUPABASE: Paste your credentials below -->
-<script>
-  const SUPABASE_URL  = 'https://ucpjwyghwxjalkfvmbro.supabase.co';   // e.g. https://abcdef.supabase.co
-  const SUPABASE_ANON = 'sb_publishable_7cI4RoxyLr88DhwDWRC1vg_DSpczsHt'; // from Project Settings → API
-  const STRIPE_DIGITAL = 'https://buy.stripe.com/YOUR_DIGITAL_LINK';
-  const STRIPE_PREMIUM = 'https://buy.stripe.com/YOUR_PREMIUM_LINK';
-</script>
+<script src="config.js"></script>
+<script src="nav.js"></script>
 
 <style>
 :root{--gold:#C9A84C;--gold-light:#E8C97A;--gold-pale:#FDF6E3;--terra:#B85C38;--terra-dark:#8C3A1F;--ink:#1A1208;--ink-mid:#3D2B1F;--ink-soft:#6B5344;--cream:#FAF7F0;--cream-dark:#F0EAD9;--border:#D4C4A0;--bg:var(--cream);--surface:#fff;--text:var(--ink);--text-soft:var(--ink-soft);--nav-bg:var(--ink);--nav-text:var(--cream);--header-bg:var(--cream-dark);--divider:var(--border);--card-bg:#fff}
@@ -465,18 +461,20 @@ footer{background:var(--ink);color:#888;padding:40px 24px 24px;margin-top:48px}
 
 <nav class="top-nav">
   <div class="nav-left">
-    <a href="?section=Markets"   class="nav-link" onclick="filterSection(event,'Markets')">Markets</a>
-    <a href="?section=Politics"  class="nav-link" onclick="filterSection(event,'Politics')">Politics</a>
-    <a href="?section=Economy"   class="nav-link" onclick="filterSection(event,'Economy')">Economy</a>
-    <a href="?section=Energy"    class="nav-link" onclick="filterSection(event,'Energy')">Energy</a>
-    <a href="?section=Technology" class="nav-link" onclick="filterSection(event,'Technology')">Tech</a>
-    <a href="?section=Opinion"   class="nav-link" onclick="filterSection(event,'Opinion')">Opinion</a>
+    <a href="markets.html"    class="nav-link">Markets</a>
+    <a href="politics.html"   class="nav-link">Politics</a>
+    <a href="economy.html"    class="nav-link">Economy</a>
+    <a href="energy.html"     class="nav-link">Energy</a>
+    <a href="technology.html" class="nav-link">Tech</a>
+    <a href="opinion.html"    class="nav-link">Opinion</a>
   </div>
   <div class="nav-right">
     <input class="nav-search" type="text" placeholder="Search AMI…" oninput="searchArticles(this.value)">
+    <a href="about.html"      class="nav-link" style="border-left:1px solid #333">About</a>
+    <a href="membership.html" class="nav-link">Membership</a>
+    <a href="contact.html"    class="nav-link">Contact</a>
     <button class="dark-toggle" onclick="toggleDark()" id="themeBtn">🌙</button>
-    <!-- Admin: hidden from public. Triple-click the masthead logo to access -->
-    <a href="#" id="navSubscribeBtn" class="btn-subscribe">Subscribe</a>
+    <a href="membership.html" id="navSubscribeBtn" class="btn-subscribe">Subscribe</a>
   </div>
 </nav>
 
@@ -540,7 +538,7 @@ footer{background:var(--ink);color:#888;padding:40px 24px 24px;margin-top:48px}
 
     <div class="section-header">
       <h2 class="section-title">Latest News</h2><div class="section-line"></div>
-      <a href="archive.html" class="view-more" id="viewAllLink">View all →</a>
+      <a href="#" class="view-more" id="viewAllLink">View all →</a>
     </div>
     <div class="archive-header" id="archiveHeader" style="display:none">
       <span class="archive-title" id="archiveTitle">All Articles</span>
@@ -570,7 +568,7 @@ footer{background:var(--ink);color:#888;padding:40px 24px 24px;margin-top:48px}
       <button class="nw-btn" id="nwBtnDisplay" onclick="handleNewsletterSignup()">Subscribe Free →</button>
     </div>
     <div class="sidebar-widget">
-      <div class="widget-title">Top Stories <a href="archive.html" style="float:right;font-family:DM Mono,monospace;font-size:9px;letter-spacing:.1em;color:var(--terra);text-transform:uppercase">View all →</a></div>
+      <div class="widget-title">Top Stories</div>
       <div id="topStoriesList"></div>
     </div>
     <div class="sidebar-widget">
@@ -591,10 +589,10 @@ footer{background:var(--ink);color:#888;padding:40px 24px 24px;margin-top:48px}
         <p class="footer-about" id="footerAboutDisplay">The continent's most trusted source for financial news and business intelligence across Africa's 54 markets.</p></div>
       <div><div class="footer-col-title">Sections</div>
         <ul class="footer-links">
-          <li><a href="?section=Markets"   onclick="filterSection(event,'Markets');window.scrollTo(0,0)">Markets</a></li>
-          <li><a href="?section=Economy"   onclick="filterSection(event,'Economy');window.scrollTo(0,0)">Economy</a></li>
-          <li><a href="?section=Politics"  onclick="filterSection(event,'Politics');window.scrollTo(0,0)">Politics</a></li>
-          <li><a href="?section=Energy"    onclick="filterSection(event,'Energy');window.scrollTo(0,0)">Energy</a></li>
+          <li><a href="markets.html">Markets</a></li>
+          <li><a href="economy.html">Economy</a></li>
+          <li><a href="politics.html">Politics</a></li>
+          <li><a href="energy.html">Energy</a></li>
         </ul></div>
       <div><div class="footer-col-title">Regions</div>
         <ul class="footer-links">
@@ -605,10 +603,10 @@ footer{background:var(--ink);color:#888;padding:40px 24px 24px;margin-top:48px}
         </ul></div>
       <div><div class="footer-col-title">Company</div>
         <ul class="footer-links">
-          <li><a href="#about"   id="footerAbout">About AMI</a></li>
-          <li><a href="#careers" id="footerCareers">Careers</a></li>
-          <li><a href="#" id="footerContact" onclick="document.querySelector('.nw-input').focus();window.scrollTo(0,0)">Contact</a></li>
-          <li><a href="#" id="footerPrivacy">Privacy Policy</a></li>
+          <li><a href="about.html">About AMI</a></li>
+          <li><a href="membership.html">Membership</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="#">Privacy Policy</a></li>
         </ul></div>
     </div>
     <div class="footer-bottom">
@@ -697,6 +695,37 @@ const db = {
   }
 };
 
+
+// ════════════════════════════════════════════════════════════
+// PAGE DETECTION — auto-filter and hide homepage sections
+// when on a section page (markets.html, politics.html, etc.)
+// ════════════════════════════════════════════════════════════
+(function(){
+  const p = window.location.pathname.split('/').pop().replace('.html','');
+  const SECTION_MAP = {
+    markets:'Markets', politics:'Politics', economy:'Economy',
+    energy:'Energy', technology:'Technology', opinion:'Opinion'
+  };
+  if(SECTION_MAP[p]){
+    window.AUTO_SECTION = SECTION_MAP[p];
+    document.addEventListener('DOMContentLoaded',()=>{
+      // Hide homepage-only blocks
+      ['heroGrid','mostReadContainer'].forEach(id=>{
+        const el=document.getElementById(id);
+        if(el) el.style.display='none';
+      });
+      document.querySelectorAll('.markets-strip,.section-header:first-of-type')
+        .forEach(el=>{ if(el.closest('main')) el.style.display='none'; });
+      // Show section name as page heading
+      const hdr = document.createElement('div');
+      hdr.style.cssText='padding:20px 0 4px;font-family:"Playfair Display",serif;font-size:28px;font-weight:700';
+      hdr.innerHTML = SECTION_MAP[p]+' <span style="color:var(--gold);font-size:14px;font-family:'DM Mono',monospace;font-weight:400;vertical-align:middle">All Coverage →</span>';
+      const main = document.querySelector('main');
+      if(main) main.insertBefore(hdr, main.firstChild);
+    });
+  }
+})();
+
 // ════════════════════════════════════════════════════════════
 // STATE
 // ════════════════════════════════════════════════════════════
@@ -731,6 +760,7 @@ async function init() {
   const params = new URLSearchParams(window.location.search);
   currentPage  = parseInt(params.get('page')) || 1;
   if(params.get('section')) filterActive = params.get('section');
+  if(window.AUTO_SECTION && !params.get('section')) filterActive = window.AUTO_SECTION;
   if(params.get('q'))       searchQuery  = params.get('q');
 
   try {
