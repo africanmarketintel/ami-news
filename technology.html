@@ -704,7 +704,10 @@ const db = {
   const p = window.location.pathname.split('/').pop().replace('.html','');
   const SECTION_MAP = {
     markets:'Markets', politics:'Politics', economy:'Economy',
-    energy:'Energy', technology:'Technology', opinion:'Opinion'
+    energy:'Energy', technology:'Technology', opinion:'Opinion',
+    'west-africa':'West Africa', 'east-africa':'East Africa',
+    'north-africa':'North Africa', 'southern-africa':'Southern Africa',
+    archive:'archive'
   };
   if(SECTION_MAP[p]){
     window.AUTO_SECTION = SECTION_MAP[p];
