@@ -1,0 +1,1525 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Politics | African Market Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400;1,600&family=Spectral:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<!-- ✅ SUPABASE: Paste your credentials below -->
+<script src="config.js"></script>
+
+<style>
+:root{--gold:#C9A84C;--gold-light:#E8C97A;--gold-pale:#FDF6E3;--terra:#B85C38;--terra-dark:#8C3A1F;--ink:#1A1208;--ink-mid:#3D2B1F;--ink-soft:#6B5344;--cream:#FAF7F0;--cream-dark:#F0EAD9;--border:#D4C4A0;--bg:var(--cream);--surface:#fff;--text:var(--ink);--text-soft:var(--ink-soft);--nav-bg:var(--ink);--nav-text:var(--cream);--header-bg:var(--cream-dark);--divider:var(--border);--card-bg:#fff}
+[data-theme="dark"]{--bg:#0F0A06;--surface:#1A1208;--text:#EDE5D5;--text-soft:#A89070;--nav-bg:#080502;--nav-text:#EDE5D5;--header-bg:#1A1208;--divider:#3D2B1F;--card-bg:#1F1610;--border:#3D2B1F;--gold-pale:#2A1F10}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Spectral',Georgia,serif;background:var(--bg);color:var(--text);font-size:16px;line-height:1.6;transition:background .3s,color .3s;overflow-x:hidden}
+a{color:inherit;text-decoration:none}button{cursor:pointer;border:none;background:none;font-family:inherit}
+/* Ticker */
+.ticker-bar{background:var(--ink);color:#C9A84C;font-family:'DM Mono',monospace;font-size:11px;padding:6px 0;overflow:hidden;white-space:nowrap}
+.ticker-inner{display:inline-flex;gap:48px;animation:ticker 40s linear infinite}
+.ticker-item{display:flex;gap:8px;align-items:center}.ticker-item .sym{color:#888}
+.up{color:#4CAF50}.dn{color:#F44336}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+/* Nav */
+.top-nav{background:var(--nav-bg);color:var(--nav-text);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:48px;border-bottom:2px solid var(--gold);position:sticky;top:0;z-index:1000}
+.nav-left{display:flex;align-items:center}
+.nav-link{color:var(--nav-text);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:0 14px;height:48px;display:flex;align-items:center;border-right:1px solid #333;transition:color .2s}
+.nav-link:first-child{border-left:1px solid #333}.nav-link:hover{color:var(--gold)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.nav-search{background:rgba(255,255,255,.08);border:1px solid #444;color:var(--nav-text);padding:6px 12px;border-radius:2px;font-family:'DM Mono',monospace;font-size:11px;width:160px;outline:none}
+.nav-search:focus{border-color:var(--gold)}.nav-search::placeholder{color:#777}
+.btn-subscribe{background:var(--gold);color:var(--ink);font-family:'DM Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:8px 16px;border-radius:2px;transition:background .2s;display:inline-block}
+.btn-subscribe:hover{background:var(--gold-light)}
+.dark-toggle{color:var(--nav-text);font-size:16px;padding:8px;line-height:1;transition:color .2s}
+.dark-toggle:hover{color:var(--gold)}
+.admin-btn{background:var(--terra);color:white;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:7px 12px;border-radius:2px;transition:background .2s}
+.admin-btn:hover{background:var(--terra-dark)}
+/* Masthead */
+.masthead{background:var(--header-bg);border-bottom:1px solid var(--divider);padding:20px 24px 16px;text-align:center;position:relative;overflow:hidden}
+.masthead::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23C9A84C' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+.masthead-name{font-family:'Playfair Display',serif;font-size:clamp(28px,6vw,60px);font-weight:800;letter-spacing:-.02em;color:var(--text);line-height:1;position:relative}
+.masthead-name span{color:var(--gold)}
+.masthead-tagline{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-soft);margin-top:6px;position:relative}
+.masthead-meta{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:12px;border-top:1px solid var(--divider);font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);text-transform:uppercase;letter-spacing:.1em;position:relative}
+.edition-badge{background:var(--terra);color:white;padding:2px 10px;font-size:10px;letter-spacing:.15em}
+/* Section nav */
+.section-nav{border-bottom:2px solid var(--gold);background:var(--surface);overflow-x:auto;scrollbar-width:none}
+.section-nav-inner{display:flex;padding:0 24px}
+.section-tab{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-soft);padding:12px 18px;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;cursor:pointer;transition:color .2s,border-color .2s}
+.section-tab:hover,.section-tab.active{color:var(--terra);border-bottom-color:var(--terra)}
+/* Layout */
+.main-wrapper{max-width:1280px;margin:0 auto;padding:32px 24px;display:grid;grid-template-columns:1fr 300px;gap:40px}
+@media(max-width:900px){.main-wrapper{grid-template-columns:1fr}}
+/* Hero */
+.hero-grid{display:grid;grid-template-columns:2fr 1fr;grid-template-rows:auto auto;gap:1px;background:var(--divider);border:1px solid var(--divider);margin-bottom:32px}
+.hero-main{grid-column:1;grid-row:1/3;background:var(--card-bg);padding:0;position:relative;overflow:hidden}
+.hero-main::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--terra),var(--gold))}
+.hero-img{width:100%;height:220px;object-fit:cover;display:block}
+.hero-img-placeholder{width:100%;height:220px;background:linear-gradient(135deg,var(--ink),var(--ink-mid));display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:11px;color:#555;letter-spacing:.1em}
+.hero-content{padding:24px 28px 28px}
+.hero-side-1,.hero-side-2{background:var(--card-bg);padding:20px 22px;position:relative;overflow:hidden}
+.hero-side-1{border-bottom:1px solid var(--divider)}
+.side-img{width:100%;height:110px;object-fit:cover;display:block;margin-bottom:12px}
+.article-kicker{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.article-section{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--terra);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.article-section::after{content:'';flex:1;height:1px;background:var(--divider)}
+.hero-headline{font-family:'Playfair Display',serif;font-size:clamp(20px,3vw,34px);font-weight:700;line-height:1.2;color:var(--text);margin-bottom:14px;transition:color .2s;cursor:pointer}
+.hero-headline:hover{color:var(--terra)}
+.hero-standfirst{font-size:15px;line-height:1.65;color:var(--text-soft);margin-bottom:16px;font-style:italic;font-weight:300}
+.side-headline{font-family:'Playfair Display',serif;font-size:17px;font-weight:600;line-height:1.3;margin-bottom:10px;transition:color .2s;cursor:pointer}
+.side-headline:hover{color:var(--terra)}
+.side-standfirst{font-size:13px;color:var(--text-soft);line-height:1.6;font-weight:300}
+.article-meta{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.article-meta .author{color:var(--terra)}
+.article-tag{background:var(--gold-pale);color:var(--ink-mid);padding:2px 8px;font-size:9px;letter-spacing:.1em;text-transform:uppercase;border-left:2px solid var(--gold)}
+[data-theme="dark"] .article-tag{background:#2A1F10;color:var(--gold-light)}
+/* Cards */
+.article-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--divider);border:1px solid var(--divider);margin-bottom:24px}
+.article-card{background:var(--card-bg);padding:0;transition:background .2s;overflow:hidden}
+.article-card:hover{background:var(--gold-pale)}
+[data-theme="dark"] .article-card:hover{background:#2A1F10}
+.card-img{width:100%;height:140px;object-fit:cover;display:block}
+.card-img-placeholder{width:100%;height:140px;background:linear-gradient(135deg,var(--ink-mid),var(--ink));display:flex;align-items:center;justify-content:center;font-size:24px;opacity:.4}
+.card-content{padding:18px}
+.card-headline{font-family:'Playfair Display',serif;font-size:16px;font-weight:600;line-height:1.35;margin-bottom:10px;margin-top:8px;cursor:pointer;transition:color .2s}
+.card-headline:hover{color:var(--terra)}
+.card-body{font-size:13px;color:var(--text-soft);line-height:1.65;margin-bottom:14px;font-weight:300}
+.card-footer{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);display:flex;justify-content:space-between;align-items:center}
+.lock-icon{color:var(--gold)}
+/* Markets */
+.markets-strip{background:var(--card-bg);border:1px solid var(--divider);border-top:3px solid var(--gold);padding:20px 24px;margin-bottom:32px}
+.strip-title{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-soft);margin-bottom:16px}
+.markets-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:16px}
+.market-name{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.market-value{font-family:'DM Mono',monospace;font-size:17px;font-weight:500;color:var(--text);line-height:1}
+.market-change{font-family:'DM Mono',monospace;font-size:11px;margin-top:3px}
+/* Opinion */
+.opinion-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--divider);border:1px solid var(--divider);margin-bottom:32px}
+.opinion-card{background:var(--card-bg);padding:22px;border-top:3px solid var(--terra)}
+.opinion-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--terra);margin-bottom:10px}
+.opinion-author{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-soft);margin-bottom:10px;display:flex;align-items:center;gap:10px}
+.author-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:13px;font-weight:800;color:white;flex-shrink:0;object-fit:cover}
+.opinion-headline{font-family:'Playfair Display',serif;font-size:16px;font-style:italic;line-height:1.4;margin-bottom:10px;cursor:pointer}
+.opinion-headline:hover{color:var(--terra)}
+/* Sidebar */
+.sidebar-widget{border:1px solid var(--divider);border-top:3px solid var(--gold);background:var(--card-bg);padding:20px;margin-bottom:24px}
+.widget-title{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-soft);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--divider)}
+.top-story{padding:10px 0;border-bottom:1px solid var(--divider)}.top-story:last-child{border-bottom:none;padding-bottom:0}
+.top-story-num{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:var(--divider);line-height:1;margin-bottom:3px}
+.top-story-headline{font-family:'Playfair Display',serif;font-size:13px;font-weight:600;line-height:1.35;cursor:pointer;transition:color .2s}
+.top-story-headline:hover{color:var(--terra)}
+.newsletter-widget{background:linear-gradient(135deg,#1A1208,#3D2B1F);padding:24px;margin-bottom:24px;position:relative;overflow:hidden}
+.newsletter-widget::before{content:'◆';position:absolute;top:-20px;right:-10px;font-size:120px;color:rgba(201,168,76,.08);line-height:1}
+.nw-title{font-family:'Playfair Display',serif;font-size:18px;color:var(--gold);margin-bottom:6px;position:relative}
+.nw-sub{font-size:13px;color:#999;margin-bottom:12px;font-weight:300;position:relative}
+.nw-input{width:100%;background:rgba(255,255,255,.08);border:1px solid #444;color:white;padding:9px 12px;border-radius:2px;font-family:'DM Mono',monospace;font-size:11px;margin-bottom:8px;outline:none}
+.nw-input::placeholder{color:#666}
+.nw-btn{width:100%;background:var(--gold);color:var(--ink);font-family:'DM Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;padding:9px;border-radius:2px}
+.nw-btn:hover{background:var(--gold-light)}
+.data-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--divider);font-family:'DM Mono',monospace;font-size:11px}
+.data-row:last-child{border-bottom:none}
+.data-label{color:var(--text-soft)}.data-value{font-weight:500}
+.section-header{display:flex;align-items:center;gap:16px;margin-bottom:16px}
+.section-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;white-space:nowrap}
+.section-line{flex:1;height:1px;background:var(--divider)}
+.view-more{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--terra);white-space:nowrap}
+.view-more:hover{color:var(--gold)}
+/* Breaking */
+.breaking-banner{background:var(--terra);color:white;padding:10px 24px;display:flex;align-items:center;gap:16px;font-size:13px}
+.breaking-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;background:rgba(255,255,255,.2);padding:3px 10px;flex-shrink:0}
+.breaking-close{margin-left:auto;color:rgba(255,255,255,.7);font-size:18px;padding:0 4px}
+/* Loading skeleton */
+.skeleton{background:linear-gradient(90deg,var(--divider) 25%,var(--card-bg) 50%,var(--divider) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:2px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.skel-headline{height:28px;margin-bottom:12px;width:85%}
+.skel-text{height:14px;margin-bottom:8px;width:100%}
+.skel-text-short{height:14px;width:60%}
+/* Paywall */
+.paywall-blur{position:fixed;bottom:0;left:0;right:0;height:45vh;background:linear-gradient(to top,var(--bg) 60%,transparent);pointer-events:none;z-index:1999;display:none}
+.paywall-overlay{position:fixed;inset:0;z-index:2000;display:none;align-items:flex-end;justify-content:center}
+.paywall-box{background:var(--surface);border:1px solid var(--divider);border-top:4px solid var(--gold);box-shadow:0 -8px 48px rgba(0,0,0,.15);padding:40px;max-width:600px;width:90%;margin-bottom:32px;text-align:center;animation:slideUp .5s ease}
+@keyframes slideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+.paywall-logo{font-family:'Playfair Display',serif;font-size:20px;font-weight:800;color:var(--text);margin-bottom:4px}
+.paywall-logo span{color:var(--gold)}
+.paywall-headline{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;margin-bottom:10px;line-height:1.3}
+.paywall-sub{font-size:14px;color:var(--text-soft);margin-bottom:24px;font-style:italic;font-weight:300}
+.paywall-plans{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.plan-card{border:1px solid var(--divider);padding:18px;text-align:left;position:relative;transition:border-color .2s}
+.plan-card:hover{border-color:var(--gold)}
+.plan-card.featured{border-color:var(--gold);background:var(--gold-pale)}
+[data-theme="dark"] .plan-card.featured{background:#2A1F10}
+.plan-badge{position:absolute;top:-10px;right:14px;background:var(--terra);color:white;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:2px 10px}
+.plan-name{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-soft);margin-bottom:8px}
+.plan-price{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;margin-bottom:4px}
+.plan-period{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);margin-bottom:12px}
+.plan-features{list-style:none;font-size:12px;color:var(--text-soft)}
+.plan-features li{padding:3px 0}
+.plan-features li::before{content:'✓ ';color:var(--gold)}
+.paywall-cta{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.btn-stripe{background:var(--gold);color:var(--ink);font-family:'DM Mono',monospace;font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:14px;border-radius:2px;display:block;text-align:center;transition:background .2s}
+.btn-stripe:hover{background:var(--gold-light)}
+.btn-stripe-alt{background:var(--terra);color:white;font-family:'DM Mono',monospace;font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:14px;border-radius:2px;display:block;text-align:center;transition:background .2s}
+.btn-stripe-alt:hover{background:var(--terra-dark)}
+.paywall-dismiss{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);letter-spacing:.08em;text-transform:uppercase;text-decoration:underline;cursor:pointer}
+/* Toast */
+.toast{position:fixed;bottom:28px;right:28px;z-index:9999;background:#1B4D1B;border:1px solid #4CAF50;color:#4CAF50;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.08em;padding:12px 22px;border-radius:2px;opacity:0;transform:translateY(16px);transition:all .3s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+
+/* ═══ ADMIN PANEL ═══════════════════════════════════════════ */
+.admin-overlay{position:fixed;inset:0;z-index:9000;display:none;background:rgba(0,0,0,.55);backdrop-filter:blur(3px)}
+.admin-overlay.open{display:flex}
+.admin-panel{background:#0F0A06;color:#EDE5D5;width:500px;height:100vh;overflow-y:auto;display:flex;flex-direction:column;box-shadow:4px 0 40px rgba(0,0,0,.6);border-right:2px solid #C9A84C;flex-shrink:0}
+.admin-right{flex:1;background:#1A1208;overflow-y:auto;padding:28px}
+.admin-header{padding:18px 24px;border-bottom:1px solid #3D2B1F;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#0F0A06;z-index:10}
+.admin-logo{font-family:'Playfair Display',serif;font-size:18px;color:#C9A84C}
+.admin-status{font-family:'DM Mono',monospace;font-size:10px;padding:3px 10px;border-radius:1px;border:1px solid}
+.admin-status.connected{color:#4CAF50;border-color:#4CAF50;background:rgba(76,175,80,.1)}
+.admin-status.disconnected{color:#F44336;border-color:#F44336;background:rgba(244,67,54,.1)}
+.admin-status.loading{color:#C9A84C;border-color:#C9A84C;background:rgba(201,168,76,.1)}
+.admin-close-btn{color:#888;font-size:22px;padding:4px 8px;transition:color .2s}
+.admin-close-btn:hover{color:#C9A84C}
+.admin-tabs{display:flex;border-bottom:1px solid #3D2B1F;padding:0 24px}
+.admin-tab{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#888;padding:12px 14px;border-bottom:2px solid transparent;margin-bottom:-1px;cursor:pointer;transition:color .2s,border-color .2s}
+.admin-tab:hover,.admin-tab.active{color:#C9A84C;border-bottom-color:#C9A84C}
+.admin-section{display:none;padding:20px 24px}
+.admin-section.active{display:block}
+.admin-section-title{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:#C9A84C;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid #3D2B1F}
+.form-group{margin-bottom:14px}
+.form-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#888;margin-bottom:6px;display:block}
+.form-input,.form-textarea,.form-select{width:100%;background:#1A1208;border:1px solid #3D2B1F;color:#EDE5D5;padding:9px 12px;border-radius:2px;font-family:'Spectral',serif;font-size:14px;outline:none;transition:border-color .2s}
+.form-input:focus,.form-textarea:focus,.form-select:focus{border-color:#C9A84C}
+.form-textarea{min-height:80px;resize:vertical;line-height:1.6}
+.form-select{font-family:'DM Mono',monospace;font-size:12px}.form-select option{background:#1A1208}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn-save{background:#C9A84C;color:#1A1208;font-family:'DM Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;padding:12px 24px;border-radius:2px;transition:background .2s;width:100%;margin-top:8px}
+.btn-save:hover{background:#E8C97A}
+.btn-save:disabled{background:#666;cursor:not-allowed}
+.btn-danger{background:#B85C38;color:white;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:2px;transition:background .2s}
+.btn-danger:hover{background:#8C3A1F}
+.admin-article-list{list-style:none}
+.admin-article-item{border:1px solid #3D2B1F;border-radius:2px;margin-bottom:8px;overflow:hidden}
+.admin-article-header{padding:12px 14px;display:flex;align-items:flex-start;gap:10px;cursor:pointer;transition:background .2s}
+.admin-article-header:hover{background:#2A1F10}
+.admin-article-info{flex:1;min-width:0}
+.admin-article-title{font-family:'Playfair Display',serif;font-size:13px;line-height:1.3;margin-bottom:4px;color:#EDE5D5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.admin-article-meta{font-family:'DM Mono',monospace;font-size:10px;color:#888;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.admin-article-body{display:none;padding:14px;border-top:1px solid #3D2B1F;background:#0F0A06}
+.admin-article-body.open{display:block}
+.badge{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border-radius:1px}
+.badge-hero{background:#B85C38;color:white}.badge-locked{background:#3D2B1F;color:#C9A84C}
+.badge-side1,.badge-side2{background:#1B3A6B;color:white}.badge-card{background:#1B3D1B;color:#4CAF50}
+.market-edit-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.market-edit-item{background:#1A1208;border:1px solid #3D2B1F;padding:12px;border-radius:2px}
+.market-edit-name{font-family:'DM Mono',monospace;font-size:10px;color:#C9A84C;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+.mini-input{width:100%;background:#0F0A06;border:1px solid #3D2B1F;color:#EDE5D5;padding:7px 9px;border-radius:2px;font-family:'DM Mono',monospace;font-size:12px;outline:none;margin-bottom:5px;transition:border-color .2s}
+.mini-input:focus{border-color:#C9A84C}
+.dir-toggle{display:flex;gap:5px}
+.dir-btn{font-family:'DM Mono',monospace;font-size:10px;padding:4px 0;border:1px solid #3D2B1F;border-radius:1px;color:#888;cursor:pointer;transition:all .2s;flex:1;text-align:center}
+.dir-btn.up.active{background:#1B4D1B;border-color:#4CAF50;color:#4CAF50}
+.dir-btn.dn.active{background:#4D1B1B;border-color:#F44336;color:#F44336}
+/* Image upload */
+.img-upload-area{border:2px dashed #3D2B1F;border-radius:2px;padding:20px;text-align:center;cursor:pointer;transition:border-color .2s;position:relative;margin-bottom:10px}
+.img-upload-area:hover{border-color:#C9A84C}
+.img-upload-area input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.img-upload-label{font-family:'DM Mono',monospace;font-size:10px;color:#888;letter-spacing:.1em;text-transform:uppercase}
+.img-preview{width:100%;height:80px;object-fit:cover;border-radius:2px;margin-top:8px;display:none}
+.setting-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #3D2B1F}
+.setting-row:last-child{border-bottom:none}
+.setting-label{font-family:'DM Mono',monospace;font-size:11px;color:#EDE5D5}
+.setting-desc{font-size:12px;color:#888;margin-top:2px}
+.toggle-switch{position:relative;width:42px;height:22px;flex-shrink:0}
+.toggle-switch input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;background:#3D2B1F;border-radius:11px;cursor:pointer;transition:.3s}
+.toggle-slider::before{content:'';position:absolute;left:3px;top:3px;width:16px;height:16px;background:#888;border-radius:50%;transition:.3s}
+.toggle-switch input:checked+.toggle-slider{background:#C9A84C}
+.toggle-switch input:checked+.toggle-slider::before{transform:translateX(20px);background:#1A1208}
+/* Dashboard stats */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px}
+.stat-card{background:#0F0A06;border:1px solid #3D2B1F;border-top:2px solid;padding:18px}
+.stat-card:nth-child(1){border-top-color:#C9A84C}.stat-card:nth-child(2){border-top-color:#B85C38}
+.stat-card:nth-child(3){border-top-color:#4CAF50}.stat-card:nth-child(4){border-top-color:#1B3A6B}
+.stat-num{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;color:#EDE5D5;line-height:1}
+.stat-label{font-family:'DM Mono',monospace;font-size:10px;color:#888;letter-spacing:.1em;text-transform:uppercase;margin-top:5px}
+/* Footer */
+footer{background:var(--ink);color:#888;padding:40px 24px 24px;margin-top:48px}
+.footer-inner{max-width:1280px;margin:0 auto}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;padding-bottom:40px;border-bottom:1px solid #333;margin-bottom:28px}
+@media(max-width:768px){.footer-top{grid-template-columns:1fr 1fr}}
+.footer-brand{font-family:'Playfair Display',serif;font-size:22px;font-weight:800;color:var(--gold);margin-bottom:12px}
+.footer-about{font-size:13px;line-height:1.7;font-weight:300;max-width:260px}
+.footer-col-title{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+.footer-links{list-style:none}
+.footer-links li{padding:4px 0}
+.footer-links a{font-size:13px;transition:color .2s;font-weight:300}
+.footer-links a:hover{color:var(--gold)}
+.footer-bottom{display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:10px;flex-wrap:wrap;gap:10px}
+
+/* ═══ PAGINATION ════════════════════════════════════════════ */
+.pagination-bar{display:flex;align-items:center;justify-content:center;gap:6px;padding:32px 0 8px;flex-wrap:wrap}
+.page-btn{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;letter-spacing:.05em;min-width:38px;height:38px;display:flex;align-items:center;justify-content:center;border:1px solid var(--divider);background:var(--card-bg);color:var(--text-soft);border-radius:2px;cursor:pointer;transition:all .2s;text-decoration:none;padding:0 10px}
+.page-btn:hover{border-color:var(--gold);color:var(--gold)}
+.page-btn.active{background:var(--terra);border-color:var(--terra);color:white}
+.page-btn.disabled{opacity:.35;cursor:not-allowed;pointer-events:none}
+.page-btn.nav{background:var(--card-bg)}
+.page-ellipsis{font-family:'DM Mono',monospace;font-size:12px;color:var(--text-soft);padding:0 4px;line-height:38px}
+.pagination-info{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-soft);text-align:center;margin-bottom:4px}
+.archive-header{background:var(--card-bg);border:1px solid var(--divider);border-left:4px solid var(--terra);padding:14px 20px;margin-bottom:0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.archive-title{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--terra)}
+.archive-count{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft)}
+
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- ═══ ADMIN PANEL ════════════════════════════════════════ -->
+<div class="admin-overlay" id="adminOverlay">
+  <div class="admin-panel">
+    <div class="admin-header">
+      <div class="admin-logo">⚙ AMI Admin</div>
+      <div id="dbStatus" class="admin-status loading">● Connecting…</div>
+      <button class="admin-close-btn" onclick="closeAdmin()">×</button>
+    </div>
+    <div class="admin-tabs">
+      <div class="admin-tab active" onclick="switchTab(event,'articles')">Articles</div>
+      <div class="admin-tab" onclick="switchTab(event,'markets')">Markets</div>
+      <div class="admin-tab" onclick="switchTab(event,'breaking')">Breaking</div>
+      <div class="admin-tab" onclick="switchTab(event,'settings')">Settings</div>
+      <div class="admin-tab" onclick="switchTab(event,'subscribers')">Subscribers</div>
+    </div>
+
+    <!-- ARTICLES TAB -->
+    <div class="admin-section active" id="tab-articles">
+      <div class="admin-section-title">➕ Publish New Article</div>
+      <details style="border:1px solid #3D2B1F;border-radius:2px;overflow:hidden;margin-bottom:20px">
+        <summary style="padding:12px 14px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#C9A84C;cursor:pointer;background:#1A1208;list-style:none">＋ New Article Form</summary>
+        <div style="padding:16px;background:#0F0A06">
+          <div class="form-group"><label class="form-label">Placement</label>
+            <select class="form-select" id="new-placement">
+              <option value="card">Article Card (Latest News)</option>
+              <option value="hero">Hero — Main Feature</option>
+              <option value="side1">Side Story 1</option>
+              <option value="side2">Side Story 2</option>
+            </select></div>
+          <div class="form-group"><label class="form-label">Section / Region</label>
+            <input class="form-input" id="new-section" placeholder="e.g. West Africa · Politics"></div>
+          <div class="form-group"><label class="form-label">Headline</label>
+            <textarea class="form-textarea" id="new-headline" style="min-height:65px" placeholder="Article headline..."></textarea></div>
+          <div class="form-group"><label class="form-label">Standfirst / Summary</label>
+            <textarea class="form-textarea" id="new-standfirst" placeholder="2–3 sentence intro shown on homepage..."></textarea></div>
+          <div class="form-group"><label class="form-label">Full Article Body (HTML supported)</label>
+            <textarea class="form-textarea" id="new-body" style="min-height:160px;font-family:'DM Mono',monospace;font-size:11px" placeholder="Write the full article here...&#10;&#10;Use &lt;p&gt; for paragraphs, &lt;h2&gt; for headings, &lt;blockquote&gt; for quotes.&#10;Plain text also works — paragraphs are auto-detected."></textarea></div>
+          <!-- Hero Image Upload -->
+          <div class="form-group"><label class="form-label">Hero Image</label>
+            <div class="img-upload-area" id="heroUploadArea">
+              <input type="file" accept="image/*" id="new-hero-file" onchange="previewImage(this,'heroPreview','heroUploadArea')">
+              <div class="img-upload-label">📷 Click or drag to upload hero image</div>
+              <img id="heroPreview" class="img-preview">
+            </div>
+            <input class="form-input" id="new-hero-url" placeholder="Or paste image URL directly" style="font-size:11px;font-family:'DM Mono',monospace">
+          </div>
+          <div class="form-row">
+            <div class="form-group" style="margin:0"><label class="form-label">Author Name</label>
+              <input class="form-input" id="new-author" placeholder="Full name"></div>
+            <div class="form-group" style="margin:0"><label class="form-label">Author Role</label>
+              <input class="form-input" id="new-author-role" placeholder="e.g. West Africa Correspondent"></div>
+          </div>
+          <!-- Author Photo Upload -->
+          <div class="form-group" style="margin-top:10px"><label class="form-label">Author Photo (optional)</label>
+            <div class="img-upload-area" id="authorUploadArea">
+              <input type="file" accept="image/*" id="new-author-file" onchange="previewImage(this,'authorPreview','authorUploadArea')">
+              <div class="img-upload-label">👤 Upload author photo</div>
+              <img id="authorPreview" class="img-preview">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group" style="margin:0"><label class="form-label">Read Time</label>
+              <input class="form-input" id="new-readtime" placeholder="5 min"></div>
+            <div class="form-group" style="margin:0"><label class="form-label">Tags (comma-separated)</label>
+              <input class="form-input" id="new-tags" placeholder="Nigeria, Markets, Policy"></div>
+          </div>
+          <label style="font-family:'DM Mono',monospace;font-size:10px;color:#888;display:flex;align-items:center;gap:6px;margin-top:12px">
+            <input type="checkbox" id="new-locked"> 🔒 Premium — locked behind paywall</label>
+          <button class="btn-save" id="publishBtn" onclick="publishArticle()" style="margin-top:14px">📢 Publish to Site →</button>
+        </div>
+      </details>
+
+      <div class="admin-section-title">📰 Live Articles</div>
+      <div id="adminArticleList" style="font-family:'DM Mono',monospace;font-size:11px;color:#888">Loading articles…</div>
+    </div>
+
+    <!-- MARKETS TAB -->
+    <div class="admin-section" id="tab-markets">
+      <div class="admin-section-title">Update Market Data</div>
+      <div class="market-edit-grid" id="marketEditGrid">
+        <div style="color:#888;font-family:'DM Mono',monospace;font-size:11px">Loading…</div>
+      </div>
+      <button class="btn-save" onclick="saveMarkets()" style="margin-top:18px">💾 Save All Markets →</button>
+    </div>
+
+    <!-- BREAKING NEWS TAB -->
+    <div class="admin-section" id="tab-breaking">
+      <div class="admin-section-title">Breaking News Banner</div>
+      <div class="form-group"><label class="form-label">Banner Text</label>
+        <textarea class="form-textarea" id="breakingText" placeholder="Breaking news text..."></textarea></div>
+      <div class="setting-row" style="border:none;padding:8px 0 16px">
+        <div><div class="setting-label">Show Banner</div></div>
+        <label class="toggle-switch"><input type="checkbox" id="showBreaking" checked><span class="toggle-slider"></span></label>
+      </div>
+      <button class="btn-save" onclick="saveBreaking()">💾 Update Breaking News →</button>
+    </div>
+
+    <!-- SETTINGS TAB -->
+    <div class="admin-section" id="tab-settings">
+      <div class="admin-section-title">Site Settings</div>
+      <div class="form-group"><label class="form-label">Publication Name</label>
+        <input class="form-input" id="siteName" value="African Market Intelligence"></div>
+      <div class="form-group"><label class="form-label">Tagline</label>
+        <input class="form-input" id="siteTagline" value="The Continent's Premium Financial & Business Publication"></div>
+      <div class="form-group"><label class="form-label">Edition Label</label>
+        <input class="form-input" id="editionLabel" value="Pan-African Edition"></div>
+      <div class="setting-row">
+        <div><div class="setting-label">Paywall Active</div><div class="setting-desc">Auto-show after 30 seconds</div></div>
+        <label class="toggle-switch"><input type="checkbox" id="paywallActive" checked><span class="toggle-slider"></span></label>
+      </div>
+      <div class="setting-row" style="border:none">
+        <div><div class="setting-label">Dark Mode Default</div></div>
+        <label class="toggle-switch"><input type="checkbox" id="darkDefault" onchange="toggleDark()"><span class="toggle-slider"></span></label>
+      </div>
+      <button class="btn-save" onclick="saveSettings()">💾 Save Settings →</button>
+    </div>
+  </div>
+
+  <!-- SUBSCRIBERS TAB -->
+  <div class="admin-section" id="tab-subscribers">
+    <div class="admin-section-title">Newsletter Subscribers</div>
+    <div style="display:flex;gap:10px;margin-bottom:16px">
+      <button class="btn-save" style="flex:1;margin:0" onclick="loadSubscribers()">Refresh List</button>
+      <button class="btn-save" style="flex:1;margin:0;background:#1B3A6B" onclick="exportSubscribersCSV()">Export CSV</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px">
+      <div style="background:#0F0A06;border:1px solid #3D2B1F;border-top:2px solid #C9A84C;padding:14px;text-align:center">
+        <div id="subTotal" style="font-size:24px;font-weight:700;color:#EDE5D5;font-family:Georgia,serif">-</div>
+        <div style="font-size:9px;color:#888;text-transform:uppercase;letter-spacing:.1em;margin-top:4px">Total</div>
+      </div>
+      <div style="background:#0F0A06;border:1px solid #3D2B1F;border-top:2px solid #4CAF50;padding:14px;text-align:center">
+        <div id="subThisWeek" style="font-size:24px;font-weight:700;color:#4CAF50;font-family:Georgia,serif">-</div>
+        <div style="font-size:9px;color:#888;text-transform:uppercase;letter-spacing:.1em;margin-top:4px">This Week</div>
+      </div>
+      <div style="background:#0F0A06;border:1px solid #3D2B1F;border-top:2px solid #B85C38;padding:14px;text-align:center">
+        <div id="subThisMonth" style="font-size:24px;font-weight:700;color:#B85C38;font-family:Georgia,serif">-</div>
+        <div style="font-size:9px;color:#888;text-transform:uppercase;letter-spacing:.1em;margin-top:4px">This Month</div>
+      </div>
+    </div>
+    <div style="background:#0F0A06;border:1px solid #3D2B1F;overflow:hidden">
+      <div style="display:grid;grid-template-columns:1fr 80px 100px;padding:8px 14px;border-bottom:1px solid #3D2B1F;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:#555">
+        <span>Email</span><span>Source</span><span>Date</span>
+      </div>
+      <div id="subscriberList" style="max-height:380px;overflow-y:auto;font-size:11px">
+        <div style="padding:24px;text-align:center;color:#555">Click Refresh to load subscribers</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dashboard right panel -->
+  <div class="admin-right">
+    <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#EDE5D5;margin-bottom:6px">Dashboard</div>
+    <div style="font-family:'DM Mono',monospace;font-size:10px;color:#888;letter-spacing:.08em;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid #3D2B1F">AFRICAN MARKET INTELLIGENCE · CONTENT MANAGEMENT</div>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-num" id="statArticles">—</div><div class="stat-label">Live Articles</div></div>
+      <div class="stat-card"><div class="stat-num" id="statLocked">—</div><div class="stat-label">Premium Locked</div></div>
+      <div class="stat-card"><div class="stat-num" id="statMarkets">8</div><div class="stat-label">Market Indices</div></div>
+      <div class="stat-card"><div class="stat-num" id="statImages">—</div><div class="stat-label">Images Stored</div></div>
+      <div class="stat-card" style="border-top-color:#C9A84C"><div class="stat-num" id="statSubscribers">—</div><div class="stat-label">Subscribers</div></div>
+    </div>
+    <div style="background:#0F0A06;border:1px solid #3D2B1F;padding:18px">
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:#C9A84C;letter-spacing:.15em;text-transform:uppercase;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #3D2B1F">Supabase Connection</div>
+      <div style="font-size:13px;color:#A89070;line-height:1.8">
+        <div>📡 URL: <span id="dbUrl" style="color:#EDE5D5;font-family:'DM Mono',monospace;font-size:10px">—</span></div>
+        <div style="margin-top:8px;font-family:'DM Mono',monospace;font-size:10px;color:#555;line-height:1.8">
+          To configure: open index.html<br>and paste your credentials at the top.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SITE ═══════════════════════════════════════════════ -->
+<div class="breaking-banner" id="breakingBanner" style="display:none">
+  <span class="breaking-label">Breaking</span>
+  <span id="breakingTextDisplay"></span>
+  <button class="breaking-close" onclick="this.parentElement.style.display='none'">×</button>
+</div>
+
+<div class="ticker-bar"><div class="ticker-inner" id="tickerInner">
+  <span class="ticker-item"><span class="sym">Loading markets…</span></span>
+</div></div>
+
+<nav class="top-nav">
+  <div class="nav-left">
+    <a href="markets.html"    class="nav-link">Markets</a>
+    <a href="politics.html"   class="nav-link" style="color:var(--gold);border-bottom:2px solid var(--gold)">Politics</a>
+    <a href="economy.html"    class="nav-link">Economy</a>
+    <a href="energy.html"     class="nav-link">Energy</a>
+    <a href="technology.html" class="nav-link">Tech</a>
+    <a href="opinion.html"    class="nav-link">Opinion</a>
+  </div>
+  <div class="nav-right">
+    <input class="nav-search" type="text" placeholder="Search AMI…" oninput="searchArticles(this.value)">
+    <a href="about.html"      class="nav-link" style="border-left:1px solid #333">About</a>
+    <a href="membership.html" class="nav-link">Membership</a>
+    <a href="contact.html"    class="nav-link">Contact</a>
+    <button class="dark-toggle" onclick="toggleDark()" id="themeBtn">🌙</button>
+    <a href="membership.html" id="navSubscribeBtn" class="btn-subscribe">Subscribe</a>
+  </div>
+</nav>
+
+<header class="masthead">
+  <div class="masthead-name" id="siteNameDisplay" onclick="handleLogoClick()" style="cursor:default" title="">African Market <span>Intelligence</span></div>
+  <div class="masthead-tagline" id="siteTaglineDisplay">The Continent's Premium Financial & Business Publication</div>
+  <div class="masthead-meta">
+    <span id="mastDate"></span>
+    <span class="edition-badge" id="editionDisplay">Pan-African Edition</span>
+    <span id="locationDisplay">Est. 2024 · Nairobi · Lagos · Cairo · Johannesburg</span>
+  </div>
+</header>
+
+<div class="section-nav"><div class="section-nav-inner">
+  <a href="#" class="section-tab active" onclick="filterSection(event,'all')">All Stories</a>
+  <a href="#" class="section-tab" onclick="filterSection(event,'West Africa')">West Africa</a>
+  <a href="#" class="section-tab" onclick="filterSection(event,'East Africa')">East Africa</a>
+  <a href="#" class="section-tab" onclick="filterSection(event,'Southern Africa')">Southern Africa</a>
+  <a href="#" class="section-tab" onclick="filterSection(event,'North Africa')">North Africa</a>
+  <a href="#" class="section-tab" onclick="filterSection(event,'Commodities')">Commodities</a>
+  <a href="#" class="section-tab" onclick="filterSection(event,'Technology')">Technology</a>
+  <a href="#" class="section-tab" onclick="filterSection(event,'Markets')">Markets</a>
+</div></div>
+
+<div class="main-wrapper">
+  <main>
+    <!-- Hero -->
+    <div class="hero-grid" id="heroGrid">
+      <!-- Skeleton loader -->
+      <div class="hero-main" style="background:var(--card-bg)">
+        <div class="hero-img-placeholder">Loading…</div>
+        <div class="hero-content">
+          <div class="skeleton skel-headline" style="width:90%;height:36px"></div>
+          <div class="skeleton skel-text" style="margin-top:16px"></div>
+          <div class="skeleton skel-text"></div>
+          <div class="skeleton skel-text-short"></div>
+        </div>
+      </div>
+      <div class="hero-side-1" style="background:var(--card-bg)">
+        <div class="skeleton skel-headline"></div>
+        <div class="skeleton skel-text"></div>
+        <div class="skeleton skel-text-short"></div>
+      </div>
+      <div class="hero-side-2" style="background:var(--card-bg)">
+        <div class="skeleton skel-headline"></div>
+        <div class="skeleton skel-text"></div>
+        <div class="skeleton skel-text-short"></div>
+      </div>
+    </div>
+
+    <!-- Markets strip -->
+    <div class="markets-strip">
+      <div class="strip-title">African Markets at a Glance</div>
+      <div class="markets-grid" id="marketsDisplay">
+        <div class="skeleton" style="height:60px;border-radius:4px"></div>
+        <div class="skeleton" style="height:60px;border-radius:4px"></div>
+        <div class="skeleton" style="height:60px;border-radius:4px"></div>
+        <div class="skeleton" style="height:60px;border-radius:4px"></div>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <h2 class="section-title">Latest News</h2><div class="section-line"></div>
+      <a href="#" class="view-more" id="viewAllLink">View all →</a>
+    </div>
+    <div class="archive-header" id="archiveHeader" style="display:none">
+      <span class="archive-title" id="archiveTitle">All Articles</span>
+      <span class="archive-count" id="archiveCount"></span>
+    </div>
+    <div id="articleCardsContainer">
+      <div class="article-row">
+        <div class="article-card"><div class="card-img-placeholder">⏳</div><div class="card-content"><div class="skeleton skel-headline"></div><div class="skeleton skel-text"></div></div></div>
+        <div class="article-card"><div class="card-img-placeholder">⏳</div><div class="card-content"><div class="skeleton skel-headline"></div><div class="skeleton skel-text"></div></div></div>
+        <div class="article-card"><div class="card-img-placeholder">⏳</div><div class="card-content"><div class="skeleton skel-headline"></div><div class="skeleton skel-text"></div></div></div>
+      </div>
+    </div>
+
+    <!-- Most Read -->
+    <div id="paginationBar" class="pagination-bar"></div>
+    <div class="section-header" style="margin-top:32px">
+      <h2 class="section-title">Most Read</h2><div class="section-line"></div>
+    </div>
+    <div id="mostReadContainer" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--divider);border:1px solid var(--divider);margin-bottom:32px"></div>
+  </main>
+
+  <aside>
+    <div class="newsletter-widget">
+      <div class="nw-title" id="nwTitleDisplay">AMI Morning Brief</div>
+      <div class="nw-sub" id="nwSubDisplay">Markets & deals delivered before 7am across Africa.</div>
+      <input class="nw-input" type="email" placeholder="your@email.com">
+      <button class="nw-btn" id="nwBtnDisplay" onclick="handleNewsletterSignup()">Subscribe Free →</button>
+    </div>
+    <div class="sidebar-widget">
+      <div class="widget-title">Top Stories</div>
+      <div id="topStoriesList"></div>
+    </div>
+    <div class="sidebar-widget">
+      <div class="widget-title">Key Economic Data</div>
+      <div class="data-row"><span class="data-label">Nigeria Inflation</span><span class="data-value dn">31.70%</span></div>
+      <div class="data-row"><span class="data-label">SA Unemployment</span><span class="data-value dn">32.1%</span></div>
+      <div class="data-row"><span class="data-label">Kenya GDP Growth</span><span class="data-value up">5.4%</span></div>
+      <div class="data-row"><span class="data-label">Egypt Inflation</span><span class="data-value dn">24.1%</span></div>
+      <div class="data-row"><span class="data-label">Ghana Prime Rate</span><span class="data-value">29.0%</span></div>
+    </div>
+  </aside>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div><div class="footer-brand" id="footerBrand">African Market Intelligence</div>
+        <p class="footer-about" id="footerAboutDisplay">The continent's most trusted source for financial news and business intelligence across Africa's 54 markets.</p></div>
+      <div><div class="footer-col-title">Sections</div>
+        <ul class="footer-links">
+          <li><a href="markets.html">Markets</a></li>
+          <li><a href="economy.html">Economy</a></li>
+          <li><a href="politics.html">Politics</a></li>
+          <li><a href="energy.html">Energy</a></li>
+        </ul></div>
+      <div><div class="footer-col-title">Regions</div>
+        <ul class="footer-links">
+          <li><a href="?section=West+Africa"     onclick="filterSection(event,'West Africa');window.scrollTo(0,0)">West Africa</a></li>
+          <li><a href="?section=East+Africa"     onclick="filterSection(event,'East Africa');window.scrollTo(0,0)">East Africa</a></li>
+          <li><a href="?section=North+Africa"    onclick="filterSection(event,'North Africa');window.scrollTo(0,0)">North Africa</a></li>
+          <li><a href="?section=Southern+Africa" onclick="filterSection(event,'Southern Africa');window.scrollTo(0,0)">Southern Africa</a></li>
+        </ul></div>
+      <div><div class="footer-col-title">Company</div>
+        <ul class="footer-links">
+          <li><a href="about.html">About AMI</a></li>
+          <li><a href="membership.html">Membership</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+        </ul></div>
+    </div>
+    <div class="footer-bottom">
+      <span id="copyrightDisplay">© 2025 African Market Intelligence Ltd. All rights reserved.</span>
+      <span>Terms · Privacy · Cookie Policy</span>
+    </div>
+  </div>
+</footer>
+
+<!-- Paywall -->
+<div class="paywall-blur" id="paywallBlur"></div>
+<div class="paywall-overlay" id="paywallOverlay">
+  <div class="paywall-box">
+    <div class="paywall-logo">African Market <span>Intelligence</span></div>
+    <h2 class="paywall-headline">Subscribe to read this article</h2>
+    <p class="paywall-sub">Join 48,000+ investors and executives across Africa who rely on AMI for premium financial intelligence.</p>
+    <div class="paywall-plans">
+      <div class="plan-card"><div class="plan-name">Digital</div><div class="plan-price">$29</div><div class="plan-period">/ month</div>
+        <ul class="plan-features"><li>Unlimited articles</li><li>Morning Brief</li><li>Market data</li><li>AI summaries</li></ul></div>
+      <div class="plan-card featured"><div class="plan-badge">Most Popular</div><div class="plan-name">Premium</div><div class="plan-price">$59</div><div class="plan-period">/ month</div>
+        <ul class="plan-features"><li>Everything in Digital</li><li>Research reports</li><li>Events & webinars</li><li>Data downloads</li></ul></div>
+    </div>
+    <div class="paywall-cta">
+      <a id="stripeDigital" href="#" target="_blank" class="btn-stripe">Digital — $29/mo →</a>
+      <a id="stripePremium" href="#" target="_blank" class="btn-stripe-alt">Premium — $59/mo →</a>
+    </div>
+    <div style="margin-bottom:14px;text-align:center;font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft)">🔒 Secure checkout powered by Stripe · Cancel anytime</div>
+    <div class="paywall-dismiss" onclick="closePaywall()">Continue with limited access</div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════
+// SUPABASE CLIENT
+// ════════════════════════════════════════════════════════════
+const db = {
+  async query(table, options={}) {
+    const params = new URLSearchParams();
+    if(options.select)  params.set('select', options.select);
+    if(options.eq)      Object.entries(options.eq).forEach(([k,v])=>params.set(k,'eq.'+v));
+    if(options.order)   params.set('order', options.order);
+    if(options.limit)   params.set('limit', options.limit);
+    const url = `${SUPABASE_URL}/rest/v1/${table}?${params}`;
+    const r = await fetch(url, { headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer '+SUPABASE_ANON } });
+    if(!r.ok) throw new Error(await r.text());
+    return r.json();
+  },
+  async insert(table, data) {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
+      method:'POST',
+      headers:{ apikey:SUPABASE_ANON, Authorization:'Bearer '+SUPABASE_ANON, 'Content-Type':'application/json', Prefer:'return=representation' },
+      body: JSON.stringify(data)
+    });
+    if(!r.ok) throw new Error(await r.text());
+    return r.json();
+  },
+  async update(table, data, match) {
+    const params = new URLSearchParams();
+    Object.entries(match).forEach(([k,v])=>params.set(k,'eq.'+v));
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${params}`, {
+      method:'PATCH',
+      headers:{ apikey:SUPABASE_ANON, Authorization:'Bearer '+SUPABASE_ANON, 'Content-Type':'application/json', Prefer:'return=representation' },
+      body: JSON.stringify(data)
+    });
+    if(!r.ok) throw new Error(await r.text());
+    return r.json();
+  },
+  async delete(table, match) {
+    const params = new URLSearchParams();
+    Object.entries(match).forEach(([k,v])=>params.set(k,'eq.'+v));
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${params}`, {
+      method:'DELETE',
+      headers:{ apikey:SUPABASE_ANON, Authorization:'Bearer '+SUPABASE_ANON }
+    });
+    if(!r.ok) throw new Error(await r.text());
+    return true;
+  },
+  async uploadImage(file, path) {
+    const r = await fetch(`${SUPABASE_URL}/storage/v1/object/ami-images/${path}`, {
+      method:'POST',
+      headers:{ apikey:SUPABASE_ANON, Authorization:'Bearer '+SUPABASE_ANON, 'Content-Type': file.type },
+      body: file
+    });
+    if(!r.ok) throw new Error(await r.text());
+    return `${SUPABASE_URL}/storage/v1/object/public/ami-images/${path}`;
+  }
+};
+
+
+// ════════════════════════════════════════════════════════════
+// PAGE DETECTION — auto-filter and hide homepage sections
+// when on a section page (markets.html, politics.html, etc.)
+// ════════════════════════════════════════════════════════════
+(function(){
+  const p = window.location.pathname.split('/').pop().replace('.html','');
+  const SECTION_MAP = {
+    markets:'Markets', politics:'Politics', economy:'Economy',
+    energy:'Energy', technology:'Technology', opinion:'Opinion'
+  };
+  if(SECTION_MAP[p]){
+    window.AUTO_SECTION = SECTION_MAP[p];
+    document.addEventListener('DOMContentLoaded',()=>{
+      // Hide homepage-only blocks
+      ['heroGrid','mostReadContainer'].forEach(id=>{
+        const el=document.getElementById(id);
+        if(el) el.style.display='none';
+      });
+      document.querySelectorAll('.markets-strip,.section-header:first-of-type')
+        .forEach(el=>{ if(el.closest('main')) el.style.display='none'; });
+      // Show section name as page heading
+      const hdr = document.createElement('div');
+      hdr.style.cssText='padding:20px 0 4px;font-family:"Playfair Display",serif;font-size:28px;font-weight:700';
+      hdr.innerHTML = SECTION_MAP[p]+' <span style="color:var(--gold);font-size:14px;font-family:'DM Mono',monospace;font-weight:400;vertical-align:middle">All Coverage →</span>';
+      const main = document.querySelector('main');
+      if(main) main.insertBefore(hdr, main.firstChild);
+    });
+  }
+})();
+
+// ════════════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════════════
+let allArticles    = [];
+let filteredCards  = []; // current filtered set for pagination
+let allMarkets     = [];
+let filterActive   = 'all';
+let searchQuery    = '';
+const ARTICLES_PER_PAGE = 9; // articles per page (3 rows of 3)
+let currentPage    = 1;
+let totalArticles  = 0;
+
+// ════════════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════════════
+document.getElementById('mastDate').textContent =
+  new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+// section tabs handled by filterSection()
+
+// Stripe links
+document.getElementById('stripeDigital').href = STRIPE_DIGITAL;
+document.getElementById('stripePremium').href = STRIPE_PREMIUM;
+document.getElementById('navSubscribeBtn').href = STRIPE_PREMIUM;
+
+async function init() {
+  if(SUPABASE_URL === 'YOUR_SUPABASE_URL') {
+    showConfigBanner(); return;
+  }
+
+  // Read page/section/q from URL
+  const params = new URLSearchParams(window.location.search);
+  currentPage  = parseInt(params.get('page')) || 1;
+  if(params.get('section')) filterActive = params.get('section');
+  if(window.AUTO_SECTION && !params.get('section')) filterActive = window.AUTO_SECTION;
+  if(params.get('q'))       searchQuery  = params.get('q');
+
+  try {
+    const [articles, markets, settings, breaking] = await Promise.all([
+      db.query('articles', { select:'*', eq:{is_published:'true'}, order:'created_at.desc' }),
+      db.query('markets',  { select:'*' }),
+      db.query('site_settings', { select:'*' }),
+      db.query('breaking_news', { select:'*', eq:{is_active:'true'}, limit:'1' })
+    ]);
+    allArticles = articles;
+    allMarkets  = markets;
+    applySettings(settings);
+    renderBreaking(breaking);
+    renderHero();
+    renderMarketsStrip();
+    renderTicker();
+    renderCards();
+    renderTopStories();
+    // Activate correct section tab if section param set
+    if(filterActive !== 'all') {
+      document.querySelectorAll('.section-tab').forEach(t=>{
+        if(t.textContent.includes(filterActive)) t.classList.add('active');
+        else t.classList.remove('active');
+      });
+    }
+  } catch(e) {
+    console.error(e);
+    showToast('⚠ Could not connect to database. Check your Supabase credentials.','error');
+  }
+}
+
+// Handle browser back/forward
+window.addEventListener('popstate', e => {
+  if(e.state){
+    currentPage  = e.state.page || 1;
+    filterActive = e.state.filterActive || 'all';
+    searchQuery  = e.state.searchQuery || '';
+    applyFilters();
+  }
+});
+
+// ════════════════════════════════════════════════════════════
+// RENDER FUNCTIONS
+// ════════════════════════════════════════════════════════════
+
+function articleUrl(a) { return `article.html?id=${a.id}`; }
+
+function heroImgHtml(a, height='220px') {
+  if(a.hero_image) return `<img src="${a.hero_image}" class="hero-img" style="height:${height}" onerror="this.style.display='none'">`;
+  return `<div class="hero-img-placeholder" style="height:${height}">📰 ${a.section||''}</div>`;
+}
+
+function renderHero() {
+  const hero  = allArticles.find(a=>a.placement==='hero') || allArticles[0];
+  const side1 = allArticles.find(a=>a.placement==='side1') || allArticles[1];
+  const side2 = allArticles.find(a=>a.placement==='side2') || allArticles[2];
+  if(!hero) return;
+
+  document.getElementById('heroGrid').innerHTML = `
+    <div class="hero-main" style="background:var(--card-bg)">
+      ${heroImgHtml(hero,'200px')}
+      <div class="hero-content">
+        <div class="article-kicker">${hero.section||''}</div>
+        <h1 class="hero-headline" onclick="window.location.href='${articleUrl(hero)}'">${hero.headline}</h1>
+        <p class="hero-standfirst">${hero.standfirst||''}</p>
+        <div class="article-meta">
+          <span class="author">By ${hero.author_name||'AMI Staff'}</span>
+          <span>${hero.read_time||''}</span>
+          ${hero.is_locked?'<span class="article-tag">Premium</span>':''}
+        </div>
+      </div>
+    </div>
+    ${side1?`<div class="hero-side-1" style="background:var(--card-bg)">
+      ${side1.hero_image?`<img src="${side1.hero_image}" style="width:100%;height:100px;object-fit:cover;display:block;margin-bottom:12px">`:''}
+      <div class="article-section">${side1.section||''}</div>
+      <h2 class="side-headline" onclick="window.location.href='${articleUrl(side1)}'">${side1.headline}</h2>
+      <p class="side-standfirst">${side1.standfirst||''}</p>
+      <div class="article-meta" style="margin-top:12px"><span class="author">${side1.author_name||''}</span><span>${side1.read_time||''}</span>${side1.is_locked?'<span class="article-tag">Premium</span>':''}</div>
+    </div>`:'<div class="hero-side-1" style="background:var(--card-bg)"></div>'}
+    ${side2?`<div class="hero-side-2" style="background:var(--card-bg)">
+      ${side2.hero_image?`<img src="${side2.hero_image}" style="width:100%;height:90px;object-fit:cover;display:block;margin-bottom:12px">`:''}
+      <div class="article-section">${side2.section||''}</div>
+      <h2 class="side-headline" onclick="window.location.href='${articleUrl(side2)}'">${side2.headline}</h2>
+      <p class="side-standfirst">${side2.standfirst||''}</p>
+      <div class="article-meta" style="margin-top:12px"><span class="author">${side2.author_name||''}</span><span>${side2.read_time||''}</span>${side2.is_locked?'<span class="article-tag">Premium</span>':''}</div>
+    </div>`:'<div class="hero-side-2" style="background:var(--card-bg)"></div>'}`;
+}
+
+function renderCards(articles) {
+  // Update filtered set
+  filteredCards = (articles || allArticles).filter(a => a.placement === 'card');
+  totalArticles = filteredCards.length;
+
+  // Paginate
+  const start = (currentPage - 1) * ARTICLES_PER_PAGE;
+  const page  = filteredCards.slice(start, start + ARTICLES_PER_PAGE);
+
+  const container = document.getElementById('articleCardsContainer');
+  if(!filteredCards.length){
+    container.innerHTML = '<p style="color:var(--text-soft);font-family:DM Mono,monospace;font-size:12px;padding:24px 0">No articles found.</p>';
+    document.getElementById('paginationBar').innerHTML = '';
+    document.getElementById('archiveHeader').style.display = 'none';
+    return;
+  }
+
+  // Show archive header on page 2+
+  const archiveHeader = document.getElementById('archiveHeader');
+  const archiveCount  = document.getElementById('archiveCount');
+  const section = filterActive !== 'all' ? filterActive : 'All Articles';
+  document.getElementById('archiveTitle').textContent = searchQuery ? `Search: "${searchQuery}"` : section;
+  archiveCount.textContent = `${totalArticles} article${totalArticles!==1?'s':''} · Page ${currentPage} of ${Math.ceil(totalArticles/ARTICLES_PER_PAGE)}`;
+  archiveHeader.style.display = 'flex';
+
+  const rows = [];
+  for(let i = 0; i < page.length; i += 3){
+    const chunk = page.slice(i, i + 3);
+    rows.push('<div class="article-row">' + chunk.map(a => `
+      <div class="article-card" onclick="window.location.href='${articleUrl(a)}'">
+        ${a.hero_image
+          ? `<img src="${a.hero_image}" class="card-img" onerror="this.outerHTML='<div class=card-img-placeholder>📰</div>'">`
+          : `<div class="card-img-placeholder">📰</div>`}
+        <div class="card-content">
+          <div class="article-kicker">${a.section||''}</div>
+          <h3 class="card-headline">${a.is_locked?'🔒 ':''} ${a.headline}</h3>
+          <p class="card-body">${a.standfirst||''}</p>
+          <div class="card-footer">
+            <span>${a.author_name||'AMI Staff'} · ${a.read_time||'3 min'} ${a.is_locked?'<span class="lock-icon">🔒</span>':''}</span>
+            <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-soft)">${a.published_date||''}</span>
+          </div>
+        </div>
+      </div>`).join('') + '</div>');
+  }
+  container.innerHTML = rows.join('');
+  renderPagination();
+}
+
+function renderPagination() {
+  const totalPages = Math.ceil(totalArticles / ARTICLES_PER_PAGE);
+  const bar = document.getElementById('paginationBar');
+  if(totalPages <= 1){ bar.innerHTML = ''; return; }
+
+  const pages = buildPageNumbers(currentPage, totalPages);
+  const section = filterActive !== 'all' ? `&section=${encodeURIComponent(filterActive)}` : '';
+  const q = searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : '';
+
+  bar.innerHTML = `
+    <a class="page-btn nav ${currentPage===1?'disabled':''}" onclick="goToPage(${currentPage-1})" href="?page=${currentPage-1}${section}${q}" aria-label="Previous page">← Prev</a>
+    ${pages.map(p => p === '...'
+      ? `<span class="page-ellipsis">…</span>`
+      : `<a class="page-btn ${p===currentPage?'active':''}" onclick="goToPage(${p})" href="?page=${p}${section}${q}">${p}</a>`
+    ).join('')}
+    <a class="page-btn nav ${currentPage===totalPages?'disabled':''}" onclick="goToPage(${currentPage+1})" href="?page=${currentPage+1}${section}${q}" aria-label="Next page">Next →</a>
+  `;
+}
+
+function buildPageNumbers(current, total) {
+  if(total <= 7) return Array.from({length:total}, (_,i)=>i+1);
+  const pages = [];
+  pages.push(1);
+  if(current > 3) pages.push('...');
+  for(let i = Math.max(2, current-1); i <= Math.min(total-1, current+1); i++) pages.push(i);
+  if(current < total-2) pages.push('...');
+  pages.push(total);
+  return pages;
+}
+
+function goToPage(page) {
+  event.preventDefault();
+  const totalPages = Math.ceil(totalArticles / ARTICLES_PER_PAGE);
+  if(page < 1 || page > totalPages) return;
+  currentPage = page;
+  // Update URL without page reload
+  const section = filterActive !== 'all' ? `&section=${encodeURIComponent(filterActive)}` : '';
+  const q = searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : '';
+  const newUrl = page === 1 ? window.location.pathname + (section||q ? '?'+section.slice(1)+(q?'&'+q.slice(1):'') : '') : `?page=${page}${section}${q}`;
+  history.pushState({page, filterActive, searchQuery}, '', newUrl.replace('?&','?'));
+  renderCards();
+  // Scroll to top of article grid smoothly
+  document.getElementById('archiveHeader')?.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function renderMarketsStrip() {
+  document.getElementById('marketsDisplay').innerHTML = allMarkets.map(m=>`
+    <div class="market-item">
+      <div class="market-name">${m.name}</div>
+      <div class="market-value">${m.value}</div>
+      <div class="market-change ${m.direction}">${m.direction==='up'?'▲':'▼'} ${m.change}</div>
+    </div>`).join('');
+}
+
+function renderTicker() {
+  const items = allMarkets.map(m=>`<span class="ticker-item"><span class="sym">${m.id.toUpperCase()}</span> ${m.value} <span class="${m.direction}">${m.direction==='up'?'▲':'▼'} ${m.change}</span></span>`).join('');
+  document.getElementById('tickerInner').innerHTML = items + items; // duplicate for seamless loop
+}
+
+function renderTopStories() {
+  const top = allArticles.slice(0,5);
+  document.getElementById('topStoriesList').innerHTML = top.map((a,i)=>`
+    <div class="top-story" onclick="window.location.href='${articleUrl(a)}'">
+      <div class="top-story-num">0${i+1}</div>
+      <div class="top-story-headline">${a.headline}</div>
+    </div>`).join('');
+}
+
+function renderBreaking(breaking) {
+  if(breaking && breaking.length>0 && breaking[0].is_active) {
+    document.getElementById('breakingTextDisplay').textContent = breaking[0].text;
+    document.getElementById('breakingBanner').style.display = 'flex';
+  }
+}
+
+function applySettings(settings) {
+  if(!settings) return;
+  const get = key => (settings.find(s=>s.key===key)?.value) || '';
+  const name = get('site_name') || 'African Market Intelligence';
+  // Site identity
+  document.getElementById('siteNameDisplay').innerHTML = name.replace(/(\S+)\s*$/, '<span>$1</span>');
+  document.getElementById('siteTaglineDisplay').textContent = get('tagline');
+  document.getElementById('editionDisplay').textContent     = get('edition');
+  document.getElementById('footerBrand').textContent        = name;
+  document.title = name;
+  if(get('location_line') && document.getElementById('locationDisplay'))
+    document.getElementById('locationDisplay').textContent = get('location_line');
+  // Newsletter
+  if(get('newsletter_title') && document.getElementById('nwTitleDisplay'))
+    document.getElementById('nwTitleDisplay').textContent  = get('newsletter_title');
+  if(get('newsletter_sub') && document.getElementById('nwSubDisplay'))
+    document.getElementById('nwSubDisplay').textContent    = get('newsletter_sub');
+  if(get('newsletter_btn') && document.getElementById('nwBtnDisplay'))
+    document.getElementById('nwBtnDisplay').textContent    = get('newsletter_btn');
+  // Footer
+  if(get('footer_about') && document.getElementById('footerAboutDisplay'))
+    document.getElementById('footerAboutDisplay').textContent = get('footer_about');
+  if(get('copyright') && document.getElementById('copyrightDisplay'))
+    document.getElementById('copyrightDisplay').textContent   = get('copyright');
+  // Stripe
+  const d1 = get('plan1_link'); const d2 = get('plan2_link');
+  if(d1){ document.getElementById('stripeDigital').href = d1; }
+  if(d2){ document.getElementById('stripePremium').href = d2; document.getElementById('navSubscribeBtn').href = d2; }
+  // Footer links
+  if(get('about_url'))   { const el=document.getElementById('footerAbout');   if(el) el.href=get('about_url'); }
+  if(get('careers_url')) { const el=document.getElementById('footerCareers'); if(el) el.href=get('careers_url'); }
+  if(get('privacy_url')) { const el=document.getElementById('footerPrivacy'); if(el) el.href=get('privacy_url'); }
+  // Paywall
+  if(get('paywall_active')==='true') setTimeout(showPaywall, 30000);
+  // Populate admin form fields
+  const fields = {
+    siteName:get('site_name'), siteTagline:get('tagline'), editionLabel:get('edition'),
+    locationLine:get('location_line'), newsletterTitle:get('newsletter_title'),
+    newsletterSub:get('newsletter_sub'), newsletterBtn:get('newsletter_btn'),
+    newsletterLink:get('newsletter_link'), plan1Name:get('plan1_name'),
+    plan1Price:get('plan1_price'), plan1Link:get('plan1_link'), plan2Name:get('plan2_name'),
+    plan2Price:get('plan2_price'), plan2Link:get('plan2_link'), aboutUrl:get('about_url'),
+    careersUrl:get('careers_url'), privacyUrl:get('privacy_url'),
+    footerAboutText:get('footer_about'), copyrightText:get('copyright')
+  };
+  Object.entries(fields).forEach(([id,val])=>{ const el=document.getElementById(id); if(el&&val) el.value=val; });
+}
+
+// ════════════════════════════════════════════════════════════
+// SEARCH & FILTER
+// ════════════════════════════════════════════════════════════
+function filterSection(e, section) {
+  e.preventDefault();
+  e.stopPropagation();
+  document.querySelectorAll('.section-tab').forEach(x=>x.classList.remove('active'));
+  e.target.classList.add('active');
+  filterActive = section;
+  currentPage  = 1;
+  // Update URL
+  const q = searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : '';
+  const newUrl = section === 'all' ? window.location.pathname : `?section=${encodeURIComponent(section)}${q}`;
+  history.pushState({page:1, filterActive:section, searchQuery}, '', newUrl);
+  applyFilters();
+  // Scroll to articles
+  document.getElementById('archiveHeader')?.scrollIntoView({behavior:'smooth', block:'start'});
+}
+function searchArticles(q) {
+  searchQuery  = q.toLowerCase();
+  currentPage  = 1;
+  applyFilters();
+}
+function applyFilters(preservePage=false) {
+  if(!preservePage) currentPage = 1; // reset to page 1 on new search/filter
+  let filtered = allArticles;
+  if(filterActive !== 'all') filtered = filtered.filter(a=>(a.section||'').includes(filterActive) || (a.tags||'').includes(filterActive));
+  if(searchQuery) filtered = filtered.filter(a=>(a.headline||'').toLowerCase().includes(searchQuery)||(a.standfirst||'').toLowerCase().includes(searchQuery)||(a.author_name||'').toLowerCase().includes(searchQuery));
+  renderCards(filtered.filter(a=>a.placement==='card'));
+}
+
+// ════════════════════════════════════════════════════════════
+// ADMIN
+// ════════════════════════════════════════════════════════════
+// ── Admin password gate ──────────────────────────────────────
+const ADMIN_PASSWORD = 'ami2024'; // ← CHANGE THIS to your own password
+let logoClickCount = 0, logoClickTimer = null;
+
+function handleLogoClick() {
+  logoClickCount++;
+  clearTimeout(logoClickTimer);
+  logoClickTimer = setTimeout(()=>{ logoClickCount=0; }, 2000);
+  if(logoClickCount >= 5) { logoClickCount=0; promptAdmin(); }
+}
+
+function promptAdmin() {
+  const pwd = prompt('Enter admin password:');
+  if(pwd === null) return;
+  if(pwd === ADMIN_PASSWORD) {
+    openAdmin();
+  } else {
+    showToast('Incorrect password','error');
+  }
+}
+
+function toggleAdminVisibility(show) {
+  // Optionally show a visible admin button when toggled on from within admin
+  let btn = document.getElementById('visibleAdminBtn');
+  if(show && !btn) {
+    btn = document.createElement('button');
+    btn.id = 'visibleAdminBtn';
+    btn.className = 'admin-btn';
+    btn.textContent = '⚙ Admin';
+    btn.onclick = promptAdmin;
+    document.querySelector('.nav-right').insertBefore(btn, document.querySelector('.btn-subscribe'));
+  } else if(!show && btn) {
+    btn.remove();
+  }
+}
+
+async function handleNewsletterSignup() {
+  const input = document.querySelector('.nw-input');
+  const email = input?.value?.trim();
+  if(!email){ showToast('Please enter your email address','error'); return; }
+  // Basic email validation
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    showToast('Please enter a valid email address','error'); return;
+  }
+  const btn = document.getElementById('nwBtnDisplay');
+  const origText = btn.textContent;
+  btn.textContent = 'Subscribing…';
+  btn.disabled = true;
+  try {
+    // Check if already subscribed
+    const existing = await db.query('subscribers', { select:'id', eq:{email} });
+    if(existing && existing.length > 0){
+      showToast('✓ You are already subscribed!');
+      input.value = '';
+    } else {
+      await db.insert('subscribers', {
+        email,
+        source: 'homepage_widget',
+        subscribed_at: new Date().toISOString()
+      });
+      showToast('✓ Subscribed! Welcome to the AMI Morning Brief.');
+      input.value = '';
+      // Show thank you state
+      const widget = input.closest('.newsletter-widget');
+      if(widget){
+        widget.innerHTML = `
+          <div style="text-align:center;padding:12px 0">
+            <div style="font-size:28px;margin-bottom:8px">📬</div>
+            <div style="font-family:'Playfair Display',serif;font-size:18px;color:#C9A84C;margin-bottom:6px">You're in!</div>
+            <div style="font-size:13px;color:#999;font-weight:300">Check your inbox tomorrow morning for your first briefing.</div>
+          </div>`;
+      }
+    }
+  } catch(e){
+    showToast('✗ Could not subscribe: '+e.message,'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = origText;
+  }
+}
+
+// ── Subscriber management (admin) ────────────────────────────
+async function loadSubscribers() {
+  document.getElementById('subscriberList').innerHTML =
+    '<div style="padding:24px;text-align:center;color:#888">Loading…</div>';
+  try {
+    const subs = await db.query('subscribers', { select:'*', order:'subscribed_at.desc' });
+    const now  = new Date();
+    const weekAgo  = new Date(now - 7*24*60*60*1000);
+    const monthAgo = new Date(now.getFullYear(), now.getMonth(), 1);
+    const thisWeek  = subs.filter(s=>new Date(s.subscribed_at)>=weekAgo).length;
+    const thisMonth = subs.filter(s=>new Date(s.subscribed_at)>=monthAgo).length;
+    document.getElementById('subTotal').textContent     = subs.length;
+    document.getElementById('subThisWeek').textContent  = thisWeek;
+    document.getElementById('subThisMonth').textContent = thisMonth;
+    document.getElementById('statSubscribers').textContent = subs.length;
+    if(!subs.length){
+      document.getElementById('subscriberList').innerHTML =
+        '<div style="padding:24px;text-align:center;color:#555">No subscribers yet.</div>';
+      return;
+    }
+    document.getElementById('subscriberList').innerHTML = subs.map(s=>`
+      <div style="display:grid;grid-template-columns:1fr auto auto;gap:12px;padding:10px 14px;border-bottom:1px solid #1A1208;align-items:center">
+        <span style="color:#EDE5D5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.email}</span>
+        <span style="color:#555;font-size:10px;letter-spacing:.05em">${s.source||'widget'}</span>
+        <span style="color:#555;font-size:10px;white-space:nowrap">${new Date(s.subscribed_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</span>
+      </div>`).join('');
+  } catch(e){
+    document.getElementById('subscriberList').innerHTML =
+      '<div style="padding:24px;color:#F44336;font-size:11px">Error: '+e.message+'</div>';
+  }
+}
+
+function exportSubscribersCSV() {
+  const rows = document.querySelectorAll('#subscriberList > div');
+  if(!rows.length){ showToast('Load subscribers first','error'); return; }
+  const lines = ['Email,Source,Date'];
+  rows.forEach(row=>{
+    const cells = row.querySelectorAll('span');
+    if(cells.length>=3) lines.push([cells[0].textContent,cells[1].textContent,cells[2].textContent].join(','));
+  });
+  const blob = new Blob([lines.join('\n')], {type:'text/csv'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a'); a.href=url;
+  a.download = 'ami-subscribers-'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click(); URL.revokeObjectURL(url);
+  showToast('✓ CSV downloaded');
+}
+
+async function openAdmin() {
+  document.getElementById('adminOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+  const st = document.getElementById('dbStatus');
+  st.textContent='● Connecting…'; st.className='admin-status loading';
+  document.getElementById('dbUrl').textContent = SUPABASE_URL !== 'YOUR_SUPABASE_URL' ? SUPABASE_URL.split('//')[1] : 'Not configured';
+  try {
+    await loadAdminData();
+    st.textContent='● Connected'; st.className='admin-status connected';
+  } catch(e) {
+    st.textContent='● Disconnected'; st.className='admin-status disconnected';
+  }
+}
+function closeAdmin(){ document.getElementById('adminOverlay').classList.remove('open'); document.body.style.overflow=''; }
+document.getElementById('adminOverlay').addEventListener('click',e=>{ if(e.target===document.getElementById('adminOverlay')) closeAdmin(); });
+function switchTab(e,tab){
+  document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.admin-section').forEach(s=>s.classList.remove('active'));
+  e.target.classList.add('active');
+  document.getElementById('tab-'+tab).classList.add('active');
+  if(tab==='subscribers') loadSubscribers();
+}
+
+async function loadAdminData() {
+  const [arts, mkts, brk] = await Promise.all([
+    db.query('articles', { select:'*', order:'created_at.desc' }),
+    db.query('markets',  { select:'*' }),
+    db.query('breaking_news', { select:'*', order:'created_at.desc', limit:'1' })
+  ]);
+  allArticles = arts.filter(a=>a.is_published);
+  allMarkets  = mkts;
+  renderAdminArticleList(arts);
+  renderMarketEditor(mkts);
+  if(brk && brk[0]){
+    document.getElementById('breakingText').value   = brk[0].text;
+    document.getElementById('showBreaking').checked = brk[0].is_active;
+  }
+  document.getElementById('statArticles').textContent = arts.filter(a=>a.is_published).length;
+  document.getElementById('statLocked').textContent   = arts.filter(a=>a.is_locked).length;
+  document.getElementById('statImages').textContent   = arts.filter(a=>a.hero_image).length;
+  // Load subscriber count
+  try {
+    const subs = await db.query('subscribers', { select:'id' });
+    document.getElementById('statSubscribers').textContent = subs.length;
+  } catch(e){}
+}
+
+function renderAdminArticleList(articles) {
+  const el = document.getElementById('adminArticleList');
+  if(!articles || !articles.length){ el.innerHTML='<div style="color:#555;padding:16px 0">No articles yet. Publish your first above.</div>'; return; }
+  el.innerHTML = `<ul class="admin-article-list">${articles.map(a=>`
+    <li class="admin-article-item">
+      <div class="admin-article-header" onclick="toggleEdit(${a.id})">
+        <div class="admin-article-info">
+          <div class="admin-article-title">${a.headline}</div>
+          <div class="admin-article-meta">
+            <span class="badge badge-${a.placement}">${a.placement}</span>
+            <span>${a.author_name||'—'}</span>
+            <span>${a.published_date||''}</span>
+            ${a.is_locked?'<span class="badge badge-locked">🔒</span>':''}
+            ${!a.is_published?'<span class="badge" style="background:#555;color:#ccc">Draft</span>':''}
+          </div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="btn-danger" onclick="event.stopPropagation();deleteArticle(${a.id})">✕</button>
+        </div>
+      </div>
+      <div class="admin-article-body" id="edit-${a.id}">
+        <div class="form-group"><label class="form-label">Headline</label><textarea class="form-textarea" id="eh-${a.id}" style="min-height:55px">${a.headline}</textarea></div>
+        <div class="form-group"><label class="form-label">Standfirst</label><textarea class="form-textarea" id="es-${a.id}">${a.standfirst||''}</textarea></div>
+        <div class="form-group"><label class="form-label">Full Article Body</label><textarea class="form-textarea" id="eb-${a.id}" style="min-height:120px;font-family:'DM Mono',monospace;font-size:11px">${(a.body||'').replace(/</g,'&lt;')}</textarea></div>
+        <div class="form-group"><label class="form-label">Hero Image URL</label><input class="form-input" id="ei-${a.id}" value="${a.hero_image||''}"></div>
+        <div class="form-group"><label class="form-label">Replace Image</label>
+          <div class="img-upload-area"><input type="file" accept="image/*" onchange="uploadAndSetImage(this,${a.id})"><div class="img-upload-label">📷 Upload new image</div></div>
+          ${a.hero_image?`<img src="${a.hero_image}" style="width:100%;height:80px;object-fit:cover;border-radius:2px;margin-top:6px">`:''}
+        </div>
+        <div class="form-row">
+          <div class="form-group" style="margin:0"><label class="form-label">Section</label><input class="form-input" id="ec-${a.id}" value="${a.section||''}"></div>
+          <div class="form-group" style="margin:0"><label class="form-label">Author</label><input class="form-input" id="ea-${a.id}" value="${a.author_name||''}"></div>
+        </div>
+        <div class="form-row" style="margin-top:10px">
+          <div class="form-group" style="margin:0"><label class="form-label">Read Time</label><input class="form-input" id="er-${a.id}" value="${a.read_time||''}"></div>
+          <div class="form-group" style="margin:0"><label class="form-label">Placement</label>
+            <select class="form-select" id="ep-${a.id}">
+              <option value="card" ${a.placement==='card'?'selected':''}>Card</option>
+              <option value="hero" ${a.placement==='hero'?'selected':''}>Hero</option>
+              <option value="side1" ${a.placement==='side1'?'selected':''}>Side 1</option>
+              <option value="side2" ${a.placement==='side2'?'selected':''}>Side 2</option>
+            </select></div>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:14px;align-items:center">
+          <label style="font-family:'DM Mono',monospace;font-size:10px;color:#888;display:flex;align-items:center;gap:5px"><input type="checkbox" id="el-${a.id}" ${a.is_locked?'checked':''}> 🔒 Premium</label>
+          <label style="font-family:'DM Mono',monospace;font-size:10px;color:#888;display:flex;align-items:center;gap:5px"><input type="checkbox" id="ep2-${a.id}" ${a.is_published?'checked':''}> ✅ Published</label>
+        </div>
+        <button class="btn-save" onclick="saveArticle(${a.id})" style="margin-top:12px">💾 Save Changes →</button>
+      </div>
+    </li>`).join('')}</ul>`;
+}
+
+function toggleEdit(id){ document.getElementById('edit-'+id).classList.toggle('open'); }
+
+async function uploadAndSetImage(input, articleId) {
+  const file = input.files[0]; if(!file) return;
+  showToast('⏳ Uploading image…', 'loading');
+  try {
+    const path = `articles/${articleId}-${Date.now()}-${file.name}`;
+    const url  = await db.uploadImage(file, path);
+    document.getElementById('ei-'+articleId).value = url;
+    showToast('✓ Image uploaded — save the article to apply');
+  } catch(e) { showToast('✗ Upload failed: '+e.message,'error'); }
+}
+
+async function deleteArticle(id) {
+  if(!confirm('Delete this article permanently from the database?')) return;
+  try {
+    await db.delete('articles', {id});
+    showToast('✓ Article deleted');
+    await loadAdminData();
+    renderHero(); renderCards(); renderTopStories();
+  } catch(e){ showToast('✗ '+e.message,'error'); }
+}
+
+async function saveArticle(id) {
+  const btn = event.target; btn.disabled=true; btn.textContent='Saving…';
+  try {
+    let bodyRaw = document.getElementById('eb-'+id).value;
+    // Convert plain text to HTML paragraphs if needed
+    if(!bodyRaw.trim().startsWith('<')) {
+      bodyRaw = bodyRaw.split(/\n\n+/).filter(p=>p.trim()).map(p=>`<p>${p.trim()}</p>`).join('\n');
+    }
+    await db.update('articles', {
+      headline:     document.getElementById('eh-'+id).value,
+      standfirst:   document.getElementById('es-'+id).value,
+      body:         bodyRaw,
+      hero_image:   document.getElementById('ei-'+id).value,
+      section:      document.getElementById('ec-'+id).value,
+      author_name:  document.getElementById('ea-'+id).value,
+      read_time:    document.getElementById('er-'+id).value,
+      placement:    document.getElementById('ep-'+id).value,
+      is_locked:    document.getElementById('el-'+id).checked,
+      is_published: document.getElementById('ep2-'+id).checked,
+      updated_at:   new Date().toISOString()
+    }, {id});
+    showToast('✓ Saved to database — live on site now');
+    await loadAdminData();
+    renderHero(); renderCards(); renderTopStories();
+  } catch(e){ showToast('✗ '+e.message,'error'); }
+  finally{ btn.disabled=false; btn.textContent='💾 Save Changes →'; }
+}
+
+// Image preview helper
+function previewImage(input, previewId, areaId) {
+  const file = input.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = document.getElementById(previewId);
+    img.src = e.target.result; img.style.display='block';
+  };
+  reader.readAsDataURL(file);
+}
+
+async function publishArticle() {
+  const btn = document.getElementById('publishBtn');
+  const headline = document.getElementById('new-headline').value.trim();
+  if(!headline){ showToast('Please enter a headline','error'); return; }
+  btn.disabled=true; btn.textContent='Publishing…';
+  try {
+    // Handle image upload first
+    let heroImageUrl = document.getElementById('new-hero-url').value.trim();
+    const heroFile   = document.getElementById('new-hero-file').files[0];
+    let authorPhotoUrl = '';
+    const authorFile = document.getElementById('new-author-file').files[0];
+
+    if(heroFile) {
+      showToast('⏳ Uploading hero image…','loading');
+      heroImageUrl = await db.uploadImage(heroFile, `articles/hero-${Date.now()}-${heroFile.name}`);
+    }
+    if(authorFile) {
+      authorPhotoUrl = await db.uploadImage(authorFile, `authors/${Date.now()}-${authorFile.name}`);
+    }
+
+    let bodyRaw = document.getElementById('new-body').value;
+    if(bodyRaw.trim() && !bodyRaw.trim().startsWith('<')) {
+      bodyRaw = bodyRaw.split(/\n\n+/).filter(p=>p.trim()).map(p=>`<p>${p.trim()}</p>`).join('\n');
+    }
+
+    const authorName = document.getElementById('new-author').value || 'AMI Staff';
+    await db.insert('articles', {
+      headline:        headline,
+      standfirst:      document.getElementById('new-standfirst').value,
+      body:            bodyRaw,
+      section:         document.getElementById('new-section').value || 'News',
+      author_name:     authorName,
+      author_role:     document.getElementById('new-author-role').value,
+      author_initials: authorName.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2),
+      author_photo:    authorPhotoUrl,
+      hero_image:      heroImageUrl,
+      read_time:       document.getElementById('new-readtime').value || '3 min',
+      published_date:  new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}),
+      placement:       document.getElementById('new-placement').value,
+      is_locked:       document.getElementById('new-locked').checked,
+      is_published:    true,
+      tags:            document.getElementById('new-tags').value,
+    });
+
+    // Clear form
+    ['new-headline','new-standfirst','new-body','new-author','new-author-role','new-readtime','new-section','new-tags','new-hero-url'].forEach(id=>{
+      const el=document.getElementById(id); if(el) el.value='';
+    });
+    document.getElementById('new-locked').checked=false;
+    document.getElementById('heroPreview').style.display='none';
+    document.getElementById('authorPreview').style.display='none';
+
+    showToast('✓ Article published to database — live on site!');
+    await loadAdminData();
+    renderHero(); renderCards(); renderTopStories();
+  } catch(e){ showToast('✗ '+e.message,'error'); }
+  finally{ btn.disabled=false; btn.textContent='📢 Publish to Site →'; }
+}
+
+function renderMarketEditor(markets) {
+  document.getElementById('marketEditGrid').innerHTML=(markets||allMarkets).map(m=>`
+    <div class="market-edit-item">
+      <div class="market-edit-name">${m.name}</div>
+      <input class="mini-input" id="mv-${m.id}" value="${m.value}" placeholder="Value">
+      <input class="mini-input" id="mc-${m.id}" value="${m.change}" placeholder="e.g. +1.24%">
+      <div class="dir-toggle">
+        <div class="dir-btn up ${m.direction==='up'?'active':''}" onclick="setDir('${m.id}','up',this)">▲ Up</div>
+        <div class="dir-btn dn ${m.direction==='dn'?'active':''}" onclick="setDir('${m.id}','dn',this)">▼ Down</div>
+      </div>
+    </div>`).join('');
+}
+
+function setDir(id,dir,el){
+  el.closest('.dir-toggle').querySelectorAll('.dir-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+async function saveMarkets() {
+  try {
+    await Promise.all(allMarkets.map(m => {
+      const v = document.getElementById('mv-'+m.id)?.value;
+      const c = document.getElementById('mc-'+m.id)?.value;
+      const p = document.getElementById('mv-'+m.id)?.closest('.market-edit-item');
+      const activeDir = p?.querySelector('.dir-btn.active');
+      const dir = activeDir?.classList.contains('up') ? 'up' : 'dn';
+      return db.update('markets', { value:v||m.value, change:c||m.change, direction:dir, updated_at:new Date().toISOString() }, {id:m.id});
+    }));
+    const updated = await db.query('markets',{select:'*'});
+    allMarkets = updated;
+    renderMarketsStrip(); renderTicker();
+    showToast('✓ Market data saved to database');
+  } catch(e){ showToast('✗ '+e.message,'error'); }
+}
+
+async function saveBreaking() {
+  try {
+    const text   = document.getElementById('breakingText').value;
+    const active = document.getElementById('showBreaking').checked;
+    // Deactivate all, then insert new
+    const existing = await db.query('breaking_news',{select:'id',limit:'1'});
+    if(existing && existing[0]) {
+      await db.update('breaking_news', {text, is_active:active}, {id:existing[0].id});
+    } else {
+      await db.insert('breaking_news', {text, is_active:active});
+    }
+    document.getElementById('breakingTextDisplay').textContent = text;
+    document.getElementById('breakingBanner').style.display = active ? 'flex' : 'none';
+    showToast('✓ Breaking news saved');
+  } catch(e){ showToast('✗ '+e.message,'error'); }
+}
+
+async function saveSettings() {
+  try {
+    const settings = [
+      { key:'site_name',        value:document.getElementById('siteName').value },
+      { key:'tagline',          value:document.getElementById('siteTagline').value },
+      { key:'edition',          value:document.getElementById('editionLabel').value },
+      { key:'location_line',    value:document.getElementById('locationLine').value },
+      { key:'paywall_active',   value:String(document.getElementById('paywallActive').checked) },
+      { key:'newsletter_title', value:document.getElementById('newsletterTitle').value },
+      { key:'newsletter_sub',   value:document.getElementById('newsletterSub').value },
+      { key:'newsletter_btn',   value:document.getElementById('newsletterBtn').value },
+      { key:'newsletter_link',  value:document.getElementById('newsletterLink').value },
+      { key:'plan1_name',       value:document.getElementById('plan1Name').value },
+      { key:'plan1_price',      value:document.getElementById('plan1Price').value },
+      { key:'plan1_link',       value:document.getElementById('plan1Link').value },
+      { key:'plan2_name',       value:document.getElementById('plan2Name').value },
+      { key:'plan2_price',      value:document.getElementById('plan2Price').value },
+      { key:'plan2_link',       value:document.getElementById('plan2Link').value },
+      { key:'about_url',        value:document.getElementById('aboutUrl').value },
+      { key:'careers_url',      value:document.getElementById('careersUrl').value },
+      { key:'privacy_url',      value:document.getElementById('privacyUrl').value },
+      { key:'footer_about',     value:document.getElementById('footerAboutText').value },
+      { key:'copyright',        value:document.getElementById('copyrightText').value },
+    ];
+    await Promise.all(settings.map(s =>
+      db.update('site_settings',{value:s.value},{key:s.key})
+        .catch(()=>db.insert('site_settings',{key:s.key,value:s.value}))
+    ));
+    applySettings(settings.map(s=>({key:s.key,value:s.value})));
+    showToast('✓ All settings saved and live on site');
+  } catch(e){ showToast('✗ '+e.message,'error'); }
+}
+
+// ════════════════════════════════════════════════════════════
+// UI HELPERS
+// ════════════════════════════════════════════════════════════
+function toggleDark(){
+  const h=document.documentElement,dark=h.getAttribute('data-theme')==='dark';
+  h.setAttribute('data-theme',dark?'light':'dark');
+  document.getElementById('themeBtn').textContent=dark?'🌙':'☀️';
+}
+
+function showPaywall(){ document.getElementById('paywallOverlay').style.display='flex'; document.getElementById('paywallBlur').style.display='block'; }
+function closePaywall(){ document.getElementById('paywallOverlay').style.display='none'; document.getElementById('paywallBlur').style.display='none'; }
+
+function showToast(msg, type='success'){
+  const t=document.getElementById('toast'); t.textContent=msg;
+  if(type==='error'){ t.style.background='#4D1B1B'; t.style.borderColor='#F44336'; t.style.color='#F44336'; }
+  else if(type==='loading'){ t.style.background='#2A1F10'; t.style.borderColor='#C9A84C'; t.style.color='#C9A84C'; }
+  else { t.style.background='#1B4D1B'; t.style.borderColor='#4CAF50'; t.style.color='#4CAF50'; }
+  t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),4000);
+}
+
+function showConfigBanner(){
+  document.getElementById('heroGrid').innerHTML=`
+    <div style="grid-column:1/-1;background:var(--card-bg);padding:48px;text-align:center;border:2px dashed var(--gold)">
+      <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;margin-bottom:12px;color:var(--gold)">⚙ Configure Supabase</div>
+      <p style="font-size:15px;color:var(--text-soft);max-width:500px;margin:0 auto 20px;line-height:1.7">Open <code style="background:var(--divider);padding:2px 8px;border-radius:2px">index.html</code> and replace <code style="background:var(--divider);padding:2px 8px;border-radius:2px">YOUR_SUPABASE_URL</code> and <code style="background:var(--divider);padding:2px 8px;border-radius:2px">YOUR_SUPABASE_ANON_KEY</code> with your credentials from Supabase → Project Settings → API.</p>
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-soft)">See the included <strong>supabase-setup.sql</strong> file for full setup instructions.</div>
+    </div>`;
+}
+
+// ════════════════════════════════════════════════════════════
+// START
+// ════════════════════════════════════════════════════════════
+init();
+</script>
+</body>
+</html>
