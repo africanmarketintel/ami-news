@@ -1,13 +1,23 @@
-// ═══════════════════════════════════════════════════
-// AMI CONFIGURATION — edit this file only
-// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════
+// AMI CONFIG  —  edit this ONE file; all pages update automatically
+// ═══════════════════════════════════════════════════════════════════
+//
+// HOW TO SET UP:
+//
+// SUPABASE
+//   1. Go to https://supabase.com → open your project
+//   2. Left sidebar → Project Settings → API
+//   3. Copy "Project URL" → paste as SUPABASE_URL below
+//   4. Copy "anon / public" key → paste as SUPABASE_ANON below
+//
+// STRIPE  (optional — only needed for subscription payments)
+//   1. Go to https://dashboard.stripe.com → Payment Links
+//   2. Copy the link for your Digital plan  → STRIPE_DIGITAL
+//   3. Copy the link for your Premium plan  → STRIPE_PREMIUM
+//
+// ═══════════════════════════════════════════════════════════════════
 
-// SUPABASE — get these from supabase.com
-// Project Settings → API → Project URL & anon/public key
-const SUPABASE_URL  = 'https://ucpjwyghwxjalkfvmbro.supabase.co';  
-const SUPABASE_ANON = 'sb_publishable_7cI4RoxyLr88DhwDWRC1vg_DSpczsHt'; 
-
-// STRIPE — get these from dashboard.stripe.com
-// Products → Payment Links → copy the link URL
+const SUPABASE_URL   = 'YOUR_SUPABASE_URL';       // https://xxxx.supabase.co
+const SUPABASE_ANON  = 'YOUR_SUPABASE_ANON_KEY';  // eyJh…
 const STRIPE_DIGITAL = 'https://buy.stripe.com/YOUR_DIGITAL_LINK';
-const STRIPE_PREMIUM  = 'https://buy.stripe.com/YOUR_PREMIUM_LINK';
+const STRIPE_PREMIUM = 'https://buy.stripe.com/YOUR_PREMIUM_LINK';

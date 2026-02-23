@@ -7,13 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400;1,600&family=Spectral:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-<!-- ✅ SUPABASE: Paste your credentials below -->
-<script>
-  const SUPABASE_URL  = 'https://ucpjwyghwxjalkfvmbro.supabase.co';  
-  const SUPABASE_ANON = 'sb_publishable_7cI4RoxyLr88DhwDWRC1vg_DSpczsHt'; 
-  const STRIPE_DIGITAL = 'https://buy.stripe.com/YOUR_DIGITAL_LINK';
-  const STRIPE_PREMIUM = 'https://buy.stripe.com/YOUR_PREMIUM_LINK';
-</script>
+<!-- ✅ CREDENTIALS: Edit config.js once — applies to all pages -->
+<script src="config.js"></script>
 <style>
 :root{--gold:#C9A84C;--gold-light:#E8C97A;--gold-pale:#FDF6E3;--terra:#B85C38;--terra-dark:#8C3A1F;--ink:#1A1208;--ink-mid:#3D2B1F;--ink-soft:#6B5344;--cream:#FAF7F0;--cream-dark:#F0EAD9;--border:#D4C4A0;--bg:var(--cream);--surface:#fff;--text:var(--ink);--text-soft:var(--ink-soft);--nav-bg:var(--ink);--nav-text:var(--cream);--header-bg:var(--cream-dark);--divider:var(--border);--card-bg:#fff}
 [data-theme="dark"]{--bg:#0F0A06;--surface:#1A1208;--text:#EDE5D5;--text-soft:#A89070;--nav-bg:#080502;--nav-text:#EDE5D5;--header-bg:#1A1208;--divider:#3D2B1F;--card-bg:#1F1610;--border:#3D2B1F;--gold-pale:#2A1F10}
@@ -396,30 +391,36 @@ footer{background:var(--ink);color:#888;padding:40px 24px 24px;margin-top:48px}
         <div class="footer-brand">African Market Intelligence</div>
         <p class="footer-about">The continent's most trusted source for financial news and business intelligence across Africa's 54 markets.</p>
       </div>
-      <div><div class="footer-col-title">Sections</div>
-        <ul class="footer-links">
+      <div>
+        <div class="footer-col-title" id="footerCol1Title">Sections</div>
+        <ul class="footer-links" id="footerCol1Links">
           <li><a href="markets.html">Markets</a></li>
           <li><a href="economy.html">Economy</a></li>
           <li><a href="politics.html">Politics</a></li>
           <li><a href="energy.html">Energy</a></li>
           <li><a href="technology.html">Technology</a></li>
           <li><a href="opinion.html">Opinion</a></li>
-        </ul></div>
-      <div><div class="footer-col-title">Regions</div>
-        <ul class="footer-links">
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title" id="footerCol2Title">Regions</div>
+        <ul class="footer-links" id="footerCol2Links">
           <li><a href="west-africa.html">West Africa</a></li>
           <li><a href="east-africa.html">East Africa</a></li>
           <li><a href="north-africa.html">North Africa</a></li>
           <li><a href="southern-africa.html">Southern Africa</a></li>
-        </ul></div>
-      <div><div class="footer-col-title">Company</div>
-        <ul class="footer-links">
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title" id="footerCol3Title">Company</div>
+        <ul class="footer-links" id="footerCol3Links">
           <li><a href="about.html">About AMI</a></li>
           <li><a href="membership.html">Membership</a></li>
           <li><a href="careers.html">Careers</a></li>
           <li><a href="contact.html">Contact</a></li>
           <li><a href="privacy.html">Privacy Policy</a></li>
-        </ul></div>
+        </ul>
+      </div>
     </div>
     <div class="footer-bottom">
       <span id="copyrightDisplay">© 2025 African Market Intelligence Ltd. All rights reserved.</span>
@@ -484,5 +485,48 @@ async function loadCMSContent(pageName) {
 loadCMSContent('careers');
 </script>
 
+<script>
+// Render footer columns from Supabase if configured
+(async function(){
+  if(typeof SUPABASE_URL === 'undefined' || SUPABASE_URL === 'YOUR_SUPABASE_URL') return;
+  const DEFAULTS = {
+    1:[{label:'Markets',href:'markets.html'},{label:'Economy',href:'economy.html'},
+       {label:'Politics',href:'politics.html'},{label:'Energy',href:'energy.html'},
+       {label:'Technology',href:'technology.html'},{label:'Opinion',href:'opinion.html'}],
+    2:[{label:'West Africa',href:'west-africa.html'},{label:'East Africa',href:'east-africa.html'},
+       {label:'North Africa',href:'north-africa.html'},{label:'Southern Africa',href:'southern-africa.html'}],
+    3:[{label:'About AMI',href:'about.html'},{label:'Membership',href:'membership.html'},
+       {label:'Careers',href:'careers.html'},{label:'Contact',href:'contact.html'},
+       {label:'Privacy Policy',href:'privacy.html'}]
+  };
+  function renderCol(titleId, listId, titleVal, linksJson, col){
+    const t=document.getElementById(titleId), l=document.getElementById(listId);
+    if(t&&titleVal) t.textContent=titleVal;
+    if(l){ try{ const links=linksJson?JSON.parse(linksJson):DEFAULTS[col];
+      l.innerHTML=links.map(x=>'<li><a href="'+x.href+'">'+x.label+'</a></li>').join('');
+    }catch(e){} }
+  }
+  try {
+    const params = new URLSearchParams({select:'key,value'});
+    ['footer_col1_title','footer_col1_links',
+     'footer_col2_title','footer_col2_links',
+     'footer_col3_title','footer_col3_links',
+     'footer_about','copyright'].forEach(k=>params.append('key','eq.'+k));
+    const r = await fetch(SUPABASE_URL+'/rest/v1/site_settings?select=key,value',{
+      headers:{apikey:SUPABASE_ANON,Authorization:'Bearer '+SUPABASE_ANON}
+    });
+    if(!r.ok) return;
+    const rows = await r.json();
+    const get = k => (rows.find(x=>x.key===k)||{}).value||'';
+    renderCol('footerCol1Title','footerCol1Links',get('footer_col1_title')||'Sections',get('footer_col1_links'),1);
+    renderCol('footerCol2Title','footerCol2Links',get('footer_col2_title')||'Regions', get('footer_col2_links'),2);
+    renderCol('footerCol3Title','footerCol3Links',get('footer_col3_title')||'Company', get('footer_col3_links'),3);
+    const fa=get('footer_about'), cp=get('copyright');
+    const faEl=document.getElementById('footerAboutDisplay'), cpEl=document.getElementById('copyrightDisplay');
+    if(faEl&&fa) faEl.textContent=fa;
+    if(cpEl&&cp) cpEl.textContent=cp;
+  } catch(e){ /* fail silently — defaults show */ }
+})();
+</script>
 </body>
 </html>
