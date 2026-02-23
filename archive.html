@@ -8,8 +8,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400;1,600&family=Spectral:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <!-- ✅ SUPABASE: Paste your credentials below -->
-<script src="config.js"></script>
-<script src="nav.js"></script>
+<script>
+  const SUPABASE_URL  = 'YOUR_SUPABASE_URL';   // e.g. https://abcdef.supabase.co
+  const SUPABASE_ANON = 'YOUR_SUPABASE_ANON_KEY'; // from Project Settings → API
+  const STRIPE_DIGITAL = 'https://buy.stripe.com/YOUR_DIGITAL_LINK';
+  const STRIPE_PREMIUM = 'https://buy.stripe.com/YOUR_PREMIUM_LINK';
+</script>
 
 <style>
 :root{--gold:#C9A84C;--gold-light:#E8C97A;--gold-pale:#FDF6E3;--terra:#B85C38;--terra-dark:#8C3A1F;--ink:#1A1208;--ink-mid:#3D2B1F;--ink-soft:#6B5344;--cream:#FAF7F0;--cream-dark:#F0EAD9;--border:#D4C4A0;--bg:var(--cream);--surface:#fff;--text:var(--ink);--text-soft:var(--ink-soft);--nav-bg:var(--ink);--nav-text:var(--cream);--header-bg:var(--cream-dark);--divider:var(--border);--card-bg:#fff}
@@ -461,18 +465,20 @@ footer{background:var(--ink);color:#888;padding:40px 24px 24px;margin-top:48px}
 
 <nav class="top-nav">
   <div class="nav-left">
-    <a href="markets.html"    class="nav-link">Markets</a>
-    <a href="politics.html"   class="nav-link">Politics</a>
-    <a href="economy.html"    class="nav-link">Economy</a>
-    <a href="energy.html"     class="nav-link">Energy</a>
-    <a href="technology.html" class="nav-link">Tech</a>
-    <a href="opinion.html"    class="nav-link">Opinion</a>
+    <a href="index.html"      class="nav-link" id="nav-home">Home</a>
+    <a href="markets.html"    class="nav-link" id="nav-markets">Markets</a>
+    <a href="politics.html"   class="nav-link" id="nav-politics">Politics</a>
+    <a href="economy.html"    class="nav-link" id="nav-economy">Economy</a>
+    <a href="energy.html"     class="nav-link" id="nav-energy">Energy</a>
+    <a href="technology.html" class="nav-link" id="nav-technology">Tech</a>
+    <a href="opinion.html"    class="nav-link" id="nav-opinion">Opinion</a>
+    <a href="archive.html"    class="nav-link" id="nav-archive" style="color:var(--gold);border-bottom:2px solid var(--gold)">Archive</a>
   </div>
   <div class="nav-right">
     <input class="nav-search" type="text" placeholder="Search AMI…" oninput="searchArticles(this.value)">
-    <a href="about.html"      class="nav-link" style="border-left:1px solid #333">About</a>
-    <a href="membership.html" class="nav-link">Membership</a>
-    <a href="contact.html"    class="nav-link">Contact</a>
+    <a href="about.html"      class="nav-link" id="nav-about">About</a>
+    <a href="membership.html" class="nav-link" id="nav-membership">Membership</a>
+    <a href="contact.html"    class="nav-link" id="nav-contact">Contact</a>
     <button class="dark-toggle" onclick="toggleDark()" id="themeBtn">🌙</button>
     <a href="membership.html" id="navSubscribeBtn" class="btn-subscribe">Subscribe</a>
   </div>
@@ -500,49 +506,65 @@ footer{background:var(--ink);color:#888;padding:40px 24px 24px;margin-top:48px}
 </div></div>
 
 <div class="main-wrapper">
-  <main><style>
-.arc-hero{margin-bottom:28px}
-.arc-hero h1{font-family:'Playfair Display',serif;font-size:clamp(22px,4vw,38px);font-weight:800;margin-bottom:6px}
-.arc-hero p{font-size:15px;color:var(--text-soft);font-style:italic;font-weight:300}
-.arc-filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
-.arc-filter-btn{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;
-  padding:7px 14px;border:1px solid var(--divider);background:var(--card-bg);color:var(--text-soft);
-  cursor:pointer;border-radius:2px;transition:all .2s}
-.arc-filter-btn:hover,.arc-filter-btn.active{background:var(--gold);color:var(--ink);border-color:var(--gold)}
-.kicker-bar{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
-</style>
-<div class="arc-hero">
-  <div class="kicker-bar">Archive</div>
-  <h1>All Stories</h1>
-  <p>Browse the complete AMI archive — every article, analysis, and intelligence brief.</p>
-</div>
-<div class="arc-filters" id="arcFilters">
-  <button class="arc-filter-btn active" onclick="arcFilter(this,'all')">All</button>
-  <button class="arc-filter-btn" onclick="arcFilter(this,'Markets')">Markets</button>
-  <button class="arc-filter-btn" onclick="arcFilter(this,'Politics')">Politics</button>
-  <button class="arc-filter-btn" onclick="arcFilter(this,'Economy')">Economy</button>
-  <button class="arc-filter-btn" onclick="arcFilter(this,'Energy')">Energy</button>
-  <button class="arc-filter-btn" onclick="arcFilter(this,'Technology')">Technology</button>
-  <button class="arc-filter-btn" onclick="arcFilter(this,'Opinion')">Opinion</button>
-  <button class="arc-filter-btn" onclick="arcFilter(this,'West Africa')">West Africa</button>
-  <button class="arc-filter-btn" onclick="arcFilter(this,'East Africa')">East Africa</button>
-</div>
-<div class="archive-header" id="archiveHeader" style="display:flex">
-  <span class="archive-title" id="archiveTitle">All Articles</span>
-  <span class="archive-count" id="archiveCount"></span>
-</div>
-<div id="articleCardsContainer"></div>
-<div id="paginationBar" class="pagination-bar"></div>
-<script>
-function arcFilter(btn, section) {
-  document.querySelectorAll('.arc-filter-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  filterActive = section;
-  currentPage  = 1;
-  applyFilters();
-}
-</script>
-</main>
+  <main>
+    <!-- Hero -->
+    <div class="hero-grid" id="heroGrid">
+      <!-- Skeleton loader -->
+      <div class="hero-main" style="background:var(--card-bg)">
+        <div class="hero-img-placeholder">Loading…</div>
+        <div class="hero-content">
+          <div class="skeleton skel-headline" style="width:90%;height:36px"></div>
+          <div class="skeleton skel-text" style="margin-top:16px"></div>
+          <div class="skeleton skel-text"></div>
+          <div class="skeleton skel-text-short"></div>
+        </div>
+      </div>
+      <div class="hero-side-1" style="background:var(--card-bg)">
+        <div class="skeleton skel-headline"></div>
+        <div class="skeleton skel-text"></div>
+        <div class="skeleton skel-text-short"></div>
+      </div>
+      <div class="hero-side-2" style="background:var(--card-bg)">
+        <div class="skeleton skel-headline"></div>
+        <div class="skeleton skel-text"></div>
+        <div class="skeleton skel-text-short"></div>
+      </div>
+    </div>
+
+    <!-- Markets strip -->
+    <div class="markets-strip">
+      <div class="strip-title">African Markets at a Glance</div>
+      <div class="markets-grid" id="marketsDisplay">
+        <div class="skeleton" style="height:60px;border-radius:4px"></div>
+        <div class="skeleton" style="height:60px;border-radius:4px"></div>
+        <div class="skeleton" style="height:60px;border-radius:4px"></div>
+        <div class="skeleton" style="height:60px;border-radius:4px"></div>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <h2 class="section-title">Latest News</h2><div class="section-line"></div>
+      <a href="#" class="view-more" id="viewAllLink">View all →</a>
+    </div>
+    <div class="archive-header" id="archiveHeader" style="display:none">
+      <span class="archive-title" id="archiveTitle">All Articles</span>
+      <span class="archive-count" id="archiveCount"></span>
+    </div>
+    <div id="articleCardsContainer">
+      <div class="article-row">
+        <div class="article-card"><div class="card-img-placeholder">⏳</div><div class="card-content"><div class="skeleton skel-headline"></div><div class="skeleton skel-text"></div></div></div>
+        <div class="article-card"><div class="card-img-placeholder">⏳</div><div class="card-content"><div class="skeleton skel-headline"></div><div class="skeleton skel-text"></div></div></div>
+        <div class="article-card"><div class="card-img-placeholder">⏳</div><div class="card-content"><div class="skeleton skel-headline"></div><div class="skeleton skel-text"></div></div></div>
+      </div>
+    </div>
+
+    <!-- Most Read -->
+    <div id="paginationBar" class="pagination-bar"></div>
+    <div class="section-header" style="margin-top:32px">
+      <h2 class="section-title">Most Read</h2><div class="section-line"></div>
+    </div>
+    <div id="mostReadContainer" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--divider);border:1px solid var(--divider);margin-bottom:32px"></div>
+  </main>
 
   <aside>
     <div class="newsletter-widget">
@@ -577,20 +599,23 @@ function arcFilter(btn, section) {
           <li><a href="economy.html">Economy</a></li>
           <li><a href="politics.html">Politics</a></li>
           <li><a href="energy.html">Energy</a></li>
+          <li><a href="technology.html">Technology</a></li>
+          <li><a href="opinion.html">Opinion</a></li>
         </ul></div>
       <div><div class="footer-col-title">Regions</div>
         <ul class="footer-links">
-          <li><a href="?section=West+Africa"     onclick="filterSection(event,'West Africa');window.scrollTo(0,0)">West Africa</a></li>
-          <li><a href="?section=East+Africa"     onclick="filterSection(event,'East Africa');window.scrollTo(0,0)">East Africa</a></li>
-          <li><a href="?section=North+Africa"    onclick="filterSection(event,'North Africa');window.scrollTo(0,0)">North Africa</a></li>
-          <li><a href="?section=Southern+Africa" onclick="filterSection(event,'Southern Africa');window.scrollTo(0,0)">Southern Africa</a></li>
+          <li><a href="west-africa.html">West Africa</a></li>
+          <li><a href="east-africa.html">East Africa</a></li>
+          <li><a href="north-africa.html">North Africa</a></li>
+          <li><a href="southern-africa.html">Southern Africa</a></li>
         </ul></div>
       <div><div class="footer-col-title">Company</div>
         <ul class="footer-links">
-          <li><a href="about.html">About AMI</a></li>
+          <li><a href="about.html"      id="footerAbout">About AMI</a></li>
           <li><a href="membership.html">Membership</a></li>
-          <li><a href="contact.html">Contact</a></li>
-          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="careers.html"    id="footerCareers">Careers</a></li>
+          <li><a href="contact.html"    id="footerContact">Contact</a></li>
+          <li><a href="privacy.html"    id="footerPrivacy">Privacy Policy</a></li>
         </ul></div>
     </div>
     <div class="footer-bottom">
@@ -679,40 +704,6 @@ const db = {
   }
 };
 
-
-// ════════════════════════════════════════════════════════════
-// PAGE DETECTION — auto-filter and hide homepage sections
-// when on a section page (markets.html, politics.html, etc.)
-// ════════════════════════════════════════════════════════════
-(function(){
-  const p = window.location.pathname.split('/').pop().replace('.html','');
-  const SECTION_MAP = {
-    markets:'Markets', politics:'Politics', economy:'Economy',
-    energy:'Energy', technology:'Technology', opinion:'Opinion',
-    'west-africa':'West Africa', 'east-africa':'East Africa',
-    'north-africa':'North Africa', 'southern-africa':'Southern Africa',
-    archive:'archive'
-  };
-  if(SECTION_MAP[p]){
-    window.AUTO_SECTION = SECTION_MAP[p];
-    document.addEventListener('DOMContentLoaded',()=>{
-      // Hide homepage-only blocks
-      ['heroGrid','mostReadContainer'].forEach(id=>{
-        const el=document.getElementById(id);
-        if(el) el.style.display='none';
-      });
-      document.querySelectorAll('.markets-strip,.section-header:first-of-type')
-        .forEach(el=>{ if(el.closest('main')) el.style.display='none'; });
-      // Show section name as page heading
-      const hdr = document.createElement('div');
-      hdr.style.cssText='padding:20px 0 4px;font-family:"Playfair Display",serif;font-size:28px;font-weight:700';
-      hdr.innerHTML = SECTION_MAP[p]+' <span style="color:var(--gold);font-size:14px;font-family:'DM Mono',monospace;font-weight:400;vertical-align:middle">All Coverage →</span>';
-      const main = document.querySelector('main');
-      if(main) main.insertBefore(hdr, main.firstChild);
-    });
-  }
-})();
-
 // ════════════════════════════════════════════════════════════
 // STATE
 // ════════════════════════════════════════════════════════════
@@ -747,7 +738,6 @@ async function init() {
   const params = new URLSearchParams(window.location.search);
   currentPage  = parseInt(params.get('page')) || 1;
   if(params.get('section')) filterActive = params.get('section');
-  if(window.AUTO_SECTION && !params.get('section')) filterActive = window.AUTO_SECTION;
   if(params.get('q'))       searchQuery  = params.get('q');
 
   try {
@@ -1507,6 +1497,9 @@ function showConfigBanner(){
 // ════════════════════════════════════════════════════════════
 // START
 // ════════════════════════════════════════════════════════════
+// Archive: show all articles
+filterActive = "all";
+showAll = true;
 init();
 </script>
 </body>

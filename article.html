@@ -8,8 +8,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400;1,600&family=Spectral:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 
 <!-- ✅ SUPABASE: Paste your credentials below -->
-<script src="config.js"></script>
-<script src="nav.js"></script>
+<script>
+  const SUPABASE_URL  = 'YOUR_SUPABASE_URL';
+  const SUPABASE_ANON = 'YOUR_SUPABASE_ANON_KEY';
+  const STRIPE_DIGITAL = 'https://buy.stripe.com/YOUR_DIGITAL_LINK';
+  const STRIPE_PREMIUM = 'https://buy.stripe.com/YOUR_PREMIUM_LINK';
+</script>
 
 <style>
 :root{--gold:#C9A84C;--gold-light:#E8C97A;--gold-pale:#FDF6E3;--terra:#B85C38;--terra-dark:#8C3A1F;--ink:#1A1208;--ink-mid:#3D2B1F;--ink-soft:#6B5344;--cream:#FAF7F0;--cream-dark:#F0EAD9;--border:#D4C4A0;--bg:var(--cream);--surface:#fff;--text:var(--ink);--text-soft:var(--ink-soft);--nav-bg:var(--ink);--nav-text:var(--cream);--header-bg:var(--cream-dark);--divider:var(--border);--card-bg:#fff}
@@ -271,206 +275,49 @@ footer{background:var(--ink);color:#888;padding:40px 24px 24px;margin-top:48px}
 .archive-count{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft)}
 
 </style>
+
+<style>
+.article-full { max-width: 760px; margin: 0 auto; padding: 40px 24px 80px; }
+.article-full .af-kicker { font-family:'DM Mono',monospace; font-size:11px; letter-spacing:.15em; text-transform:uppercase; color:var(--terra); margin-bottom:14px; }
+.article-full .af-headline { font-family:'Playfair Display',serif; font-size:clamp(26px,4vw,44px); font-weight:800; line-height:1.15; color:var(--text); margin-bottom:18px; }
+.article-full .af-standfirst { font-size:18px; line-height:1.7; color:var(--text-soft); margin-bottom:22px; font-style:italic; font-weight:300; border-left:3px solid var(--gold); padding-left:18px; }
+.article-full .af-meta { font-family:'DM Mono',monospace; font-size:11px; color:var(--text-soft); display:flex; align-items:center; gap:18px; flex-wrap:wrap; padding:18px 0; border-top:1px solid var(--divider); border-bottom:1px solid var(--divider); margin-bottom:28px; }
+.article-full .af-author { display:flex; align-items:center; gap:10px; }
+.article-full .af-avatar { width:38px; height:38px; border-radius:50%; background:var(--terra); color:white; display:flex; align-items:center; justify-content:center; font-family:'Playfair Display',serif; font-size:14px; font-weight:700; flex-shrink:0; object-fit:cover; }
+.article-full .af-author-name { color:var(--terra); font-weight:500; }
+.article-full .af-hero { width:100%; max-height:480px; object-fit:cover; display:block; margin-bottom:32px; border:1px solid var(--divider); }
+.article-full .af-body { font-size:17px; line-height:1.85; color:var(--text); }
+.article-full .af-body p { margin-bottom:1.4em; }
+.article-full .af-body h2 { font-family:'Playfair Display',serif; font-size:22px; font-weight:700; margin:1.8em 0 .7em; color:var(--text); }
+.article-full .af-body h3 { font-family:'Playfair Display',serif; font-size:18px; font-weight:600; margin:1.5em 0 .6em; }
+.article-full .af-body blockquote { border-left:4px solid var(--gold); padding:12px 20px; margin:1.5em 0; color:var(--text-soft); font-style:italic; font-size:18px; background:var(--gold-pale); }
+.article-full .af-tag { background:var(--gold-pale); color:var(--ink-mid); padding:3px 10px; font-family:'DM Mono',monospace; font-size:9px; letter-spacing:.1em; text-transform:uppercase; border-left:2px solid var(--gold); }
+.back-link { display:inline-flex; align-items:center; gap:8px; font-family:'DM Mono',monospace; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-soft); margin-bottom:24px; transition:color .2s; }
+.back-link:hover { color:var(--gold); }
+.loading-art { text-align:center; padding:80px 24px; font-family:'DM Mono',monospace; color:var(--text-soft); font-size:12px; }
+</style>
+
 </head>
 <body>
 
-<div class="toast" id="toast"></div>
-
-<!-- ═══ ADMIN PANEL ════════════════════════════════════════ -->
-<div class="admin-overlay" id="adminOverlay">
-  <div class="admin-panel">
-    <div class="admin-header">
-      <div class="admin-logo">⚙ AMI Admin</div>
-      <div id="dbStatus" class="admin-status loading">● Connecting…</div>
-      <button class="admin-close-btn" onclick="closeAdmin()">×</button>
-    </div>
-    <div class="admin-tabs">
-      <div class="admin-tab active" onclick="switchTab(event,'articles')">Articles</div>
-      <div class="admin-tab" onclick="switchTab(event,'markets')">Markets</div>
-      <div class="admin-tab" onclick="switchTab(event,'breaking')">Breaking</div>
-      <div class="admin-tab" onclick="switchTab(event,'settings')">Settings</div>
-      <div class="admin-tab" onclick="switchTab(event,'subscribers')">Subscribers</div>
-    </div>
-
-    <!-- ARTICLES TAB -->
-    <div class="admin-section active" id="tab-articles">
-      <div class="admin-section-title">➕ Publish New Article</div>
-      <details style="border:1px solid #3D2B1F;border-radius:2px;overflow:hidden;margin-bottom:20px">
-        <summary style="padding:12px 14px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#C9A84C;cursor:pointer;background:#1A1208;list-style:none">＋ New Article Form</summary>
-        <div style="padding:16px;background:#0F0A06">
-          <div class="form-group"><label class="form-label">Placement</label>
-            <select class="form-select" id="new-placement">
-              <option value="card">Article Card (Latest News)</option>
-              <option value="hero">Hero — Main Feature</option>
-              <option value="side1">Side Story 1</option>
-              <option value="side2">Side Story 2</option>
-            </select></div>
-          <div class="form-group"><label class="form-label">Section / Region</label>
-            <input class="form-input" id="new-section" placeholder="e.g. West Africa · Politics"></div>
-          <div class="form-group"><label class="form-label">Headline</label>
-            <textarea class="form-textarea" id="new-headline" style="min-height:65px" placeholder="Article headline..."></textarea></div>
-          <div class="form-group"><label class="form-label">Standfirst / Summary</label>
-            <textarea class="form-textarea" id="new-standfirst" placeholder="2–3 sentence intro shown on homepage..."></textarea></div>
-          <div class="form-group"><label class="form-label">Full Article Body (HTML supported)</label>
-            <textarea class="form-textarea" id="new-body" style="min-height:160px;font-family:'DM Mono',monospace;font-size:11px" placeholder="Write the full article here...&#10;&#10;Use &lt;p&gt; for paragraphs, &lt;h2&gt; for headings, &lt;blockquote&gt; for quotes.&#10;Plain text also works — paragraphs are auto-detected."></textarea></div>
-          <!-- Hero Image Upload -->
-          <div class="form-group"><label class="form-label">Hero Image</label>
-            <div class="img-upload-area" id="heroUploadArea">
-              <input type="file" accept="image/*" id="new-hero-file" onchange="previewImage(this,'heroPreview','heroUploadArea')">
-              <div class="img-upload-label">📷 Click or drag to upload hero image</div>
-              <img id="heroPreview" class="img-preview">
-            </div>
-            <input class="form-input" id="new-hero-url" placeholder="Or paste image URL directly" style="font-size:11px;font-family:'DM Mono',monospace">
-          </div>
-          <div class="form-row">
-            <div class="form-group" style="margin:0"><label class="form-label">Author Name</label>
-              <input class="form-input" id="new-author" placeholder="Full name"></div>
-            <div class="form-group" style="margin:0"><label class="form-label">Author Role</label>
-              <input class="form-input" id="new-author-role" placeholder="e.g. West Africa Correspondent"></div>
-          </div>
-          <!-- Author Photo Upload -->
-          <div class="form-group" style="margin-top:10px"><label class="form-label">Author Photo (optional)</label>
-            <div class="img-upload-area" id="authorUploadArea">
-              <input type="file" accept="image/*" id="new-author-file" onchange="previewImage(this,'authorPreview','authorUploadArea')">
-              <div class="img-upload-label">👤 Upload author photo</div>
-              <img id="authorPreview" class="img-preview">
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group" style="margin:0"><label class="form-label">Read Time</label>
-              <input class="form-input" id="new-readtime" placeholder="5 min"></div>
-            <div class="form-group" style="margin:0"><label class="form-label">Tags (comma-separated)</label>
-              <input class="form-input" id="new-tags" placeholder="Nigeria, Markets, Policy"></div>
-          </div>
-          <label style="font-family:'DM Mono',monospace;font-size:10px;color:#888;display:flex;align-items:center;gap:6px;margin-top:12px">
-            <input type="checkbox" id="new-locked"> 🔒 Premium — locked behind paywall</label>
-          <button class="btn-save" id="publishBtn" onclick="publishArticle()" style="margin-top:14px">📢 Publish to Site →</button>
-        </div>
-      </details>
-
-      <div class="admin-section-title">📰 Live Articles</div>
-      <div id="adminArticleList" style="font-family:'DM Mono',monospace;font-size:11px;color:#888">Loading articles…</div>
-    </div>
-
-    <!-- MARKETS TAB -->
-    <div class="admin-section" id="tab-markets">
-      <div class="admin-section-title">Update Market Data</div>
-      <div class="market-edit-grid" id="marketEditGrid">
-        <div style="color:#888;font-family:'DM Mono',monospace;font-size:11px">Loading…</div>
-      </div>
-      <button class="btn-save" onclick="saveMarkets()" style="margin-top:18px">💾 Save All Markets →</button>
-    </div>
-
-    <!-- BREAKING NEWS TAB -->
-    <div class="admin-section" id="tab-breaking">
-      <div class="admin-section-title">Breaking News Banner</div>
-      <div class="form-group"><label class="form-label">Banner Text</label>
-        <textarea class="form-textarea" id="breakingText" placeholder="Breaking news text..."></textarea></div>
-      <div class="setting-row" style="border:none;padding:8px 0 16px">
-        <div><div class="setting-label">Show Banner</div></div>
-        <label class="toggle-switch"><input type="checkbox" id="showBreaking" checked><span class="toggle-slider"></span></label>
-      </div>
-      <button class="btn-save" onclick="saveBreaking()">💾 Update Breaking News →</button>
-    </div>
-
-    <!-- SETTINGS TAB -->
-    <div class="admin-section" id="tab-settings">
-      <div class="admin-section-title">Site Settings</div>
-      <div class="form-group"><label class="form-label">Publication Name</label>
-        <input class="form-input" id="siteName" value="African Market Intelligence"></div>
-      <div class="form-group"><label class="form-label">Tagline</label>
-        <input class="form-input" id="siteTagline" value="The Continent's Premium Financial & Business Publication"></div>
-      <div class="form-group"><label class="form-label">Edition Label</label>
-        <input class="form-input" id="editionLabel" value="Pan-African Edition"></div>
-      <div class="setting-row">
-        <div><div class="setting-label">Paywall Active</div><div class="setting-desc">Auto-show after 30 seconds</div></div>
-        <label class="toggle-switch"><input type="checkbox" id="paywallActive" checked><span class="toggle-slider"></span></label>
-      </div>
-      <div class="setting-row" style="border:none">
-        <div><div class="setting-label">Dark Mode Default</div></div>
-        <label class="toggle-switch"><input type="checkbox" id="darkDefault" onchange="toggleDark()"><span class="toggle-slider"></span></label>
-      </div>
-      <button class="btn-save" onclick="saveSettings()">💾 Save Settings →</button>
-    </div>
-  </div>
-
-  <!-- SUBSCRIBERS TAB -->
-  <div class="admin-section" id="tab-subscribers">
-    <div class="admin-section-title">Newsletter Subscribers</div>
-    <div style="display:flex;gap:10px;margin-bottom:16px">
-      <button class="btn-save" style="flex:1;margin:0" onclick="loadSubscribers()">Refresh List</button>
-      <button class="btn-save" style="flex:1;margin:0;background:#1B3A6B" onclick="exportSubscribersCSV()">Export CSV</button>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px">
-      <div style="background:#0F0A06;border:1px solid #3D2B1F;border-top:2px solid #C9A84C;padding:14px;text-align:center">
-        <div id="subTotal" style="font-size:24px;font-weight:700;color:#EDE5D5;font-family:Georgia,serif">-</div>
-        <div style="font-size:9px;color:#888;text-transform:uppercase;letter-spacing:.1em;margin-top:4px">Total</div>
-      </div>
-      <div style="background:#0F0A06;border:1px solid #3D2B1F;border-top:2px solid #4CAF50;padding:14px;text-align:center">
-        <div id="subThisWeek" style="font-size:24px;font-weight:700;color:#4CAF50;font-family:Georgia,serif">-</div>
-        <div style="font-size:9px;color:#888;text-transform:uppercase;letter-spacing:.1em;margin-top:4px">This Week</div>
-      </div>
-      <div style="background:#0F0A06;border:1px solid #3D2B1F;border-top:2px solid #B85C38;padding:14px;text-align:center">
-        <div id="subThisMonth" style="font-size:24px;font-weight:700;color:#B85C38;font-family:Georgia,serif">-</div>
-        <div style="font-size:9px;color:#888;text-transform:uppercase;letter-spacing:.1em;margin-top:4px">This Month</div>
-      </div>
-    </div>
-    <div style="background:#0F0A06;border:1px solid #3D2B1F;overflow:hidden">
-      <div style="display:grid;grid-template-columns:1fr 80px 100px;padding:8px 14px;border-bottom:1px solid #3D2B1F;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:#555">
-        <span>Email</span><span>Source</span><span>Date</span>
-      </div>
-      <div id="subscriberList" style="max-height:380px;overflow-y:auto;font-size:11px">
-        <div style="padding:24px;text-align:center;color:#555">Click Refresh to load subscribers</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Dashboard right panel -->
-  <div class="admin-right">
-    <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#EDE5D5;margin-bottom:6px">Dashboard</div>
-    <div style="font-family:'DM Mono',monospace;font-size:10px;color:#888;letter-spacing:.08em;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid #3D2B1F">AFRICAN MARKET INTELLIGENCE · CONTENT MANAGEMENT</div>
-    <div class="stat-grid">
-      <div class="stat-card"><div class="stat-num" id="statArticles">—</div><div class="stat-label">Live Articles</div></div>
-      <div class="stat-card"><div class="stat-num" id="statLocked">—</div><div class="stat-label">Premium Locked</div></div>
-      <div class="stat-card"><div class="stat-num" id="statMarkets">8</div><div class="stat-label">Market Indices</div></div>
-      <div class="stat-card"><div class="stat-num" id="statImages">—</div><div class="stat-label">Images Stored</div></div>
-      <div class="stat-card" style="border-top-color:#C9A84C"><div class="stat-num" id="statSubscribers">—</div><div class="stat-label">Subscribers</div></div>
-    </div>
-    <div style="background:#0F0A06;border:1px solid #3D2B1F;padding:18px">
-      <div style="font-family:'DM Mono',monospace;font-size:11px;color:#C9A84C;letter-spacing:.15em;text-transform:uppercase;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #3D2B1F">Supabase Connection</div>
-      <div style="font-size:13px;color:#A89070;line-height:1.8">
-        <div>📡 URL: <span id="dbUrl" style="color:#EDE5D5;font-family:'DM Mono',monospace;font-size:10px">—</span></div>
-        <div style="margin-top:8px;font-family:'DM Mono',monospace;font-size:10px;color:#555;line-height:1.8">
-          To configure: open index.html<br>and paste your credentials at the top.
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ═══ SITE ═══════════════════════════════════════════════ -->
-<div class="breaking-banner" id="breakingBanner" style="display:none">
-  <span class="breaking-label">Breaking</span>
-  <span id="breakingTextDisplay"></span>
-  <button class="breaking-close" onclick="this.parentElement.style.display='none'">×</button>
-</div>
-
 <div class="ticker-bar"><div class="ticker-inner" id="tickerInner">
-  <span class="ticker-item"><span class="sym">Loading markets…</span></span>
+  <span class="ticker-item"><span class="sym">African Market Intelligence</span></span>
 </div></div>
 
 <nav class="top-nav">
   <div class="nav-left">
-    <a href="markets.html"    class="nav-link">Markets</a>
-    <a href="politics.html"   class="nav-link">Politics</a>
-    <a href="economy.html"    class="nav-link">Economy</a>
-    <a href="energy.html"     class="nav-link">Energy</a>
-    <a href="technology.html" class="nav-link">Tech</a>
-    <a href="opinion.html"    class="nav-link">Opinion</a>
+    <a href="index.html"      class="nav-link" id="nav-home">Home</a>
+    <a href="markets.html"    class="nav-link" id="nav-markets">Markets</a>
+    <a href="politics.html"   class="nav-link" id="nav-politics">Politics</a>
+    <a href="economy.html"    class="nav-link" id="nav-economy">Economy</a>
+    <a href="energy.html"     class="nav-link" id="nav-energy">Energy</a>
+    <a href="technology.html" class="nav-link" id="nav-technology">Tech</a>
+    <a href="opinion.html"    class="nav-link" id="nav-opinion">Opinion</a>
+    <a href="archive.html"    class="nav-link" id="nav-archive">Archive</a>
   </div>
   <div class="nav-right">
     <input class="nav-search" type="text" placeholder="Search AMI…" oninput="searchArticles(this.value)">
-    <a href="about.html"      class="nav-link" style="border-left:1px solid #333">About</a>
+    <a href="about.html"      class="nav-link">About</a>
     <a href="membership.html" class="nav-link">Membership</a>
     <a href="contact.html"    class="nav-link">Contact</a>
     <button class="dark-toggle" onclick="toggleDark()" id="themeBtn">🌙</button>
@@ -479,1082 +326,124 @@ footer{background:var(--ink);color:#888;padding:40px 24px 24px;margin-top:48px}
 </nav>
 
 <header class="masthead">
-  <div class="masthead-name" id="siteNameDisplay" onclick="handleLogoClick()" style="cursor:default" title="">African Market <span>Intelligence</span></div>
-  <div class="masthead-tagline" id="siteTaglineDisplay">The Continent's Premium Financial & Business Publication</div>
+  <div class="masthead-name"><a href="index.html" style="color:inherit">African Market <span>Intelligence</span></a></div>
+  <div class="masthead-tagline">The Continent's Premium Financial &amp; Business Publication</div>
   <div class="masthead-meta">
     <span id="mastDate"></span>
-    <span class="edition-badge" id="editionDisplay">Pan-African Edition</span>
-    <span id="locationDisplay">Est. 2024 · Nairobi · Lagos · Cairo · Johannesburg</span>
+    <span class="edition-badge">Pan-African Edition</span>
+    <span>Est. 2024 · Nairobi · Lagos · Cairo · Johannesburg</span>
   </div>
 </header>
 
-<div class="section-nav"><div class="section-nav-inner">
-  <a href="#" class="section-tab active" onclick="filterSection(event,'all')">All Stories</a>
-  <a href="#" class="section-tab" onclick="filterSection(event,'West Africa')">West Africa</a>
-  <a href="#" class="section-tab" onclick="filterSection(event,'East Africa')">East Africa</a>
-  <a href="#" class="section-tab" onclick="filterSection(event,'Southern Africa')">Southern Africa</a>
-  <a href="#" class="section-tab" onclick="filterSection(event,'North Africa')">North Africa</a>
-  <a href="#" class="section-tab" onclick="filterSection(event,'Commodities')">Commodities</a>
-  <a href="#" class="section-tab" onclick="filterSection(event,'Technology')">Technology</a>
-  <a href="#" class="section-tab" onclick="filterSection(event,'Markets')">Markets</a>
-</div></div>
+<script>document.getElementById('mastDate').textContent = new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});</script>
 
-<div class="main-wrapper">
-  <main><style>
-.article-reader{max-width:720px}
-.art-kicker{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;display:flex;align-items:center;gap:12px}
-.art-section-badge{background:var(--terra);color:white;padding:2px 10px;font-size:10px;letter-spacing:.1em}
-.art-headline{font-family:'Playfair Display',serif;font-size:clamp(24px,4vw,42px);font-weight:800;line-height:1.15;margin-bottom:16px;color:var(--text)}
-.art-standfirst{font-size:17px;line-height:1.7;color:var(--text-soft);font-style:italic;font-weight:300;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--divider)}
-.art-meta{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-soft);display:flex;gap:20px;flex-wrap:wrap;margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--divider)}
-.art-meta .author{color:var(--terra)}
-.art-hero-img{width:100%;max-height:420px;object-fit:cover;margin-bottom:8px;display:block}
-.art-img-caption{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);margin-bottom:28px}
-.art-body{font-size:16px;line-height:1.85;color:var(--text)}
-.art-body p{margin-bottom:20px}
-.art-body h2{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;margin:32px 0 12px;color:var(--text)}
-.art-body h3{font-family:'Playfair Display',serif;font-size:18px;font-weight:600;margin:24px 0 10px;color:var(--text)}
-.art-body blockquote{border-left:3px solid var(--gold);margin:24px 0;padding:4px 0 4px 20px;font-style:italic;color:var(--text-soft);font-size:17px;line-height:1.7}
-.art-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:32px;padding-top:24px;border-top:1px solid var(--divider)}
-.art-tag{background:var(--gold-pale);color:var(--ink-mid);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:5px 12px;border-left:2px solid var(--gold)}
-[data-theme="dark"] .art-tag{background:#2A1F10;color:var(--gold-light)}
-.art-loading{padding:60px 0;text-align:center;font-family:'DM Mono',monospace;font-size:12px;color:var(--text-soft);letter-spacing:.1em}
-.art-error{padding:60px 0;text-align:center}
-.art-error h2{font-family:'Playfair Display',serif;font-size:24px;margin-bottom:8px}
-.art-error p{font-size:14px;color:var(--text-soft);margin-bottom:20px}
-.back-link{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--terra);display:inline-flex;align-items:center;gap:6px;margin-bottom:24px}
-.back-link:hover{color:var(--gold)}
-.locked-notice{background:var(--gold-pale);border:1px solid var(--gold);border-left:4px solid var(--gold);padding:20px 24px;margin:24px 0;font-size:14px;color:var(--ink-mid);line-height:1.7}
-[data-theme="dark"] .locked-notice{background:#2A1F10;color:var(--gold-light)}
-.locked-notice strong{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:6px}
-</style>
-<div class="article-reader" id="articleReader">
-  <div class="art-loading" id="artLoading">Loading article…</div>
+
+<a href="javascript:history.back()" class="back-link" style="display:block;padding:20px 24px 0;max-width:760px;margin:0 auto">← Back</a>
+<div class="article-full" id="articleFull">
+  <div class="loading-art">Loading article…</div>
 </div>
-<script>
-(async function(){
-  const params = new URLSearchParams(window.location.search);
-  const id = params.get('id');
-  const reader = document.getElementById('articleReader');
-  const loading = document.getElementById('artLoading');
 
-  if(!id){
-    reader.innerHTML = '<div class="art-error"><h2>Article not found</h2><p>No article ID was provided.</p><a href="index.html" class="back-link">← Back to Home</a></div>';
-    return;
-  }
-
-  if(typeof SUPABASE_URL === 'undefined' || SUPABASE_URL === 'YOUR_SUPABASE_URL'){
-    reader.innerHTML = '<div class="art-error"><h2>Not configured</h2><p>Add your Supabase credentials to config.js to load articles.</p><a href="index.html" class="back-link">← Back to Home</a></div>';
-    return;
-  }
-
-  try {
-    const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/articles?id=eq.${encodeURIComponent(id)}&select=*&limit=1`,
-      { headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer ' + SUPABASE_ANON } }
-    );
-    const data = await res.json();
-    const a = data[0];
-
-    if(!a){
-      reader.innerHTML = '<div class="art-error"><h2>Article not found</h2><p>This article may have been removed or the link is incorrect.</p><a href="index.html" class="back-link">← Back to Home</a></div>';
-      return;
-    }
-
-    document.title = (a.headline || 'Article') + ' | African Market Intelligence';
-
-    const isLocked = a.is_locked;
-    const bodyHtml = isLocked
-      ? `<div class="locked-notice"><strong>Premium Content</strong>This article is available to AMI subscribers. Subscribe to read the full analysis.<br><br><a href="membership.html" style="color:var(--terra);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase">Subscribe to read →</a></div>`
-      : (a.body || a.content || '<p>Full article content not available.</p>');
-
-    reader.innerHTML = `
-      <a href="javascript:history.back()" class="back-link">← Back</a>
-      <div class="art-kicker">
-        <span class="art-section-badge">${a.section || ''}</span>
-        ${a.published_date || ''}
-        ${a.read_time ? '· ' + a.read_time : ''}
-        ${isLocked ? '· <span style="color:var(--gold)">🔒 Premium</span>' : ''}
-      </div>
-      <h1 class="art-headline">${a.headline || ''}</h1>
-      ${a.standfirst ? `<p class="art-standfirst">${a.standfirst}</p>` : ''}
-      <div class="art-meta">
-        <span class="author">${a.author_name || 'ABTA Research Team'}</span>
-        ${a.published_date ? `<span>${a.published_date}</span>` : ''}
-        ${a.read_time ? `<span>${a.read_time} read</span>` : ''}
-      </div>
-      ${a.hero_image ? `<img src="${a.hero_image}" class="art-hero-img" onerror="this.style.display='none'"><div class="art-img-caption">${a.image_caption || ''}</div>` : ''}
-      <div class="art-body">${bodyHtml}</div>
-      ${a.tags ? `<div class="art-tags">${a.tags.split(',').map(t=>`<span class="art-tag">${t.trim()}</span>`).join('')}</div>` : ''}
-    `;
-  } catch(err) {
-    reader.innerHTML = `<div class="art-error"><h2>Could not load article</h2><p>${err.message}</p><a href="index.html" class="back-link">← Back to Home</a></div>`;
-  }
-})();
-</script>
-</main>
-
-  <aside>
-    <div class="newsletter-widget">
-      <div class="nw-title" id="nwTitleDisplay">AMI Morning Brief</div>
-      <div class="nw-sub" id="nwSubDisplay">Markets & deals delivered before 7am across Africa.</div>
-      <input class="nw-input" type="email" placeholder="your@email.com">
-      <button class="nw-btn" id="nwBtnDisplay" onclick="handleNewsletterSignup()">Subscribe Free →</button>
-    </div>
-    <div class="sidebar-widget">
-      <div class="widget-title">Top Stories</div>
-      <div id="topStoriesList"></div>
-    </div>
-    <div class="sidebar-widget">
-      <div class="widget-title">Key Economic Data</div>
-      <div class="data-row"><span class="data-label">Nigeria Inflation</span><span class="data-value dn">31.70%</span></div>
-      <div class="data-row"><span class="data-label">SA Unemployment</span><span class="data-value dn">32.1%</span></div>
-      <div class="data-row"><span class="data-label">Kenya GDP Growth</span><span class="data-value up">5.4%</span></div>
-      <div class="data-row"><span class="data-label">Egypt Inflation</span><span class="data-value dn">24.1%</span></div>
-      <div class="data-row"><span class="data-label">Ghana Prime Rate</span><span class="data-value">29.0%</span></div>
-    </div>
-  </aside>
-</div>
 
 <footer>
   <div class="footer-inner">
     <div class="footer-top">
-      <div><div class="footer-brand" id="footerBrand">African Market Intelligence</div>
-        <p class="footer-about" id="footerAboutDisplay">The continent's most trusted source for financial news and business intelligence across Africa's 54 markets.</p></div>
+      <div><div class="footer-brand">African Market Intelligence</div>
+        <p class="footer-about">The continent's most trusted source for financial news and business intelligence across Africa's 54 markets.</p></div>
       <div><div class="footer-col-title">Sections</div>
         <ul class="footer-links">
           <li><a href="markets.html">Markets</a></li>
           <li><a href="economy.html">Economy</a></li>
           <li><a href="politics.html">Politics</a></li>
           <li><a href="energy.html">Energy</a></li>
+          <li><a href="technology.html">Technology</a></li>
+          <li><a href="opinion.html">Opinion</a></li>
         </ul></div>
       <div><div class="footer-col-title">Regions</div>
         <ul class="footer-links">
-          <li><a href="?section=West+Africa"     onclick="filterSection(event,'West Africa');window.scrollTo(0,0)">West Africa</a></li>
-          <li><a href="?section=East+Africa"     onclick="filterSection(event,'East Africa');window.scrollTo(0,0)">East Africa</a></li>
-          <li><a href="?section=North+Africa"    onclick="filterSection(event,'North Africa');window.scrollTo(0,0)">North Africa</a></li>
-          <li><a href="?section=Southern+Africa" onclick="filterSection(event,'Southern Africa');window.scrollTo(0,0)">Southern Africa</a></li>
+          <li><a href="west-africa.html">West Africa</a></li>
+          <li><a href="east-africa.html">East Africa</a></li>
+          <li><a href="north-africa.html">North Africa</a></li>
+          <li><a href="southern-africa.html">Southern Africa</a></li>
         </ul></div>
       <div><div class="footer-col-title">Company</div>
         <ul class="footer-links">
           <li><a href="about.html">About AMI</a></li>
           <li><a href="membership.html">Membership</a></li>
+          <li><a href="careers.html">Careers</a></li>
           <li><a href="contact.html">Contact</a></li>
-          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="privacy.html">Privacy Policy</a></li>
         </ul></div>
     </div>
     <div class="footer-bottom">
-      <span id="copyrightDisplay">© 2025 African Market Intelligence Ltd. All rights reserved.</span>
+      <span>© 2026 African Market Intelligence Ltd. All rights reserved.</span>
       <span>Terms · Privacy · Cookie Policy</span>
     </div>
   </div>
 </footer>
 
-<!-- Paywall -->
-<div class="paywall-blur" id="paywallBlur"></div>
-<div class="paywall-overlay" id="paywallOverlay">
-  <div class="paywall-box">
-    <div class="paywall-logo">African Market <span>Intelligence</span></div>
-    <h2 class="paywall-headline">Subscribe to read this article</h2>
-    <p class="paywall-sub">Join 48,000+ investors and executives across Africa who rely on AMI for premium financial intelligence.</p>
-    <div class="paywall-plans">
-      <div class="plan-card"><div class="plan-name">Digital</div><div class="plan-price">$29</div><div class="plan-period">/ month</div>
-        <ul class="plan-features"><li>Unlimited articles</li><li>Morning Brief</li><li>Market data</li><li>AI summaries</li></ul></div>
-      <div class="plan-card featured"><div class="plan-badge">Most Popular</div><div class="plan-name">Premium</div><div class="plan-price">$59</div><div class="plan-period">/ month</div>
-        <ul class="plan-features"><li>Everything in Digital</li><li>Research reports</li><li>Events & webinars</li><li>Data downloads</li></ul></div>
-    </div>
-    <div class="paywall-cta">
-      <a id="stripeDigital" href="#" target="_blank" class="btn-stripe">Digital — $29/mo →</a>
-      <a id="stripePremium" href="#" target="_blank" class="btn-stripe-alt">Premium — $59/mo →</a>
-    </div>
-    <div style="margin-bottom:14px;text-align:center;font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft)">🔒 Secure checkout powered by Stripe · Cancel anytime</div>
-    <div class="paywall-dismiss" onclick="closePaywall()">Continue with limited access</div>
-  </div>
-</div>
-
 <script>
 // ════════════════════════════════════════════════════════════
-// SUPABASE CLIENT
-// ════════════════════════════════════════════════════════════
-const db = {
-  async query(table, options={}) {
-    const params = new URLSearchParams();
-    if(options.select)  params.set('select', options.select);
-    if(options.eq)      Object.entries(options.eq).forEach(([k,v])=>params.set(k,'eq.'+v));
-    if(options.order)   params.set('order', options.order);
-    if(options.limit)   params.set('limit', options.limit);
-    const url = `${SUPABASE_URL}/rest/v1/${table}?${params}`;
-    const r = await fetch(url, { headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer '+SUPABASE_ANON } });
-    if(!r.ok) throw new Error(await r.text());
-    return r.json();
-  },
-  async insert(table, data) {
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
-      method:'POST',
-      headers:{ apikey:SUPABASE_ANON, Authorization:'Bearer '+SUPABASE_ANON, 'Content-Type':'application/json', Prefer:'return=representation' },
-      body: JSON.stringify(data)
-    });
-    if(!r.ok) throw new Error(await r.text());
-    return r.json();
-  },
-  async update(table, data, match) {
-    const params = new URLSearchParams();
-    Object.entries(match).forEach(([k,v])=>params.set(k,'eq.'+v));
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${params}`, {
-      method:'PATCH',
-      headers:{ apikey:SUPABASE_ANON, Authorization:'Bearer '+SUPABASE_ANON, 'Content-Type':'application/json', Prefer:'return=representation' },
-      body: JSON.stringify(data)
-    });
-    if(!r.ok) throw new Error(await r.text());
-    return r.json();
-  },
-  async delete(table, match) {
-    const params = new URLSearchParams();
-    Object.entries(match).forEach(([k,v])=>params.set(k,'eq.'+v));
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${params}`, {
-      method:'DELETE',
-      headers:{ apikey:SUPABASE_ANON, Authorization:'Bearer '+SUPABASE_ANON }
-    });
-    if(!r.ok) throw new Error(await r.text());
-    return true;
-  },
-  async uploadImage(file, path) {
-    const r = await fetch(`${SUPABASE_URL}/storage/v1/object/ami-images/${path}`, {
-      method:'POST',
-      headers:{ apikey:SUPABASE_ANON, Authorization:'Bearer '+SUPABASE_ANON, 'Content-Type': file.type },
-      body: file
-    });
-    if(!r.ok) throw new Error(await r.text());
-    return `${SUPABASE_URL}/storage/v1/object/public/ami-images/${path}`;
-  }
-};
-
-
-// ════════════════════════════════════════════════════════════
-// PAGE DETECTION — auto-filter and hide homepage sections
-// when on a section page (markets.html, politics.html, etc.)
-// ════════════════════════════════════════════════════════════
-(function(){
-  const p = window.location.pathname.split('/').pop().replace('.html','');
-  const SECTION_MAP = {
-    markets:'Markets', politics:'Politics', economy:'Economy',
-    energy:'Energy', technology:'Technology', opinion:'Opinion'
-  };
-  if(SECTION_MAP[p]){
-    window.AUTO_SECTION = SECTION_MAP[p];
-    document.addEventListener('DOMContentLoaded',()=>{
-      // Hide homepage-only blocks
-      ['heroGrid','mostReadContainer'].forEach(id=>{
-        const el=document.getElementById(id);
-        if(el) el.style.display='none';
-      });
-      document.querySelectorAll('.markets-strip,.section-header:first-of-type')
-        .forEach(el=>{ if(el.closest('main')) el.style.display='none'; });
-      // Show section name as page heading
-      const hdr = document.createElement('div');
-      hdr.style.cssText='padding:20px 0 4px;font-family:"Playfair Display",serif;font-size:28px;font-weight:700';
-      hdr.innerHTML = SECTION_MAP[p]+' <span style="color:var(--gold);font-size:14px;font-family:'DM Mono',monospace;font-weight:400;vertical-align:middle">All Coverage →</span>';
-      const main = document.querySelector('main');
-      if(main) main.insertBefore(hdr, main.firstChild);
-    });
-  }
-})();
-
-// ════════════════════════════════════════════════════════════
-// STATE
-// ════════════════════════════════════════════════════════════
-let allArticles    = [];
-let filteredCards  = []; // current filtered set for pagination
-let allMarkets     = [];
-let filterActive   = 'all';
-let searchQuery    = '';
-const ARTICLES_PER_PAGE = 9; // articles per page (3 rows of 3)
-let currentPage    = 1;
-let totalArticles  = 0;
-
-// ════════════════════════════════════════════════════════════
-// INIT
-// ════════════════════════════════════════════════════════════
-document.getElementById('mastDate').textContent =
-  new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-
-// section tabs handled by filterSection()
-
-// Stripe links
-document.getElementById('stripeDigital').href = STRIPE_DIGITAL;
-document.getElementById('stripePremium').href = STRIPE_PREMIUM;
-document.getElementById('navSubscribeBtn').href = STRIPE_PREMIUM;
-
-async function init() {
-  if(SUPABASE_URL === 'YOUR_SUPABASE_URL') {
-    showConfigBanner(); return;
-  }
-
-  // Read page/section/q from URL
-  const params = new URLSearchParams(window.location.search);
-  currentPage  = parseInt(params.get('page')) || 1;
-  if(params.get('section')) filterActive = params.get('section');
-  if(window.AUTO_SECTION && !params.get('section')) filterActive = window.AUTO_SECTION;
-  if(params.get('q'))       searchQuery  = params.get('q');
-
-  try {
-    const [articles, markets, settings, breaking] = await Promise.all([
-      db.query('articles', { select:'*', eq:{is_published:'true'}, order:'created_at.desc' }),
-      db.query('markets',  { select:'*' }),
-      db.query('site_settings', { select:'*' }),
-      db.query('breaking_news', { select:'*', eq:{is_active:'true'}, limit:'1' })
-    ]);
-    allArticles = articles;
-    allMarkets  = markets;
-    applySettings(settings);
-    renderBreaking(breaking);
-    renderHero();
-    renderMarketsStrip();
-    renderTicker();
-    renderCards();
-    renderTopStories();
-    // Activate correct section tab if section param set
-    if(filterActive !== 'all') {
-      document.querySelectorAll('.section-tab').forEach(t=>{
-        if(t.textContent.includes(filterActive)) t.classList.add('active');
-        else t.classList.remove('active');
-      });
-    }
-  } catch(e) {
-    console.error(e);
-    showToast('⚠ Could not connect to database. Check your Supabase credentials.','error');
-  }
-}
-
-// Handle browser back/forward
-window.addEventListener('popstate', e => {
-  if(e.state){
-    currentPage  = e.state.page || 1;
-    filterActive = e.state.filterActive || 'all';
-    searchQuery  = e.state.searchQuery || '';
-    applyFilters();
-  }
-});
-
-// ════════════════════════════════════════════════════════════
-// RENDER FUNCTIONS
-// ════════════════════════════════════════════════════════════
-
-function articleUrl(a) { return `article.html?id=${a.id}`; }
-
-function heroImgHtml(a, height='220px') {
-  if(a.hero_image) return `<img src="${a.hero_image}" class="hero-img" style="height:${height}" onerror="this.style.display='none'">`;
-  return `<div class="hero-img-placeholder" style="height:${height}">📰 ${a.section||''}</div>`;
-}
-
-function renderHero() {
-  const hero  = allArticles.find(a=>a.placement==='hero') || allArticles[0];
-  const side1 = allArticles.find(a=>a.placement==='side1') || allArticles[1];
-  const side2 = allArticles.find(a=>a.placement==='side2') || allArticles[2];
-  if(!hero) return;
-
-  document.getElementById('heroGrid').innerHTML = `
-    <div class="hero-main" style="background:var(--card-bg)">
-      ${heroImgHtml(hero,'200px')}
-      <div class="hero-content">
-        <div class="article-kicker">${hero.section||''}</div>
-        <h1 class="hero-headline" onclick="window.location.href='${articleUrl(hero)}'">${hero.headline}</h1>
-        <p class="hero-standfirst">${hero.standfirst||''}</p>
-        <div class="article-meta">
-          <span class="author">By ${hero.author_name||'AMI Staff'}</span>
-          <span>${hero.read_time||''}</span>
-          ${hero.is_locked?'<span class="article-tag">Premium</span>':''}
-        </div>
-      </div>
-    </div>
-    ${side1?`<div class="hero-side-1" style="background:var(--card-bg)">
-      ${side1.hero_image?`<img src="${side1.hero_image}" style="width:100%;height:100px;object-fit:cover;display:block;margin-bottom:12px">`:''}
-      <div class="article-section">${side1.section||''}</div>
-      <h2 class="side-headline" onclick="window.location.href='${articleUrl(side1)}'">${side1.headline}</h2>
-      <p class="side-standfirst">${side1.standfirst||''}</p>
-      <div class="article-meta" style="margin-top:12px"><span class="author">${side1.author_name||''}</span><span>${side1.read_time||''}</span>${side1.is_locked?'<span class="article-tag">Premium</span>':''}</div>
-    </div>`:'<div class="hero-side-1" style="background:var(--card-bg)"></div>'}
-    ${side2?`<div class="hero-side-2" style="background:var(--card-bg)">
-      ${side2.hero_image?`<img src="${side2.hero_image}" style="width:100%;height:90px;object-fit:cover;display:block;margin-bottom:12px">`:''}
-      <div class="article-section">${side2.section||''}</div>
-      <h2 class="side-headline" onclick="window.location.href='${articleUrl(side2)}'">${side2.headline}</h2>
-      <p class="side-standfirst">${side2.standfirst||''}</p>
-      <div class="article-meta" style="margin-top:12px"><span class="author">${side2.author_name||''}</span><span>${side2.read_time||''}</span>${side2.is_locked?'<span class="article-tag">Premium</span>':''}</div>
-    </div>`:'<div class="hero-side-2" style="background:var(--card-bg)"></div>'}`;
-}
-
-function renderCards(articles) {
-  // Update filtered set
-  filteredCards = (articles || allArticles).filter(a => a.placement === 'card');
-  totalArticles = filteredCards.length;
-
-  // Paginate
-  const start = (currentPage - 1) * ARTICLES_PER_PAGE;
-  const page  = filteredCards.slice(start, start + ARTICLES_PER_PAGE);
-
-  const container = document.getElementById('articleCardsContainer');
-  if(!filteredCards.length){
-    container.innerHTML = '<p style="color:var(--text-soft);font-family:DM Mono,monospace;font-size:12px;padding:24px 0">No articles found.</p>';
-    document.getElementById('paginationBar').innerHTML = '';
-    document.getElementById('archiveHeader').style.display = 'none';
-    return;
-  }
-
-  // Show archive header on page 2+
-  const archiveHeader = document.getElementById('archiveHeader');
-  const archiveCount  = document.getElementById('archiveCount');
-  const section = filterActive !== 'all' ? filterActive : 'All Articles';
-  document.getElementById('archiveTitle').textContent = searchQuery ? `Search: "${searchQuery}"` : section;
-  archiveCount.textContent = `${totalArticles} article${totalArticles!==1?'s':''} · Page ${currentPage} of ${Math.ceil(totalArticles/ARTICLES_PER_PAGE)}`;
-  archiveHeader.style.display = 'flex';
-
-  const rows = [];
-  for(let i = 0; i < page.length; i += 3){
-    const chunk = page.slice(i, i + 3);
-    rows.push('<div class="article-row">' + chunk.map(a => `
-      <div class="article-card" onclick="window.location.href='${articleUrl(a)}'">
-        ${a.hero_image
-          ? `<img src="${a.hero_image}" class="card-img" onerror="this.outerHTML='<div class=card-img-placeholder>📰</div>'">`
-          : `<div class="card-img-placeholder">📰</div>`}
-        <div class="card-content">
-          <div class="article-kicker">${a.section||''}</div>
-          <h3 class="card-headline">${a.is_locked?'🔒 ':''} ${a.headline}</h3>
-          <p class="card-body">${a.standfirst||''}</p>
-          <div class="card-footer">
-            <span>${a.author_name||'AMI Staff'} · ${a.read_time||'3 min'} ${a.is_locked?'<span class="lock-icon">🔒</span>':''}</span>
-            <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-soft)">${a.published_date||''}</span>
-          </div>
-        </div>
-      </div>`).join('') + '</div>');
-  }
-  container.innerHTML = rows.join('');
-  renderPagination();
-}
-
-function renderPagination() {
-  const totalPages = Math.ceil(totalArticles / ARTICLES_PER_PAGE);
-  const bar = document.getElementById('paginationBar');
-  if(totalPages <= 1){ bar.innerHTML = ''; return; }
-
-  const pages = buildPageNumbers(currentPage, totalPages);
-  const section = filterActive !== 'all' ? `&section=${encodeURIComponent(filterActive)}` : '';
-  const q = searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : '';
-
-  bar.innerHTML = `
-    <a class="page-btn nav ${currentPage===1?'disabled':''}" onclick="goToPage(${currentPage-1})" href="?page=${currentPage-1}${section}${q}" aria-label="Previous page">← Prev</a>
-    ${pages.map(p => p === '...'
-      ? `<span class="page-ellipsis">…</span>`
-      : `<a class="page-btn ${p===currentPage?'active':''}" onclick="goToPage(${p})" href="?page=${p}${section}${q}">${p}</a>`
-    ).join('')}
-    <a class="page-btn nav ${currentPage===totalPages?'disabled':''}" onclick="goToPage(${currentPage+1})" href="?page=${currentPage+1}${section}${q}" aria-label="Next page">Next →</a>
-  `;
-}
-
-function buildPageNumbers(current, total) {
-  if(total <= 7) return Array.from({length:total}, (_,i)=>i+1);
-  const pages = [];
-  pages.push(1);
-  if(current > 3) pages.push('...');
-  for(let i = Math.max(2, current-1); i <= Math.min(total-1, current+1); i++) pages.push(i);
-  if(current < total-2) pages.push('...');
-  pages.push(total);
-  return pages;
-}
-
-function goToPage(page) {
-  event.preventDefault();
-  const totalPages = Math.ceil(totalArticles / ARTICLES_PER_PAGE);
-  if(page < 1 || page > totalPages) return;
-  currentPage = page;
-  // Update URL without page reload
-  const section = filterActive !== 'all' ? `&section=${encodeURIComponent(filterActive)}` : '';
-  const q = searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : '';
-  const newUrl = page === 1 ? window.location.pathname + (section||q ? '?'+section.slice(1)+(q?'&'+q.slice(1):'') : '') : `?page=${page}${section}${q}`;
-  history.pushState({page, filterActive, searchQuery}, '', newUrl.replace('?&','?'));
-  renderCards();
-  // Scroll to top of article grid smoothly
-  document.getElementById('archiveHeader')?.scrollIntoView({behavior:'smooth', block:'start'});
-}
-
-function renderMarketsStrip() {
-  document.getElementById('marketsDisplay').innerHTML = allMarkets.map(m=>`
-    <div class="market-item">
-      <div class="market-name">${m.name}</div>
-      <div class="market-value">${m.value}</div>
-      <div class="market-change ${m.direction}">${m.direction==='up'?'▲':'▼'} ${m.change}</div>
-    </div>`).join('');
-}
-
-function renderTicker() {
-  const items = allMarkets.map(m=>`<span class="ticker-item"><span class="sym">${m.id.toUpperCase()}</span> ${m.value} <span class="${m.direction}">${m.direction==='up'?'▲':'▼'} ${m.change}</span></span>`).join('');
-  document.getElementById('tickerInner').innerHTML = items + items; // duplicate for seamless loop
-}
-
-function renderTopStories() {
-  const top = allArticles.slice(0,5);
-  document.getElementById('topStoriesList').innerHTML = top.map((a,i)=>`
-    <div class="top-story" onclick="window.location.href='${articleUrl(a)}'">
-      <div class="top-story-num">0${i+1}</div>
-      <div class="top-story-headline">${a.headline}</div>
-    </div>`).join('');
-}
-
-function renderBreaking(breaking) {
-  if(breaking && breaking.length>0 && breaking[0].is_active) {
-    document.getElementById('breakingTextDisplay').textContent = breaking[0].text;
-    document.getElementById('breakingBanner').style.display = 'flex';
-  }
-}
-
-function applySettings(settings) {
-  if(!settings) return;
-  const get = key => (settings.find(s=>s.key===key)?.value) || '';
-  const name = get('site_name') || 'African Market Intelligence';
-  // Site identity
-  document.getElementById('siteNameDisplay').innerHTML = name.replace(/(\S+)\s*$/, '<span>$1</span>');
-  document.getElementById('siteTaglineDisplay').textContent = get('tagline');
-  document.getElementById('editionDisplay').textContent     = get('edition');
-  document.getElementById('footerBrand').textContent        = name;
-  document.title = name;
-  if(get('location_line') && document.getElementById('locationDisplay'))
-    document.getElementById('locationDisplay').textContent = get('location_line');
-  // Newsletter
-  if(get('newsletter_title') && document.getElementById('nwTitleDisplay'))
-    document.getElementById('nwTitleDisplay').textContent  = get('newsletter_title');
-  if(get('newsletter_sub') && document.getElementById('nwSubDisplay'))
-    document.getElementById('nwSubDisplay').textContent    = get('newsletter_sub');
-  if(get('newsletter_btn') && document.getElementById('nwBtnDisplay'))
-    document.getElementById('nwBtnDisplay').textContent    = get('newsletter_btn');
-  // Footer
-  if(get('footer_about') && document.getElementById('footerAboutDisplay'))
-    document.getElementById('footerAboutDisplay').textContent = get('footer_about');
-  if(get('copyright') && document.getElementById('copyrightDisplay'))
-    document.getElementById('copyrightDisplay').textContent   = get('copyright');
-  // Stripe
-  const d1 = get('plan1_link'); const d2 = get('plan2_link');
-  if(d1){ document.getElementById('stripeDigital').href = d1; }
-  if(d2){ document.getElementById('stripePremium').href = d2; document.getElementById('navSubscribeBtn').href = d2; }
-  // Footer links
-  if(get('about_url'))   { const el=document.getElementById('footerAbout');   if(el) el.href=get('about_url'); }
-  if(get('careers_url')) { const el=document.getElementById('footerCareers'); if(el) el.href=get('careers_url'); }
-  if(get('privacy_url')) { const el=document.getElementById('footerPrivacy'); if(el) el.href=get('privacy_url'); }
-  // Paywall
-  if(get('paywall_active')==='true') setTimeout(showPaywall, 30000);
-  // Populate admin form fields
-  const fields = {
-    siteName:get('site_name'), siteTagline:get('tagline'), editionLabel:get('edition'),
-    locationLine:get('location_line'), newsletterTitle:get('newsletter_title'),
-    newsletterSub:get('newsletter_sub'), newsletterBtn:get('newsletter_btn'),
-    newsletterLink:get('newsletter_link'), plan1Name:get('plan1_name'),
-    plan1Price:get('plan1_price'), plan1Link:get('plan1_link'), plan2Name:get('plan2_name'),
-    plan2Price:get('plan2_price'), plan2Link:get('plan2_link'), aboutUrl:get('about_url'),
-    careersUrl:get('careers_url'), privacyUrl:get('privacy_url'),
-    footerAboutText:get('footer_about'), copyrightText:get('copyright')
-  };
-  Object.entries(fields).forEach(([id,val])=>{ const el=document.getElementById(id); if(el&&val) el.value=val; });
-}
-
-// ════════════════════════════════════════════════════════════
-// SEARCH & FILTER
-// ════════════════════════════════════════════════════════════
-function filterSection(e, section) {
-  e.preventDefault();
-  e.stopPropagation();
-  document.querySelectorAll('.section-tab').forEach(x=>x.classList.remove('active'));
-  e.target.classList.add('active');
-  filterActive = section;
-  currentPage  = 1;
-  // Update URL
-  const q = searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : '';
-  const newUrl = section === 'all' ? window.location.pathname : `?section=${encodeURIComponent(section)}${q}`;
-  history.pushState({page:1, filterActive:section, searchQuery}, '', newUrl);
-  applyFilters();
-  // Scroll to articles
-  document.getElementById('archiveHeader')?.scrollIntoView({behavior:'smooth', block:'start'});
-}
-function searchArticles(q) {
-  searchQuery  = q.toLowerCase();
-  currentPage  = 1;
-  applyFilters();
-}
-function applyFilters(preservePage=false) {
-  if(!preservePage) currentPage = 1; // reset to page 1 on new search/filter
-  let filtered = allArticles;
-  if(filterActive !== 'all') filtered = filtered.filter(a=>(a.section||'').includes(filterActive) || (a.tags||'').includes(filterActive));
-  if(searchQuery) filtered = filtered.filter(a=>(a.headline||'').toLowerCase().includes(searchQuery)||(a.standfirst||'').toLowerCase().includes(searchQuery)||(a.author_name||'').toLowerCase().includes(searchQuery));
-  renderCards(filtered.filter(a=>a.placement==='card'));
-}
-
-// ════════════════════════════════════════════════════════════
-// ADMIN
-// ════════════════════════════════════════════════════════════
-// ── Admin password gate ──────────────────────────────────────
-const ADMIN_PASSWORD = 'ami2024'; // ← CHANGE THIS to your own password
-let logoClickCount = 0, logoClickTimer = null;
-
-function handleLogoClick() {
-  logoClickCount++;
-  clearTimeout(logoClickTimer);
-  logoClickTimer = setTimeout(()=>{ logoClickCount=0; }, 2000);
-  if(logoClickCount >= 5) { logoClickCount=0; promptAdmin(); }
-}
-
-function promptAdmin() {
-  const pwd = prompt('Enter admin password:');
-  if(pwd === null) return;
-  if(pwd === ADMIN_PASSWORD) {
-    openAdmin();
-  } else {
-    showToast('Incorrect password','error');
-  }
-}
-
-function toggleAdminVisibility(show) {
-  // Optionally show a visible admin button when toggled on from within admin
-  let btn = document.getElementById('visibleAdminBtn');
-  if(show && !btn) {
-    btn = document.createElement('button');
-    btn.id = 'visibleAdminBtn';
-    btn.className = 'admin-btn';
-    btn.textContent = '⚙ Admin';
-    btn.onclick = promptAdmin;
-    document.querySelector('.nav-right').insertBefore(btn, document.querySelector('.btn-subscribe'));
-  } else if(!show && btn) {
-    btn.remove();
-  }
-}
-
-async function handleNewsletterSignup() {
-  const input = document.querySelector('.nw-input');
-  const email = input?.value?.trim();
-  if(!email){ showToast('Please enter your email address','error'); return; }
-  // Basic email validation
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
-    showToast('Please enter a valid email address','error'); return;
-  }
-  const btn = document.getElementById('nwBtnDisplay');
-  const origText = btn.textContent;
-  btn.textContent = 'Subscribing…';
-  btn.disabled = true;
-  try {
-    // Check if already subscribed
-    const existing = await db.query('subscribers', { select:'id', eq:{email} });
-    if(existing && existing.length > 0){
-      showToast('✓ You are already subscribed!');
-      input.value = '';
-    } else {
-      await db.insert('subscribers', {
-        email,
-        source: 'homepage_widget',
-        subscribed_at: new Date().toISOString()
-      });
-      showToast('✓ Subscribed! Welcome to the AMI Morning Brief.');
-      input.value = '';
-      // Show thank you state
-      const widget = input.closest('.newsletter-widget');
-      if(widget){
-        widget.innerHTML = `
-          <div style="text-align:center;padding:12px 0">
-            <div style="font-size:28px;margin-bottom:8px">📬</div>
-            <div style="font-family:'Playfair Display',serif;font-size:18px;color:#C9A84C;margin-bottom:6px">You're in!</div>
-            <div style="font-size:13px;color:#999;font-weight:300">Check your inbox tomorrow morning for your first briefing.</div>
-          </div>`;
-      }
-    }
-  } catch(e){
-    showToast('✗ Could not subscribe: '+e.message,'error');
-  } finally {
-    btn.disabled = false;
-    btn.textContent = origText;
-  }
-}
-
-// ── Subscriber management (admin) ────────────────────────────
-async function loadSubscribers() {
-  document.getElementById('subscriberList').innerHTML =
-    '<div style="padding:24px;text-align:center;color:#888">Loading…</div>';
-  try {
-    const subs = await db.query('subscribers', { select:'*', order:'subscribed_at.desc' });
-    const now  = new Date();
-    const weekAgo  = new Date(now - 7*24*60*60*1000);
-    const monthAgo = new Date(now.getFullYear(), now.getMonth(), 1);
-    const thisWeek  = subs.filter(s=>new Date(s.subscribed_at)>=weekAgo).length;
-    const thisMonth = subs.filter(s=>new Date(s.subscribed_at)>=monthAgo).length;
-    document.getElementById('subTotal').textContent     = subs.length;
-    document.getElementById('subThisWeek').textContent  = thisWeek;
-    document.getElementById('subThisMonth').textContent = thisMonth;
-    document.getElementById('statSubscribers').textContent = subs.length;
-    if(!subs.length){
-      document.getElementById('subscriberList').innerHTML =
-        '<div style="padding:24px;text-align:center;color:#555">No subscribers yet.</div>';
-      return;
-    }
-    document.getElementById('subscriberList').innerHTML = subs.map(s=>`
-      <div style="display:grid;grid-template-columns:1fr auto auto;gap:12px;padding:10px 14px;border-bottom:1px solid #1A1208;align-items:center">
-        <span style="color:#EDE5D5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.email}</span>
-        <span style="color:#555;font-size:10px;letter-spacing:.05em">${s.source||'widget'}</span>
-        <span style="color:#555;font-size:10px;white-space:nowrap">${new Date(s.subscribed_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</span>
-      </div>`).join('');
-  } catch(e){
-    document.getElementById('subscriberList').innerHTML =
-      '<div style="padding:24px;color:#F44336;font-size:11px">Error: '+e.message+'</div>';
-  }
-}
-
-function exportSubscribersCSV() {
-  const rows = document.querySelectorAll('#subscriberList > div');
-  if(!rows.length){ showToast('Load subscribers first','error'); return; }
-  const lines = ['Email,Source,Date'];
-  rows.forEach(row=>{
-    const cells = row.querySelectorAll('span');
-    if(cells.length>=3) lines.push([cells[0].textContent,cells[1].textContent,cells[2].textContent].join(','));
-  });
-  const blob = new Blob([lines.join('\n')], {type:'text/csv'});
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a'); a.href=url;
-  a.download = 'ami-subscribers-'+new Date().toISOString().slice(0,10)+'.csv';
-  a.click(); URL.revokeObjectURL(url);
-  showToast('✓ CSV downloaded');
-}
-
-async function openAdmin() {
-  document.getElementById('adminOverlay').classList.add('open');
-  document.body.style.overflow='hidden';
-  const st = document.getElementById('dbStatus');
-  st.textContent='● Connecting…'; st.className='admin-status loading';
-  document.getElementById('dbUrl').textContent = SUPABASE_URL !== 'YOUR_SUPABASE_URL' ? SUPABASE_URL.split('//')[1] : 'Not configured';
-  try {
-    await loadAdminData();
-    st.textContent='● Connected'; st.className='admin-status connected';
-  } catch(e) {
-    st.textContent='● Disconnected'; st.className='admin-status disconnected';
-  }
-}
-function closeAdmin(){ document.getElementById('adminOverlay').classList.remove('open'); document.body.style.overflow=''; }
-document.getElementById('adminOverlay').addEventListener('click',e=>{ if(e.target===document.getElementById('adminOverlay')) closeAdmin(); });
-function switchTab(e,tab){
-  document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.admin-section').forEach(s=>s.classList.remove('active'));
-  e.target.classList.add('active');
-  document.getElementById('tab-'+tab).classList.add('active');
-  if(tab==='subscribers') loadSubscribers();
-}
-
-async function loadAdminData() {
-  const [arts, mkts, brk] = await Promise.all([
-    db.query('articles', { select:'*', order:'created_at.desc' }),
-    db.query('markets',  { select:'*' }),
-    db.query('breaking_news', { select:'*', order:'created_at.desc', limit:'1' })
-  ]);
-  allArticles = arts.filter(a=>a.is_published);
-  allMarkets  = mkts;
-  renderAdminArticleList(arts);
-  renderMarketEditor(mkts);
-  if(brk && brk[0]){
-    document.getElementById('breakingText').value   = brk[0].text;
-    document.getElementById('showBreaking').checked = brk[0].is_active;
-  }
-  document.getElementById('statArticles').textContent = arts.filter(a=>a.is_published).length;
-  document.getElementById('statLocked').textContent   = arts.filter(a=>a.is_locked).length;
-  document.getElementById('statImages').textContent   = arts.filter(a=>a.hero_image).length;
-  // Load subscriber count
-  try {
-    const subs = await db.query('subscribers', { select:'id' });
-    document.getElementById('statSubscribers').textContent = subs.length;
-  } catch(e){}
-}
-
-function renderAdminArticleList(articles) {
-  const el = document.getElementById('adminArticleList');
-  if(!articles || !articles.length){ el.innerHTML='<div style="color:#555;padding:16px 0">No articles yet. Publish your first above.</div>'; return; }
-  el.innerHTML = `<ul class="admin-article-list">${articles.map(a=>`
-    <li class="admin-article-item">
-      <div class="admin-article-header" onclick="toggleEdit(${a.id})">
-        <div class="admin-article-info">
-          <div class="admin-article-title">${a.headline}</div>
-          <div class="admin-article-meta">
-            <span class="badge badge-${a.placement}">${a.placement}</span>
-            <span>${a.author_name||'—'}</span>
-            <span>${a.published_date||''}</span>
-            ${a.is_locked?'<span class="badge badge-locked">🔒</span>':''}
-            ${!a.is_published?'<span class="badge" style="background:#555;color:#ccc">Draft</span>':''}
-          </div>
-        </div>
-        <div style="display:flex;gap:6px">
-          <button class="btn-danger" onclick="event.stopPropagation();deleteArticle(${a.id})">✕</button>
-        </div>
-      </div>
-      <div class="admin-article-body" id="edit-${a.id}">
-        <div class="form-group"><label class="form-label">Headline</label><textarea class="form-textarea" id="eh-${a.id}" style="min-height:55px">${a.headline}</textarea></div>
-        <div class="form-group"><label class="form-label">Standfirst</label><textarea class="form-textarea" id="es-${a.id}">${a.standfirst||''}</textarea></div>
-        <div class="form-group"><label class="form-label">Full Article Body</label><textarea class="form-textarea" id="eb-${a.id}" style="min-height:120px;font-family:'DM Mono',monospace;font-size:11px">${(a.body||'').replace(/</g,'&lt;')}</textarea></div>
-        <div class="form-group"><label class="form-label">Hero Image URL</label><input class="form-input" id="ei-${a.id}" value="${a.hero_image||''}"></div>
-        <div class="form-group"><label class="form-label">Replace Image</label>
-          <div class="img-upload-area"><input type="file" accept="image/*" onchange="uploadAndSetImage(this,${a.id})"><div class="img-upload-label">📷 Upload new image</div></div>
-          ${a.hero_image?`<img src="${a.hero_image}" style="width:100%;height:80px;object-fit:cover;border-radius:2px;margin-top:6px">`:''}
-        </div>
-        <div class="form-row">
-          <div class="form-group" style="margin:0"><label class="form-label">Section</label><input class="form-input" id="ec-${a.id}" value="${a.section||''}"></div>
-          <div class="form-group" style="margin:0"><label class="form-label">Author</label><input class="form-input" id="ea-${a.id}" value="${a.author_name||''}"></div>
-        </div>
-        <div class="form-row" style="margin-top:10px">
-          <div class="form-group" style="margin:0"><label class="form-label">Read Time</label><input class="form-input" id="er-${a.id}" value="${a.read_time||''}"></div>
-          <div class="form-group" style="margin:0"><label class="form-label">Placement</label>
-            <select class="form-select" id="ep-${a.id}">
-              <option value="card" ${a.placement==='card'?'selected':''}>Card</option>
-              <option value="hero" ${a.placement==='hero'?'selected':''}>Hero</option>
-              <option value="side1" ${a.placement==='side1'?'selected':''}>Side 1</option>
-              <option value="side2" ${a.placement==='side2'?'selected':''}>Side 2</option>
-            </select></div>
-        </div>
-        <div style="margin-top:12px;display:flex;gap:14px;align-items:center">
-          <label style="font-family:'DM Mono',monospace;font-size:10px;color:#888;display:flex;align-items:center;gap:5px"><input type="checkbox" id="el-${a.id}" ${a.is_locked?'checked':''}> 🔒 Premium</label>
-          <label style="font-family:'DM Mono',monospace;font-size:10px;color:#888;display:flex;align-items:center;gap:5px"><input type="checkbox" id="ep2-${a.id}" ${a.is_published?'checked':''}> ✅ Published</label>
-        </div>
-        <button class="btn-save" onclick="saveArticle(${a.id})" style="margin-top:12px">💾 Save Changes →</button>
-      </div>
-    </li>`).join('')}</ul>`;
-}
-
-function toggleEdit(id){ document.getElementById('edit-'+id).classList.toggle('open'); }
-
-async function uploadAndSetImage(input, articleId) {
-  const file = input.files[0]; if(!file) return;
-  showToast('⏳ Uploading image…', 'loading');
-  try {
-    const path = `articles/${articleId}-${Date.now()}-${file.name}`;
-    const url  = await db.uploadImage(file, path);
-    document.getElementById('ei-'+articleId).value = url;
-    showToast('✓ Image uploaded — save the article to apply');
-  } catch(e) { showToast('✗ Upload failed: '+e.message,'error'); }
-}
-
-async function deleteArticle(id) {
-  if(!confirm('Delete this article permanently from the database?')) return;
-  try {
-    await db.delete('articles', {id});
-    showToast('✓ Article deleted');
-    await loadAdminData();
-    renderHero(); renderCards(); renderTopStories();
-  } catch(e){ showToast('✗ '+e.message,'error'); }
-}
-
-async function saveArticle(id) {
-  const btn = event.target; btn.disabled=true; btn.textContent='Saving…';
-  try {
-    let bodyRaw = document.getElementById('eb-'+id).value;
-    // Convert plain text to HTML paragraphs if needed
-    if(!bodyRaw.trim().startsWith('<')) {
-      bodyRaw = bodyRaw.split(/\n\n+/).filter(p=>p.trim()).map(p=>`<p>${p.trim()}</p>`).join('\n');
-    }
-    await db.update('articles', {
-      headline:     document.getElementById('eh-'+id).value,
-      standfirst:   document.getElementById('es-'+id).value,
-      body:         bodyRaw,
-      hero_image:   document.getElementById('ei-'+id).value,
-      section:      document.getElementById('ec-'+id).value,
-      author_name:  document.getElementById('ea-'+id).value,
-      read_time:    document.getElementById('er-'+id).value,
-      placement:    document.getElementById('ep-'+id).value,
-      is_locked:    document.getElementById('el-'+id).checked,
-      is_published: document.getElementById('ep2-'+id).checked,
-      updated_at:   new Date().toISOString()
-    }, {id});
-    showToast('✓ Saved to database — live on site now');
-    await loadAdminData();
-    renderHero(); renderCards(); renderTopStories();
-  } catch(e){ showToast('✗ '+e.message,'error'); }
-  finally{ btn.disabled=false; btn.textContent='💾 Save Changes →'; }
-}
-
-// Image preview helper
-function previewImage(input, previewId, areaId) {
-  const file = input.files[0]; if(!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    const img = document.getElementById(previewId);
-    img.src = e.target.result; img.style.display='block';
-  };
-  reader.readAsDataURL(file);
-}
-
-async function publishArticle() {
-  const btn = document.getElementById('publishBtn');
-  const headline = document.getElementById('new-headline').value.trim();
-  if(!headline){ showToast('Please enter a headline','error'); return; }
-  btn.disabled=true; btn.textContent='Publishing…';
-  try {
-    // Handle image upload first
-    let heroImageUrl = document.getElementById('new-hero-url').value.trim();
-    const heroFile   = document.getElementById('new-hero-file').files[0];
-    let authorPhotoUrl = '';
-    const authorFile = document.getElementById('new-author-file').files[0];
-
-    if(heroFile) {
-      showToast('⏳ Uploading hero image…','loading');
-      heroImageUrl = await db.uploadImage(heroFile, `articles/hero-${Date.now()}-${heroFile.name}`);
-    }
-    if(authorFile) {
-      authorPhotoUrl = await db.uploadImage(authorFile, `authors/${Date.now()}-${authorFile.name}`);
-    }
-
-    let bodyRaw = document.getElementById('new-body').value;
-    if(bodyRaw.trim() && !bodyRaw.trim().startsWith('<')) {
-      bodyRaw = bodyRaw.split(/\n\n+/).filter(p=>p.trim()).map(p=>`<p>${p.trim()}</p>`).join('\n');
-    }
-
-    const authorName = document.getElementById('new-author').value || 'AMI Staff';
-    await db.insert('articles', {
-      headline:        headline,
-      standfirst:      document.getElementById('new-standfirst').value,
-      body:            bodyRaw,
-      section:         document.getElementById('new-section').value || 'News',
-      author_name:     authorName,
-      author_role:     document.getElementById('new-author-role').value,
-      author_initials: authorName.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2),
-      author_photo:    authorPhotoUrl,
-      hero_image:      heroImageUrl,
-      read_time:       document.getElementById('new-readtime').value || '3 min',
-      published_date:  new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}),
-      placement:       document.getElementById('new-placement').value,
-      is_locked:       document.getElementById('new-locked').checked,
-      is_published:    true,
-      tags:            document.getElementById('new-tags').value,
-    });
-
-    // Clear form
-    ['new-headline','new-standfirst','new-body','new-author','new-author-role','new-readtime','new-section','new-tags','new-hero-url'].forEach(id=>{
-      const el=document.getElementById(id); if(el) el.value='';
-    });
-    document.getElementById('new-locked').checked=false;
-    document.getElementById('heroPreview').style.display='none';
-    document.getElementById('authorPreview').style.display='none';
-
-    showToast('✓ Article published to database — live on site!');
-    await loadAdminData();
-    renderHero(); renderCards(); renderTopStories();
-  } catch(e){ showToast('✗ '+e.message,'error'); }
-  finally{ btn.disabled=false; btn.textContent='📢 Publish to Site →'; }
-}
-
-function renderMarketEditor(markets) {
-  document.getElementById('marketEditGrid').innerHTML=(markets||allMarkets).map(m=>`
-    <div class="market-edit-item">
-      <div class="market-edit-name">${m.name}</div>
-      <input class="mini-input" id="mv-${m.id}" value="${m.value}" placeholder="Value">
-      <input class="mini-input" id="mc-${m.id}" value="${m.change}" placeholder="e.g. +1.24%">
-      <div class="dir-toggle">
-        <div class="dir-btn up ${m.direction==='up'?'active':''}" onclick="setDir('${m.id}','up',this)">▲ Up</div>
-        <div class="dir-btn dn ${m.direction==='dn'?'active':''}" onclick="setDir('${m.id}','dn',this)">▼ Down</div>
-      </div>
-    </div>`).join('');
-}
-
-function setDir(id,dir,el){
-  el.closest('.dir-toggle').querySelectorAll('.dir-btn').forEach(b=>b.classList.remove('active'));
-  el.classList.add('active');
-}
-
-async function saveMarkets() {
-  try {
-    await Promise.all(allMarkets.map(m => {
-      const v = document.getElementById('mv-'+m.id)?.value;
-      const c = document.getElementById('mc-'+m.id)?.value;
-      const p = document.getElementById('mv-'+m.id)?.closest('.market-edit-item');
-      const activeDir = p?.querySelector('.dir-btn.active');
-      const dir = activeDir?.classList.contains('up') ? 'up' : 'dn';
-      return db.update('markets', { value:v||m.value, change:c||m.change, direction:dir, updated_at:new Date().toISOString() }, {id:m.id});
-    }));
-    const updated = await db.query('markets',{select:'*'});
-    allMarkets = updated;
-    renderMarketsStrip(); renderTicker();
-    showToast('✓ Market data saved to database');
-  } catch(e){ showToast('✗ '+e.message,'error'); }
-}
-
-async function saveBreaking() {
-  try {
-    const text   = document.getElementById('breakingText').value;
-    const active = document.getElementById('showBreaking').checked;
-    // Deactivate all, then insert new
-    const existing = await db.query('breaking_news',{select:'id',limit:'1'});
-    if(existing && existing[0]) {
-      await db.update('breaking_news', {text, is_active:active}, {id:existing[0].id});
-    } else {
-      await db.insert('breaking_news', {text, is_active:active});
-    }
-    document.getElementById('breakingTextDisplay').textContent = text;
-    document.getElementById('breakingBanner').style.display = active ? 'flex' : 'none';
-    showToast('✓ Breaking news saved');
-  } catch(e){ showToast('✗ '+e.message,'error'); }
-}
-
-async function saveSettings() {
-  try {
-    const settings = [
-      { key:'site_name',        value:document.getElementById('siteName').value },
-      { key:'tagline',          value:document.getElementById('siteTagline').value },
-      { key:'edition',          value:document.getElementById('editionLabel').value },
-      { key:'location_line',    value:document.getElementById('locationLine').value },
-      { key:'paywall_active',   value:String(document.getElementById('paywallActive').checked) },
-      { key:'newsletter_title', value:document.getElementById('newsletterTitle').value },
-      { key:'newsletter_sub',   value:document.getElementById('newsletterSub').value },
-      { key:'newsletter_btn',   value:document.getElementById('newsletterBtn').value },
-      { key:'newsletter_link',  value:document.getElementById('newsletterLink').value },
-      { key:'plan1_name',       value:document.getElementById('plan1Name').value },
-      { key:'plan1_price',      value:document.getElementById('plan1Price').value },
-      { key:'plan1_link',       value:document.getElementById('plan1Link').value },
-      { key:'plan2_name',       value:document.getElementById('plan2Name').value },
-      { key:'plan2_price',      value:document.getElementById('plan2Price').value },
-      { key:'plan2_link',       value:document.getElementById('plan2Link').value },
-      { key:'about_url',        value:document.getElementById('aboutUrl').value },
-      { key:'careers_url',      value:document.getElementById('careersUrl').value },
-      { key:'privacy_url',      value:document.getElementById('privacyUrl').value },
-      { key:'footer_about',     value:document.getElementById('footerAboutText').value },
-      { key:'copyright',        value:document.getElementById('copyrightText').value },
-    ];
-    await Promise.all(settings.map(s =>
-      db.update('site_settings',{value:s.value},{key:s.key})
-        .catch(()=>db.insert('site_settings',{key:s.key,value:s.value}))
-    ));
-    applySettings(settings.map(s=>({key:s.key,value:s.value})));
-    showToast('✓ All settings saved and live on site');
-  } catch(e){ showToast('✗ '+e.message,'error'); }
-}
-
-// ════════════════════════════════════════════════════════════
-// UI HELPERS
+// ARTICLE PAGE
 // ════════════════════════════════════════════════════════════
 function toggleDark(){
   const h=document.documentElement,dark=h.getAttribute('data-theme')==='dark';
   h.setAttribute('data-theme',dark?'light':'dark');
   document.getElementById('themeBtn').textContent=dark?'🌙':'☀️';
+  localStorage.setItem('amiTheme',dark?'light':'dark');
+}
+// Restore theme
+if(localStorage.getItem('amiTheme')==='dark'){
+  document.documentElement.setAttribute('data-theme','dark');
 }
 
-function showPaywall(){ document.getElementById('paywallOverlay').style.display='flex'; document.getElementById('paywallBlur').style.display='block'; }
-function closePaywall(){ document.getElementById('paywallOverlay').style.display='none'; document.getElementById('paywallBlur').style.display='none'; }
+// Supabase mini client
+const db = {
+  async query(table, options={}) {
+    const params = new URLSearchParams();
+    if(options.select) params.set('select', options.select);
+    if(options.eq) Object.entries(options.eq).forEach(([k,v])=>params.set(k,'eq.'+v));
+    if(options.order) params.set('order', options.order);
+    if(options.limit) params.set('limit', options.limit);
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${params}`, {
+      headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer '+SUPABASE_ANON }
+    });
+    if(!r.ok) throw new Error(await r.text());
+    return r.json();
+  }
+};
 
-function showToast(msg, type='success'){
-  const t=document.getElementById('toast'); t.textContent=msg;
-  if(type==='error'){ t.style.background='#4D1B1B'; t.style.borderColor='#F44336'; t.style.color='#F44336'; }
-  else if(type==='loading'){ t.style.background='#2A1F10'; t.style.borderColor='#C9A84C'; t.style.color='#C9A84C'; }
-  else { t.style.background='#1B4D1B'; t.style.borderColor='#4CAF50'; t.style.color='#4CAF50'; }
-  t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),4000);
+function searchArticles(q){ if(q) window.location.href='index.html?q='+encodeURIComponent(q); }
+
+async function loadArticle() {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+  if(!id) { document.getElementById('articleFull').innerHTML = '<p style="color:var(--text-soft);padding:24px;font-family:DM Mono,monospace">No article ID provided.</p>'; return; }
+  if(SUPABASE_URL==='YOUR_SUPABASE_URL') { document.getElementById('articleFull').innerHTML='<p style="color:var(--text-soft);padding:24px;font-family:DM Mono,monospace">Configure Supabase credentials to view articles.</p>'; return; }
+  try {
+    const rows = await db.query('articles',{select:'*',eq:{id}});
+    if(!rows||!rows.length){ document.getElementById('articleFull').innerHTML='<p style="color:var(--text-soft);padding:24px;font-family:DM Mono,monospace">Article not found.</p>'; return; }
+    const a = rows[0];
+    document.title = a.headline + ' | African Market Intelligence';
+    const avatar = a.author_photo
+      ? `<img src="${a.author_photo}" class="af-avatar" onerror="this.style.display='none'">`
+      : `<div class="af-avatar">${(a.author_initials||'?')}</div>`;
+    document.getElementById('articleFull').innerHTML = `
+      ${a.hero_image?`<img src="${a.hero_image}" class="af-hero" alt="${a.headline}" onerror="this.style.display='none'">`:''}
+      <div class="af-kicker">${a.section||''} ${a.is_locked?'<span class="af-tag">Premium</span>':''}</div>
+      <h1 class="af-headline">${a.headline}</h1>
+      ${a.standfirst?`<p class="af-standfirst">${a.standfirst}</p>`:''}
+      <div class="af-meta">
+        <div class="af-author">${avatar}<div><div class="af-author-name">${a.author_name||'AMI Staff'}</div><div>${a.author_role||''}</div></div></div>
+        <span>${a.published_date||''}</span>
+        <span>${a.read_time||''}</span>
+        ${a.tags?`<span>${a.tags}</span>`:''}
+      </div>
+      <div class="af-body">${a.body||'<p>Full article content coming soon.</p>'}</div>`;
+  } catch(e) {
+    document.getElementById('articleFull').innerHTML=`<p style="color:var(--text-soft);padding:24px;font-family:DM Mono,monospace">Error loading article: ${e.message}</p>`;
+  }
 }
-
-function showConfigBanner(){
-  document.getElementById('heroGrid').innerHTML=`
-    <div style="grid-column:1/-1;background:var(--card-bg);padding:48px;text-align:center;border:2px dashed var(--gold)">
-      <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;margin-bottom:12px;color:var(--gold)">⚙ Configure Supabase</div>
-      <p style="font-size:15px;color:var(--text-soft);max-width:500px;margin:0 auto 20px;line-height:1.7">Open <code style="background:var(--divider);padding:2px 8px;border-radius:2px">index.html</code> and replace <code style="background:var(--divider);padding:2px 8px;border-radius:2px">YOUR_SUPABASE_URL</code> and <code style="background:var(--divider);padding:2px 8px;border-radius:2px">YOUR_SUPABASE_ANON_KEY</code> with your credentials from Supabase → Project Settings → API.</p>
-      <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-soft)">See the included <strong>supabase-setup.sql</strong> file for full setup instructions.</div>
-    </div>`;
-}
-
-// ════════════════════════════════════════════════════════════
-// START
-// ════════════════════════════════════════════════════════════
-init();
+loadArticle();
 </script>
 </body>
 </html>
