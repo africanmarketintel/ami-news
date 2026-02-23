@@ -3,9 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>About | African Market Intelligence</title>
+<title>About AMI | African Market Intelligence</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400;1,600&family=Spectral:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<!-- ✅ SUPABASE: Paste your credentials below -->
+<script>
+  const SUPABASE_URL  = 'YOUR_SUPABASE_URL';
+  const SUPABASE_ANON = 'YOUR_SUPABASE_ANON_KEY';
+  const STRIPE_DIGITAL = 'https://buy.stripe.com/YOUR_DIGITAL_LINK';
+  const STRIPE_PREMIUM = 'https://buy.stripe.com/YOUR_PREMIUM_LINK';
+</script>
 <style>
 :root{--gold:#C9A84C;--gold-light:#E8C97A;--gold-pale:#FDF6E3;--terra:#B85C38;--terra-dark:#8C3A1F;--ink:#1A1208;--ink-mid:#3D2B1F;--ink-soft:#6B5344;--cream:#FAF7F0;--cream-dark:#F0EAD9;--border:#D4C4A0;--bg:var(--cream);--surface:#fff;--text:var(--ink);--text-soft:var(--ink-soft);--nav-bg:var(--ink);--nav-text:var(--cream);--header-bg:var(--cream-dark);--divider:var(--border);--card-bg:#fff}
 [data-theme="dark"]{--bg:#0F0A06;--surface:#1A1208;--text:#EDE5D5;--text-soft:#A89070;--nav-bg:#080502;--nav-text:#EDE5D5;--header-bg:#1A1208;--divider:#3D2B1F;--card-bg:#1F1610;--border:#3D2B1F;--gold-pale:#2A1F10}
@@ -267,13 +275,16 @@ footer{background:var(--ink);color:#888;padding:40px 24px 24px;margin-top:48px}
 
 </style>
 <style>
-.static-page { max-width: 900px; margin: 0 auto; padding: 56px 24px 80px; }
+.static-page { max-width: 860px; margin: 0 auto; padding: 56px 24px 80px; }
 .static-page h1 { font-family:'Playfair Display',serif; font-size:clamp(28px,5vw,48px); font-weight:800; color:var(--text); margin-bottom:8px; }
-.static-page .page-subtitle { font-family:'DM Mono',monospace; font-size:12px; letter-spacing:.15em; text-transform:uppercase; color:var(--text-soft); margin-bottom:40px; padding-bottom:20px; border-bottom:2px solid var(--gold); }
+.page-subtitle { font-family:'DM Mono',monospace; font-size:11px; letter-spacing:.15em; text-transform:uppercase; color:var(--text-soft); margin-bottom:40px; padding-bottom:18px; border-bottom:2px solid var(--gold); }
 .static-page h2 { font-family:'Playfair Display',serif; font-size:22px; font-weight:700; color:var(--text); margin:40px 0 12px; }
 .static-page p { font-size:16px; line-height:1.8; color:var(--text-soft); margin-bottom:18px; }
 .static-page ul { padding-left:24px; margin-bottom:18px; }
 .static-page ul li { font-size:16px; line-height:1.8; color:var(--text-soft); margin-bottom:6px; }
+.static-page a { color:var(--terra); }
+.static-page a:hover { color:var(--gold); }
+.cms-edit-hint { display:none; font-family:'DM Mono',monospace; font-size:10px; color:var(--text-soft); text-align:right; margin-bottom:16px; }
 .plan-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; margin:32px 0; }
 @media(max-width:600px){ .plan-grid{grid-template-columns:1fr;} }
 .plan-box { border:1px solid var(--divider); border-top:4px solid var(--gold); background:var(--card-bg); padding:32px 28px; }
@@ -285,30 +296,28 @@ footer{background:var(--ink);color:#888;padding:40px 24px 24px;margin-top:48px}
 .plan-box ul li::before { content:'✓ '; color:var(--gold); font-weight:700; }
 .plan-box .plan-cta { display:block; background:var(--gold); color:var(--ink); font-family:'DM Mono',monospace; font-size:12px; font-weight:500; letter-spacing:.08em; text-transform:uppercase; padding:12px 24px; text-align:center; border-radius:2px; transition:background .2s; }
 .plan-box .plan-cta:hover { background:var(--gold-light); }
-.contact-grid { display:grid; grid-template-columns:1fr 1fr; gap:32px; margin:32px 0; }
+.contact-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; margin:32px 0; }
 @media(max-width:600px){ .contact-grid{grid-template-columns:1fr;} }
 .contact-card { background:var(--card-bg); border:1px solid var(--divider); border-left:4px solid var(--gold); padding:24px; }
 .contact-card .cc-label { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.15em; text-transform:uppercase; color:var(--text-soft); margin-bottom:8px; }
-.contact-card .cc-val { font-family:'Playfair Display',serif; font-size:18px; color:var(--text); }
-.contact-card a { color:var(--terra); }
-.contact-card a:hover { color:var(--gold); }
-.contact-form { background:var(--card-bg); border:1px solid var(--divider); padding:32px; margin-top:32px; }
+.contact-card .cc-val { font-family:'Playfair Display',serif; font-size:17px; color:var(--text); }
+.contact-form { background:var(--card-bg); border:1px solid var(--divider); padding:32px; margin-top:32px; border-top:3px solid var(--gold); }
 .contact-form label { display:block; font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--text-soft); margin-bottom:6px; margin-top:18px; }
 .contact-form input, .contact-form textarea, .contact-form select { width:100%; background:var(--bg); border:1px solid var(--divider); color:var(--text); padding:10px 14px; font-family:'Spectral',Georgia,serif; font-size:15px; outline:none; border-radius:2px; }
 .contact-form input:focus, .contact-form textarea:focus { border-color:var(--gold); }
 .contact-form textarea { height:140px; resize:vertical; }
 .contact-form .cf-submit { margin-top:22px; background:var(--gold); color:var(--ink); font-family:'DM Mono',monospace; font-size:12px; font-weight:500; letter-spacing:.1em; text-transform:uppercase; padding:12px 28px; border-radius:2px; cursor:pointer; border:none; transition:background .2s; }
 .contact-form .cf-submit:hover { background:var(--gold-light); }
-.team-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:24px; margin:32px 0; }
-.team-card { background:var(--card-bg); border:1px solid var(--divider); padding:24px; text-align:center; }
-.team-avatar { width:64px; height:64px; border-radius:50%; background:var(--terra); color:white; display:flex; align-items:center; justify-content:center; font-family:'Playfair Display',serif; font-size:22px; font-weight:800; margin:0 auto 14px; }
-.team-name { font-family:'Playfair Display',serif; font-size:16px; font-weight:600; color:var(--text); margin-bottom:4px; }
-.team-role { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-soft); }
 .stat-row { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin:32px 0; }
 @media(max-width:600px){ .stat-row{grid-template-columns:1fr 1fr;} }
 .stat-box { text-align:center; background:var(--card-bg); border:1px solid var(--divider); border-top:3px solid var(--gold); padding:28px; }
 .stat-num { font-family:'Playfair Display',serif; font-size:36px; font-weight:800; color:var(--gold); }
 .stat-lbl { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.15em; text-transform:uppercase; color:var(--text-soft); margin-top:6px; }
+.team-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:24px; margin:32px 0; }
+.team-card { background:var(--card-bg); border:1px solid var(--divider); padding:24px; text-align:center; }
+.team-avatar { width:64px; height:64px; border-radius:50%; background:var(--terra); color:white; display:flex; align-items:center; justify-content:center; font-family:'Playfair Display',serif; font-size:22px; font-weight:800; margin:0 auto 14px; }
+.team-name { font-family:'Playfair Display',serif; font-size:16px; font-weight:600; color:var(--text); margin-bottom:4px; }
+.team-role { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-soft); }
 .careers-card { background:var(--card-bg); border:1px solid var(--divider); border-left:4px solid var(--terra); padding:28px; margin-bottom:16px; }
 .careers-card .cj-title { font-family:'Playfair Display',serif; font-size:20px; font-weight:700; color:var(--text); margin-bottom:6px; }
 .careers-card .cj-meta { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-soft); margin-bottom:14px; }
@@ -317,32 +326,32 @@ footer{background:var(--ink);color:#888;padding:40px 24px 24px;margin-top:48px}
 </style>
 </head>
 <body>
+
 <div class="ticker-bar"><div class="ticker-inner">
-  <span class="ticker-item"><span class="sym">African Market Intelligence</span>&nbsp;&nbsp;·&nbsp;&nbsp;
-  <span class="sym">Pan-African Financial News</span>&nbsp;&nbsp;·&nbsp;&nbsp;
-  <span class="sym">54 Markets Covered</span>&nbsp;&nbsp;·&nbsp;&nbsp;
-  <span class="sym">Est. 2024</span></span>
+  <span class="ticker-item"><span class="sym">African Market Intelligence</span>&nbsp;·&nbsp;Pan-African Financial News&nbsp;·&nbsp;54 Markets Covered</span>
 </div></div>
+
 <nav class="top-nav">
   <div class="nav-left">
-    <a href="index.html"      class="nav-link" id="nav-home">Home</a>
-    <a href="markets.html"    class="nav-link" id="nav-markets">Markets</a>
-    <a href="politics.html"   class="nav-link" id="nav-politics">Politics</a>
-    <a href="economy.html"    class="nav-link" id="nav-economy">Economy</a>
-    <a href="energy.html"     class="nav-link" id="nav-energy">Energy</a>
+    <a href="index.html" class="nav-link" id="nav-home">Home</a>
+    <a href="markets.html" class="nav-link" id="nav-markets">Markets</a>
+    <a href="politics.html" class="nav-link" id="nav-politics">Politics</a>
+    <a href="economy.html" class="nav-link" id="nav-economy">Economy</a>
+    <a href="energy.html" class="nav-link" id="nav-energy">Energy</a>
     <a href="technology.html" class="nav-link" id="nav-technology">Tech</a>
-    <a href="opinion.html"    class="nav-link" id="nav-opinion">Opinion</a>
-    <a href="archive.html"    class="nav-link" id="nav-archive">Archive</a>
+    <a href="opinion.html" class="nav-link" id="nav-opinion">Opinion</a>
+    <a href="archive.html" class="nav-link" id="nav-archive">Archive</a>
   </div>
   <div class="nav-right">
-    <input class="nav-search" type="text" placeholder="Search AMI…" oninput="if(window.searchArticles)searchArticles(this.value);else window.location.href='index.html?q='+encodeURIComponent(this.value)">
-    <a href="about.html"      class="nav-link" id="nav-about" style="color:var(--gold);border-bottom:2px solid var(--gold)">About</a>
+    <input class="nav-search" type="text" placeholder="Search AMI…" oninput="if(this.value)window.location.href='index.html?q='+encodeURIComponent(this.value)">
+    <a href="about.html" class="nav-link" id="nav-about" style="color:var(--gold);border-bottom:2px solid var(--gold)">About</a>
     <a href="membership.html" class="nav-link" id="nav-membership">Membership</a>
-    <a href="contact.html"    class="nav-link" id="nav-contact">Contact</a>
+    <a href="contact.html" class="nav-link" id="nav-contact">Contact</a>
     <button class="dark-toggle" onclick="toggleDark()" id="themeBtn">🌙</button>
     <a href="membership.html" class="btn-subscribe">Subscribe</a>
   </div>
 </nav>
+
 <header class="masthead">
   <div class="masthead-name"><a href="index.html" style="color:inherit">African Market <span>Intelligence</span></a></div>
   <div class="masthead-tagline">The Continent's Premium Financial &amp; Business Publication</div>
@@ -353,48 +362,43 @@ footer{background:var(--ink);color:#888;padding:40px 24px 24px;margin-top:48px}
   </div>
 </header>
 <div class="static-page">
-  <h1>About African Market Intelligence</h1>
-  <div class="page-subtitle">Our mission, our people, our reach</div>
-
-  <p>African Market Intelligence (AMI) is the continent's leading independent source of financial news, market data, and business intelligence. We serve investors, executives, policymakers, and entrepreneurs across Africa's 54 markets.</p>
-
-  <p>Founded in 2024, AMI was built on a simple belief: that Africa's economic story deserves world-class financial journalism. From Lagos to Nairobi, Cairo to Johannesburg, our correspondents provide the analysis and insight that professionals rely on.</p>
-
-  <div class="stat-row">
-    <div class="stat-box"><div class="stat-num">54</div><div class="stat-lbl">Markets Covered</div></div>
-    <div class="stat-box"><div class="stat-num">48K+</div><div class="stat-lbl">Subscribers</div></div>
-    <div class="stat-box"><div class="stat-num">6</div><div class="stat-lbl">Regional Bureaus</div></div>
+  <h1 id="page-title-display">About AMI</h1>
+  <div class="page-subtitle" id="page-subtitle-display"><!-- CMS subtitle --></div>
+  <div id="page-body-display">
+<p>African Market Intelligence (AMI) is the continent's leading independent source of financial news, market data, and business intelligence. We serve investors, executives, policymakers, and entrepreneurs across Africa's 54 markets.</p>
+<p>Founded in 2024, AMI was built on a simple belief: that Africa's economic story deserves world-class financial journalism.</p>
+<div class="stat-row">
+  <div class="stat-box"><div class="stat-num">54</div><div class="stat-lbl">Markets Covered</div></div>
+  <div class="stat-box"><div class="stat-num">48K+</div><div class="stat-lbl">Subscribers</div></div>
+  <div class="stat-box"><div class="stat-num">6</div><div class="stat-lbl">Regional Bureaus</div></div>
+</div>
+<h2>Our Editorial Standards</h2>
+<p>AMI is editorially independent. Our newsroom is funded entirely by subscriber revenue — we accept no advertising and carry no sponsored content.</p>
+<h2>Our Coverage</h2>
+<ul>
+  <li><strong>Markets &amp; Finance:</strong> Equity markets, currencies, commodities across Africa</li>
+  <li><strong>Economy:</strong> GDP, inflation, trade and fiscal policy analysis</li>
+  <li><strong>Politics &amp; Policy:</strong> Elections, regulation and geopolitical risk</li>
+  <li><strong>Energy:</strong> Oil, gas, renewables and Africa's energy transition</li>
+  <li><strong>Technology:</strong> Fintech, telecoms, digital infrastructure and innovation</li>
+</ul>
+<h2>Our Team</h2>
+<div class="team-grid">
+  <div class="team-card"><div class="team-avatar">EO</div><div class="team-name">Emmanuel Osei</div><div class="team-role">Editor-in-Chief</div></div>
+  <div class="team-card"><div class="team-avatar">FN</div><div class="team-name">Fatima Ndlovu</div><div class="team-role">Markets Editor</div></div>
+  <div class="team-card"><div class="team-avatar">KA</div><div class="team-name">Kofi Asante</div><div class="team-role">West Africa Bureau</div></div>
+  <div class="team-card"><div class="team-avatar">AW</div><div class="team-name">Amara Wanjiku</div><div class="team-role">East Africa Bureau</div></div>
+</div>
+<p>For editorial enquiries, visit our <a href="contact.html">Contact page</a>.</p>
   </div>
-
-  <h2>Our Editorial Standards</h2>
-  <p>AMI is editorially independent. Our newsroom is funded entirely by subscriber revenue — we accept no advertising and carry no sponsored content. Our journalists adhere to the highest standards of accuracy, fairness, and impartiality.</p>
-
-  <h2>Coverage Areas</h2>
-  <ul>
-    <li><strong>Markets &amp; Finance:</strong> Equity markets, currencies, commodities, and fixed income across Africa</li>
-    <li><strong>Economy:</strong> GDP, inflation, trade, and fiscal policy analysis</li>
-    <li><strong>Politics &amp; Policy:</strong> Elections, regulation, and geopolitical risk</li>
-    <li><strong>Energy:</strong> Oil, gas, renewables, and Africa's energy transition</li>
-    <li><strong>Technology:</strong> Fintech, telecoms, digital infrastructure, and innovation</li>
-    <li><strong>Opinion:</strong> Perspectives from Africa's leading economists and business leaders</li>
-  </ul>
-
-  <h2>Our Team</h2>
-  <div class="team-grid">
-    <div class="team-card"><div class="team-avatar">EO</div><div class="team-name">Emmanuel Osei</div><div class="team-role">Editor-in-Chief</div></div>
-    <div class="team-card"><div class="team-avatar">FN</div><div class="team-name">Fatima Ndlovu</div><div class="team-role">Markets Editor</div></div>
-    <div class="team-card"><div class="team-avatar">KA</div><div class="team-name">Kofi Asante</div><div class="team-role">West Africa Bureau</div></div>
-    <div class="team-card"><div class="team-avatar">AW</div><div class="team-name">Amara Wanjiku</div><div class="team-role">East Africa Bureau</div></div>
-  </div>
-
-  <h2>Contact Us</h2>
-  <p>For editorial enquiries, press releases, or subscription support, visit our <a href="contact.html" style="color:var(--terra)">Contact page</a> or email <a href="mailto:editorial@africanmarketintel.com" style="color:var(--terra)">editorial@africanmarketintel.com</a>.</p>
 </div>
 <footer>
   <div class="footer-inner">
     <div class="footer-top">
-      <div><div class="footer-brand">African Market Intelligence</div>
-        <p class="footer-about">The continent's most trusted source for financial news and business intelligence across Africa's 54 markets.</p></div>
+      <div>
+        <div class="footer-brand">African Market Intelligence</div>
+        <p class="footer-about">The continent's most trusted source for financial news and business intelligence across Africa's 54 markets.</p>
+      </div>
       <div><div class="footer-col-title">Sections</div>
         <ul class="footer-links">
           <li><a href="markets.html">Markets</a></li>
@@ -426,12 +430,13 @@ footer{background:var(--ink);color:#888;padding:40px 24px 24px;margin-top:48px}
     </div>
   </div>
 </footer>
+
 <script>
 function toggleDark(){
-  const h=document.documentElement,dark=h.getAttribute('data-theme')==='dark';
-  h.setAttribute('data-theme',dark?'light':'dark');
-  document.getElementById('themeBtn').textContent=dark?'🌙':'☀️';
-  localStorage.setItem('amiTheme',dark?'light':'dark');
+  const h=document.documentElement, dark=h.getAttribute('data-theme')==='dark';
+  h.setAttribute('data-theme', dark?'light':'dark');
+  document.getElementById('themeBtn').textContent = dark?'🌙':'☀️';
+  localStorage.setItem('amiTheme', dark?'light':'dark');
 }
 if(localStorage.getItem('amiTheme')==='dark'){
   document.documentElement.setAttribute('data-theme','dark');
@@ -446,6 +451,41 @@ document.addEventListener('DOMContentLoaded',function(){
   const c=document.getElementById('copyrightDisplay');
   if(c) c.textContent='© '+new Date().getFullYear()+' African Market Intelligence Ltd. All rights reserved.';
 });
+
+// CMS content loader from Supabase
+const db = {
+  async query(table, options={}) {
+    const params = new URLSearchParams();
+    if(options.select) params.set('select', options.select);
+    if(options.eq) Object.entries(options.eq).forEach(([k,v])=>params.set(k,'eq.'+v));
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${params}`, {
+      headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer '+SUPABASE_ANON }
+    });
+    if(!r.ok) throw new Error(await r.text());
+    return r.json();
+  }
+};
+
+async function loadCMSContent(pageName) {
+  if(SUPABASE_URL === 'YOUR_SUPABASE_URL') return; // Not configured yet
+  try {
+    const [t, s, b] = await Promise.all([
+      db.query('site_settings', {select:'key,value', eq:{key:`page_${pageName}_title`}}),
+      db.query('site_settings', {select:'key,value', eq:{key:`page_${pageName}_subtitle`}}),
+      db.query('site_settings', {select:'key,value', eq:{key:`page_${pageName}_body`}}),
+    ]);
+    const titleEl    = document.getElementById('page-title-display');
+    const subtitleEl = document.getElementById('page-subtitle-display');
+    const bodyEl     = document.getElementById('page-body-display');
+    if(titleEl    && t&&t[0]&&t[0].value) titleEl.textContent    = t[0].value;
+    if(subtitleEl && s&&s[0]&&s[0].value) subtitleEl.textContent = s[0].value;
+    if(bodyEl     && b&&b[0]&&b[0].value) bodyEl.innerHTML       = b[0].value;
+  } catch(e) { console.warn('CMS load error:', e.message); }
+}
 </script>
+<script>
+loadCMSContent('about');
+</script>
+
 </body>
 </html>

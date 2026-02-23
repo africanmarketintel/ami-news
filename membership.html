@@ -6,6 +6,14 @@
 <title>Membership | African Market Intelligence</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400;1,600&family=Spectral:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<!-- ✅ SUPABASE: Paste your credentials below -->
+<script>
+  const SUPABASE_URL  = 'YOUR_SUPABASE_URL';
+  const SUPABASE_ANON = 'YOUR_SUPABASE_ANON_KEY';
+  const STRIPE_DIGITAL = 'https://buy.stripe.com/YOUR_DIGITAL_LINK';
+  const STRIPE_PREMIUM = 'https://buy.stripe.com/YOUR_PREMIUM_LINK';
+</script>
 <style>
 :root{--gold:#C9A84C;--gold-light:#E8C97A;--gold-pale:#FDF6E3;--terra:#B85C38;--terra-dark:#8C3A1F;--ink:#1A1208;--ink-mid:#3D2B1F;--ink-soft:#6B5344;--cream:#FAF7F0;--cream-dark:#F0EAD9;--border:#D4C4A0;--bg:var(--cream);--surface:#fff;--text:var(--ink);--text-soft:var(--ink-soft);--nav-bg:var(--ink);--nav-text:var(--cream);--header-bg:var(--cream-dark);--divider:var(--border);--card-bg:#fff}
 [data-theme="dark"]{--bg:#0F0A06;--surface:#1A1208;--text:#EDE5D5;--text-soft:#A89070;--nav-bg:#080502;--nav-text:#EDE5D5;--header-bg:#1A1208;--divider:#3D2B1F;--card-bg:#1F1610;--border:#3D2B1F;--gold-pale:#2A1F10}
@@ -267,13 +275,16 @@ footer{background:var(--ink);color:#888;padding:40px 24px 24px;margin-top:48px}
 
 </style>
 <style>
-.static-page { max-width: 900px; margin: 0 auto; padding: 56px 24px 80px; }
+.static-page { max-width: 860px; margin: 0 auto; padding: 56px 24px 80px; }
 .static-page h1 { font-family:'Playfair Display',serif; font-size:clamp(28px,5vw,48px); font-weight:800; color:var(--text); margin-bottom:8px; }
-.static-page .page-subtitle { font-family:'DM Mono',monospace; font-size:12px; letter-spacing:.15em; text-transform:uppercase; color:var(--text-soft); margin-bottom:40px; padding-bottom:20px; border-bottom:2px solid var(--gold); }
+.page-subtitle { font-family:'DM Mono',monospace; font-size:11px; letter-spacing:.15em; text-transform:uppercase; color:var(--text-soft); margin-bottom:40px; padding-bottom:18px; border-bottom:2px solid var(--gold); }
 .static-page h2 { font-family:'Playfair Display',serif; font-size:22px; font-weight:700; color:var(--text); margin:40px 0 12px; }
 .static-page p { font-size:16px; line-height:1.8; color:var(--text-soft); margin-bottom:18px; }
 .static-page ul { padding-left:24px; margin-bottom:18px; }
 .static-page ul li { font-size:16px; line-height:1.8; color:var(--text-soft); margin-bottom:6px; }
+.static-page a { color:var(--terra); }
+.static-page a:hover { color:var(--gold); }
+.cms-edit-hint { display:none; font-family:'DM Mono',monospace; font-size:10px; color:var(--text-soft); text-align:right; margin-bottom:16px; }
 .plan-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; margin:32px 0; }
 @media(max-width:600px){ .plan-grid{grid-template-columns:1fr;} }
 .plan-box { border:1px solid var(--divider); border-top:4px solid var(--gold); background:var(--card-bg); padding:32px 28px; }
@@ -285,30 +296,28 @@ footer{background:var(--ink);color:#888;padding:40px 24px 24px;margin-top:48px}
 .plan-box ul li::before { content:'✓ '; color:var(--gold); font-weight:700; }
 .plan-box .plan-cta { display:block; background:var(--gold); color:var(--ink); font-family:'DM Mono',monospace; font-size:12px; font-weight:500; letter-spacing:.08em; text-transform:uppercase; padding:12px 24px; text-align:center; border-radius:2px; transition:background .2s; }
 .plan-box .plan-cta:hover { background:var(--gold-light); }
-.contact-grid { display:grid; grid-template-columns:1fr 1fr; gap:32px; margin:32px 0; }
+.contact-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; margin:32px 0; }
 @media(max-width:600px){ .contact-grid{grid-template-columns:1fr;} }
 .contact-card { background:var(--card-bg); border:1px solid var(--divider); border-left:4px solid var(--gold); padding:24px; }
 .contact-card .cc-label { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.15em; text-transform:uppercase; color:var(--text-soft); margin-bottom:8px; }
-.contact-card .cc-val { font-family:'Playfair Display',serif; font-size:18px; color:var(--text); }
-.contact-card a { color:var(--terra); }
-.contact-card a:hover { color:var(--gold); }
-.contact-form { background:var(--card-bg); border:1px solid var(--divider); padding:32px; margin-top:32px; }
+.contact-card .cc-val { font-family:'Playfair Display',serif; font-size:17px; color:var(--text); }
+.contact-form { background:var(--card-bg); border:1px solid var(--divider); padding:32px; margin-top:32px; border-top:3px solid var(--gold); }
 .contact-form label { display:block; font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--text-soft); margin-bottom:6px; margin-top:18px; }
 .contact-form input, .contact-form textarea, .contact-form select { width:100%; background:var(--bg); border:1px solid var(--divider); color:var(--text); padding:10px 14px; font-family:'Spectral',Georgia,serif; font-size:15px; outline:none; border-radius:2px; }
 .contact-form input:focus, .contact-form textarea:focus { border-color:var(--gold); }
 .contact-form textarea { height:140px; resize:vertical; }
 .contact-form .cf-submit { margin-top:22px; background:var(--gold); color:var(--ink); font-family:'DM Mono',monospace; font-size:12px; font-weight:500; letter-spacing:.1em; text-transform:uppercase; padding:12px 28px; border-radius:2px; cursor:pointer; border:none; transition:background .2s; }
 .contact-form .cf-submit:hover { background:var(--gold-light); }
-.team-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:24px; margin:32px 0; }
-.team-card { background:var(--card-bg); border:1px solid var(--divider); padding:24px; text-align:center; }
-.team-avatar { width:64px; height:64px; border-radius:50%; background:var(--terra); color:white; display:flex; align-items:center; justify-content:center; font-family:'Playfair Display',serif; font-size:22px; font-weight:800; margin:0 auto 14px; }
-.team-name { font-family:'Playfair Display',serif; font-size:16px; font-weight:600; color:var(--text); margin-bottom:4px; }
-.team-role { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-soft); }
 .stat-row { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin:32px 0; }
 @media(max-width:600px){ .stat-row{grid-template-columns:1fr 1fr;} }
 .stat-box { text-align:center; background:var(--card-bg); border:1px solid var(--divider); border-top:3px solid var(--gold); padding:28px; }
 .stat-num { font-family:'Playfair Display',serif; font-size:36px; font-weight:800; color:var(--gold); }
 .stat-lbl { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.15em; text-transform:uppercase; color:var(--text-soft); margin-top:6px; }
+.team-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:24px; margin:32px 0; }
+.team-card { background:var(--card-bg); border:1px solid var(--divider); padding:24px; text-align:center; }
+.team-avatar { width:64px; height:64px; border-radius:50%; background:var(--terra); color:white; display:flex; align-items:center; justify-content:center; font-family:'Playfair Display',serif; font-size:22px; font-weight:800; margin:0 auto 14px; }
+.team-name { font-family:'Playfair Display',serif; font-size:16px; font-weight:600; color:var(--text); margin-bottom:4px; }
+.team-role { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-soft); }
 .careers-card { background:var(--card-bg); border:1px solid var(--divider); border-left:4px solid var(--terra); padding:28px; margin-bottom:16px; }
 .careers-card .cj-title { font-family:'Playfair Display',serif; font-size:20px; font-weight:700; color:var(--text); margin-bottom:6px; }
 .careers-card .cj-meta { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-soft); margin-bottom:14px; }
@@ -317,32 +326,32 @@ footer{background:var(--ink);color:#888;padding:40px 24px 24px;margin-top:48px}
 </style>
 </head>
 <body>
+
 <div class="ticker-bar"><div class="ticker-inner">
-  <span class="ticker-item"><span class="sym">African Market Intelligence</span>&nbsp;&nbsp;·&nbsp;&nbsp;
-  <span class="sym">Pan-African Financial News</span>&nbsp;&nbsp;·&nbsp;&nbsp;
-  <span class="sym">54 Markets Covered</span>&nbsp;&nbsp;·&nbsp;&nbsp;
-  <span class="sym">Est. 2024</span></span>
+  <span class="ticker-item"><span class="sym">African Market Intelligence</span>&nbsp;·&nbsp;Pan-African Financial News&nbsp;·&nbsp;54 Markets Covered</span>
 </div></div>
+
 <nav class="top-nav">
   <div class="nav-left">
-    <a href="index.html"      class="nav-link" id="nav-home">Home</a>
-    <a href="markets.html"    class="nav-link" id="nav-markets">Markets</a>
-    <a href="politics.html"   class="nav-link" id="nav-politics">Politics</a>
-    <a href="economy.html"    class="nav-link" id="nav-economy">Economy</a>
-    <a href="energy.html"     class="nav-link" id="nav-energy">Energy</a>
+    <a href="index.html" class="nav-link" id="nav-home">Home</a>
+    <a href="markets.html" class="nav-link" id="nav-markets">Markets</a>
+    <a href="politics.html" class="nav-link" id="nav-politics">Politics</a>
+    <a href="economy.html" class="nav-link" id="nav-economy">Economy</a>
+    <a href="energy.html" class="nav-link" id="nav-energy">Energy</a>
     <a href="technology.html" class="nav-link" id="nav-technology">Tech</a>
-    <a href="opinion.html"    class="nav-link" id="nav-opinion">Opinion</a>
-    <a href="archive.html"    class="nav-link" id="nav-archive">Archive</a>
+    <a href="opinion.html" class="nav-link" id="nav-opinion">Opinion</a>
+    <a href="archive.html" class="nav-link" id="nav-archive">Archive</a>
   </div>
   <div class="nav-right">
-    <input class="nav-search" type="text" placeholder="Search AMI…" oninput="if(window.searchArticles)searchArticles(this.value);else window.location.href='index.html?q='+encodeURIComponent(this.value)">
-    <a href="about.html"      class="nav-link" id="nav-about">About</a>
+    <input class="nav-search" type="text" placeholder="Search AMI…" oninput="if(this.value)window.location.href='index.html?q='+encodeURIComponent(this.value)">
+    <a href="about.html" class="nav-link" id="nav-about">About</a>
     <a href="membership.html" class="nav-link" id="nav-membership" style="color:var(--gold);border-bottom:2px solid var(--gold)">Membership</a>
-    <a href="contact.html"    class="nav-link" id="nav-contact">Contact</a>
+    <a href="contact.html" class="nav-link" id="nav-contact">Contact</a>
     <button class="dark-toggle" onclick="toggleDark()" id="themeBtn">🌙</button>
     <a href="membership.html" class="btn-subscribe">Subscribe</a>
   </div>
 </nav>
+
 <header class="masthead">
   <div class="masthead-name"><a href="index.html" style="color:inherit">African Market <span>Intelligence</span></a></div>
   <div class="masthead-tagline">The Continent's Premium Financial &amp; Business Publication</div>
@@ -353,66 +362,53 @@ footer{background:var(--ink);color:#888;padding:40px 24px 24px;margin-top:48px}
   </div>
 </header>
 <div class="static-page">
-  <h1>AMI Membership</h1>
-  <div class="page-subtitle">Choose your plan — cancel anytime</div>
-
-  <p>AMI is funded entirely by its readers. Your subscription supports independent, high-quality financial journalism from across Africa's 54 markets, with no advertising and no outside influence.</p>
-
-  <div class="plan-grid">
-    <div class="plan-box">
-      <div class="pname">Digital</div>
-      <div class="pprice">$29</div>
-      <div class="pper">per month · billed monthly</div>
-      <ul>
-        <li>Unlimited article access</li>
-        <li>AMI Morning Brief newsletter</li>
-        <li>Live African market data</li>
-        <li>AI-powered article summaries</li>
-        <li>Archive access (5 years)</li>
-      </ul>
-      <a href="https://buy.stripe.com/YOUR_DIGITAL_LINK" id="memberDigitalBtn" class="plan-cta" target="_blank">Subscribe — Digital →</a>
-    </div>
-    <div class="plan-box featured">
-      <div class="pname" style="color:var(--terra)">Premium ★ Most Popular</div>
-      <div class="pprice">$59</div>
-      <div class="pper">per month · billed monthly</div>
-      <ul>
-        <li>Everything in Digital</li>
-        <li>In-depth research reports</li>
-        <li>AMI Investor Events &amp; Webinars</li>
-        <li>Downloadable market datasets</li>
-        <li>Priority editorial access</li>
-      </ul>
-      <a href="https://buy.stripe.com/YOUR_PREMIUM_LINK" id="memberPremiumBtn" class="plan-cta" style="background:var(--terra);color:white" target="_blank">Subscribe — Premium →</a>
-    </div>
+  <h1 id="page-title-display">Membership</h1>
+  <div class="page-subtitle" id="page-subtitle-display"><!-- CMS subtitle --></div>
+  <div id="page-body-display">
+<p>AMI is funded entirely by its readers. Your subscription supports independent, high-quality financial journalism from across Africa's 54 markets — no advertising, no outside influence.</p>
+<div class="plan-grid">
+  <div class="plan-box">
+    <div class="pname">Digital</div>
+    <div class="pprice">$29</div>
+    <div class="pper">per month · billed monthly</div>
+    <ul>
+      <li>Unlimited article access</li>
+      <li>AMI Morning Brief newsletter</li>
+      <li>Live African market data</li>
+      <li>AI-powered article summaries</li>
+      <li>5-year archive access</li>
+    </ul>
+    <a href="https://buy.stripe.com/YOUR_DIGITAL_LINK" class="plan-cta" target="_blank">Subscribe — Digital →</a>
   </div>
-
-  <h2>Why Subscribe?</h2>
-  <p>Africa is the world's fastest-growing economic region, yet reliable, independent financial intelligence has historically been hard to find. AMI fills that gap — providing the same depth of analysis you'd expect from the world's best financial publications, focused entirely on African markets.</p>
-
-  <h2>Frequently Asked Questions</h2>
-  <h2 style="font-size:16px;margin-top:20px">Can I cancel at any time?</h2>
-  <p>Yes. All plans are month-to-month and can be cancelled at any time with no fees or penalties. Your access continues until the end of your billing period.</p>
-  <h2 style="font-size:16px;margin-top:20px">Is there a free trial?</h2>
-  <p>New subscribers receive 3 free articles per month with no subscription. To unlock unlimited access, choose a paid plan above.</p>
-  <h2 style="font-size:16px;margin-top:20px">Do you offer institutional or corporate subscriptions?</h2>
-  <p>Yes — please <a href="contact.html" style="color:var(--terra)">contact us</a> for team and enterprise pricing tailored to your organisation.</p>
-
-  <p style="margin-top:40px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text-soft);text-align:center">🔒 Secure checkout powered by Stripe · All major cards accepted · Cancel anytime</p>
+  <div class="plan-box featured">
+    <div class="pname" style="color:var(--terra)">Premium ★ Most Popular</div>
+    <div class="pprice">$59</div>
+    <div class="pper">per month · billed monthly</div>
+    <ul>
+      <li>Everything in Digital</li>
+      <li>In-depth research reports</li>
+      <li>AMI Investor Events &amp; Webinars</li>
+      <li>Downloadable market datasets</li>
+      <li>Priority editorial access</li>
+    </ul>
+    <a href="https://buy.stripe.com/YOUR_PREMIUM_LINK" class="plan-cta" style="background:var(--terra);color:white" target="_blank">Subscribe — Premium →</a>
+  </div>
 </div>
-<script>
-// Update Stripe links from credentials if set
-(function(){
-  const d = document.getElementById('memberDigitalBtn');
-  const p = document.getElementById('memberPremiumBtn');
-  // These will be overridden at subscription time via Stripe
-})();
-</script>
+<h2>Frequently Asked Questions</h2>
+<h2 style="font-size:16px;margin-top:20px">Can I cancel at any time?</h2>
+<p>Yes. All plans are month-to-month and can be cancelled at any time with no fees or penalties.</p>
+<h2 style="font-size:16px;margin-top:20px">Do you offer corporate plans?</h2>
+<p>Yes — <a href="contact.html">contact us</a> for team and enterprise pricing.</p>
+<p style="margin-top:40px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text-soft);text-align:center">🔒 Secure checkout powered by Stripe · Cancel anytime</p>
+  </div>
+</div>
 <footer>
   <div class="footer-inner">
     <div class="footer-top">
-      <div><div class="footer-brand">African Market Intelligence</div>
-        <p class="footer-about">The continent's most trusted source for financial news and business intelligence across Africa's 54 markets.</p></div>
+      <div>
+        <div class="footer-brand">African Market Intelligence</div>
+        <p class="footer-about">The continent's most trusted source for financial news and business intelligence across Africa's 54 markets.</p>
+      </div>
       <div><div class="footer-col-title">Sections</div>
         <ul class="footer-links">
           <li><a href="markets.html">Markets</a></li>
@@ -444,12 +440,13 @@ footer{background:var(--ink);color:#888;padding:40px 24px 24px;margin-top:48px}
     </div>
   </div>
 </footer>
+
 <script>
 function toggleDark(){
-  const h=document.documentElement,dark=h.getAttribute('data-theme')==='dark';
-  h.setAttribute('data-theme',dark?'light':'dark');
-  document.getElementById('themeBtn').textContent=dark?'🌙':'☀️';
-  localStorage.setItem('amiTheme',dark?'light':'dark');
+  const h=document.documentElement, dark=h.getAttribute('data-theme')==='dark';
+  h.setAttribute('data-theme', dark?'light':'dark');
+  document.getElementById('themeBtn').textContent = dark?'🌙':'☀️';
+  localStorage.setItem('amiTheme', dark?'light':'dark');
 }
 if(localStorage.getItem('amiTheme')==='dark'){
   document.documentElement.setAttribute('data-theme','dark');
@@ -464,6 +461,41 @@ document.addEventListener('DOMContentLoaded',function(){
   const c=document.getElementById('copyrightDisplay');
   if(c) c.textContent='© '+new Date().getFullYear()+' African Market Intelligence Ltd. All rights reserved.';
 });
+
+// CMS content loader from Supabase
+const db = {
+  async query(table, options={}) {
+    const params = new URLSearchParams();
+    if(options.select) params.set('select', options.select);
+    if(options.eq) Object.entries(options.eq).forEach(([k,v])=>params.set(k,'eq.'+v));
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${params}`, {
+      headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer '+SUPABASE_ANON }
+    });
+    if(!r.ok) throw new Error(await r.text());
+    return r.json();
+  }
+};
+
+async function loadCMSContent(pageName) {
+  if(SUPABASE_URL === 'YOUR_SUPABASE_URL') return; // Not configured yet
+  try {
+    const [t, s, b] = await Promise.all([
+      db.query('site_settings', {select:'key,value', eq:{key:`page_${pageName}_title`}}),
+      db.query('site_settings', {select:'key,value', eq:{key:`page_${pageName}_subtitle`}}),
+      db.query('site_settings', {select:'key,value', eq:{key:`page_${pageName}_body`}}),
+    ]);
+    const titleEl    = document.getElementById('page-title-display');
+    const subtitleEl = document.getElementById('page-subtitle-display');
+    const bodyEl     = document.getElementById('page-body-display');
+    if(titleEl    && t&&t[0]&&t[0].value) titleEl.textContent    = t[0].value;
+    if(subtitleEl && s&&s[0]&&s[0].value) subtitleEl.textContent = s[0].value;
+    if(bodyEl     && b&&b[0]&&b[0].value) bodyEl.innerHTML       = b[0].value;
+  } catch(e) { console.warn('CMS load error:', e.message); }
+}
 </script>
+<script>
+loadCMSContent('membership');
+</script>
+
 </body>
 </html>
