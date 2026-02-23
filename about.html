@@ -268,6 +268,175 @@ footer{background:var(--ink);color:#888;padding:40px 24px 24px;margin-top:48px}
 .archive-title{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--terra)}
 .archive-count{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft)}
 
+
+/* ══════════════════════════════════════════════════════════
+   WCAG AA + RESPONSIVE — auto-generated patch
+══════════════════════════════════════════════════════════ */
+
+/* Screen-reader only — hides visually but readable by AT */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* Skip link — WCAG 2.4.1 Bypass Blocks */
+.skip-link{position:absolute;top:-100px;left:8px;z-index:99999;
+  background:var(--gold);color:var(--ink);padding:10px 18px;
+  font-family:'DM Mono',monospace;font-size:12px;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;border-radius:2px;
+  text-decoration:none;box-shadow:0 4px 12px rgba(0,0,0,.3);
+  transition:top .15s}
+.skip-link:focus{top:8px}
+
+/* Visible focus rings — WCAG 2.4.7 Focus Visible */
+*:focus{outline:none}
+*:focus-visible{outline:3px solid #C9A84C !important;outline-offset:3px !important}
+[data-theme="dark"] *:focus-visible{outline-color:#E8C97A !important}
+
+/* Paywall dismiss was a <div> — now <button> */
+button.paywall-dismiss{background:none;border:none;padding:8px 4px;
+  font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);
+  letter-spacing:.08em;text-transform:uppercase;text-decoration:underline;
+  cursor:pointer;min-height:44px}
+
+/* Minimum 44×44 touch targets — WCAG 2.5.5 */
+.dark-toggle{min-width:44px;min-height:44px;display:inline-flex;
+  align-items:center;justify-content:center}
+.breaking-close{min-width:44px;min-height:44px;display:inline-flex;
+  align-items:center;justify-content:center}
+.admin-close-btn{min-width:44px;min-height:44px;display:inline-flex;
+  align-items:center;justify-content:center}
+.page-btn{min-width:44px;min-height:44px}
+.section-tab{min-height:44px}
+.nw-btn{min-height:44px}
+.btn-save{min-height:44px}
+
+/* Footer link contrast fix — WCAG 1.4.3 (was #888 on dark bg ≈ 3.5:1, fails) */
+footer .footer-links a{color:#BBA898 !important}
+footer .footer-links a:hover{color:var(--gold) !important}
+.footer-about{color:#A89070}
+.footer-bottom{color:#999}
+
+/* ── Mobile hamburger button ──────────────────────── */
+.nav-hamburger{display:none;flex-direction:column;align-items:center;
+  justify-content:center;gap:5px;width:44px;height:48px;padding:0 10px;
+  cursor:pointer;background:none;border:none;color:var(--nav-text);
+  flex-shrink:0}
+.nav-hamburger span{display:block;width:20px;height:2px;background:currentColor;
+  border-radius:1px;transition:transform .25s,opacity .25s}
+.nav-hamburger[aria-expanded="true"] span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.nav-hamburger[aria-expanded="true"] span:nth-child(2){opacity:0;transform:scaleX(0)}
+.nav-hamburger[aria-expanded="true"] span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+/* ── Mobile nav drawer ────────────────────────────── */
+.nav-mobile-drawer{display:none;position:fixed;top:48px;left:0;right:0;
+  bottom:0;background:var(--nav-bg);z-index:998;overflow-y:auto;
+  border-top:2px solid var(--gold)}
+.nav-mobile-drawer.open{display:block}
+.nav-mobile-drawer a,.nav-mobile-drawer button{display:flex;align-items:center;
+  width:100%;padding:14px 24px;font-family:'DM Mono',monospace;font-size:12px;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--nav-text);
+  border-bottom:1px solid rgba(255,255,255,.07);text-decoration:none;
+  min-height:50px;background:none;border-left:none;border-right:none;
+  border-top:none;cursor:pointer}
+.nav-mobile-drawer a:hover,.nav-mobile-drawer a:focus,
+.nav-mobile-drawer button:hover,.nav-mobile-drawer button:focus{
+  background:#1A1208;color:var(--gold)}
+.nav-mobile-drawer a.mob-active{color:var(--gold)}
+.nav-mobile-search{padding:12px 24px;border-bottom:1px solid rgba(255,255,255,.07)}
+.nav-mobile-search input{width:100%;background:rgba(255,255,255,.08);
+  border:1px solid #444;color:var(--nav-text);padding:10px 14px;
+  font-family:'DM Mono',monospace;font-size:12px;border-radius:2px}
+.nav-mobile-search input:focus{border-color:var(--gold)}
+.mob-subscribe{background:var(--gold) !important;color:var(--ink) !important;
+  margin:16px 24px;border-radius:2px;justify-content:center;
+  font-weight:600;width:calc(100% - 48px) !important;border-bottom:none !important}
+
+/* ═══ RESPONSIVE BREAKPOINTS ════════════════════════ */
+
+/* ── Mobile (< 768px) ──────────────────────────────── */
+@media(max-width:767px){
+
+  /* Hamburger on, desktop nav links off */
+  .nav-hamburger{display:flex !important}
+  .nav-left,.nav-right{display:none !important}
+
+  /* Hero: single column stack */
+  .hero-grid{display:flex !important;flex-direction:column !important}
+  .hero-main,.hero-side-1,.hero-side-2{width:100%;border-right:none;
+    border-bottom:1px solid var(--divider)}
+
+  /* Cards: 1 column */
+  .article-row{grid-template-columns:1fr !important}
+
+  /* Opinion: 1 column */
+  .opinion-row{grid-template-columns:1fr !important}
+
+  /* Most-read: 1 column */
+  #mostReadContainer{grid-template-columns:1fr !important}
+
+  /* Masthead meta: centred stack */
+  .masthead-meta{flex-direction:column;gap:6px;text-align:center;align-items:center}
+  .masthead{padding:16px 16px 12px}
+
+  /* Paywall: stacked */
+  .paywall-plans,.paywall-cta{grid-template-columns:1fr !important}
+  .paywall-box{padding:24px 18px;margin-bottom:0;border-left:none;border-right:none;
+    border-bottom:none;border-radius:0}
+  .paywall-overlay{align-items:flex-end}
+
+  /* Admin panel full-width */
+  .admin-panel{width:100vw !important;max-width:100vw !important}
+
+  /* Forms stack */
+  .form-row{grid-template-columns:1fr !important}
+  .market-edit-grid{grid-template-columns:1fr !important}
+
+  /* Footer: full single column */
+  .footer-top{grid-template-columns:1fr !important}
+  .footer-about{max-width:100% !important}
+  .footer-bottom{flex-direction:column;gap:6px;text-align:center}
+
+  /* Padding reduction */
+  .main-wrapper{padding:20px 16px !important}
+  .hero-content{padding:18px 16px 20px}
+  .card-content{padding:14px}
+
+  /* Markets: 2-col on mobile */
+  .markets-grid{grid-template-columns:repeat(2,1fr) !important}
+
+  /* Section header wraps */
+  .section-header{flex-wrap:wrap;gap:6px}
+
+  /* Archive filter wraps */
+  .archive-filter-bar{flex-wrap:wrap !important;gap:6px !important}
+
+  /* Ticker slightly smaller */
+  .ticker-inner{gap:28px}
+
+  /* Article page reading width */
+  .article-body{padding:0 !important}
+}
+
+/* ── Tablet (768px – 1024px) ───────────────────────── */
+@media(min-width:768px) and (max-width:1024px){
+
+  /* 2-column cards */
+  .article-row{grid-template-columns:1fr 1fr !important}
+  .opinion-row{grid-template-columns:1fr 1fr !important}
+  #mostReadContainer{grid-template-columns:1fr 1fr !important}
+
+  /* Hero ratio tweak */
+  .hero-grid{grid-template-columns:3fr 2fr !important}
+
+  /* Wrapper padding */
+  .main-wrapper{padding:24px 20px}
+
+  /* Footer: 2-col */
+  .footer-top{grid-template-columns:1fr 1fr !important}
+
+  /* Reduce nav font on tablet */
+  .nav-link{font-size:10px !important;padding:0 10px !important}
+}
+
 </style>
 <style>
 .static-page { max-width: 860px; margin: 0 auto; padding: 56px 24px 80px; }
@@ -326,8 +495,8 @@ footer{background:var(--ink);color:#888;padding:40px 24px 24px;margin-top:48px}
   <span class="ticker-item"><span class="sym">African Market Intelligence</span>&nbsp;·&nbsp;Pan-African Financial News&nbsp;·&nbsp;54 Markets Covered</span>
 </div></div>
 
-<nav class="top-nav">
-  <div class="nav-left">
+<nav class="top-nav" aria-label="Main navigation">
+  <button class="nav-hamburger" id="navHamburger" aria-expanded="false" aria-controls="navMobileDrawer" aria-label="Open navigation menu" onclick="toggleMobileNav()"><span></span><span></span><span></span></button><div class="nav-left">
     <a href="index.html" class="nav-link" id="nav-home">Home</a>
     <a href="markets.html" class="nav-link" id="nav-markets">Markets</a>
     <a href="politics.html" class="nav-link" id="nav-politics">Politics</a>
@@ -342,12 +511,12 @@ footer{background:var(--ink);color:#888;padding:40px 24px 24px;margin-top:48px}
     <a href="about.html" class="nav-link" id="nav-about" style="color:var(--gold);border-bottom:2px solid var(--gold)">About</a>
     <a href="membership.html" class="nav-link" id="nav-membership">Membership</a>
     <a href="contact.html" class="nav-link" id="nav-contact">Contact</a>
-    <button class="dark-toggle" onclick="toggleDark()" id="themeBtn">🌙</button>
+    <button class="dark-toggle" onclick="toggleDark()" id="themeBtn" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
     <a href="membership.html" class="btn-subscribe">Subscribe</a>
   </div>
 </nav>
 
-<header class="masthead">
+<header class="masthead" role="banner">
   <div class="masthead-name"><a href="index.html" style="color:inherit">African Market <span>Intelligence</span></a></div>
   <div class="masthead-tagline">The Continent's Premium Financial &amp; Business Publication</div>
   <div class="masthead-meta">
