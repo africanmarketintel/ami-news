@@ -438,6 +438,173 @@ footer .footer-links a:hover{color:var(--gold) !important}
   .nav-link{font-size:10px !important;padding:0 10px !important}
 }
 
+
+/* ══════════════════════════════════════════════════════
+   INLINE EDIT MODE — Squarespace-style
+══════════════════════════════════════════════════════ */
+
+/* ── Floating Edit FAB ───────────────────────────────── */
+.ami-edit-fab{
+  position:fixed;bottom:80px;right:22px;z-index:8900;
+  background:var(--gold);color:var(--ink);
+  font-family:'DM Mono',monospace;font-size:11px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;
+  padding:11px 20px;border-radius:30px;cursor:pointer;
+  box-shadow:0 4px 24px rgba(0,0,0,.35);
+  transition:all .2s;border:none;
+  display:none;align-items:center;gap:8px;
+}
+.ami-edit-fab:hover{background:var(--gold-light);transform:translateY(-2px);box-shadow:0 6px 28px rgba(0,0,0,.4)}
+.ami-edit-fab.active{background:var(--terra);color:white}
+.ami-edit-fab .fab-dot{width:7px;height:7px;border-radius:50%;background:rgba(0,0,0,.3);transition:background .2s}
+.ami-edit-fab.active .fab-dot{background:rgba(255,255,255,.4);animation:fab-pulse 1.5s infinite}
+@keyframes fab-pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── Save Bar ─────────────────────────────────────────── */
+.ami-edit-bar{
+  position:fixed;bottom:0;left:0;right:0;z-index:8901;
+  background:#0F0A06;border-top:3px solid var(--gold);
+  padding:10px 24px;display:none;align-items:center;gap:16px;
+  font-family:'DM Mono',monospace;font-size:11px;
+  box-shadow:0 -4px 24px rgba(0,0,0,.4);
+  transform:translateY(100%);transition:transform .25s;
+}
+.ami-edit-bar.visible{display:flex;transform:translateY(0)}
+.ami-edit-bar-label{color:#C9A84C;letter-spacing:.12em;text-transform:uppercase;flex:1}
+.ami-edit-pending{color:#F44336;font-size:10px;letter-spacing:.08em}
+.ami-edit-pending.none{color:#4CAF50}
+.ami-save-btn{background:var(--gold);color:var(--ink);font-family:'DM Mono',monospace;
+  font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  padding:8px 18px;border-radius:2px;border:none;cursor:pointer}
+.ami-save-btn:hover{background:var(--gold-light)}
+.ami-exit-btn{background:transparent;border:1px solid #3D2B1F;color:#888;
+  font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  padding:8px 14px;border-radius:2px;cursor:pointer;transition:all .2s}
+.ami-exit-btn:hover{border-color:#C9A84C;color:#C9A84C}
+
+/* ── Editable elements ───────────────────────────────── */
+body.ami-edit-mode [data-editable]{
+  cursor:text;
+  border-radius:3px;
+  transition:outline .15s,background .15s;
+  position:relative;
+}
+body.ami-edit-mode [data-editable]:not([data-editable="image"])::before{
+  content:'✏';
+  position:absolute;
+  top:-10px;right:-4px;
+  font-size:9px;
+  background:var(--gold);color:var(--ink);
+  padding:1px 4px;border-radius:2px;
+  opacity:0;transition:opacity .15s;
+  pointer-events:none;
+  font-style:normal;
+}
+body.ami-edit-mode [data-editable]:hover::before{opacity:1}
+body.ami-edit-mode [data-editable]:hover{
+  outline:2px dashed #C9A84C;
+  outline-offset:4px;
+}
+body.ami-edit-mode [data-editable]:focus,[data-editable]:focus-within{
+  outline:2px solid #C9A84C !important;
+  outline-offset:4px;
+  background:rgba(201,168,76,.05);
+}
+body.ami-edit-mode [data-editable].saved-flash{
+  outline:2px solid #4CAF50 !important;
+  background:rgba(76,175,80,.06);
+  transition:outline .1s,background .1s;
+}
+
+/* ── Image overlay ───────────────────────────────────── */
+body.ami-edit-mode [data-editable="image"]{
+  cursor:pointer !important;
+  position:relative;
+  display:block;
+}
+body.ami-edit-mode [data-editable="image"]::after{
+  content:'📷  Replace Image';
+  position:absolute;inset:0;
+  background:rgba(15,10,6,.72);
+  color:#C9A84C;
+  font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.12em;
+  text-transform:uppercase;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .2s;
+  pointer-events:none;
+}
+body.ami-edit-mode [data-editable="image"]:hover::after{opacity:1}
+
+/* ── Article card "Edit" button ─────────────────────── */
+.card-edit-overlay{
+  display:none;
+  position:absolute;top:8px;right:8px;z-index:20;
+  background:var(--gold);color:var(--ink);
+  font-family:'DM Mono',monospace;font-size:9px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;
+  padding:4px 10px;border-radius:2px;border:none;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.3);
+}
+body.ami-edit-mode .card-edit-overlay{display:flex;align-items:center;gap:4px}
+body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
+.ami-edit-mode .hero-side-1,.ami-edit-mode .hero-side-2{position:relative}
+
+/* ── Image replace dialog ────────────────────────────── */
+.ami-img-dialog{
+  display:none;position:fixed;inset:0;z-index:9999;
+  background:rgba(0,0,0,.7);backdrop-filter:blur(4px);
+  align-items:center;justify-content:center;
+}
+.ami-img-dialog.open{display:flex}
+.ami-img-dialog-box{
+  background:#1A1208;border:1px solid #3D2B1F;border-top:4px solid #C9A84C;
+  padding:28px;max-width:480px;width:90%;border-radius:2px;
+  box-shadow:0 8px 40px rgba(0,0,0,.6);
+}
+.ami-img-dialog-title{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.15em;
+  text-transform:uppercase;color:#C9A84C;margin-bottom:16px}
+.ami-img-dialog-preview{width:100%;height:140px;object-fit:cover;border-radius:2px;
+  margin-bottom:14px;display:none;border:1px solid #3D2B1F}
+.ami-img-dialog-tabs{display:flex;gap:1px;margin-bottom:14px;background:#0F0A06;border-radius:2px;overflow:hidden}
+.ami-img-tab{flex:1;padding:8px;font-family:'DM Mono',monospace;font-size:10px;
+  letter-spacing:.1em;text-transform:uppercase;color:#888;cursor:pointer;
+  background:transparent;border:none;transition:all .2s;text-align:center}
+.ami-img-tab.active{background:#3D2B1F;color:#C9A84C}
+.ami-img-panel{display:none}.ami-img-panel.active{display:block}
+.ami-img-url{width:100%;background:#0F0A06;border:1px solid #3D2B1F;color:#EDE5D5;
+  padding:9px 12px;font-family:'DM Mono',monospace;font-size:12px;border-radius:2px;
+  outline:none;margin-bottom:10px}
+.ami-img-url:focus{border-color:#C9A84C}
+.ami-img-upload-area{border:2px dashed #3D2B1F;border-radius:2px;padding:24px;
+  text-align:center;cursor:pointer;position:relative;transition:border-color .2s;margin-bottom:10px}
+.ami-img-upload-area:hover{border-color:#C9A84C}
+.ami-img-upload-area input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.ami-img-upload-label{font-family:'DM Mono',monospace;font-size:10px;color:#888;letter-spacing:.1em;text-transform:uppercase}
+.ami-img-dialog-actions{display:flex;gap:8px;margin-top:4px}
+.ami-img-apply{flex:1;background:#C9A84C;color:#1A1208;font-family:'DM Mono',monospace;
+  font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  padding:10px;border:none;border-radius:2px;cursor:pointer}
+.ami-img-apply:hover{background:#E8C97A}
+.ami-img-cancel{background:transparent;border:1px solid #3D2B1F;color:#888;
+  font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  padding:10px 14px;border-radius:2px;cursor:pointer;transition:all .2s}
+.ami-img-cancel:hover{border-color:#C9A84C;color:#C9A84C}
+
+/* ── Rich text toolbar ───────────────────────────────── */
+.ami-rte-bar{
+  display:none;
+  position:fixed;top:60px;left:50%;transform:translateX(-50%);z-index:9000;
+  background:#1A1208;border:1px solid #3D2B1F;border-radius:4px;
+  padding:4px 6px;gap:2px;box-shadow:0 4px 20px rgba(0,0,0,.5);
+  align-items:center;
+  font-family:'DM Mono',monospace;font-size:11px;
+}
+.ami-rte-bar.visible{display:flex}
+.ami-rte-btn{background:none;border:none;color:#888;padding:5px 8px;border-radius:2px;
+  cursor:pointer;font-size:14px;line-height:1;transition:all .2s;min-width:30px;text-align:center}
+.ami-rte-btn:hover{background:#3D2B1F;color:#C9A84C}
+.ami-rte-sep{width:1px;height:18px;background:#3D2B1F;margin:0 3px}
+
 </style>
 </head>
 <body>
@@ -699,7 +866,7 @@ footer .footer-links a:hover{color:var(--gold) !important}
 <!-- ═══ SITE ═══════════════════════════════════════════════ -->
 <div class="breaking-banner" id="breakingBanner" role="alert" aria-live="assertive" style="display:none">
   <span class="breaking-label">Breaking</span>
-  <span id="breakingTextDisplay"></span>
+  <span id="breakingTextDisplay" data-editable="text" data-cms-type="breaking" data-cms-key="breaking_text"></span>
   <button class="breaking-close" onclick="this.parentElement.style.display='none'" aria-label="Dismiss breaking news">×</button>
 </div>
 
@@ -728,13 +895,36 @@ footer .footer-links a:hover{color:var(--gold) !important}
   </div>
 </nav>
 
+<!-- ═══ MOBILE NAV DRAWER ════════════════════════════ -->
+<div class="nav-mobile-drawer" id="navMobileDrawer"
+     role="dialog" aria-modal="true"
+     aria-label="Navigation menu" aria-hidden="true">
+  <div class="nav-mobile-search">
+    <input type="search" placeholder="Search AMI…" aria-label="Search articles"
+           oninput="typeof searchArticles==='function'&&searchArticles(this.value)">
+  </div>
+  <a href="index.html">Home</a>
+  <a href="markets.html">Markets</a>
+  <a href="politics.html">Politics</a>
+  <a href="economy.html">Economy</a>
+  <a href="energy.html">Energy</a>
+  <a href="technology.html">Technology</a>
+  <a href="opinion.html">Opinion</a>
+  <a href="archive.html">Archive</a>
+  <a href="about.html">About</a>
+  <a href="membership.html">Membership</a>
+  <a href="contact.html">Contact</a>
+  <a href="membership.html" class="mob-subscribe">Subscribe →</a>
+</div>
+
+
 <header class="masthead" role="banner">
-  <div class="masthead-name" id="siteNameDisplay" onclick="handleLogoClick()" style="cursor:default" title="">African Market <span>Intelligence</span></div>
-  <div class="masthead-tagline" id="siteTaglineDisplay">The Continent's Premium Financial & Business Publication</div>
+  <div class="masthead-name" id="siteNameDisplay" data-editable="text" data-cms-type="setting" data-cms-key="site_name" onclick="handleLogoClick()" style="cursor:default" title="">African Market <span>Intelligence</span></div>
+  <div class="masthead-tagline" id="siteTaglineDisplay" data-editable="text" data-cms-type="setting" data-cms-key="tagline">The Continent's Premium Financial & Business Publication</div>
   <div class="masthead-meta">
     <span id="mastDate"></span>
-    <span class="edition-badge" id="editionDisplay">Pan-African Edition</span>
-    <span id="locationDisplay">Est. 2024 · Nairobi · Lagos · Cairo · Johannesburg</span>
+    <span class="edition-badge" id="editionDisplay" data-editable="text" data-cms-type="setting" data-cms-key="edition">Pan-African Edition</span>
+    <span id="locationDisplay" data-editable="text" data-cms-type="setting" data-cms-key="location_line">Est. 2024 · Nairobi · Lagos · Cairo · Johannesburg</span>
   </div>
 </header>
 
@@ -812,8 +1002,8 @@ footer .footer-links a:hover{color:var(--gold) !important}
 
   <aside>
     <div class="newsletter-widget">
-      <div class="nw-title" id="nwTitleDisplay">AMI Morning Brief</div>
-      <div class="nw-sub" id="nwSubDisplay">Markets & deals delivered before 7am across Africa.</div>
+      <div class="nw-title" id="nwTitleDisplay" data-editable="text" data-cms-type="setting" data-cms-key="newsletter_title">AMI Morning Brief</div>
+      <div class="nw-sub" id="nwSubDisplay" data-editable="text" data-cms-type="setting" data-cms-key="newsletter_sub">Markets & deals delivered before 7am across Africa.</div>
       <label for="nwEmailInput" class="sr-only">Email address</label><input class="nw-input" type="email" id="nwEmailInput" placeholder="your@email.com" aria-label="Your email address" autocomplete="email">
       <button class="nw-btn" id="nwBtnDisplay" onclick="handleNewsletterSignup()">Subscribe Free →</button>
     </div>
@@ -835,10 +1025,10 @@ footer .footer-links a:hover{color:var(--gold) !important}
 <footer>
   <div class="footer-inner">
     <div class="footer-top">
-      <div><div class="footer-brand" id="footerBrand">African Market Intelligence</div>
-        <p class="footer-about" id="footerAboutDisplay">The continent's most trusted source for financial news and business intelligence across Africa's 54 markets.</p></div>
+      <div><div class="footer-brand" id="footerBrand" data-editable="text" data-cms-type="setting" data-cms-key="site_name">African Market Intelligence</div>
+        <p class="footer-about" id="footerAboutDisplay" data-editable="text" data-cms-type="setting" data-cms-key="footer_about">The continent's most trusted source for financial news and business intelligence across Africa's 54 markets.</p></div>
       <div>
-        <div class="footer-col-title" id="footerCol1Title">Sections</div>
+        <div class="footer-col-title" id="footerCol1Title" data-editable="text" data-cms-type="setting" data-cms-key="footer_col1_title">Sections</div>
         <ul class="footer-links" id="footerCol1Links">
           <li><a href="markets.html">Markets</a></li>
           <li><a href="economy.html">Economy</a></li>
@@ -849,7 +1039,7 @@ footer .footer-links a:hover{color:var(--gold) !important}
         </ul>
       </div>
       <div>
-        <div class="footer-col-title" id="footerCol2Title">Regions</div>
+        <div class="footer-col-title" id="footerCol2Title" data-editable="text" data-cms-type="setting" data-cms-key="footer_col2_title">Regions</div>
         <ul class="footer-links" id="footerCol2Links">
           <li><a href="west-africa.html">West Africa</a></li>
           <li><a href="east-africa.html">East Africa</a></li>
@@ -858,7 +1048,7 @@ footer .footer-links a:hover{color:var(--gold) !important}
         </ul>
       </div>
       <div>
-        <div class="footer-col-title" id="footerCol3Title">Company</div>
+        <div class="footer-col-title" id="footerCol3Title" data-editable="text" data-cms-type="setting" data-cms-key="footer_col3_title">Company</div>
         <ul class="footer-links" id="footerCol3Links">
           <li><a href="about.html">About AMI</a></li>
           <li><a href="membership.html">Membership</a></li>
@@ -869,7 +1059,7 @@ footer .footer-links a:hover{color:var(--gold) !important}
       </div>
     </div>
     <div class="footer-bottom">
-      <span id="copyrightDisplay">© 2025 African Market Intelligence Ltd. All rights reserved.</span>
+      <span id="copyrightDisplay" data-editable="text" data-cms-type="setting" data-cms-key="copyright">© 2025 African Market Intelligence Ltd. All rights reserved.</span>
       <span>Terms · Privacy · Cookie Policy</span>
     </div>
   </div>
@@ -1889,5 +2079,461 @@ function renderFooterColumn(titleId, listId, titleVal, linksJson, col) {
 filterActive = 'East Africa';
 init();
 </script>
+
+<!-- ═══ INLINE EDITOR UI ════════════════════════════════ -->
+<!-- Rich-text toolbar -->
+<div class="ami-rte-bar" id="amiRteBar" role="toolbar" aria-label="Text formatting">
+  <button class="ami-rte-btn" onclick="rteCmd('bold')" title="Bold" aria-label="Bold"><b>B</b></button>
+  <button class="ami-rte-btn" onclick="rteCmd('italic')" title="Italic" aria-label="Italic"><i>I</i></button>
+  <button class="ami-rte-btn" onclick="rteCmd('underline')" title="Underline" aria-label="Underline"><u>U</u></button>
+  <div class="ami-rte-sep"></div>
+  <button class="ami-rte-btn" onclick="rteCmd('formatBlock','h2')" title="Heading" aria-label="Heading">H2</button>
+  <button class="ami-rte-btn" onclick="rteCmd('formatBlock','p')" title="Paragraph" aria-label="Paragraph">¶</button>
+  <button class="ami-rte-btn" onclick="rteCmd('insertUnorderedList')" title="List" aria-label="Bullet list">•—</button>
+  <div class="ami-rte-sep"></div>
+  <button class="ami-rte-btn" onclick="rteCmd('createLink',prompt('URL:'))" title="Link" aria-label="Insert link">🔗</button>
+  <button class="ami-rte-btn" onclick="rteCmd('unlink')" title="Remove link" aria-label="Remove link">✂</button>
+</div>
+
+<!-- Floating edit FAB -->
+<button class="ami-edit-fab" id="amiEditFab" onclick="toggleEditMode()" aria-label="Toggle edit mode" style="display:none">
+  <span class="fab-dot"></span>
+  <span id="amiEditFabLabel">Edit Page</span>
+</button>
+
+<!-- Save bar -->
+<div class="ami-edit-bar" id="amiEditBar" role="toolbar" aria-label="Edit mode controls">
+  <span class="ami-edit-bar-label">✏ Editing this page</span>
+  <span class="ami-edit-pending none" id="amiPendingLabel">All saved</span>
+  <button class="ami-save-btn" onclick="saveAllEdits()">💾 Save All</button>
+  <button class="ami-exit-btn" onclick="toggleEditMode()">Exit Edit Mode</button>
+</div>
+
+<!-- Image replace dialog -->
+<div class="ami-img-dialog" id="amiImgDialog" role="dialog" aria-modal="true" aria-label="Replace image">
+  <div class="ami-img-dialog-box">
+    <div class="ami-img-dialog-title">📷 Replace Image</div>
+    <img class="ami-img-dialog-preview" id="amiImgPreview" alt="Image preview">
+    <div class="ami-img-dialog-tabs">
+      <button class="ami-img-tab active" onclick="switchImgTab('url')" id="amiTabUrl">Paste URL</button>
+      <button class="ami-img-tab" onclick="switchImgTab('upload')" id="amiTabUpload">Upload File</button>
+    </div>
+    <div class="ami-img-panel active" id="amiImgPanelUrl">
+      <input class="ami-img-url" id="amiImgUrl" type="url" placeholder="https://example.com/image.jpg"
+             oninput="previewImgUrl(this.value)">
+    </div>
+    <div class="ami-img-panel" id="amiImgPanelUpload">
+      <div class="ami-img-upload-area">
+        <input type="file" accept="image/*" id="amiImgFile" onchange="handleImgFileSelect(this)">
+        <div class="ami-img-upload-label">📁 Click or drag to choose an image</div>
+      </div>
+    </div>
+    <div class="ami-img-dialog-actions">
+      <button class="ami-img-apply" onclick="applyImage()">Apply Image →</button>
+      <button class="ami-img-cancel" onclick="closeImgDialog()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+
+// ════════════════════════════════════════════════════════
+// AMI INLINE EDITOR — Squarespace-style page editing
+// ════════════════════════════════════════════════════════
+(function() {
+
+var amiEditActive   = false;   // is edit mode on?
+var amiPendingCount = 0;       // unsaved changes
+var amiImgTarget    = null;    // current image element being replaced
+var amiImgField     = null;    // its cms-key or article-field
+var amiImgType      = null;    // 'setting' | 'article' | 'page'
+var amiImgArticleId = null;    // for article images
+var amiLastRteEl    = null;    // element rich-text bar is attached to
+var amiUploadedUrl  = null;    // result of file upload
+
+// ── Show FAB after admin opens ──────────────────────────
+window.amiShowEditFab = function() {
+  var fab = document.getElementById('amiEditFab');
+  if(fab) { fab.style.display = 'flex'; }
+};
+window.amiHideEditFab = function() {
+  var fab = document.getElementById('amiEditFab');
+  if(fab && !amiEditActive) fab.style.display = 'none';
+};
+
+// ── Toggle Edit Mode ──────────────────────────────────
+window.toggleEditMode = function() {
+  amiEditActive ? exitEditMode() : enterEditMode();
+};
+
+function enterEditMode() {
+  amiEditActive = true;
+  document.body.classList.add('ami-edit-mode');
+  document.getElementById('amiEditFabLabel').textContent = 'Editing…';
+  document.getElementById('amiEditFab').classList.add('active');
+
+  // Make static settings editable
+  document.querySelectorAll('[data-editable="text"]').forEach(function(el) {
+    el.setAttribute('contenteditable', 'true');
+    el.setAttribute('spellcheck', 'true');
+    el.dataset.originalContent = el.innerHTML;
+    el.addEventListener('blur', onTextBlur);
+    el.addEventListener('focus', onTextFocus);
+    el.addEventListener('keydown', onEditKeydown);
+  });
+
+  // Rich-text elements (bodies, article body)
+  document.querySelectorAll('[data-editable="richtext"]').forEach(function(el) {
+    el.setAttribute('contenteditable', 'true');
+    el.setAttribute('spellcheck', 'true');
+    el.dataset.originalContent = el.innerHTML;
+    el.addEventListener('blur', onRteBlur);
+    el.addEventListener('focus', onRteFocus);
+  });
+
+  // Image elements
+  document.querySelectorAll('[data-editable="image"]').forEach(function(el) {
+    el.addEventListener('click', onImageClick);
+    el.style.cursor = 'pointer';
+  });
+
+  // Add edit buttons to article cards (rendered dynamically)
+  setupCardEditButtons();
+
+  // Show save bar
+  var bar = document.getElementById('amiEditBar');
+  bar.classList.add('visible');
+  updatePendingLabel();
+}
+
+function exitEditMode() {
+  amiEditActive = false;
+  document.body.classList.remove('ami-edit-mode');
+  document.getElementById('amiEditFabLabel').textContent = 'Edit Page';
+  document.getElementById('amiEditFab').classList.remove('active');
+
+  // Disable contenteditable
+  document.querySelectorAll('[contenteditable="true"]').forEach(function(el) {
+    el.setAttribute('contenteditable', 'false');
+    el.removeEventListener('blur', onTextBlur);
+    el.removeEventListener('blur', onRteBlur);
+    el.removeEventListener('focus', onTextFocus);
+    el.removeEventListener('focus', onRteFocus);
+    el.removeEventListener('keydown', onEditKeydown);
+    el.removeEventListener('click', onImageClick);
+  });
+
+  // Remove image listeners
+  document.querySelectorAll('[data-editable="image"]').forEach(function(el) {
+    el.removeEventListener('click', onImageClick);
+  });
+
+  // Remove card edit buttons
+  document.querySelectorAll('.card-edit-overlay').forEach(function(el) { el.remove(); });
+
+  // Hide save bar & rte bar
+  document.getElementById('amiEditBar').classList.remove('visible');
+  document.getElementById('amiRteBar').classList.remove('visible');
+
+  amiPendingCount = 0;
+  updatePendingLabel();
+}
+
+// ── Pending change tracking ─────────────────────────
+function addPending() {
+  amiPendingCount++;
+  updatePendingLabel();
+}
+function removePending() {
+  if(amiPendingCount > 0) amiPendingCount--;
+  updatePendingLabel();
+}
+function updatePendingLabel() {
+  var el = document.getElementById('amiPendingLabel');
+  if(!el) return;
+  if(amiPendingCount === 0) {
+    el.textContent = 'All saved ✓';
+    el.className = 'ami-edit-pending none';
+  } else {
+    el.textContent = amiPendingCount + ' unsaved change' + (amiPendingCount !== 1 ? 's' : '');
+    el.className = 'ami-edit-pending';
+  }
+}
+
+// ── Text field blur → auto-save ─────────────────────
+function onTextFocus(e) {
+  // Select all text on first focus for easy replacement
+}
+function onEditKeydown(e) {
+  if(e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    e.target.blur();
+  }
+  if(e.key === 'Escape') {
+    // Restore original
+    e.target.innerHTML = e.target.dataset.originalContent || '';
+    e.target.blur();
+  }
+}
+function onTextBlur(e) {
+  var el = e.target;
+  var newVal = el.textContent.trim();
+  var oldVal = (el.dataset.originalContent || '').trim();
+  if(newVal === oldVal) return;
+  el.dataset.originalContent = el.innerHTML;
+  var type    = el.dataset.cmsType;
+  var key     = el.dataset.cmsKey;
+  var artId   = el.dataset.articleId;
+  var artFld  = el.dataset.articleField;
+  var pageName= el.dataset.pageName;
+  var pageFld = el.dataset.pageField;
+  saveFieldChange(el, type, key, artId, artFld, pageName, pageFld, newVal);
+}
+
+// ── Richtext blur → auto-save ───────────────────────
+function onRteFocus(e) {
+  amiLastRteEl = e.target;
+  document.getElementById('amiRteBar').classList.add('visible');
+}
+function onRteBlur(e) {
+  // Small delay so clicking RTE bar buttons doesn't dismiss it
+  setTimeout(function() {
+    if(document.activeElement && document.activeElement.closest('.ami-rte-bar')) return;
+    document.getElementById('amiRteBar').classList.remove('visible');
+    amiLastRteEl = null;
+    var el = e.target;
+    var newVal = el.innerHTML.trim();
+    var oldVal = (el.dataset.originalContent || '').trim();
+    if(newVal === oldVal) return;
+    el.dataset.originalContent = el.innerHTML;
+    var type    = el.dataset.cmsType;
+    var key     = el.dataset.cmsKey;
+    var artId   = el.dataset.articleId;
+    var artFld  = el.dataset.articleField;
+    var pageName= el.dataset.pageName;
+    var pageFld = el.dataset.pageField;
+    saveFieldChange(el, type, key, artId, artFld, pageName, pageFld, newVal);
+  }, 150);
+}
+window.rteCmd = function(cmd, val) {
+  document.execCommand(cmd, false, val || null);
+  if(amiLastRteEl) amiLastRteEl.focus();
+};
+
+// ── Core save function ─────────────────────────────
+async function saveFieldChange(el, type, cmsKey, artId, artFld, pageName, pageFld, value) {
+  addPending();
+  try {
+    if(type === 'setting') {
+      // site_settings table
+      await amiDbUpsertSetting(cmsKey, value);
+    } else if(type === 'breaking') {
+      // breaking_news table (update text)
+      await amiDbUpdateBreaking(value);
+    } else if(type === 'article' && artId && artFld) {
+      // articles table
+      var upd = {};
+      upd[artFld] = value;
+      await amiDbUpdateArticle(artId, upd);
+    } else if(type === 'page' && pageName && pageFld) {
+      // site_settings with page_${pageName}_${pageFld}
+      await amiDbUpsertSetting('page_' + pageName + '_' + pageFld, value);
+    }
+    // Flash green
+    el.classList.add('saved-flash');
+    setTimeout(function() { el.classList.remove('saved-flash'); }, 800);
+    removePending();
+    if(typeof showToast === 'function') showToast('✓ Saved');
+  } catch(err) {
+    removePending();
+    addPending(); // keep as unsaved
+    if(typeof showToast === 'function') showToast('✗ Save failed: ' + err.message, 'error');
+  }
+}
+
+// ── Save All button ────────────────────────────────
+window.saveAllEdits = async function() {
+  // Force blur on all active contenteditable elements
+  document.querySelectorAll('[contenteditable="true"]').forEach(function(el) {
+    if(document.activeElement === el) el.blur();
+  });
+  if(typeof showToast === 'function') showToast('✓ All changes saved');
+  amiPendingCount = 0;
+  updatePendingLabel();
+};
+
+// ── Image click → open dialog ────────────────────────
+function onImageClick(e) {
+  e.preventDefault(); e.stopPropagation();
+  var el      = e.currentTarget;
+  amiImgTarget    = el;
+  amiImgField     = el.dataset.cmsKey || el.dataset.articleField;
+  amiImgType      = el.dataset.cmsType;
+  amiImgArticleId = el.dataset.articleId;
+  amiUploadedUrl  = null;
+  // Show current image URL
+  var currentSrc = el.src || el.getAttribute('data-src') || '';
+  document.getElementById('amiImgUrl').value = currentSrc;
+  document.getElementById('amiImgPreview').src = currentSrc;
+  document.getElementById('amiImgPreview').style.display = currentSrc ? 'block' : 'none';
+  switchImgTab('url');
+  document.getElementById('amiImgDialog').classList.add('open');
+}
+window.switchImgTab = function(tab) {
+  ['url','upload'].forEach(function(t) {
+    document.getElementById('amiTabUrl' === 'amiTab' + t.charAt(0).toUpperCase() + t.slice(1) ||
+      'amiTab' + t).classList.toggle('active', t === tab);
+    document.getElementById('amiImgPanel' + t.charAt(0).toUpperCase() + t.slice(1)).classList.toggle('active', t === tab);
+  });
+  document.getElementById('amiTab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+  document.getElementById('amiTabUrl' === 'amiTab' + (tab === 'url' ? 'Upload' : 'Url') ? 'x':'amiTab' +
+    (tab === 'url' ? 'Upload' : 'Url')).classList.remove('active');
+  document.getElementById('amiImgPanel' + (tab === 'url' ? 'Url' : 'Upload')).classList.add('active');
+  document.getElementById('amiImgPanel' + (tab === 'url' ? 'Upload' : 'Url')).classList.remove('active');
+};
+window.previewImgUrl = function(url) {
+  var prev = document.getElementById('amiImgPreview');
+  if(url) { prev.src = url; prev.style.display = 'block'; } else { prev.style.display = 'none'; }
+};
+window.handleImgFileSelect = function(input) {
+  var file = input.files[0]; if(!file) return;
+  var prev = document.getElementById('amiImgPreview');
+  var reader = new FileReader();
+  reader.onload = function(e) { prev.src = e.target.result; prev.style.display = 'block'; };
+  reader.readAsDataURL(file);
+  // Upload to Supabase storage
+  if(typeof db !== 'undefined' && db.uploadImage) {
+    var path = 'inline/' + Date.now() + '-' + file.name;
+    db.uploadImage(file, path).then(function(url) { amiUploadedUrl = url; })
+      .catch(function(err) { if(typeof showToast === 'function') showToast('Upload failed: ' + err.message, 'error'); });
+  }
+};
+window.closeImgDialog = function() {
+  document.getElementById('amiImgDialog').classList.remove('open');
+  amiImgTarget = amiImgField = amiImgType = amiImgArticleId = null;
+};
+window.applyImage = async function() {
+  var url = amiUploadedUrl || document.getElementById('amiImgUrl').value.trim();
+  if(!url) { closeImgDialog(); return; }
+  // Update DOM immediately
+  if(amiImgTarget) amiImgTarget.src = url;
+  // Save to Supabase
+  try {
+    addPending();
+    if(amiImgType === 'setting') {
+      await amiDbUpsertSetting(amiImgField, url);
+    } else if(amiImgType === 'article' && amiImgArticleId) {
+      var upd = {}; upd[amiImgField] = url;
+      await amiDbUpdateArticle(amiImgArticleId, upd);
+    } else if(amiImgType === 'page' && amiImgField) {
+      await amiDbUpsertSetting(amiImgField, url);
+    }
+    removePending();
+    if(typeof showToast === 'function') showToast('✓ Image updated');
+  } catch(err) {
+    if(typeof showToast === 'function') showToast('✗ ' + err.message, 'error');
+  }
+  closeImgDialog();
+};
+
+// ── Article card edit buttons ─────────────────────────
+function setupCardEditButtons() {
+  // Find all clickable article cards and add an edit overlay
+  var clickEls = document.querySelectorAll('[onclick*="openArticle"]');
+  clickEls.forEach(function(el) {
+    // Only add to the card container, not nested elements
+    if(el.classList.contains('article-card') ||
+       el.classList.contains('hero-main') ||
+       el.classList.contains('hero-side-1') ||
+       el.classList.contains('hero-side-2')) {
+      if(el.querySelector('.card-edit-overlay')) return;
+      var match = (el.getAttribute('onclick') || '').match(/openArticle\((\d+)\)/);
+      if(!match) return;
+      var artId = match[1];
+      var btn = document.createElement('button');
+      btn.className = 'card-edit-overlay';
+      btn.innerHTML = '✏ Edit';
+      btn.setAttribute('aria-label', 'Edit this article');
+      btn.setAttribute('title', 'Edit this article in admin panel');
+      btn.onclick = function(e) {
+        e.stopPropagation();
+        // Open admin panel and pre-select this article
+        if(typeof openAdmin === 'function') openAdmin();
+        setTimeout(function() {
+          var editEl = document.getElementById('edit-' + artId);
+          if(editEl) {
+            editEl.classList.add('open');
+            editEl.scrollIntoView({behavior:'smooth', block:'center'});
+          }
+        }, 400);
+      };
+      el.style.position = 'relative';
+      el.appendChild(btn);
+    }
+  });
+}
+
+// ── Supabase helpers ─────────────────────────────────
+async function amiDbUpsertSetting(key, value) {
+  if(typeof SUPABASE_URL === 'undefined' || SUPABASE_URL === 'YOUR_SUPABASE_URL')
+    throw new Error('Supabase not configured');
+  var ANON = typeof SUPABASE_ANON !== 'undefined' ? SUPABASE_ANON : '';
+  // Try update first, then insert
+  var res = await fetch(SUPABASE_URL + '/rest/v1/site_settings?key=eq.' + encodeURIComponent(key), {
+    method: 'PATCH',
+    headers: {
+      'apikey': ANON, 'Authorization': 'Bearer ' + ANON,
+      'Content-Type': 'application/json', 'Prefer': 'return=minimal'
+    },
+    body: JSON.stringify({ key: key, value: value })
+  });
+  if(!res.ok) {
+    // insert
+    var res2 = await fetch(SUPABASE_URL + '/rest/v1/site_settings', {
+      method: 'POST',
+      headers: {
+        'apikey': ANON, 'Authorization': 'Bearer ' + ANON,
+        'Content-Type': 'application/json', 'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ key: key, value: value })
+    });
+    if(!res2.ok) throw new Error(await res2.text());
+  }
+}
+async function amiDbUpdateBreaking(text) {
+  if(typeof SUPABASE_URL === 'undefined' || SUPABASE_URL === 'YOUR_SUPABASE_URL')
+    throw new Error('Supabase not configured');
+  var ANON = typeof SUPABASE_ANON !== 'undefined' ? SUPABASE_ANON : '';
+  var res = await fetch(SUPABASE_URL + '/rest/v1/breaking_news?order=created_at.desc&limit=1', {
+    headers: { 'apikey': ANON, 'Authorization': 'Bearer ' + ANON }
+  });
+  var rows = await res.json();
+  if(rows && rows[0]) {
+    await fetch(SUPABASE_URL + '/rest/v1/breaking_news?id=eq.' + rows[0].id, {
+      method: 'PATCH',
+      headers: {
+        'apikey': ANON, 'Authorization': 'Bearer ' + ANON,
+        'Content-Type': 'application/json', 'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ text: text })
+    });
+  }
+}
+async function amiDbUpdateArticle(id, fields) {
+  if(typeof SUPABASE_URL === 'undefined' || SUPABASE_URL === 'YOUR_SUPABASE_URL')
+    throw new Error('Supabase not configured');
+  var ANON = typeof SUPABASE_ANON !== 'undefined' ? SUPABASE_ANON : '';
+  var res = await fetch(SUPABASE_URL + '/rest/v1/articles?id=eq.' + id, {
+    method: 'PATCH',
+    headers: {
+      'apikey': ANON, 'Authorization': 'Bearer ' + ANON,
+      'Content-Type': 'application/json', 'Prefer': 'return=minimal'
+    },
+    body: JSON.stringify(fields)
+  });
+  if(!res.ok) throw new Error(await res.text());
+}
+
+})(); // end IIFE
+
 </body>
 </html>
