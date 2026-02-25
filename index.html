@@ -918,6 +918,44 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
     </div>
   </div>
 
+  <!-- PAGES TAB -->
+  <div class="admin-section" id="tab-pages">
+    <div class="admin-section-title">📄 Edit Static Pages</div>
+    <p style="font-size:11px;color:#888;font-family:'DM Mono',monospace;margin-bottom:16px;line-height:1.6">Select a page, edit its content, then save. Changes go live immediately on the selected page.</p>
+    <div class="form-group">
+      <label class="form-label">Select Page</label>
+      <select class="form-input" id="pages-selector" onchange="loadPageContent(this.value)">
+        <option value="about">About</option>
+        <option value="contact">Contact</option>
+        <option value="membership">Membership</option>
+        <option value="careers">Careers</option>
+        <option value="privacy">Privacy Policy</option>
+        <option value="deals">Deal Tracker</option>
+      </select>
+    </div>
+    <div class="form-group"><label class="form-label">Page Title</label>
+      <input class="form-input" id="page-title" placeholder="Page title…"></div>
+    <div class="form-group"><label class="form-label">Page Subtitle / Tagline</label>
+      <input class="form-input" id="page-subtitle" placeholder="Short subtitle…"></div>
+    <div class="form-group"><label class="form-label">Page Body (HTML supported)</label>
+      <textarea class="form-textarea" id="page-body" style="height:220px;font-family:'DM Mono',monospace;font-size:11px" placeholder="Page body content — HTML accepted…"></textarea></div>
+    <div class="admin-section-title" style="margin-top:22px">💳 Membership Pricing</div>
+    <p style="font-size:11px;color:#888;font-family:'DM Mono',monospace;margin-bottom:12px;line-height:1.6">These update the membership page prices and paywall buttons live.</p>
+    <div class="form-row">
+      <div class="form-group" style="margin:0"><label class="form-label">Monthly Price</label>
+        <input class="form-input" id="mp-plan1-price" placeholder="$39"></div>
+      <div class="form-group" style="margin:0"><label class="form-label">Monthly Stripe Link</label>
+        <input class="form-input" id="mp-plan1-link" placeholder="https://buy.stripe.com/…"></div>
+    </div>
+    <div class="form-row" style="margin-top:8px">
+      <div class="form-group" style="margin:0"><label class="form-label">Annual Price</label>
+        <input class="form-input" id="mp-plan2-price" placeholder="$385"></div>
+      <div class="form-group" style="margin:0"><label class="form-label">Annual Stripe Link</label>
+        <input class="form-input" id="mp-plan2-link" placeholder="https://buy.stripe.com/…"></div>
+    </div>
+    <button class="btn-save" style="margin-top:16px;width:100%" onclick="savePageAndPricing()">💾 Save Page &amp; Pricing →</button>
+  </div>
+
   <!-- SUBSCRIBERS TAB -->
   <div class="admin-section" id="tab-subscribers">
     <div class="admin-section-title">Newsletter Subscribers</div>
@@ -2141,42 +2179,53 @@ async function loadPageContent(page) {
   const bodyEl     = document.getElementById('page-body');
   if(!titleEl||!subtitleEl||!bodyEl) return;
   try {
-    const [t,s,b] = await Promise.all([
-      db.query('site_settings',{select:'*',eq:{key:`page_${page}_title`}}),
-      db.query('site_settings',{select:'*',eq:{key:`page_${page}_subtitle`}}),
-      db.query('site_settings',{select:'*',eq:{key:`page_${page}_body`}}),
-    ]);
-    titleEl.value    = (t&&t[0]) ? t[0].value : '';
-    subtitleEl.value = (s&&s[0]) ? s[0].value : '';
-    bodyEl.value     = (b&&b[0]) ? b[0].value : '';
-    showToast('✓ Loaded ' + page + ' content from database');
+    const rows = await db.query('site_settings',{select:'key,value'});
+    const get  = k => (rows.find(x=>x.key===k)||{}).value||'';
+    titleEl.value    = get(`page_${page}_title`);
+    subtitleEl.value = get(`page_${page}_subtitle`);
+    bodyEl.value     = get(`page_${page}_body`);
+    // Load pricing fields
+    const p1p = document.getElementById('mp-plan1-price');
+    const p1l = document.getElementById('mp-plan1-link');
+    const p2p = document.getElementById('mp-plan2-price');
+    const p2l = document.getElementById('mp-plan2-link');
+    if(p1p) p1p.value = get('plan1_price')||'$39';
+    if(p1l) p1l.value = get('plan1_link');
+    if(p2p) p2p.value = get('plan2_price')||'$385';
+    if(p2l) p2l.value = get('plan2_link');
+    showToast('✓ Loaded ' + page + ' content');
   } catch(e) { showToast('✗ ' + e.message, 'error'); }
 }
 
-async function savePage() {
+async function savePageAndPricing() {
   const page     = document.getElementById('pages-selector').value;
   const titleVal = document.getElementById('page-title').value;
   const subVal   = document.getElementById('page-subtitle').value;
   const bodyVal  = document.getElementById('page-body').value;
+  const p1price  = document.getElementById('mp-plan1-price')?.value||'';
+  const p1link   = document.getElementById('mp-plan1-link')?.value||'';
+  const p2price  = document.getElementById('mp-plan2-price')?.value||'';
+  const p2link   = document.getElementById('mp-plan2-link')?.value||'';
   const btn = document.querySelector('#tab-pages .btn-save');
   if(btn){ btn.disabled=true; btn.textContent='Saving…'; }
   try {
     const upsert = async (key, value) => {
-      try { await db.update('site_settings',{value},{key}); }
-      catch(e) {
-        const rows = await db.query('site_settings',{select:'id',eq:{key}});
-        if(rows&&rows.length) await db.update('site_settings',{value},{key});
-        else await db.insert('site_settings',{key,value});
-      }
+      const rows = await db.query('site_settings',{select:'id',eq:{key}});
+      if(rows&&rows.length) await db.update('site_settings',{value},{key});
+      else await db.insert('site_settings',{key,value});
     };
     await Promise.all([
-      upsert(`page_${page}_title`,   titleVal),
+      upsert(`page_${page}_title`,    titleVal),
       upsert(`page_${page}_subtitle`, subVal),
-      upsert(`page_${page}_body`,    bodyVal),
+      upsert(`page_${page}_body`,     bodyVal),
+      upsert('plan1_price', p1price),
+      upsert('plan1_link',  p1link),
+      upsert('plan2_price', p2price),
+      upsert('plan2_link',  p2link),
     ]);
-    showToast('✓ ' + page + ' page saved — live on site now!');
+    showToast('✓ ' + page + ' page and pricing saved — live now!');
   } catch(e) { showToast('✗ ' + e.message, 'error'); }
-  finally { if(btn){ btn.disabled=false; btn.textContent='💾 Save Page Content →'; } }
+  finally { if(btn){ btn.disabled=false; btn.textContent='💾 Save Page & Pricing →'; } }
 }
 
 // ════════════════════════════════════════════════════════════

@@ -755,7 +755,7 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
 
   <div class="plan-box">
     <div class="pname">Deal Tracker</div>
-    <div class="pprice">£29</div>
+    <div class="pprice">$39</div>
     <div class="pper">per month · billed monthly</div>
     <ul>
       <li>Full Deal Tracker dashboard</li>
@@ -769,9 +769,9 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
   </div>
 
   <div class="plan-box featured">
-    <div class="plan-badge">Save 37%</div>
+    <div class="plan-badge">Save 18%</div>
     <div class="pname">Deal Tracker Annual</div>
-    <div class="pprice">£219</div>
+    <div class="pprice">$385</div>
     <div class="pper">per year · best value</div>
     <ul>
       <li>Everything in Monthly</li>
@@ -895,6 +895,35 @@ async function loadCMSContent(pageName) {
 </script>
 <script>
 loadCMSContent('membership');
+
+// Pull plan pricing and Stripe links from site_settings
+(async function(){
+  if(SUPABASE_URL === 'YOUR_SUPABASE_URL') return;
+  try {
+    const r = await fetch(
+      `${SUPABASE_URL}/rest/v1/site_settings?key=in.(plan1_price,plan1_link,plan2_price,plan2_link,plan1_name,plan2_name)&select=key,value`,
+      { headers:{ apikey:SUPABASE_ANON, Authorization:'Bearer '+SUPABASE_ANON } }
+    );
+    if(!r.ok) return;
+    const rows = await r.json();
+    const get  = k => (rows.find(x=>x.key===k)||{}).value||'';
+    const p1price = get('plan1_price'), p2price = get('plan2_price');
+    const p1link  = get('plan1_link'),  p2link  = get('plan2_link');
+    const p1name  = get('plan1_name'),  p2name  = get('plan2_name');
+    // Update prices
+    const priceEls = document.querySelectorAll('.pprice');
+    if(p1price && priceEls[1]) priceEls[1].textContent = p1price;
+    if(p2price && priceEls[2]) priceEls[2].textContent = p2price;
+    // Update Stripe links
+    const ctaEls = document.querySelectorAll('.plan-cta');
+    if(p1link && ctaEls[1]) ctaEls[1].href = p1link;
+    if(p2link && ctaEls[2]) ctaEls[2].href = p2link;
+    // Update plan names if set
+    const nameEls = document.querySelectorAll('.pname');
+    if(p1name && nameEls[1]) nameEls[1].textContent = p1name;
+    if(p2name && nameEls[2]) nameEls[2].textContent = p2name;
+  } catch(e){ /* use hardcoded defaults */ }
+})();
 </script>
 
 <script>
