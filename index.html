@@ -1159,12 +1159,15 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
       <div id="topStoriesList"></div>
     </div>
     <div class="sidebar-widget">
-      <div class="widget-title">Key Economic Data</div>
-      <div class="data-row"><span class="data-label">Nigeria Inflation</span><span class="data-value dn">31.70%</span></div>
-      <div class="data-row"><span class="data-label">SA Unemployment</span><span class="data-value dn">32.1%</span></div>
-      <div class="data-row"><span class="data-label">Kenya GDP Growth</span><span class="data-value up">5.4%</span></div>
-      <div class="data-row"><span class="data-label">Egypt Inflation</span><span class="data-value dn">24.1%</span></div>
-      <div class="data-row"><span class="data-label">Ghana Prime Rate</span><span class="data-value">29.0%</span></div>
+      <div class="widget-title" style="display:flex;justify-content:space-between;align-items:center">
+        Key Economic Data
+        <span id="ecoDataYear" style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-soft);letter-spacing:.05em"></span>
+      </div>
+      <div class="data-row"><span class="data-label">Nigeria Inflation</span><span class="data-value dn" id="eco-ng-inf">31.70%</span></div>
+      <div class="data-row"><span class="data-label">SA Unemployment</span><span class="data-value dn" id="eco-za-unem">32.1%</span></div>
+      <div class="data-row"><span class="data-label">Kenya GDP Growth</span><span class="data-value up" id="eco-ke-gdp">5.4%</span></div>
+      <div class="data-row"><span class="data-label">Egypt Inflation</span><span class="data-value dn" id="eco-eg-inf">24.1%</span></div>
+      <div class="data-row"><span class="data-label">Ghana Prime Rate</span><span class="data-value" id="eco-gh-rate">29.0%</span></div>
     </div>
   </aside>
 </div>
@@ -1521,6 +1524,101 @@ function renderTicker() {
   document.getElementById('tickerInner').innerHTML = items + items; // duplicate for seamless loop
 }
 
+// ── Live Economic Data ────────────────────────────────────────────────────
+// Key Economic Data: World Bank open API (no key, annual official figures)
+// African Markets ticker: open.er-api.com (free, no key, daily FX rates)
+async function loadLiveEconomicData() {
+  const wb = async (iso2, indicator) => {
+    try {
+      const r = await fetch(`https://api.worldbank.org/v2/country/${iso2}/indicator/${indicator}?format=json&mrv=1`, { cache: 'no-store' });
+      if(!r.ok) return null;
+      const d = await r.json();
+      const row = (d[1]||[]).find(x => x.value !== null);
+      return row ? { value: row.value, year: row.date } : null;
+    } catch(e) { return null; }
+  };
+
+  const fmt = (v, decimals=1) => v !== null ? (+v).toFixed(decimals) + '%' : null;
+
+  const [ng, za, ke, eg] = await Promise.all([
+    wb('NG', 'FP.CPI.TOTL.ZG'),   // Nigeria inflation
+    wb('ZA', 'SL.UEM.TOTL.ZS'),   // SA unemployment
+    wb('KE', 'NY.GDP.MKTP.KD.ZG'), // Kenya GDP growth
+    wb('EG', 'FP.CPI.TOTL.ZG'),   // Egypt inflation
+  ]);
+
+  const update = (id, result, direction) => {
+    const el = document.getElementById(id);
+    if(el && result) {
+      el.textContent = fmt(result.value);
+      el.className = 'data-value ' + direction;
+    }
+  };
+  update('eco-ng-inf',  ng,  'dn');
+  update('eco-za-unem', za,  'dn');
+  update('eco-ke-gdp',  ke,  ke && ke.value >= 0 ? 'up' : 'dn');
+  update('eco-eg-inf',  eg,  'dn');
+
+  // Show year label from first successful response
+  const year = [ng, za, ke, eg].find(x => x && x.year);
+  if(year) {
+    const lbl = document.getElementById('ecoDataYear');
+    if(lbl) lbl.textContent = year.year + ' WB';
+  }
+}
+
+// African Markets at a Glance: live FX rates (vs USD)
+async function loadLiveFxRates() {
+  try {
+    const r = await fetch('https://open.er-api.com/v6/latest/USD', { cache: 'no-store' });
+    if(!r.ok) return;
+    const d = await r.json();
+    if(!d.rates) return;
+
+    const fxMarkets = [
+      { id: 'ngn', name: 'NGN/USD', rate: d.rates.NGN },
+      { id: 'zar', name: 'ZAR/USD', rate: d.rates.ZAR },
+      { id: 'kes', name: 'KES/USD', rate: d.rates.KES },
+      { id: 'egp', name: 'EGP/USD', rate: d.rates.EGP },
+      { id: 'ghs', name: 'GHS/USD', rate: d.rates.GHS },
+      { id: 'tzs', name: 'TZS/USD', rate: d.rates.TZS },
+      { id: 'ugx', name: 'UGX/USD', rate: d.rates.UGX },
+      { id: 'etb', name: 'ETB/USD', rate: d.rates.ETB },
+    ].filter(m => m.rate);
+
+    // If the markets strip is currently showing Supabase data, overlay FX
+    // Only replace if the marketsDisplay is present and FX data loaded
+    const strip = document.getElementById('marketsDisplay');
+    if(strip && fxMarkets.length) {
+      strip.innerHTML = fxMarkets.map(m => `
+        <div class="market-item">
+          <div class="market-name">${m.name}</div>
+          <div class="market-value">${(+m.rate).toFixed(2)}</div>
+          <div class="market-change" style="color:var(--text-soft);font-size:10px">vs USD</div>
+        </div>`).join('');
+    }
+
+    // Update ticker
+    const ticker = document.getElementById('tickerInner');
+    if(ticker && fxMarkets.length) {
+      const items = fxMarkets.map(m =>
+        `<span class="ticker-item"><span class="sym">${m.id.toUpperCase()}</span> ${(+m.rate).toFixed(2)} <span style="color:#888;font-size:10px">/ USD</span></span>`
+      ).join('');
+      ticker.innerHTML = items + items;
+    }
+  } catch(e) { /* keep Supabase fallback */ }
+}
+
+// Run both on page load (after main data loads)
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    loadLiveEconomicData();
+    loadLiveFxRates();
+  }, 1200); // slight delay to let Supabase load first
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 function renderTopStories() {
   const top = allArticles.slice(0,5);
   document.getElementById('topStoriesList').innerHTML = top.map((a,i)=>`
@@ -1730,7 +1828,6 @@ async function handleNewsletterSignup() {
   const input = document.querySelector('.nw-input');
   const email = input?.value?.trim();
   if(!email){ showToast('Please enter your email address','error'); return; }
-  // Basic email validation
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
     showToast('Please enter a valid email address','error'); return;
   }
@@ -1739,13 +1836,8 @@ async function handleNewsletterSignup() {
   btn.textContent = 'Subscribing…';
   btn.disabled = true;
   try {
-    await db.insert('subscribers', {
-      email,
-      source: 'homepage_widget',
-      subscribed_at: new Date().toISOString()
-    }, true);
+    await db.insert('subscribers', { email, source: 'homepage_widget', subscribed_at: new Date().toISOString() }, true);
     input.value = '';
-    // Show thank you state
     const widget = input.closest('.newsletter-widget');
     if(widget){
       widget.innerHTML = `

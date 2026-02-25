@@ -744,8 +744,10 @@ function renderDeals() {
           <div style="background:var(--gold);color:#060F09;font-family:'DM Mono',monospace;font-size:9px;font-weight:600;letter-spacing:.1em;padding:4px 12px;text-transform:uppercase;border-radius:1px">Members Only</div>
           <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-soft);letter-spacing:.05em">Subscribe to read</div>
         </div>` : ''}
-      <div class="deal-header" style="padding:14px 16px 0;${lockedStyle}">
-        <div style="font-family:'Playfair Display',serif;font-size:16px;line-height:1.35;color:var(--text);margin-bottom:10px">${deal.headline}</div>
+      <div class="deal-header" style="padding:14px 16px 0;">
+        <div style="font-family:'Playfair Display',serif;font-size:16px;line-height:1.35;color:var(--text);margin-bottom:10px${deal.is_locked?';filter:blur(4px);user-select:none;pointer-events:none':''}">
+          ${deal.is_locked ? deal.headline.trim().split(/\s+/).slice(0,2).join(' ')+'…' : deal.headline}
+        </div>
       </div>
       <div style="padding:0 16px 8px;font-family:'Spectral',serif;font-size:13px;color:var(--text-soft);line-height:1.5;${lockedStyle}">${deal.standfirst||''}</div>
       <div class="deal-date" style="padding:0 16px 16px;display:flex;justify-content:space-between;align-items:center;${lockedStyle}">
