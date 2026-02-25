@@ -77,7 +77,8 @@
             text-transform: uppercase;
         }
         
-        .nav-links a:hover {
+        .nav-links a:visited { color: inherit; }
+.nav-links a:hover {
             color: var(--gold);
         }
         
@@ -609,6 +610,7 @@
 .deals-tab:hover,.deals-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
 @media(max-width:600px){.deals-subnav-inner{padding:0 14px}.deals-tab{padding:10px 12px;font-size:9px}}
 </style>
+<script src="config.js"></script>
 </head>
 <body>
 <nav class="top-nav" aria-label="Main navigation">
@@ -681,237 +683,160 @@
     <div class="filter-bar">
         <div class="filter-bar-title">Filter by Deal Type</div>
         <div class="filter-buttons">
-            <button class="filter-btn active" onclick="filterDeals('all')">All</button>
-            <button class="filter-btn" onclick="filterDeals('pe-vc')">PE/VC</button>
-            <button class="filter-btn" onclick="filterDeals('ma')">M&A</button>
-            <button class="filter-btn" onclick="filterDeals('dfi')">DFI</button>
-            <button class="filter-btn" onclick="filterDeals('infrastructure')">Infrastructure</button>
-            <button class="filter-btn" onclick="filterDeals('trade')">Trade Finance</button>
+            <button class="filter-btn active" onclick="filterDeals('all',this)">All Deals</button>
+            <button class="filter-btn" onclick="filterDeals('PE & Venture',this)">PE &amp; Venture</button>
+            <button class="filter-btn" onclick="filterDeals('M&A',this)">M&amp;A</button>
+            <button class="filter-btn" onclick="filterDeals('Infrastructure',this)">Infrastructure</button>
+            <button class="filter-btn" onclick="filterDeals('Debt & Mez',this)">Debt &amp; Mez</button>
+            <button class="filter-btn" onclick="filterDeals('DFI & Impact',this)">DFI &amp; Impact</button>
+            <button class="filter-btn" onclick="filterDeals('Exits',this)">Exits</button>
         </div>
     </div>
     
-    <!-- Deal Cards -->
+    <!-- Deal Cards — loaded dynamically from Supabase -->
     <div class="container">
-        <div class="deals-grid" id="dealsGrid">
-            
-            <!-- Deal 1 -->
-            <div class="deal-card" data-type="pe-vc">
-                <div class="deal-type-badge pe">PRIVATE EQUITY</div>
-                <div class="deal-header">
-                    <div class="deal-investor">
-                        Heirs Holdings
-                        <span class="deal-arrow">→</span>
-                    </div>
-                    <div class="deal-investee">Lagos Logistics Ltd</div>
-                </div>
-                <div class="deal-amount">$75.5M</div>
-                <div class="deal-location">
-                    🇳🇬 Nigeria · West Africa
-                </div>
-                <div class="deal-summary">
-                    Acquisition of regional supply chain operator with strong management team and logistics hub positioning.
-                </div>
-                <div class="deal-date">Feb 20, 2026</div>
-            </div>
-            
-            <!-- Deal 2 -->
-            <div class="deal-card" data-type="infrastructure">
-                <div class="deal-type-badge infrastructure">INFRASTRUCTURE</div>
-                <div class="deal-header">
-                    <div class="deal-investor">
-                        Harith General Partners
-                        <span class="deal-arrow">→</span>
-                    </div>
-                    <div class="deal-investee">Kenya Solar Farm</div>
-                </div>
-                <div class="deal-amount">$120.0M</div>
-                <div class="deal-location">
-                    🇰🇪 Kenya · East Africa
-                </div>
-                <div class="deal-summary">
-                    Renewable energy infrastructure investment with DFI support. Grid-scale solar operations across East Africa.
-                </div>
-                <div class="deal-date">Feb 19, 2026</div>
-            </div>
-            
-            <!-- Deal 3 -->
-            <div class="deal-card" data-type="pe-vc">
-                <div class="deal-type-badge vc">VENTURE CAPITAL</div>
-                <div class="deal-header">
-                    <div class="deal-investor">
-                        Velocity Global
-                        <span class="deal-arrow">→</span>
-                    </div>
-                    <div class="deal-investee">SafePass Nigeria</div>
-                </div>
-                <div class="deal-amount">$4.2M</div>
-                <div class="deal-location">
-                    🇳🇬 Nigeria · West Africa
-                </div>
-                <div class="deal-summary">
-                    Series A funding for fintech platform. Expansion from Kenya operations into consumer payment infrastructure.
-                </div>
-                <div class="deal-date">Feb 18, 2026</div>
-            </div>
-            
-            <!-- Deal 4 -->
-            <div class="deal-card" data-type="dfi">
-                <div class="deal-type-badge dfi">PRIVATE CREDIT</div>
-                <div class="deal-header">
-                    <div class="deal-investor">
-                        IFC + Standard Bank
-                        <span class="deal-arrow">→</span>
-                    </div>
-                    <div class="deal-investee">Zambia Manufacturing</div>
-                </div>
-                <div class="deal-amount">$85.0M</div>
-                <div class="deal-location">
-                    🇿🇲 Zambia · Southern Africa
-                </div>
-                <div class="deal-summary">
-                    Growth capital for industrial operations. DFI structured financing with ESG mandate and local employment focus.
-                </div>
-                <div class="deal-date">Feb 17, 2026</div>
-            </div>
-            
-            <!-- Deal 5 -->
-            <div class="deal-card" data-type="ma">
-                <div class="deal-type-badge ma">M&A</div>
-                <div class="deal-header">
-                    <div class="deal-investor">
-                        Meridian Capital
-                        <span class="deal-arrow">→</span>
-                    </div>
-                    <div class="deal-investee">South Africa Rail</div>
-                </div>
-                <div class="deal-amount">TBD</div>
-                <div class="deal-location">
-                    🇿🇦 South Africa · Southern Africa
-                </div>
-                <div class="deal-summary">
-                    Strategic infrastructure acquisition in rail and transport sector. Size pending verification from transaction advisors.
-                </div>
-                <div class="deal-date">Feb 16, 2026</div>
-            </div>
-            
-            <!-- Deal 6 -->
-            <div class="deal-card" data-type="trade">
-                <div class="deal-type-badge trade">TRADE FINANCE</div>
-                <div class="deal-header">
-                    <div class="deal-investor">
-                        AfDB Trade Window
-                        <span class="deal-arrow">→</span>
-                    </div>
-                    <div class="deal-investee">Ghana Agro Export</div>
-                </div>
-                <div class="deal-amount">$18.5M</div>
-                <div class="deal-location">
-                    🇬🇭 Ghana · West Africa
-                </div>
-                <div class="deal-summary">
-                    Trade financing for agricultural export operations. Focus on sustainable cocoa and shea butter supply chains.
-                </div>
-                <div class="deal-date">Feb 15, 2026</div>
-            </div>
-            
-        </div>
+      <div id="dealsLoading" style="text-align:center;padding:60px 20px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text-soft);letter-spacing:.1em">
+        LOADING DEALS…
+      </div>
+      <div class="deals-grid" id="dealsGrid" style="display:none"></div>
+      <p id="dealsEmpty" style="display:none;text-align:center;padding:60px 20px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text-soft)">
+        No deals found for this filter.
+      </p>
     </div>
-    
-    <!-- Subscribe Section -->
-    <section class="subscribe-section" id="subscribe">
-        <div class="container">
-            <h2>Subscribe for Full Database</h2>
-            <p style="font-size: 16px; max-width: 700px; margin: 0 auto 30px;">Get instant access to the complete Excel tracker, weekly deal alerts, and monthly sector analysis. Track every major capital movement across Africa.</p>
-            
-            <div class="subscribe-benefits">
-                <div class="benefit-item">
-                    <span class="benefit-icon">✓</span>
-                    <span>Full monthly Excel database with all tracked deals and metadata</span>
-                </div>
-                <div class="benefit-item">
-                    <span class="benefit-icon">✓</span>
-                    <span>Weekly email alerts highlighting major transactions</span>
-                </div>
-                <div class="benefit-item">
-                    <span class="benefit-icon">✓</span>
-                    <span>Complete archive since launch (847+ deals, 2 years)</span>
-                </div>
-                <div class="benefit-item">
-                    <span class="benefit-icon">✓</span>
-                    <span>League tables, sector reports, and investor rankings</span>
-                </div>
-                <div class="benefit-item">
-                    <span class="benefit-icon">✓</span>
-                    <span>Monthly flagship analysis report and trend insights</span>
-                </div>
-                <div class="benefit-item">
-                    <span class="benefit-icon">✓</span>
-                    <span>Filter by country, region, sector, and deal type</span>
-                </div>
-            </div>
-            
-            <a href="https://africanmarketintelligence.com/subscribe" class="cta-button">Subscribe Now</a>
-        </div>
-    </section>
-    
-    <!-- Pricing Section -->
-    <section class="pricing-section">
-        <div class="container">
-            <h2 class="section-title">Pricing</h2>
-            
-            <div class="pricing-grid">
-                <div class="pricing-card">
-                    <div class="pricing-period">Monthly Subscription</div>
-                    <div class="pricing-amount">£29</div>
-                    <div class="pricing-subtext">Billed monthly, cancel anytime</div>
-                    <button class="pricing-cta" onclick="window.location.href='https://africanmarketintelligence.com/subscribe'">Get Started</button>
-                </div>
-                
-                <div class="pricing-card featured">
-                    <div class="pricing-period">Annual Subscription</div>
-                    <div class="pricing-amount">£219</div>
-                    <div class="pricing-subtext">Save 37% · Best Value</div>
-                    <button class="pricing-cta" onclick="window.location.href='https://africanmarketintelligence.com/subscribe'">Get Started</button>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Footer -->
-    <footer>
-        <div class="footer-logo">AMI</div>
-        <div class="footer-text">African Market Intelligence</div>
-        <div class="footer-text">Tracking capital movement across Africa</div>
-        <div class="footer-links">
-            <a href="https://africanmarketintelligence.com">Website</a>
-            <a href="https://africanmarketintelligence.com/about">About</a>
-            <a href="https://africanmarketintelligence.com/contact">Contact</a>
-            <a href="https://africanmarketintelligence.com/privacy">Privacy</a>
-        </div>
-        <div class="footer-text" style="margin-top: 20px; color: var(--ink-soft);">
-            © 2026 African Market Intelligence. All rights reserved.
-        </div>
-    </footer>
-    
+
     <script>
-        function filterDeals(type) {
-            // Update active button
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            // Filter deals
-            const deals = document.querySelectorAll('.deal-card');
-            deals.forEach(deal => {
-                if (type === 'all' || deal.dataset.type === type) {
-                    deal.style.display = 'block';
-                } else {
-                    deal.style.display = 'none';
-                }
-            });
-        }
+// ════════════════════════════════════════════════════════════
+// DEALS — dynamic Supabase loader
+// ════════════════════════════════════════════════════════════
+let allDeals      = [];
+let activeFilter  = 'all';
+
+// Sector → badge label mapping
+const BADGE_MAP = {
+  'PE & Venture':  { label:'PRIVATE EQUITY / VENTURE', cls:'pe'             },
+  'M&A':           { label:'M&A',                       cls:'ma'             },
+  'Infrastructure':{ label:'INFRASTRUCTURE',            cls:'infrastructure' },
+  'Debt & Mez':    { label:'DEBT & MEZZANINE',          cls:'debt'           },
+  'DFI & Impact':  { label:'DFI & IMPACT',              cls:'dfi'            },
+  'Exits':         { label:'EXIT',                      cls:'exit'           },
+  'People':        { label:'PEOPLE',                    cls:'people'         },
+};
+
+function getBadge(tags) {
+  if(!tags) return { label:'DEAL', cls:'pe' };
+  for(const [key, val] of Object.entries(BADGE_MAP)) {
+    if(tags.includes(key)) return val;
+  }
+  return { label:'DEAL', cls:'pe' };
+}
+
+function filterDeals(type, btn) {
+  activeFilter = type;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  renderDeals();
+}
+
+function renderDeals() {
+  const grid   = document.getElementById('dealsGrid');
+  const empty  = document.getElementById('dealsEmpty');
+  const filtered = activeFilter === 'all'
+    ? allDeals
+    : allDeals.filter(d => (d.tags||'').includes(activeFilter) || (d.section||'').includes(activeFilter));
+
+  if(!filtered.length) {
+    grid.style.display  = 'none';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+  grid.style.display  = '';
+
+  grid.innerHTML = filtered.map(deal => {
+    const badge = getBadge(deal.tags);
+    const img   = deal.hero_image
+      ? `<img src="${deal.hero_image}" alt="${deal.headline}" style="width:100%;height:160px;object-fit:cover;border-radius:2px 2px 0 0;display:block" onerror="this.style.display='none'">`
+      : '';
+    return `
+    <div class="deal-card" style="cursor:pointer" onclick="window.location='article.html?id=${deal.id}'">
+      ${img}
+      <div class="deal-type-badge ${badge.cls}">${badge.label}</div>
+      <div class="deal-header" style="padding:14px 16px 0">
+        <div style="font-family:'Playfair Display',serif;font-size:16px;line-height:1.35;color:var(--text);margin-bottom:10px">${deal.headline}</div>
+      </div>
+      <div style="padding:0 16px 8px;font-family:'Spectral',serif;font-size:13px;color:var(--text-soft);line-height:1.5">${deal.standfirst||''}</div>
+      <div class="deal-date" style="padding:0 16px 16px;display:flex;justify-content:space-between;align-items:center">
+        <span>${deal.published_date||''}</span>
+        <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft)">${deal.read_time||'3 min'}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function loadDeals() {
+  if(!SUPABASE_URL || SUPABASE_URL === '' || SUPABASE_URL === 'YOUR_SUPABASE_URL') {
+    document.getElementById('dealsLoading').textContent = 'Configure Supabase in config.js to load deals.';
+    return;
+  }
+  try {
+    const params = new URLSearchParams({
+      select: '*',
+      or:     'section.eq.Deals,tags.ilike.%PE%,tags.ilike.%M%26A%,tags.ilike.%Infrastructure%,tags.ilike.%Debt%,tags.ilike.%DFI%,tags.ilike.%Exits%',
+      order:  'created_at.desc',
+      is_published: 'eq.true'
+    });
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/articles?${params}`, {
+      headers: { apikey: SUPABASE_ANON, Authorization: `Bearer ${SUPABASE_ANON}` }
+    });
+    if(!r.ok) throw new Error(await r.text());
+    const data = await r.json();
+
+    // fallback: if OR filter returns nothing, try simple section filter
+    if(!data.length) {
+      const r2 = await fetch(`${SUPABASE_URL}/rest/v1/articles?section=eq.Deals&is_published=eq.true&order=created_at.desc`, {
+        headers: { apikey: SUPABASE_ANON, Authorization: `Bearer ${SUPABASE_ANON}` }
+      });
+      allDeals = r2.ok ? await r2.json() : [];
+    } else {
+      allDeals = data;
+    }
+
+    document.getElementById('dealsLoading').style.display = 'none';
+    renderDeals();
+  } catch(err) {
+    document.getElementById('dealsLoading').textContent = 'Could not load deals — ' + err.message;
+    console.error('Deals load error:', err);
+  }
+}
+
+// Dark mode toggle (matches other AMI pages)
+function toggleDark() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  localStorage.setItem('ami-theme', isDark ? 'light' : 'dark');
+  const btn = document.getElementById('themeBtn');
+  if(btn) btn.textContent = isDark ? '🌙' : '☀️';
+}
+
+function toggleMobileNav() {
+  const drawer = document.getElementById('navMobileDrawer');
+  const btn    = document.getElementById('navHamburger');
+  if(!drawer) return;
+  const open = drawer.classList.toggle('open');
+  btn.setAttribute('aria-expanded', open);
+}
+
+// Restore saved theme
+(function(){
+  const saved = localStorage.getItem('ami-theme');
+  if(saved) document.documentElement.setAttribute('data-theme', saved);
+  const btn = document.getElementById('themeBtn');
+  if(btn) btn.textContent = saved === 'light' ? '🌙' : '☀️';
+})();
+
+window.addEventListener('DOMContentLoaded', loadDeals);
     </script>
-    
+
 </body>
 </html>

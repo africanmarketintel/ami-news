@@ -25,7 +25,7 @@ a{color:inherit;text-decoration:none}button{cursor:pointer;border:none;backgroun
 /* Nav */
 .top-nav{background:var(--nav-bg);color:var(--nav-text);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:48px;border-bottom:2px solid var(--gold);position:sticky;top:0;z-index:1000}
 .nav-left{display:flex;align-items:center}
-.nav-link{color:var(--nav-text);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:0 14px;height:48px;display:flex;align-items:center;border-right:1px solid #333;transition:color .2s}
+.nav-link{color:var(--nav-text);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:0 14px;height:48px;display:flex;align-items:center;border-right:1px solid #333;transition:color .2s}.nav-link:visited{color:var(--nav-text)}
 .nav-link:first-child{border-left:1px solid #333}.nav-link:hover{color:var(--gold)}
 .nav-right{display:flex;align-items:center;gap:10px}
 .nav-search{background:rgba(255,255,255,.08);border:1px solid #444;color:var(--nav-text);padding:6px 12px;border-radius:2px;font-family:'DM Mono',monospace;font-size:11px;width:160px;outline:none}
@@ -607,6 +607,15 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
 
 .region-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-soft);padding:0 14px 0 2px;display:flex;align-items:center;opacity:.55;flex-shrink:0;user-select:none;pointer-events:none}
 .paywall-overlay,.paywall-blur{display:none!important}.lock-icon{display:none!important}.badge-locked{display:none!important}
+
+/* ── Most Read items ──────────────────────────────────────── */
+.mr-item{display:flex;align-items:flex-start;gap:14px;background:var(--surface);padding:16px;cursor:pointer;transition:background .15s}
+.mr-item:hover{background:var(--card-bg,var(--surface))}
+.mr-rank{font-family:'Playfair Display',serif;font-size:26px;font-weight:800;color:var(--divider);line-height:1;flex-shrink:0;width:28px;text-align:right}
+.mr-body{flex:1;min-width:0}
+.mr-tag{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--green,#2E9B5E);margin-bottom:5px}
+.mr-headline{font-family:'Playfair Display',serif;font-size:14px;line-height:1.35;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.mr-date{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);margin-top:5px}
 </style>
 </head>
 <body>
@@ -712,6 +721,8 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
           </div>
           <label style="font-family:'DM Mono',monospace;font-size:10px;color:#888;display:flex;align-items:center;gap:6px;margin-top:12px">
             <input type="checkbox" id="new-locked"> 🔒 Premium — locked behind paywall</label>
+          <label style="font-family:'DM Mono',monospace;font-size:10px;color:#888;display:flex;align-items:center;gap:6px;margin-top:8px">
+            <input type="checkbox" id="new-most-read"> 📌 Add to Most Read</label>
           <button class="btn-save" id="publishBtn" onclick="publishArticle()" style="margin-top:14px">📢 Publish to Site →</button>
         </div>
       </details>
@@ -1226,7 +1237,7 @@ async function init() {
     renderMarketsStrip();
     renderTicker();
     renderCards();
-    renderTopStories();
+    renderTopStories(); renderMostRead();
     // Activate correct section tab if section param set
     if(filterActive !== 'all') {
       document.querySelectorAll('.section-tab').forEach(t=>{
@@ -1275,7 +1286,7 @@ function renderHero() {
         <h1 class="hero-headline" tabindex="0" onclick="window.location.href='${articleUrl(hero)}'" onkeydown="if(event.key==='Enter')window.location.href='${articleUrl(hero)}'">${hero.headline}</h1>
         <p class="hero-standfirst">${hero.standfirst||''}</p>
         <div class="article-meta">
-          <span class="author">By ${hero.author_name||'AMI Staff'}</span>
+          
           <span>${hero.read_time||''}</span>
           ${hero.is_locked?'<span class="article-tag">Premium</span>':''}
         </div>
@@ -1335,7 +1346,7 @@ function renderCards(articles) {
           <h3 class="card-headline">${a.is_locked?'🔒 ':''} ${a.headline}</h3>
           <p class="card-body">${a.standfirst||''}</p>
           <div class="card-footer">
-            <span>${a.author_name||'AMI Staff'} · ${a.read_time||'3 min'} ${a.is_locked?'<span class="lock-icon">🔒</span>':''}</span>
+            <span>${a.read_time||'3 min'} ${a.is_locked?'<span class="lock-icon">🔒</span>':''}</span>
             <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-soft)">${a.published_date||''}</span>
           </div>
         </div>
@@ -1410,6 +1421,31 @@ function renderTopStories() {
     <div class="top-story" role="link" tabindex="0" onclick="window.location.href='${articleUrl(a)}'" onkeydown="if(event.key==='Enter')window.location.href='${articleUrl(a)}'">
       <div class="top-story-num">0${i+1}</div>
       <div class="top-story-headline">${a.headline}</div>
+    </div>`).join('');
+}
+
+
+function renderMostRead() {
+  const el = document.getElementById('mostReadContainer');
+  if (!el) return;
+  // Pick up to 6 published articles — skip hero/side placements already featured
+  const pool = allArticles.filter(a => a.is_most_read).slice(0, 6);
+  if (!pool.length) {
+    el.style.display = 'none';
+    const hdr = el.previousElementSibling;
+    if (hdr && hdr.classList.contains('section-header')) hdr.style.display = 'none';
+    return;
+  }
+  el.innerHTML = pool.map((a, i) => `
+    <div class="mr-item" role="link" tabindex="0"
+         onclick="window.location.href='${articleUrl ? articleUrl(a) : 'article.html?id='+a.id}'"
+         onkeydown="if(event.key==='Enter')window.location.href='${articleUrl ? articleUrl(a) : 'article.html?id='+a.id}'">
+      <div class="mr-rank">0${i + 1}</div>
+      <div class="mr-body">
+        <div class="mr-tag">${a.section || 'News'}</div>
+        <div class="mr-headline">${a.headline}</div>
+        <div class="mr-date">${a.published_date || ''}</div>
+      </div>
     </div>`).join('');
 }
 
@@ -1781,6 +1817,7 @@ function renderAdminArticleList(articles) {
         <div style="margin-top:12px;display:flex;gap:14px;align-items:center">
           <label style="font-family:'DM Mono',monospace;font-size:10px;color:#888;display:flex;align-items:center;gap:5px"><input type="checkbox" id="el-${a.id}" ${a.is_locked?'checked':''}> 🔒 Premium</label>
           <label style="font-family:'DM Mono',monospace;font-size:10px;color:#888;display:flex;align-items:center;gap:5px"><input type="checkbox" id="ep2-${a.id}" ${a.is_published?'checked':''}> ✅ Published</label>
+          <label style="font-family:'DM Mono',monospace;font-size:10px;color:#888;display:flex;align-items:center;gap:5px"><input type="checkbox" id="emr-${a.id}" ${a.is_most_read?'checked':''}> 📌 Most Read</label>
         </div>
         <button class="btn-save" onclick="saveArticle(${a.id})" style="margin-top:12px">💾 Save Changes →</button>
       </div>
@@ -1806,7 +1843,7 @@ async function deleteArticle(id) {
     await db.delete('articles', {id});
     showToast('✓ Article deleted');
     await loadAdminData();
-    renderHero(); renderCards(); renderTopStories();
+    renderHero(); renderCards(); renderTopStories(); renderMostRead(); renderMostRead();
   } catch(e){ showToast('✗ '+e.message,'error'); }
 }
 
@@ -1827,13 +1864,14 @@ async function saveArticle(id) {
       author_name:  document.getElementById('ea-'+id).value,
       read_time:    document.getElementById('er-'+id).value,
       placement:    document.getElementById('ep-'+id).value,
-      is_locked:    document.getElementById('el-'+id).checked,
+      is_locked:     document.getElementById('el-'+id).checked,
+      is_most_read:  document.getElementById('emr-'+id) ? document.getElementById('emr-'+id).checked : false,
       is_published: document.getElementById('ep2-'+id).checked,
       updated_at:   new Date().toISOString()
     }, {id});
     showToast('✓ Saved to database — live on site now');
     await loadAdminData();
-    renderHero(); renderCards(); renderTopStories();
+    renderHero(); renderCards(); renderTopStories(); renderMostRead(); renderMostRead();
   } catch(e){ showToast('✗ '+e.message,'error'); }
   finally{ btn.disabled=false; btn.textContent='💾 Save Changes →'; }
 }
@@ -1874,7 +1912,7 @@ async function publishArticle() {
       bodyRaw = bodyRaw.split(/\n\n+/).filter(p=>p.trim()).map(p=>`<p>${p.trim()}</p>`).join('\n');
     }
 
-    const authorName = document.getElementById('new-author').value || 'AMI Staff';
+    const authorName = '';
     await db.insert('articles', {
       headline:        headline,
       standfirst:      document.getElementById('new-standfirst').value,
@@ -1889,6 +1927,7 @@ async function publishArticle() {
       published_date:  new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}),
       placement:       document.getElementById('new-placement').value,
       is_locked:       document.getElementById('new-locked').checked,
+      is_most_read:    document.getElementById('new-most-read') ? document.getElementById('new-most-read').checked : false,
       is_published:    true,
       tags:            document.getElementById('new-tags').value,
     });
@@ -1898,12 +1937,13 @@ async function publishArticle() {
       const el=document.getElementById(id); if(el) el.value='';
     });
     document.getElementById('new-locked').checked=false;
+    if(document.getElementById('new-most-read')) document.getElementById('new-most-read').checked=false;
     document.getElementById('heroPreview').style.display='none';
     document.getElementById('authorPreview').style.display='none';
 
     showToast('✓ Article published to database — live on site!');
     await loadAdminData();
-    renderHero(); renderCards(); renderTopStories();
+    renderHero(); renderCards(); renderTopStories(); renderMostRead(); renderMostRead();
   } catch(e){ showToast('✗ '+e.message,'error'); }
   finally{ btn.disabled=false; btn.textContent='📢 Publish to Site →'; }
 }
