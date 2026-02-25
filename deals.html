@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AMI Deal Tracker - Africa's Complete Monthly Record of Capital Movement</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Mono:wght@400;500&family=Spectral:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --gold: #C9A84C;
+            --gold-light: #F9C53D;
+            --gold-pale: #FDF6E3;
+            --terra: #B85C38;
+            --terra-dark: #8C3A1F;
+            --ink: #0A1A10;
+            --ink-mid: #1A3020;
+            --ink-soft: #6B5344;
+            --cream: #FAF7F0;
+            --cream-dark: #F0EAD9;
+            --border: #D4C4A0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Spectral', serif;
+            background-color: #ffffff;
+            color: var(--ink);
+            line-height: 1.6;
+        }
+        
+        /* Navigation */
+        nav {
+            background-color: var(--ink);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 2px solid var(--gold);
+        }
+        
+        .nav-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--gold);
+            letter-spacing: 2px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            color: var(--cream);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: color 0.3s;
+            text-transform: uppercase;
+        }
+        
+        .nav-links a:hover {
+            color: var(--gold);
+        }
+        
+        .nav-links a.active {
+            color: var(--gold);
+            border-bottom: 2px solid var(--gold);
+            padding-bottom: 3px;
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--ink) 0%, var(--ink-mid) 100%);
+            padding: 80px 40px;
+            text-align: center;
+            border-bottom: 3px solid var(--terra);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(201, 168, 76, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 56px;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+        
+        .hero-subtitle {
+            font-size: 22px;
+            color: var(--cream);
+            font-weight: 400;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+        
+        .hero-description {
+            font-size: 15px;
+            color: var(--cream-dark);
+            line-height: 1.8;
+        }
+        
+        /* Stats Bar */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0;
+            background-color: var(--cream);
+            border-bottom: 2px solid var(--border);
+        }
+        
+        .stat-item {
+            padding: 30px 40px;
+            text-align: center;
+            border-right: 1px solid var(--border);
+        }
+        
+        .stat-item:last-child {
+            border-right: none;
+        }
+        
+        .stat-number {
+            font-family: 'DM Mono', monospace;
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--terra);
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--ink-soft);
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        
+        /* Filter Bar */
+        .filter-bar {
+            padding: 30px 40px;
+            background-color: var(--cream-dark);
+            border-bottom: 1px solid var(--border);
+            text-align: center;
+        }
+        
+        .filter-bar-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--ink-soft);
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .filter-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            background-color: #ffffff;
+            border: 2px solid var(--border);
+            color: var(--ink);
+            padding: 10px 20px;
+            font-size: 12px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+        }
+        
+        .filter-btn:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+            background-color: var(--gold-pale);
+        }
+        
+        .filter-btn.active {
+            background-color: var(--gold);
+            color: var(--ink);
+            border-color: var(--gold);
+        }
+        
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+        
+        /* Deal Cards Grid */
+        .deals-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin: 40px 0;
+        }
+        
+        .deal-card {
+            background-color: var(--cream);
+            border-left: 4px solid var(--gold);
+            border-bottom: 1px solid var(--border);
+            padding: 25px;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .deal-card:hover {
+            box-shadow: 0 8px 24px rgba(14, 11, 30, 0.12);
+            transform: translateY(-4px);
+            border-left-color: var(--terra);
+        }
+        
+        .deal-type-badge {
+            display: inline-block;
+            background-color: var(--ink);
+            color: var(--gold);
+            font-size: 10px;
+            font-weight: 700;
+            padding: 6px 10px;
+            border-radius: 3px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-family: 'DM Mono', monospace;
+            width: fit-content;
+        }
+        
+        .deal-type-badge.pe {
+            background-color: var(--terra);
+        }
+        
+        .deal-type-badge.vc {
+            background-color: var(--ink-mid);
+        }
+        
+        .deal-type-badge.infrastructure {
+            background-color: var(--gold);
+            color: var(--ink);
+        }
+        
+        .deal-type-badge.dfi {
+            background-color: var(--terra-dark);
+        }
+        
+        .deal-type-badge.ma {
+            background-color: #5a4a70;
+        }
+        
+        .deal-type-badge.trade {
+            background-color: #6a5a80;
+        }
+        
+        .deal-header {
+            margin-bottom: 12px;
+        }
+        
+        .deal-investor {
+            font-family: 'Playfair Display', serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--ink);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .deal-arrow {
+            color: var(--gold);
+            font-size: 18px;
+        }
+        
+        .deal-investee {
+            color: var(--ink);
+            font-weight: 600;
+        }
+        
+        .deal-amount {
+            background-color: var(--ink);
+            color: var(--gold);
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: 3px;
+            margin-bottom: 10px;
+            font-family: 'DM Mono', monospace;
+        }
+        
+        .deal-location {
+            font-size: 12px;
+            color: var(--ink-soft);
+            margin-bottom: 12px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        .deal-summary {
+            font-size: 13px;
+            color: var(--ink);
+            line-height: 1.6;
+            flex-grow: 1;
+            margin-bottom: 12px;
+        }
+        
+        .deal-date {
+            font-size: 11px;
+            color: var(--ink-soft);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            margin-top: auto;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+        
+        /* Subscribe Section */
+        .subscribe-section {
+            background: linear-gradient(135deg, var(--ink) 0%, var(--ink-mid) 100%);
+            color: var(--cream);
+            padding: 60px 40px;
+            text-align: center;
+            border-bottom: 3px solid var(--terra);
+            margin: 60px 0 0 0;
+        }
+        
+        .subscribe-section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 40px;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 20px;
+        }
+        
+        .subscribe-benefits {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            max-width: 700px;
+            margin: 40px auto;
+            text-align: left;
+        }
+        
+        .benefit-item {
+            font-size: 14px;
+            line-height: 1.8;
+            display: flex;
+            gap: 12px;
+        }
+        
+        .benefit-icon {
+            color: var(--gold);
+            font-size: 16px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background-color: var(--gold);
+            color: var(--ink);
+            padding: 16px 40px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 13px;
+            border-radius: 4px;
+            margin: 20px 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            border: 2px solid var(--gold);
+        }
+        
+        .cta-button:hover {
+            background-color: transparent;
+            color: var(--gold);
+        }
+        
+        /* Pricing Section */
+        .pricing-section {
+            padding: 60px 40px;
+            background-color: var(--cream);
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--ink);
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .pricing-card {
+            background-color: #ffffff;
+            border: 2px solid var(--border);
+            padding: 40px 30px;
+            text-align: center;
+            transition: all 0.3s;
+            border-radius: 4px;
+        }
+        
+        .pricing-card:hover {
+            border-color: var(--gold);
+            box-shadow: 0 8px 24px rgba(201, 168, 76, 0.15);
+        }
+        
+        .pricing-card.featured {
+            border-color: var(--gold);
+            background: linear-gradient(to bottom, var(--gold-pale), #ffffff);
+        }
+        
+        .pricing-period {
+            font-size: 14px;
+            color: var(--ink-soft);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+        
+        .pricing-amount {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--terra);
+            margin-bottom: 8px;
+        }
+        
+        .pricing-subtext {
+            font-size: 12px;
+            color: var(--ink-soft);
+            margin-bottom: 25px;
+        }
+        
+        .pricing-cta {
+            background-color: var(--ink);
+            color: var(--gold);
+            padding: 12px 25px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 12px;
+            border-radius: 3px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-block;
+            transition: all 0.3s;
+            border: 2px solid var(--ink);
+            cursor: pointer;
+        }
+        
+        .pricing-cta:hover {
+            background-color: var(--gold);
+            color: var(--ink);
+            border-color: var(--gold);
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--ink);
+            color: var(--cream);
+            padding: 40px;
+            text-align: center;
+            font-size: 12px;
+            border-top: 3px solid var(--terra);
+        }
+        
+        .footer-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        
+        .footer-text {
+            margin: 8px 0;
+            color: var(--cream-dark);
+        }
+        
+        .footer-links {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--ink-mid);
+        }
+        
+        .footer-links a {
+            color: var(--gold);
+            text-decoration: none;
+            margin: 0 15px;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--cream);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .deals-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero h1 {
+                font-size: 36px;
+            }
+            
+            .stats-bar {
+                grid-template-columns: 1fr;
+            }
+            
+            .stat-item {
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+            
+            .stat-item:last-child {
+                border-bottom: none;
+            }
+            
+            .subscribe-benefits {
+                grid-template-columns: 1fr;
+            }
+            
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-links {
+                gap: 15px;
+                font-size: 12px;
+            }
+            
+            .filter-buttons {
+                gap: 8px;
+            }
+            
+            .filter-btn {
+                padding: 8px 14px;
+                font-size: 11px;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            .hero {
+                padding: 40px 20px;
+            }
+        }
+    
+.deals-subnav{background:var(--nav-bg);border-bottom:1px solid rgba(201,168,76,.25);padding:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.deals-subnav::-webkit-scrollbar{display:none}
+.deals-subnav-inner{display:flex;min-width:max-content;padding:0 24px}
+.deals-tab{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:rgba(237,229,213,.55);padding:10px 16px;border-bottom:2px solid transparent;white-space:nowrap;cursor:pointer;transition:color .2s,border-color .2s;background:none;border-top:none;border-left:none;border-right:none}
+.deals-tab:hover,.deals-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+@media(max-width:600px){.deals-subnav-inner{padding:0 14px}.deals-tab{padding:10px 12px;font-size:9px}}
+</style>
+</head>
+<body>
+<nav class="top-nav" aria-label="Main navigation">
+  <button class="nav-hamburger" id="navHamburger" aria-expanded="false" aria-controls="navMobileDrawer" aria-label="Open navigation menu" onclick="toggleMobileNav()"><span></span><span></span><span></span></button><div class="nav-left">
+    <a href="index.html"      class="nav-link" id="nav-home">Home</a>
+    <a href="markets.html"    class="nav-link" id="nav-markets">Markets</a>
+    <a href="economy.html"    class="nav-link" id="nav-economy">Economy</a>
+    <a href="politics.html"   class="nav-link" id="nav-politics">Politics</a>
+    <a href="energy.html"     class="nav-link" id="nav-energy">Energy</a>
+    <a href="technology.html" class="nav-link" id="nav-technology">Tech</a>
+    <a href="opinion.html"    class="nav-link" id="nav-opinion">Opinion</a>
+    <a href="deals.html"      class="nav-link" id="nav-deals" aria-current="page" style="color:var(--gold);border-bottom:2px solid var(--gold)">Deals</a>
+    <a href="archive.html"    class="nav-link" id="nav-archive">Archive</a>
+  </div>
+  <div class="nav-right">
+    <a href="about.html"      class="nav-link" id="nav-about">About</a>
+    <a href="membership.html" class="nav-link" id="nav-membership">Membership</a>
+    <button class="dark-toggle" onclick="toggleDark()" id="themeBtn" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
+    <a href="membership.html" id="navSubscribeBtn" class="btn-subscribe">Subscribe</a>
+  </div>
+</nav>
+
+<!-- ═══ MOBILE NAV DRAWER ════════════════════════════ -->
+<div class="nav-mobile-drawer" id="navMobileDrawer"
+     role="dialog" aria-modal="true"
+     aria-label="Navigation menu" aria-hidden="true">
+  <div class="nav-mobile-search">
+    <input type="search" placeholder="Search AMI…" aria-label="Search articles">
+  </div>
+  <a href="index.html">Home</a>
+  <a href="markets.html">Markets</a>
+  <a href="economy.html">Economy</a>
+  <a href="politics.html">Politics</a>
+  <a href="energy.html">Energy</a>
+  <a href="technology.html">Technology</a>
+  <a href="opinion.html">Opinion</a>
+  <a href="deals.html" class="mob-active">Deals</a>
+  <a href="archive.html">Archive</a>
+  <a href="about.html">About</a>
+  <a href="membership.html">Membership</a>
+  <a href="membership.html" class="mob-subscribe">Subscribe →</a>
+</div>
+    
+    <!-- Hero Section -->
+    <section class="hero" id="deals">
+        <div class="hero-content">
+            <h1>AMI DEAL TRACKER</h1>
+            <p class="hero-subtitle">Africa's complete monthly record of capital movement</p>
+            <p class="hero-description">Track investments, M&A, and infrastructure projects across 38 African countries. Updated monthly with comprehensive database, league tables, and sector analysis.</p>
+        </div>
+    </section>
+    
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+        <div class="stat-item">
+            <div class="stat-number">847+</div>
+            <div class="stat-label">Deals Tracked</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">38</div>
+            <div class="stat-label">Countries Covered</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">Monthly</div>
+            <div class="stat-label">Updated</div>
+        </div>
+    </div>
+    
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+        <div class="filter-bar-title">Filter by Deal Type</div>
+        <div class="filter-buttons">
+            <button class="filter-btn active" onclick="filterDeals('all')">All</button>
+            <button class="filter-btn" onclick="filterDeals('pe-vc')">PE/VC</button>
+            <button class="filter-btn" onclick="filterDeals('ma')">M&A</button>
+            <button class="filter-btn" onclick="filterDeals('dfi')">DFI</button>
+            <button class="filter-btn" onclick="filterDeals('infrastructure')">Infrastructure</button>
+            <button class="filter-btn" onclick="filterDeals('trade')">Trade Finance</button>
+        </div>
+    </div>
+    
+    <!-- Deal Cards -->
+    <div class="container">
+        <div class="deals-grid" id="dealsGrid">
+            
+            <!-- Deal 1 -->
+            <div class="deal-card" data-type="pe-vc">
+                <div class="deal-type-badge pe">PRIVATE EQUITY</div>
+                <div class="deal-header">
+                    <div class="deal-investor">
+                        Heirs Holdings
+                        <span class="deal-arrow">→</span>
+                    </div>
+                    <div class="deal-investee">Lagos Logistics Ltd</div>
+                </div>
+                <div class="deal-amount">$75.5M</div>
+                <div class="deal-location">
+                    🇳🇬 Nigeria · West Africa
+                </div>
+                <div class="deal-summary">
+                    Acquisition of regional supply chain operator with strong management team and logistics hub positioning.
+                </div>
+                <div class="deal-date">Feb 20, 2026</div>
+            </div>
+            
+            <!-- Deal 2 -->
+            <div class="deal-card" data-type="infrastructure">
+                <div class="deal-type-badge infrastructure">INFRASTRUCTURE</div>
+                <div class="deal-header">
+                    <div class="deal-investor">
+                        Harith General Partners
+                        <span class="deal-arrow">→</span>
+                    </div>
+                    <div class="deal-investee">Kenya Solar Farm</div>
+                </div>
+                <div class="deal-amount">$120.0M</div>
+                <div class="deal-location">
+                    🇰🇪 Kenya · East Africa
+                </div>
+                <div class="deal-summary">
+                    Renewable energy infrastructure investment with DFI support. Grid-scale solar operations across East Africa.
+                </div>
+                <div class="deal-date">Feb 19, 2026</div>
+            </div>
+            
+            <!-- Deal 3 -->
+            <div class="deal-card" data-type="pe-vc">
+                <div class="deal-type-badge vc">VENTURE CAPITAL</div>
+                <div class="deal-header">
+                    <div class="deal-investor">
+                        Velocity Global
+                        <span class="deal-arrow">→</span>
+                    </div>
+                    <div class="deal-investee">SafePass Nigeria</div>
+                </div>
+                <div class="deal-amount">$4.2M</div>
+                <div class="deal-location">
+                    🇳🇬 Nigeria · West Africa
+                </div>
+                <div class="deal-summary">
+                    Series A funding for fintech platform. Expansion from Kenya operations into consumer payment infrastructure.
+                </div>
+                <div class="deal-date">Feb 18, 2026</div>
+            </div>
+            
+            <!-- Deal 4 -->
+            <div class="deal-card" data-type="dfi">
+                <div class="deal-type-badge dfi">PRIVATE CREDIT</div>
+                <div class="deal-header">
+                    <div class="deal-investor">
+                        IFC + Standard Bank
+                        <span class="deal-arrow">→</span>
+                    </div>
+                    <div class="deal-investee">Zambia Manufacturing</div>
+                </div>
+                <div class="deal-amount">$85.0M</div>
+                <div class="deal-location">
+                    🇿🇲 Zambia · Southern Africa
+                </div>
+                <div class="deal-summary">
+                    Growth capital for industrial operations. DFI structured financing with ESG mandate and local employment focus.
+                </div>
+                <div class="deal-date">Feb 17, 2026</div>
+            </div>
+            
+            <!-- Deal 5 -->
+            <div class="deal-card" data-type="ma">
+                <div class="deal-type-badge ma">M&A</div>
+                <div class="deal-header">
+                    <div class="deal-investor">
+                        Meridian Capital
+                        <span class="deal-arrow">→</span>
+                    </div>
+                    <div class="deal-investee">South Africa Rail</div>
+                </div>
+                <div class="deal-amount">TBD</div>
+                <div class="deal-location">
+                    🇿🇦 South Africa · Southern Africa
+                </div>
+                <div class="deal-summary">
+                    Strategic infrastructure acquisition in rail and transport sector. Size pending verification from transaction advisors.
+                </div>
+                <div class="deal-date">Feb 16, 2026</div>
+            </div>
+            
+            <!-- Deal 6 -->
+            <div class="deal-card" data-type="trade">
+                <div class="deal-type-badge trade">TRADE FINANCE</div>
+                <div class="deal-header">
+                    <div class="deal-investor">
+                        AfDB Trade Window
+                        <span class="deal-arrow">→</span>
+                    </div>
+                    <div class="deal-investee">Ghana Agro Export</div>
+                </div>
+                <div class="deal-amount">$18.5M</div>
+                <div class="deal-location">
+                    🇬🇭 Ghana · West Africa
+                </div>
+                <div class="deal-summary">
+                    Trade financing for agricultural export operations. Focus on sustainable cocoa and shea butter supply chains.
+                </div>
+                <div class="deal-date">Feb 15, 2026</div>
+            </div>
+            
+        </div>
+    </div>
+    
+    <!-- Subscribe Section -->
+    <section class="subscribe-section" id="subscribe">
+        <div class="container">
+            <h2>Subscribe for Full Database</h2>
+            <p style="font-size: 16px; max-width: 700px; margin: 0 auto 30px;">Get instant access to the complete Excel tracker, weekly deal alerts, and monthly sector analysis. Track every major capital movement across Africa.</p>
+            
+            <div class="subscribe-benefits">
+                <div class="benefit-item">
+                    <span class="benefit-icon">✓</span>
+                    <span>Full monthly Excel database with all tracked deals and metadata</span>
+                </div>
+                <div class="benefit-item">
+                    <span class="benefit-icon">✓</span>
+                    <span>Weekly email alerts highlighting major transactions</span>
+                </div>
+                <div class="benefit-item">
+                    <span class="benefit-icon">✓</span>
+                    <span>Complete archive since launch (847+ deals, 2 years)</span>
+                </div>
+                <div class="benefit-item">
+                    <span class="benefit-icon">✓</span>
+                    <span>League tables, sector reports, and investor rankings</span>
+                </div>
+                <div class="benefit-item">
+                    <span class="benefit-icon">✓</span>
+                    <span>Monthly flagship analysis report and trend insights</span>
+                </div>
+                <div class="benefit-item">
+                    <span class="benefit-icon">✓</span>
+                    <span>Filter by country, region, sector, and deal type</span>
+                </div>
+            </div>
+            
+            <a href="https://africanmarketintelligence.com/subscribe" class="cta-button">Subscribe Now</a>
+        </div>
+    </section>
+    
+    <!-- Pricing Section -->
+    <section class="pricing-section">
+        <div class="container">
+            <h2 class="section-title">Pricing</h2>
+            
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-period">Monthly Subscription</div>
+                    <div class="pricing-amount">£29</div>
+                    <div class="pricing-subtext">Billed monthly, cancel anytime</div>
+                    <button class="pricing-cta" onclick="window.location.href='https://africanmarketintelligence.com/subscribe'">Get Started</button>
+                </div>
+                
+                <div class="pricing-card featured">
+                    <div class="pricing-period">Annual Subscription</div>
+                    <div class="pricing-amount">£219</div>
+                    <div class="pricing-subtext">Save 37% · Best Value</div>
+                    <button class="pricing-cta" onclick="window.location.href='https://africanmarketintelligence.com/subscribe'">Get Started</button>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="footer-logo">AMI</div>
+        <div class="footer-text">African Market Intelligence</div>
+        <div class="footer-text">Tracking capital movement across Africa</div>
+        <div class="footer-links">
+            <a href="https://africanmarketintelligence.com">Website</a>
+            <a href="https://africanmarketintelligence.com/about">About</a>
+            <a href="https://africanmarketintelligence.com/contact">Contact</a>
+            <a href="https://africanmarketintelligence.com/privacy">Privacy</a>
+        </div>
+        <div class="footer-text" style="margin-top: 20px; color: var(--ink-soft);">
+            © 2026 African Market Intelligence. All rights reserved.
+        </div>
+    </footer>
+    
+    <script>
+        function filterDeals(type) {
+            // Update active button
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Filter deals
+            const deals = document.querySelectorAll('.deal-card');
+            deals.forEach(deal => {
+                if (type === 'all' || deal.dataset.type === type) {
+                    deal.style.display = 'block';
+                } else {
+                    deal.style.display = 'none';
+                }
+            });
+        }
+    </script>
+    
+</body>
+</html>

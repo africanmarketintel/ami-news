@@ -11,16 +11,16 @@
 <script src="config.js"></script>
 
 <style>
-:root{--gold:#C9A84C;--gold-light:#E8C97A;--gold-pale:#FDF6E3;--terra:#B85C38;--terra-dark:#8C3A1F;--ink:#1A1208;--ink-mid:#3D2B1F;--ink-soft:#6B5344;--cream:#FAF7F0;--cream-dark:#F0EAD9;--border:#D4C4A0;--bg:var(--cream);--surface:#fff;--text:var(--ink);--text-soft:var(--ink-soft);--nav-bg:var(--ink);--nav-text:var(--cream);--header-bg:var(--cream-dark);--divider:var(--border);--card-bg:#fff}
-[data-theme="dark"]{--bg:#0F0A06;--surface:#1A1208;--text:#EDE5D5;--text-soft:#A89070;--nav-bg:#080502;--nav-text:#EDE5D5;--header-bg:#1A1208;--divider:#3D2B1F;--card-bg:#1F1610;--border:#3D2B1F;--gold-pale:#2A1F10}
+:root{--gold:#C9A84C;--gold-light:#F9C53D;--gold-pale:#FDF6E3;--terra:#B85C38;--terra-dark:#8C3A1F;--green:#1E6B3C;--green-mid:#2E9B5E;--ink:#1A1208;--ink-mid:#3D2B1F;--ink-soft:#6B5344;--cream:#FAF7F0;--cream-dark:#F0EAD9;--border:#D4C4A0;--bg:var(--cream);--surface:#fff;--text:var(--ink);--text-soft:var(--ink-soft);--nav-bg:#0A1A10;--nav-text:var(--cream);--header-bg:var(--cream-dark);--divider:var(--border);--card-bg:#fff}
+[data-theme="dark"]{--green:#2E9B5E;--green-mid:#4DBA7F;--bg:#060F09;--surface:#0A1A10;--text:#EDE5D5;--text-soft:#A89070;--nav-bg:#060F09;--nav-text:#EDE5D5;--header-bg:#0A1A10;--divider:#1A3020;--card-bg:#0F2015;--border:#1A3020;--gold-pale:#0D1F12}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Spectral',Georgia,serif;background:var(--bg);color:var(--text);font-size:16px;line-height:1.6;transition:background .3s,color .3s;overflow-x:hidden}
 a{color:inherit;text-decoration:none}button{cursor:pointer;border:none;background:none;font-family:inherit}
 /* Ticker */
-.ticker-bar{background:var(--ink);color:#C9A84C;font-family:'DM Mono',monospace;font-size:11px;padding:6px 0;overflow:hidden;white-space:nowrap}
+.ticker-bar{background:var(--nav-bg);color:#C9A84C;font-family:'DM Mono',monospace;font-size:11px;padding:6px 0;overflow:hidden;white-space:nowrap}
 .ticker-inner{display:inline-flex;gap:48px;animation:ticker 40s linear infinite}
 .ticker-item{display:flex;gap:8px;align-items:center}.ticker-item .sym{color:#888}
-.up{color:#4CAF50}.dn{color:#F44336}
+.up{color:#2E9B5E}.dn{color:#F44336}
 @keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 /* Nav */
 .top-nav{background:var(--nav-bg);color:var(--nav-text);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:48px;border-bottom:2px solid var(--gold);position:sticky;top:0;z-index:1000}
@@ -74,12 +74,12 @@ a{color:inherit;text-decoration:none}button{cursor:pointer;border:none;backgroun
 .article-meta{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);display:flex;gap:14px;align-items:center;flex-wrap:wrap}
 .article-meta .author{color:var(--terra)}
 .article-tag{background:var(--gold-pale);color:var(--ink-mid);padding:2px 8px;font-size:9px;letter-spacing:.1em;text-transform:uppercase;border-left:2px solid var(--gold)}
-[data-theme="dark"] .article-tag{background:#2A1F10;color:var(--gold-light)}
+[data-theme="dark"] .article-tag{background:#0D1F12;color:var(--gold-light)}
 /* Cards */
 .article-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--divider);border:1px solid var(--divider);margin-bottom:24px}
 .article-card{background:var(--card-bg);padding:0;transition:background .2s;overflow:hidden}
 .article-card:hover{background:var(--gold-pale)}
-[data-theme="dark"] .article-card:hover{background:#2A1F10}
+[data-theme="dark"] .article-card:hover{background:#0D1F12}
 .card-img{width:100%;height:140px;object-fit:cover;display:block}
 .card-img-placeholder{width:100%;height:140px;background:linear-gradient(135deg,var(--ink-mid),var(--ink));display:flex;align-items:center;justify-content:center;font-size:24px;opacity:.4}
 .card-content{padding:18px}
@@ -110,7 +110,7 @@ a{color:inherit;text-decoration:none}button{cursor:pointer;border:none;backgroun
 .top-story-num{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:var(--divider);line-height:1;margin-bottom:3px}
 .top-story-headline{font-family:'Playfair Display',serif;font-size:13px;font-weight:600;line-height:1.35;cursor:pointer;transition:color .2s}
 .top-story-headline:hover{color:var(--terra)}
-.newsletter-widget{background:linear-gradient(135deg,#1A1208,#3D2B1F);padding:24px;margin-bottom:24px;position:relative;overflow:hidden}
+.newsletter-widget{background:linear-gradient(135deg,#0A1A10,#1A3020);padding:24px;margin-bottom:24px;position:relative;overflow:hidden}
 .newsletter-widget::before{content:'◆';position:absolute;top:-20px;right:-10px;font-size:120px;color:rgba(201,168,76,.08);line-height:1}
 .nw-title{font-family:'Playfair Display',serif;font-size:18px;color:var(--gold);margin-bottom:6px;position:relative}
 .nw-sub{font-size:13px;color:#999;margin-bottom:12px;font-weight:300;position:relative}
@@ -149,7 +149,7 @@ a{color:inherit;text-decoration:none}button{cursor:pointer;border:none;backgroun
 .plan-card{border:1px solid var(--divider);padding:18px;text-align:left;position:relative;transition:border-color .2s}
 .plan-card:hover{border-color:var(--gold)}
 .plan-card.featured{border-color:var(--gold);background:var(--gold-pale)}
-[data-theme="dark"] .plan-card.featured{background:#2A1F10}
+[data-theme="dark"] .plan-card.featured{background:#0D1F12}
 .plan-badge{position:absolute;top:-10px;right:14px;background:var(--terra);color:white;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:2px 10px}
 .plan-name{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-soft);margin-bottom:8px}
 .plan-price{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;margin-bottom:4px}
@@ -164,86 +164,86 @@ a{color:inherit;text-decoration:none}button{cursor:pointer;border:none;backgroun
 .btn-stripe-alt:hover{background:var(--terra-dark)}
 .paywall-dismiss{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);letter-spacing:.08em;text-transform:uppercase;text-decoration:underline;cursor:pointer}
 /* Toast */
-.toast{position:fixed;bottom:28px;right:28px;z-index:9999;background:#1B4D1B;border:1px solid #4CAF50;color:#4CAF50;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.08em;padding:12px 22px;border-radius:2px;opacity:0;transform:translateY(16px);transition:all .3s;pointer-events:none}
+.toast{position:fixed;bottom:28px;right:28px;z-index:9999;background:#0D3B1C;border:1px solid #2E9B5E;color:#2E9B5E;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.08em;padding:12px 22px;border-radius:2px;opacity:0;transform:translateY(16px);transition:all .3s;pointer-events:none}
 .toast.show{opacity:1;transform:translateY(0)}
 
 /* ═══ ADMIN PANEL ═══════════════════════════════════════════ */
 .admin-overlay{position:fixed;inset:0;z-index:9000;display:none;background:rgba(0,0,0,.55);backdrop-filter:blur(3px)}
 .admin-overlay.open{display:flex}
-.admin-panel{background:#0F0A06;color:#EDE5D5;width:500px;height:100vh;overflow-y:auto;display:flex;flex-direction:column;box-shadow:4px 0 40px rgba(0,0,0,.6);border-right:2px solid #C9A84C;flex-shrink:0}
-.admin-right{flex:1;background:#1A1208;overflow-y:auto;padding:28px}
-.admin-header{padding:18px 24px;border-bottom:1px solid #3D2B1F;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#0F0A06;z-index:10}
+.admin-panel{background:#060F09;color:#EDE5D5;width:500px;height:100vh;overflow-y:auto;display:flex;flex-direction:column;box-shadow:4px 0 40px rgba(0,0,0,.6);border-right:2px solid #C9A84C;flex-shrink:0}
+.admin-right{flex:1;background:#0A1A10;overflow-y:auto;padding:28px}
+.admin-header{padding:18px 24px;border-bottom:1px solid #1A3020;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#060F09;z-index:10}
 .admin-logo{font-family:'Playfair Display',serif;font-size:18px;color:#C9A84C}
 .admin-status{font-family:'DM Mono',monospace;font-size:10px;padding:3px 10px;border-radius:1px;border:1px solid}
-.admin-status.connected{color:#4CAF50;border-color:#4CAF50;background:rgba(76,175,80,.1)}
+.admin-status.connected{color:#2E9B5E;border-color:#2E9B5E;background:rgba(76,175,80,.1)}
 .admin-status.disconnected{color:#F44336;border-color:#F44336;background:rgba(244,67,54,.1)}
 .admin-status.loading{color:#C9A84C;border-color:#C9A84C;background:rgba(201,168,76,.1)}
 .admin-close-btn{color:#888;font-size:22px;padding:4px 8px;transition:color .2s}
 .admin-close-btn:hover{color:#C9A84C}
-.admin-tabs{display:flex;border-bottom:1px solid #3D2B1F;padding:0 24px}
+.admin-tabs{display:flex;border-bottom:1px solid #1A3020;padding:0 24px}
 .admin-tab{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#888;padding:12px 14px;border-bottom:2px solid transparent;margin-bottom:-1px;cursor:pointer;transition:color .2s,border-color .2s}
 .admin-tab:hover,.admin-tab.active{color:#C9A84C;border-bottom-color:#C9A84C}
 .admin-section{display:none;padding:20px 24px}
 .admin-section.active{display:block}
-.admin-section-title{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:#C9A84C;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid #3D2B1F}
+.admin-section-title{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:#C9A84C;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid #1A3020}
 .form-group{margin-bottom:14px}
 .form-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#888;margin-bottom:6px;display:block}
-.form-input,.form-textarea,.form-select{width:100%;background:#1A1208;border:1px solid #3D2B1F;color:#EDE5D5;padding:9px 12px;border-radius:2px;font-family:'Spectral',serif;font-size:14px;outline:none;transition:border-color .2s}
+.form-input,.form-textarea,.form-select{width:100%;background:#0A1A10;border:1px solid #1A3020;color:#EDE5D5;padding:9px 12px;border-radius:2px;font-family:'Spectral',serif;font-size:14px;outline:none;transition:border-color .2s}
 .form-input:focus,.form-textarea:focus,.form-select:focus{border-color:#C9A84C}
 .form-textarea{min-height:80px;resize:vertical;line-height:1.6}
-.form-select{font-family:'DM Mono',monospace;font-size:12px}.form-select option{background:#1A1208}
+.form-select{font-family:'DM Mono',monospace;font-size:12px}.form-select option{background:#0A1A10}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.btn-save{background:#C9A84C;color:#1A1208;font-family:'DM Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;padding:12px 24px;border-radius:2px;transition:background .2s;width:100%;margin-top:8px}
-.btn-save:hover{background:#E8C97A}
+.btn-save{background:#C9A84C;color:#0A1A10;font-family:'DM Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;padding:12px 24px;border-radius:2px;transition:background .2s;width:100%;margin-top:8px}
+.btn-save:hover{background:#F9C53D}
 .btn-save:disabled{background:#666;cursor:not-allowed}
 .btn-danger{background:#B85C38;color:white;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:2px;transition:background .2s}
 .btn-danger:hover{background:#8C3A1F}
 .admin-article-list{list-style:none}
-.admin-article-item{border:1px solid #3D2B1F;border-radius:2px;margin-bottom:8px;overflow:hidden}
+.admin-article-item{border:1px solid #1A3020;border-radius:2px;margin-bottom:8px;overflow:hidden}
 .admin-article-header{padding:12px 14px;display:flex;align-items:flex-start;gap:10px;cursor:pointer;transition:background .2s}
-.admin-article-header:hover{background:#2A1F10}
+.admin-article-header:hover{background:#0D1F12}
 .admin-article-info{flex:1;min-width:0}
 .admin-article-title{font-family:'Playfair Display',serif;font-size:13px;line-height:1.3;margin-bottom:4px;color:#EDE5D5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .admin-article-meta{font-family:'DM Mono',monospace;font-size:10px;color:#888;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.admin-article-body{display:none;padding:14px;border-top:1px solid #3D2B1F;background:#0F0A06}
+.admin-article-body{display:none;padding:14px;border-top:1px solid #1A3020;background:#060F09}
 .admin-article-body.open{display:block}
 .badge{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border-radius:1px}
-.badge-hero{background:#B85C38;color:white}.badge-locked{background:#3D2B1F;color:#C9A84C}
-.badge-side1,.badge-side2{background:#1B3A6B;color:white}.badge-card{background:#1B3D1B;color:#4CAF50}
+.badge-hero{background:#B85C38;color:white}.badge-locked{background:#1A3020;color:#C9A84C}
+.badge-side1,.badge-side2{background:#1B3A6B;color:white}.badge-card{background:#0D3B1C;color:#2E9B5E}
 .market-edit-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.market-edit-item{background:#1A1208;border:1px solid #3D2B1F;padding:12px;border-radius:2px}
+.market-edit-item{background:#0A1A10;border:1px solid #1A3020;padding:12px;border-radius:2px}
 .market-edit-name{font-family:'DM Mono',monospace;font-size:10px;color:#C9A84C;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
-.mini-input{width:100%;background:#0F0A06;border:1px solid #3D2B1F;color:#EDE5D5;padding:7px 9px;border-radius:2px;font-family:'DM Mono',monospace;font-size:12px;outline:none;margin-bottom:5px;transition:border-color .2s}
+.mini-input{width:100%;background:#060F09;border:1px solid #1A3020;color:#EDE5D5;padding:7px 9px;border-radius:2px;font-family:'DM Mono',monospace;font-size:12px;outline:none;margin-bottom:5px;transition:border-color .2s}
 .mini-input:focus{border-color:#C9A84C}
 .dir-toggle{display:flex;gap:5px}
-.dir-btn{font-family:'DM Mono',monospace;font-size:10px;padding:4px 0;border:1px solid #3D2B1F;border-radius:1px;color:#888;cursor:pointer;transition:all .2s;flex:1;text-align:center}
-.dir-btn.up.active{background:#1B4D1B;border-color:#4CAF50;color:#4CAF50}
+.dir-btn{font-family:'DM Mono',monospace;font-size:10px;padding:4px 0;border:1px solid #1A3020;border-radius:1px;color:#888;cursor:pointer;transition:all .2s;flex:1;text-align:center}
+.dir-btn.up.active{background:#0D3B1C;border-color:#2E9B5E;color:#2E9B5E}
 .dir-btn.dn.active{background:#4D1B1B;border-color:#F44336;color:#F44336}
 /* Image upload */
-.img-upload-area{border:2px dashed #3D2B1F;border-radius:2px;padding:20px;text-align:center;cursor:pointer;transition:border-color .2s;position:relative;margin-bottom:10px}
+.img-upload-area{border:2px dashed #1A3020;border-radius:2px;padding:20px;text-align:center;cursor:pointer;transition:border-color .2s;position:relative;margin-bottom:10px}
 .img-upload-area:hover{border-color:#C9A84C}
 .img-upload-area input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
 .img-upload-label{font-family:'DM Mono',monospace;font-size:10px;color:#888;letter-spacing:.1em;text-transform:uppercase}
 .img-preview{width:100%;height:80px;object-fit:cover;border-radius:2px;margin-top:8px;display:none}
-.setting-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #3D2B1F}
+.setting-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #1A3020}
 .setting-row:last-child{border-bottom:none}
 .setting-label{font-family:'DM Mono',monospace;font-size:11px;color:#EDE5D5}
 .setting-desc{font-size:12px;color:#888;margin-top:2px}
 .toggle-switch{position:relative;width:42px;height:22px;flex-shrink:0}
 .toggle-switch input{opacity:0;width:0;height:0}
-.toggle-slider{position:absolute;inset:0;background:#3D2B1F;border-radius:11px;cursor:pointer;transition:.3s}
+.toggle-slider{position:absolute;inset:0;background:#1A3020;border-radius:11px;cursor:pointer;transition:.3s}
 .toggle-slider::before{content:'';position:absolute;left:3px;top:3px;width:16px;height:16px;background:#888;border-radius:50%;transition:.3s}
 .toggle-switch input:checked+.toggle-slider{background:#C9A84C}
-.toggle-switch input:checked+.toggle-slider::before{transform:translateX(20px);background:#1A1208}
+.toggle-switch input:checked+.toggle-slider::before{transform:translateX(20px);background:#0A1A10}
 /* Dashboard stats */
 .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px}
-.stat-card{background:#0F0A06;border:1px solid #3D2B1F;border-top:2px solid;padding:18px}
+.stat-card{background:#060F09;border:1px solid #1A3020;border-top:2px solid;padding:18px}
 .stat-card:nth-child(1){border-top-color:#C9A84C}.stat-card:nth-child(2){border-top-color:#B85C38}
-.stat-card:nth-child(3){border-top-color:#4CAF50}.stat-card:nth-child(4){border-top-color:#1B3A6B}
+.stat-card:nth-child(3){border-top-color:#2E9B5E}.stat-card:nth-child(4){border-top-color:#1B3A6B}
 .stat-num{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;color:#EDE5D5;line-height:1}
 .stat-label{font-family:'DM Mono',monospace;font-size:10px;color:#888;letter-spacing:.1em;text-transform:uppercase;margin-top:5px}
 /* Footer */
-footer{background:var(--ink);color:#888;padding:40px 24px 24px;margin-top:48px}
+footer{background:var(--nav-bg);color:#888;padding:40px 24px 24px;margin-top:48px}
 .footer-inner{max-width:1280px;margin:0 auto}
 .footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;padding-bottom:40px;border-bottom:1px solid #333;margin-bottom:28px}
 @media(max-width:768px){.footer-top{grid-template-columns:1fr 1fr}}
@@ -290,7 +290,7 @@ footer{background:var(--ink);color:#888;padding:40px 24px 24px;margin-top:48px}
 /* Visible focus rings — WCAG 2.4.7 Focus Visible */
 *:focus{outline:none}
 *:focus-visible{outline:3px solid #C9A84C !important;outline-offset:3px !important}
-[data-theme="dark"] *:focus-visible{outline-color:#E8C97A !important}
+[data-theme="dark"] *:focus-visible{outline-color:#F9C53D !important}
 
 /* Paywall dismiss was a <div> — now <button> */
 button.paywall-dismiss{background:none;border:none;padding:8px 4px;
@@ -311,7 +311,7 @@ button.paywall-dismiss{background:none;border:none;padding:8px 4px;
 .btn-save{min-height:44px}
 
 /* Footer link contrast fix — WCAG 1.4.3 (was #888 on dark bg ≈ 3.5:1, fails) */
-footer .footer-links a{color:#BBA898 !important}
+footer .footer-links a{color:#B0ADC8 !important}
 footer .footer-links a:hover{color:var(--gold) !important}
 .footer-about{color:#A89070}
 .footer-bottom{color:#999}
@@ -340,7 +340,7 @@ footer .footer-links a:hover{color:var(--gold) !important}
   border-top:none;cursor:pointer}
 .nav-mobile-drawer a:hover,.nav-mobile-drawer a:focus,
 .nav-mobile-drawer button:hover,.nav-mobile-drawer button:focus{
-  background:#1A1208;color:var(--gold)}
+  background:#0A1A10;color:var(--gold)}
 .nav-mobile-drawer a.mob-active{color:var(--gold)}
 .nav-mobile-search{padding:12px 24px;border-bottom:1px solid rgba(255,255,255,.07)}
 .nav-mobile-search input{width:100%;background:rgba(255,255,255,.08);
@@ -463,7 +463,7 @@ footer .footer-links a:hover{color:var(--gold) !important}
 /* ── Save Bar ─────────────────────────────────────────── */
 .ami-edit-bar{
   position:fixed;bottom:0;left:0;right:0;z-index:8901;
-  background:#0F0A06;border-top:3px solid var(--gold);
+  background:#060F09;border-top:3px solid var(--gold);
   padding:10px 24px;display:none;align-items:center;gap:16px;
   font-family:'DM Mono',monospace;font-size:11px;
   box-shadow:0 -4px 24px rgba(0,0,0,.4);
@@ -472,12 +472,12 @@ footer .footer-links a:hover{color:var(--gold) !important}
 .ami-edit-bar.visible{display:flex;transform:translateY(0)}
 .ami-edit-bar-label{color:#C9A84C;letter-spacing:.12em;text-transform:uppercase;flex:1}
 .ami-edit-pending{color:#F44336;font-size:10px;letter-spacing:.08em}
-.ami-edit-pending.none{color:#4CAF50}
+.ami-edit-pending.none{color:#2E9B5E}
 .ami-save-btn{background:var(--gold);color:var(--ink);font-family:'DM Mono',monospace;
   font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
   padding:8px 18px;border-radius:2px;border:none;cursor:pointer}
 .ami-save-btn:hover{background:var(--gold-light)}
-.ami-exit-btn{background:transparent;border:1px solid #3D2B1F;color:#888;
+.ami-exit-btn{background:transparent;border:1px solid #1A3020;color:#888;
   font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;
   padding:8px 14px;border-radius:2px;cursor:pointer;transition:all .2s}
 .ami-exit-btn:hover{border-color:#C9A84C;color:#C9A84C}
@@ -511,7 +511,7 @@ body.ami-edit-mode [data-editable]:focus,[data-editable]:focus-within{
   background:rgba(201,168,76,.05);
 }
 body.ami-edit-mode [data-editable].saved-flash{
-  outline:2px solid #4CAF50 !important;
+  outline:2px solid #2E9B5E !important;
   background:rgba(76,175,80,.06);
   transition:outline .1s,background .1s;
 }
@@ -557,35 +557,35 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
 }
 .ami-img-dialog.open{display:flex}
 .ami-img-dialog-box{
-  background:#1A1208;border:1px solid #3D2B1F;border-top:4px solid #C9A84C;
+  background:#0A1A10;border:1px solid #1A3020;border-top:4px solid #C9A84C;
   padding:28px;max-width:480px;width:90%;border-radius:2px;
   box-shadow:0 8px 40px rgba(0,0,0,.6);
 }
 .ami-img-dialog-title{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.15em;
   text-transform:uppercase;color:#C9A84C;margin-bottom:16px}
 .ami-img-dialog-preview{width:100%;height:140px;object-fit:cover;border-radius:2px;
-  margin-bottom:14px;display:none;border:1px solid #3D2B1F}
-.ami-img-dialog-tabs{display:flex;gap:1px;margin-bottom:14px;background:#0F0A06;border-radius:2px;overflow:hidden}
+  margin-bottom:14px;display:none;border:1px solid #1A3020}
+.ami-img-dialog-tabs{display:flex;gap:1px;margin-bottom:14px;background:#060F09;border-radius:2px;overflow:hidden}
 .ami-img-tab{flex:1;padding:8px;font-family:'DM Mono',monospace;font-size:10px;
   letter-spacing:.1em;text-transform:uppercase;color:#888;cursor:pointer;
   background:transparent;border:none;transition:all .2s;text-align:center}
-.ami-img-tab.active{background:#3D2B1F;color:#C9A84C}
+.ami-img-tab.active{background:#1A3020;color:#C9A84C}
 .ami-img-panel{display:none}.ami-img-panel.active{display:block}
-.ami-img-url{width:100%;background:#0F0A06;border:1px solid #3D2B1F;color:#EDE5D5;
+.ami-img-url{width:100%;background:#060F09;border:1px solid #1A3020;color:#EDE5D5;
   padding:9px 12px;font-family:'DM Mono',monospace;font-size:12px;border-radius:2px;
   outline:none;margin-bottom:10px}
 .ami-img-url:focus{border-color:#C9A84C}
-.ami-img-upload-area{border:2px dashed #3D2B1F;border-radius:2px;padding:24px;
+.ami-img-upload-area{border:2px dashed #1A3020;border-radius:2px;padding:24px;
   text-align:center;cursor:pointer;position:relative;transition:border-color .2s;margin-bottom:10px}
 .ami-img-upload-area:hover{border-color:#C9A84C}
 .ami-img-upload-area input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
 .ami-img-upload-label{font-family:'DM Mono',monospace;font-size:10px;color:#888;letter-spacing:.1em;text-transform:uppercase}
 .ami-img-dialog-actions{display:flex;gap:8px;margin-top:4px}
-.ami-img-apply{flex:1;background:#C9A84C;color:#1A1208;font-family:'DM Mono',monospace;
+.ami-img-apply{flex:1;background:#C9A84C;color:#0A1A10;font-family:'DM Mono',monospace;
   font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
   padding:10px;border:none;border-radius:2px;cursor:pointer}
-.ami-img-apply:hover{background:#E8C97A}
-.ami-img-cancel{background:transparent;border:1px solid #3D2B1F;color:#888;
+.ami-img-apply:hover{background:#F9C53D}
+.ami-img-cancel{background:transparent;border:1px solid #1A3020;color:#888;
   font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;
   padding:10px 14px;border-radius:2px;cursor:pointer;transition:all .2s}
 .ami-img-cancel:hover{border-color:#C9A84C;color:#C9A84C}
@@ -594,7 +594,7 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
 .ami-rte-bar{
   display:none;
   position:fixed;top:60px;left:50%;transform:translateX(-50%);z-index:9000;
-  background:#1A1208;border:1px solid #3D2B1F;border-radius:4px;
+  background:#0A1A10;border:1px solid #1A3020;border-radius:4px;
   padding:4px 6px;gap:2px;box-shadow:0 4px 20px rgba(0,0,0,.5);
   align-items:center;
   font-family:'DM Mono',monospace;font-size:11px;
@@ -602,9 +602,11 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
 .ami-rte-bar.visible{display:flex}
 .ami-rte-btn{background:none;border:none;color:#888;padding:5px 8px;border-radius:2px;
   cursor:pointer;font-size:14px;line-height:1;transition:all .2s;min-width:30px;text-align:center}
-.ami-rte-btn:hover{background:#3D2B1F;color:#C9A84C}
-.ami-rte-sep{width:1px;height:18px;background:#3D2B1F;margin:0 3px}
+.ami-rte-btn:hover{background:#1A3020;color:#C9A84C}
+.ami-rte-sep{width:1px;height:18px;background:#1A3020;margin:0 3px}
 
+.region-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-soft);padding:0 14px 0 2px;display:flex;align-items:center;opacity:.55;flex-shrink:0;user-select:none;pointer-events:none}
+.paywall-overlay,.paywall-blur{display:none!important}.lock-icon{display:none!important}.badge-locked{display:none!important}
 </style>
 </head>
 <body>
@@ -631,10 +633,10 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
     <!-- ARTICLES TAB -->
     <div class="admin-section active" id="tab-articles">
       <div class="admin-section-title">➕ Publish New Article</div>
-      <details style="border:1px solid #3D2B1F;border-radius:2px;overflow:hidden;margin-bottom:20px">
-        <summary style="padding:12px 14px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#C9A84C;cursor:pointer;background:#1A1208;list-style:none">＋ New Article Form</summary>
-        <div style="padding:16px;background:#0F0A06">
-          <div class="form-group"><label class="form-label">Placement</label>
+      <details style="border:1px solid #1A3020;border-radius:2px;overflow:hidden;margin-bottom:20px">
+        <summary style="padding:12px 14px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#C9A84C;cursor:pointer;background:#0A1A10;list-style:none">＋ New Article Form</summary>
+        <div style="padding:16px;background:#060F09">
+          <div class="form-group"><label class="form-label" for="new-placement">Placement</label>
             <select class="form-select" id="new-placement">
               <option value="card">Article Card (Latest News)</option>
               <option value="hero">Hero — Main Feature</option>
@@ -642,16 +644,16 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
               <option value="side2">Side Story 2</option>
               <option value="archive">Archive Only (old news)</option>
             </select></div>
-          <div class="form-group"><label class="form-label">Section / Region</label>
+          <div class="form-group"><label class="form-label" for="new-section">Section / Region</label>
             <input class="form-input" id="new-section" placeholder="e.g. West Africa · Politics"></div>
-          <div class="form-group"><label class="form-label">Headline</label>
+          <div class="form-group"><label class="form-label" for="new-headline">Headline</label>
             <textarea class="form-textarea" id="new-headline" style="min-height:65px" placeholder="Article headline..."></textarea></div>
-          <div class="form-group"><label class="form-label">Standfirst / Summary</label>
+          <div class="form-group"><label class="form-label" for="new-standfirst">Standfirst / Summary</label>
             <textarea class="form-textarea" id="new-standfirst" placeholder="2–3 sentence intro shown on homepage..."></textarea></div>
-          <div class="form-group"><label class="form-label">Full Article Body (HTML supported)</label>
+          <div class="form-group"><label class="form-label" for="new-body">Full Article Body (HTML supported)</label>
             <textarea class="form-textarea" id="new-body" style="min-height:160px;font-family:'DM Mono',monospace;font-size:11px" placeholder="Write the full article here...&#10;&#10;Use &lt;p&gt; for paragraphs, &lt;h2&gt; for headings, &lt;blockquote&gt; for quotes.&#10;Plain text also works — paragraphs are auto-detected."></textarea></div>
           <!-- Hero Image Upload -->
-          <div class="form-group"><label class="form-label">Hero Image</label>
+          <div class="form-group"><label class="form-label" for="new-hero-url">Hero Image</label>
             <div class="img-upload-area" id="heroUploadArea">
               <input type="file" accept="image/*" id="new-hero-file" onchange="previewImage(this,'heroPreview','heroUploadArea')">
               <div class="img-upload-label">📷 Click or drag to upload hero image</div>
@@ -660,9 +662,9 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
             <input class="form-input" id="new-hero-url" placeholder="Or paste image URL directly" style="font-size:11px;font-family:'DM Mono',monospace">
           </div>
           <div class="form-row">
-            <div class="form-group" style="margin:0"><label class="form-label">Author Name</label>
+            <div class="form-group" style="margin:0"><label class="form-label" for="new-author">Author Name</label>
               <input class="form-input" id="new-author" placeholder="Full name"></div>
-            <div class="form-group" style="margin:0"><label class="form-label">Author Role</label>
+            <div class="form-group" style="margin:0"><label class="form-label" for="new-author-role">Author Role</label>
               <input class="form-input" id="new-author-role" placeholder="e.g. West Africa Correspondent"></div>
           </div>
           <!-- Author Photo Upload -->
@@ -687,9 +689,9 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
 
 
       <!-- ═══ BULK & ARCHIVE TOOLS ═══════════════════════════════ -->
-      <details style="border:1px solid #3D2B1F;border-radius:2px;overflow:hidden;margin-bottom:20px" id="bulkToolsDetails">
-        <summary style="padding:12px 14px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#C9A84C;cursor:pointer;background:#1A1208;list-style:none">🗂 Bulk &amp; Archive Tools</summary>
-        <div style="padding:16px;background:#0F0A06">
+      <details style="border:1px solid #1A3020;border-radius:2px;overflow:hidden;margin-bottom:20px" id="bulkToolsDetails">
+        <summary style="padding:12px 14px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#C9A84C;cursor:pointer;background:#0A1A10;list-style:none">🗂 Bulk &amp; Archive Tools</summary>
+        <div style="padding:16px;background:#060F09">
 
           <!-- ── Batch Archive by Date ─────────────────────────── -->
           <div class="admin-section-title" style="font-size:10px;margin-bottom:10px">📅 Move Articles to Archive by Date</div>
@@ -707,7 +709,7 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
           <div id="batchArchivePreview" style="font-family:'DM Mono',monospace;font-size:11px;color:#888;line-height:1.8;min-height:16px"></div>
           <button class="btn-save" id="batchArchiveConfirmBtn" style="display:none;margin-top:10px;background:#1B3A6B" onclick="confirmBatchArchive()">📦 Move All to Archive →</button>
 
-          <div style="border-top:1px solid #3D2B1F;margin:20px 0 18px"></div>
+          <div style="border-top:1px solid #1A3020;margin:20px 0 18px"></div>
 
           <!-- ── CSV Bulk Import ───────────────────────────────── -->
           <div class="admin-section-title" style="font-size:10px;margin-bottom:10px">📋 CSV Bulk Import (for older content)</div>
@@ -808,39 +810,39 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
       <p style="font-size:11px;color:#888;font-family:'DM Mono',monospace;margin-bottom:16px;line-height:1.6">Edit every link that appears in the footer columns. Changes go live on all pages immediately after saving.</p>
 
       <!-- Column 1 -->
-      <div style="background:#0F0A06;border:1px solid #3D2B1F;border-top:2px solid #C9A84C;padding:16px;margin-bottom:14px;border-radius:2px">
+      <div style="background:#060F09;border:1px solid #1A3020;border-top:2px solid #C9A84C;padding:16px;margin-bottom:14px;border-radius:2px">
         <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#C9A84C;margin-bottom:10px">Column 1</div>
         <div class="form-group" style="margin-bottom:10px"><label class="form-label">Column Title</label>
           <input class="form-input" id="fc1Title" placeholder="Sections" value="Sections"></div>
         <div style="font-family:'DM Mono',monospace;font-size:9px;color:#555;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">Links (Label → URL)</div>
         <div id="fc1Editor"></div>
-        <button onclick="addFooterLinkRow(1)" style="width:100%;margin-top:8px;background:transparent;border:1px dashed #3D2B1F;color:#888;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:7px;cursor:pointer;border-radius:2px;transition:all .2s" onmouseover="this.style.borderColor='#C9A84C';this.style.color='#C9A84C'" onmouseout="this.style.borderColor='#3D2B1F';this.style.color='#888'">+ Add Link</button>
+        <button onclick="addFooterLinkRow(1)" style="width:100%;margin-top:8px;background:transparent;border:1px dashed #1A3020;color:#888;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:7px;cursor:pointer;border-radius:2px;transition:all .2s" onmouseover="this.style.borderColor='#C9A84C';this.style.color='#C9A84C'" onmouseout="this.style.borderColor='#1A3020';this.style.color='#888'">+ Add Link</button>
       </div>
 
       <!-- Column 2 -->
-      <div style="background:#0F0A06;border:1px solid #3D2B1F;border-top:2px solid #B85C38;padding:16px;margin-bottom:14px;border-radius:2px">
+      <div style="background:#060F09;border:1px solid #1A3020;border-top:2px solid #B85C38;padding:16px;margin-bottom:14px;border-radius:2px">
         <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#B85C38;margin-bottom:10px">Column 2</div>
         <div class="form-group" style="margin-bottom:10px"><label class="form-label">Column Title</label>
           <input class="form-input" id="fc2Title" placeholder="Regions" value="Regions"></div>
         <div style="font-family:'DM Mono',monospace;font-size:9px;color:#555;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">Links (Label → URL)</div>
         <div id="fc2Editor"></div>
-        <button onclick="addFooterLinkRow(2)" style="width:100%;margin-top:8px;background:transparent;border:1px dashed #3D2B1F;color:#888;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:7px;cursor:pointer;border-radius:2px;transition:all .2s" onmouseover="this.style.borderColor='#C9A84C';this.style.color='#C9A84C'" onmouseout="this.style.borderColor='#3D2B1F';this.style.color='#888'">+ Add Link</button>
+        <button onclick="addFooterLinkRow(2)" style="width:100%;margin-top:8px;background:transparent;border:1px dashed #1A3020;color:#888;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:7px;cursor:pointer;border-radius:2px;transition:all .2s" onmouseover="this.style.borderColor='#C9A84C';this.style.color='#C9A84C'" onmouseout="this.style.borderColor='#1A3020';this.style.color='#888'">+ Add Link</button>
       </div>
 
       <!-- Column 3 -->
-      <div style="background:#0F0A06;border:1px solid #3D2B1F;border-top:2px solid #4CAF50;padding:16px;margin-bottom:20px;border-radius:2px">
-        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#4CAF50;margin-bottom:10px">Column 3</div>
+      <div style="background:#060F09;border:1px solid #1A3020;border-top:2px solid #2E9B5E;padding:16px;margin-bottom:20px;border-radius:2px">
+        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#2E9B5E;margin-bottom:10px">Column 3</div>
         <div class="form-group" style="margin-bottom:10px"><label class="form-label">Column Title</label>
           <input class="form-input" id="fc3Title" placeholder="Company" value="Company"></div>
         <div style="font-family:'DM Mono',monospace;font-size:9px;color:#555;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">Links (Label → URL)</div>
         <div id="fc3Editor"></div>
-        <button onclick="addFooterLinkRow(3)" style="width:100%;margin-top:8px;background:transparent;border:1px dashed #3D2B1F;color:#888;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:7px;cursor:pointer;border-radius:2px;transition:all .2s" onmouseover="this.style.borderColor='#C9A84C';this.style.color='#C9A84C'" onmouseout="this.style.borderColor='#3D2B1F';this.style.color='#888'">+ Add Link</button>
+        <button onclick="addFooterLinkRow(3)" style="width:100%;margin-top:8px;background:transparent;border:1px dashed #1A3020;color:#888;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:7px;cursor:pointer;border-radius:2px;transition:all .2s" onmouseover="this.style.borderColor='#C9A84C';this.style.color='#C9A84C'" onmouseout="this.style.borderColor='#1A3020';this.style.color='#888'">+ Add Link</button>
       </div>
 
       <!-- ── Misc ─────────────────────────────────── -->
       <div class="setting-row">
         <div><div class="setting-label">Paywall Active</div><div class="setting-desc">Auto-show paywall after 30 seconds</div></div>
-        <label class="toggle-switch"><input type="checkbox" id="paywallActive" checked><span class="toggle-slider"></span></label>
+        <label class="toggle-switch"><input type="checkbox" id="paywallActive"><span class="toggle-slider"></span></label>
       </div>
       <div class="setting-row" style="border:none">
         <div><div class="setting-label">Dark Mode Default</div></div>
@@ -859,21 +861,21 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
       <button class="btn-save" style="flex:1;margin:0;background:#1B3A6B" onclick="exportSubscribersCSV()">Export CSV</button>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px">
-      <div style="background:#0F0A06;border:1px solid #3D2B1F;border-top:2px solid #C9A84C;padding:14px;text-align:center">
+      <div style="background:#060F09;border:1px solid #1A3020;border-top:2px solid #C9A84C;padding:14px;text-align:center">
         <div id="subTotal" style="font-size:24px;font-weight:700;color:#EDE5D5;font-family:Georgia,serif">-</div>
         <div style="font-size:9px;color:#888;text-transform:uppercase;letter-spacing:.1em;margin-top:4px">Total</div>
       </div>
-      <div style="background:#0F0A06;border:1px solid #3D2B1F;border-top:2px solid #4CAF50;padding:14px;text-align:center">
-        <div id="subThisWeek" style="font-size:24px;font-weight:700;color:#4CAF50;font-family:Georgia,serif">-</div>
+      <div style="background:#060F09;border:1px solid #1A3020;border-top:2px solid #2E9B5E;padding:14px;text-align:center">
+        <div id="subThisWeek" style="font-size:24px;font-weight:700;color:#2E9B5E;font-family:Georgia,serif">-</div>
         <div style="font-size:9px;color:#888;text-transform:uppercase;letter-spacing:.1em;margin-top:4px">This Week</div>
       </div>
-      <div style="background:#0F0A06;border:1px solid #3D2B1F;border-top:2px solid #B85C38;padding:14px;text-align:center">
+      <div style="background:#060F09;border:1px solid #1A3020;border-top:2px solid #B85C38;padding:14px;text-align:center">
         <div id="subThisMonth" style="font-size:24px;font-weight:700;color:#B85C38;font-family:Georgia,serif">-</div>
         <div style="font-size:9px;color:#888;text-transform:uppercase;letter-spacing:.1em;margin-top:4px">This Month</div>
       </div>
     </div>
-    <div style="background:#0F0A06;border:1px solid #3D2B1F;overflow:hidden">
-      <div style="display:grid;grid-template-columns:1fr 80px 100px;padding:8px 14px;border-bottom:1px solid #3D2B1F;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:#555">
+    <div style="background:#060F09;border:1px solid #1A3020;overflow:hidden">
+      <div style="display:grid;grid-template-columns:1fr 80px 100px;padding:8px 14px;border-bottom:1px solid #1A3020;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:#555">
         <span>Email</span><span>Source</span><span>Date</span>
       </div>
       <div id="subscriberList" style="max-height:380px;overflow-y:auto;font-size:11px">
@@ -885,7 +887,7 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
   <!-- Dashboard right panel -->
   <div class="admin-right">
     <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#EDE5D5;margin-bottom:6px">Dashboard</div>
-    <div style="font-family:'DM Mono',monospace;font-size:10px;color:#888;letter-spacing:.08em;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid #3D2B1F">AFRICAN MARKET INTELLIGENCE · CONTENT MANAGEMENT</div>
+    <div style="font-family:'DM Mono',monospace;font-size:10px;color:#888;letter-spacing:.08em;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid #1A3020">AFRICAN MARKET INTELLIGENCE · CONTENT MANAGEMENT</div>
     <div class="stat-grid">
       <div class="stat-card"><div class="stat-num" id="statArticles">—</div><div class="stat-label">Live Articles</div></div>
       <div class="stat-card"><div class="stat-num" id="statLocked">—</div><div class="stat-label">Premium Locked</div></div>
@@ -893,8 +895,8 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
       <div class="stat-card"><div class="stat-num" id="statImages">—</div><div class="stat-label">Images Stored</div></div>
       <div class="stat-card" style="border-top-color:#C9A84C"><div class="stat-num" id="statSubscribers">—</div><div class="stat-label">Subscribers</div></div>
     </div>
-    <div style="background:#0F0A06;border:1px solid #3D2B1F;padding:18px">
-      <div style="font-family:'DM Mono',monospace;font-size:11px;color:#C9A84C;letter-spacing:.15em;text-transform:uppercase;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #3D2B1F">Supabase Connection</div>
+    <div style="background:#060F09;border:1px solid #1A3020;padding:18px">
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:#C9A84C;letter-spacing:.15em;text-transform:uppercase;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #1A3020">Supabase Connection</div>
       <div style="font-size:13px;color:#A89070;line-height:1.8">
         <div>📡 URL: <span id="dbUrl" style="color:#EDE5D5;font-family:'DM Mono',monospace;font-size:10px">—</span></div>
         <div style="margin-top:8px;font-family:'DM Mono',monospace;font-size:10px;color:#555;line-height:1.8">
@@ -925,6 +927,7 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
     <a href="energy.html"     class="nav-link" id="nav-energy">Energy</a>
     <a href="technology.html" class="nav-link" id="nav-technology">Tech</a>
     <a href="opinion.html"    class="nav-link" id="nav-opinion">Opinion</a>
+    <a href="deals.html"    class="nav-link" id="nav-deals">Deals</a>
     <a href="archive.html"    class="nav-link" id="nav-archive">Archive</a>
   </div>
   <div class="nav-right">
@@ -933,7 +936,7 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
     <a href="membership.html" class="nav-link" id="nav-membership">Membership</a>
     <a href="contact.html"    class="nav-link" id="nav-contact">Contact</a>
     <button class="dark-toggle" onclick="toggleDark()" id="themeBtn" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
-    <a href="membership.html" id="navSubscribeBtn" class="btn-subscribe">Subscribe</a>
+    <a href="deals.html"     id="navSubscribeBtn" class="btn-subscribe">Deal Tracker</a>
   </div>
 </nav>
 
@@ -952,6 +955,7 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
   <a href="energy.html">Energy</a>
   <a href="technology.html">Technology</a>
   <a href="opinion.html">Opinion</a>
+  <a href="deals.html">Deals</a>
   <a href="archive.html">Archive</a>
   <a href="about.html">About</a>
   <a href="membership.html">Membership</a>
@@ -970,15 +974,13 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
   </div>
 </header>
 
-<div class="section-nav" role="navigation" aria-label="Section navigation"><div class="section-nav-inner">
-  <a href="#" class="section-tab active" onclick="filterSection(event,'all')">All Stories</a>
-  <a href="#" class="section-tab" onclick="filterSection(event,'West Africa')">West Africa</a>
-  <a href="#" class="section-tab" onclick="filterSection(event,'East Africa')">East Africa</a>
-  <a href="#" class="section-tab" onclick="filterSection(event,'Southern Africa')">Southern Africa</a>
-  <a href="#" class="section-tab" onclick="filterSection(event,'North Africa')">North Africa</a>
-  <a href="#" class="section-tab" onclick="filterSection(event,'Commodities')">Commodities</a>
-  <a href="#" class="section-tab" onclick="filterSection(event,'Technology')">Technology</a>
-  <a href="#" class="section-tab" onclick="filterSection(event,'Markets')">Markets</a>
+<div class="section-nav" role="navigation" aria-label="Filter by region"><div class="section-nav-inner">
+  <span class="region-label">Region</span>
+  <button type="button" class="section-tab active" onclick="filterSection(event,'all')">All Africa</button>
+  <button type="button" class="section-tab" onclick="filterSection(event,'West Africa')">West Africa</button>
+  <button type="button" class="section-tab" onclick="filterSection(event,'East Africa')">East Africa</button>
+  <button type="button" class="section-tab" onclick="filterSection(event,'Southern Africa')">Southern Africa</button>
+  <button type="button" class="section-tab" onclick="filterSection(event,'North Africa')">North Africa</button>
 </div></div>
 
 <div class="main-wrapper">
@@ -1212,7 +1214,7 @@ document.getElementById('stripePremium').href = STRIPE_PREMIUM;
 document.getElementById('navSubscribeBtn').href = STRIPE_PREMIUM;
 
 async function init() {
-  if(SUPABASE_URL === 'YOUR_SUPABASE_URL') {
+  if(!SUPABASE_URL || SUPABASE_URL === 'YOUR_SUPABASE_URL' || !SUPABASE_ANON || SUPABASE_ANON === 'YOUR_SUPABASE_ANON_KEY') {
     showConfigBanner(); return;
   }
 
@@ -1268,7 +1270,7 @@ window.addEventListener('popstate', e => {
 function articleUrl(a) { return `article.html?id=${a.id}`; }
 
 function heroImgHtml(a, height='220px') {
-  if(a.hero_image) return `<img src="${a.hero_image}" class="hero-img" style="height:${height}" onerror="this.style.display='none'">`;
+  if(a.hero_image) return `<img src="${a.hero_image}" class="hero-img" alt="${a.headline}" style="height:${height}" onerror="this.style.display='none'">`;
   return `<div class="hero-img-placeholder" style="height:${height}">📰 ${a.section||''}</div>`;
 }
 
@@ -1283,7 +1285,7 @@ function renderHero() {
       ${heroImgHtml(hero,'200px')}
       <div class="hero-content">
         <div class="article-kicker">${hero.section||''}</div>
-        <h1 class="hero-headline" onclick="window.location.href='${articleUrl(hero)}'">${hero.headline}</h1>
+        <h1 class="hero-headline" tabindex="0" onclick="window.location.href='${articleUrl(hero)}'" onkeydown="if(event.key==='Enter')window.location.href='${articleUrl(hero)}'">${hero.headline}</h1>
         <p class="hero-standfirst">${hero.standfirst||''}</p>
         <div class="article-meta">
           <span class="author">By ${hero.author_name||'AMI Staff'}</span>
@@ -1293,16 +1295,16 @@ function renderHero() {
       </div>
     </div>
     ${side1?`<div class="hero-side-1" style="background:var(--card-bg)">
-      ${side1.hero_image?`<img src="${side1.hero_image}" style="width:100%;height:100px;object-fit:cover;display:block;margin-bottom:12px">`:''}
+      ${side1.hero_image?`<img src="${side1.hero_image}" alt="${side1.headline}" style="width:100%;height:100px;object-fit:cover;display:block;margin-bottom:12px">`:''}
       <div class="article-section">${side1.section||''}</div>
-      <h2 class="side-headline" onclick="window.location.href='${articleUrl(side1)}'">${side1.headline}</h2>
+      <h2 class="side-headline" tabindex="0" onclick="window.location.href='${articleUrl(side1)}'" onkeydown="if(event.key==='Enter')window.location.href='${articleUrl(side1)}'">${side1.headline}</h2>
       <p class="side-standfirst">${side1.standfirst||''}</p>
       <div class="article-meta" style="margin-top:12px"><span class="author">${side1.author_name||''}</span><span>${side1.read_time||''}</span>${side1.is_locked?'<span class="article-tag">Premium</span>':''}</div>
     </div>`:'<div class="hero-side-1" style="background:var(--card-bg)"></div>'}
     ${side2?`<div class="hero-side-2" style="background:var(--card-bg)">
-      ${side2.hero_image?`<img src="${side2.hero_image}" style="width:100%;height:90px;object-fit:cover;display:block;margin-bottom:12px">`:''}
+      ${side2.hero_image?`<img src="${side2.hero_image}" alt="${side2.headline}" style="width:100%;height:90px;object-fit:cover;display:block;margin-bottom:12px">`:''}
       <div class="article-section">${side2.section||''}</div>
-      <h2 class="side-headline" onclick="window.location.href='${articleUrl(side2)}'">${side2.headline}</h2>
+      <h2 class="side-headline" tabindex="0" onclick="window.location.href='${articleUrl(side2)}'" onkeydown="if(event.key==='Enter')window.location.href='${articleUrl(side2)}'">${side2.headline}</h2>
       <p class="side-standfirst">${side2.standfirst||''}</p>
       <div class="article-meta" style="margin-top:12px"><span class="author">${side2.author_name||''}</span><span>${side2.read_time||''}</span>${side2.is_locked?'<span class="article-tag">Premium</span>':''}</div>
     </div>`:'<div class="hero-side-2" style="background:var(--card-bg)"></div>'}`;
@@ -1337,9 +1339,9 @@ function renderCards(articles) {
   for(let i = 0; i < page.length; i += 3){
     const chunk = page.slice(i, i + 3);
     rows.push('<div class="article-row">' + chunk.map(a => `
-      <div class="article-card" onclick="window.location.href='${articleUrl(a)}'">
+      <div class="article-card" role="link" tabindex="0" onclick="window.location.href='${articleUrl(a)}'" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();window.location.href='${articleUrl(a)}'}">
         ${a.hero_image
-          ? `<img src="${a.hero_image}" class="card-img" onerror="this.outerHTML='<div class=card-img-placeholder>📰</div>'">`
+          ? `<img src="${a.hero_image}" class="card-img" alt="${a.headline}" onerror="this.outerHTML='<div class=card-img-placeholder>📰</div>'">`
           : `<div class="card-img-placeholder">📰</div>`}
         <div class="card-content">
           <div class="article-kicker">${a.section||''}</div>
@@ -1418,7 +1420,7 @@ function renderTicker() {
 function renderTopStories() {
   const top = allArticles.slice(0,5);
   document.getElementById('topStoriesList').innerHTML = top.map((a,i)=>`
-    <div class="top-story" onclick="window.location.href='${articleUrl(a)}'">
+    <div class="top-story" role="link" tabindex="0" onclick="window.location.href='${articleUrl(a)}'" onkeydown="if(event.key==='Enter')window.location.href='${articleUrl(a)}'">
       <div class="top-story-num">0${i+1}</div>
       <div class="top-story-headline">${a.headline}</div>
     </div>`).join('');
@@ -1627,7 +1629,7 @@ async function loadSubscribers() {
       return;
     }
     document.getElementById('subscriberList').innerHTML = subs.map(s=>`
-      <div style="display:grid;grid-template-columns:1fr auto auto;gap:12px;padding:10px 14px;border-bottom:1px solid #1A1208;align-items:center">
+      <div style="display:grid;grid-template-columns:1fr auto auto;gap:12px;padding:10px 14px;border-bottom:1px solid #0A1A10;align-items:center">
         <span style="color:#EDE5D5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.email}</span>
         <span style="color:#555;font-size:10px;letter-spacing:.05em">${s.source||'widget'}</span>
         <span style="color:#555;font-size:10px;white-space:nowrap">${new Date(s.subscribed_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</span>
@@ -1727,7 +1729,7 @@ function renderAdminArticleList(articles) {
         </div>
       </div>
       <div class="admin-article-body" id="edit-${a.id}">
-        <div class="form-group"><label class="form-label">Headline</label><textarea class="form-textarea" id="eh-${a.id}" style="min-height:55px">${a.headline}</textarea></div>
+        <div class="form-group"><label class="form-label" for="new-headline">Headline</label><textarea class="form-textarea" id="eh-${a.id}" style="min-height:55px">${a.headline}</textarea></div>
         <div class="form-group"><label class="form-label">Standfirst</label><textarea class="form-textarea" id="es-${a.id}">${a.standfirst||''}</textarea></div>
         <div class="form-group"><label class="form-label">Full Article Body</label><textarea class="form-textarea" id="eb-${a.id}" style="min-height:120px;font-family:'DM Mono',monospace;font-size:11px">${(a.body||'').replace(/</g,'&lt;')}</textarea></div>
         <div class="form-group"><label class="form-label">Hero Image URL</label><input class="form-input" id="ei-${a.id}" value="${a.hero_image||''}"></div>
@@ -1741,7 +1743,7 @@ function renderAdminArticleList(articles) {
         </div>
         <div class="form-row" style="margin-top:10px">
           <div class="form-group" style="margin:0"><label class="form-label">Read Time</label><input class="form-input" id="er-${a.id}" value="${a.read_time||''}"></div>
-          <div class="form-group" style="margin:0"><label class="form-label">Placement</label>
+          <div class="form-group" style="margin:0"><label class="form-label" for="new-placement">Placement</label>
             <select class="form-select" id="ep-${a.id}">
               <option value="card" ${a.placement==='card'?'selected':''}>Card</option>
               <option value="hero" ${a.placement==='hero'?'selected':''}>Hero</option>
@@ -1983,8 +1985,8 @@ function closePaywall(){ document.getElementById('paywallOverlay').style.display
 function showToast(msg, type='success'){
   const t=document.getElementById('toast'); t.textContent=msg;
   if(type==='error'){ t.style.background='#4D1B1B'; t.style.borderColor='#F44336'; t.style.color='#F44336'; }
-  else if(type==='loading'){ t.style.background='#2A1F10'; t.style.borderColor='#C9A84C'; t.style.color='#C9A84C'; }
-  else { t.style.background='#1B4D1B'; t.style.borderColor='#4CAF50'; t.style.color='#4CAF50'; }
+  else if(type==='loading'){ t.style.background='#0D1F12'; t.style.borderColor='#C9A84C'; t.style.color='#C9A84C'; }
+  else { t.style.background='#0D3B1C'; t.style.borderColor='#2E9B5E'; t.style.color='#2E9B5E'; }
   t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),4000);
 }
 
@@ -2178,8 +2180,8 @@ init();
 </div>
 
 
-// ════════════════════════════════════════════════════════
 <script>
+// ════════════════════════════════════════════════════════
 // AMI INLINE EDITOR — Squarespace-style page editing
 // ════════════════════════════════════════════════════════
 (function() {
