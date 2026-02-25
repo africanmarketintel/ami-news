@@ -21,6 +21,14 @@
             --cream: #FAF7F0;
             --cream-dark: #F0EAD9;
             --border: #D4C4A0;
+            --nav-bg: #0A1A10;
+            --nav-text: #EDE5D5;
+            --text: #1A1208;
+            --text-soft: #6B5344;
+            --surface: #FAF7F0;
+            --card-bg: #FAF7F0;
+            --divider: #D4C4A0;
+            --green: #2E9B5E;
         }
         
         * {
@@ -40,53 +48,26 @@
             line-height: 1.6;
         }
         
-        /* Navigation */
-        nav {
-            background-color: var(--ink);
-            padding: 15px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            border-bottom: 2px solid var(--gold);
-        }
-        
-        .nav-logo {
-            font-family: 'Playfair Display', serif;
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--gold);
-            letter-spacing: 2px;
-        }
-        
-        .nav-links {
-            display: flex;
-            gap: 30px;
-            list-style: none;
-        }
-        
-        .nav-links a {
-            color: var(--cream);
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            transition: color 0.3s;
-            text-transform: uppercase;
-        }
-        
-        .nav-links a:visited { color: inherit; }
-.nav-links a:hover {
-            color: var(--gold);
-        }
-        
-        .nav-links a.active {
-            color: var(--gold);
-            border-bottom: 2px solid var(--gold);
-            padding-bottom: 3px;
-        }
+        /* Navigation — AMI shared theme */
+        .top-nav{background:var(--nav-bg);color:var(--nav-text);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:48px;border-bottom:2px solid var(--gold);position:sticky;top:0;z-index:1000}
+        .nav-left{display:flex;align-items:center}
+        .nav-link{color:var(--nav-text);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:0 14px;height:48px;display:flex;align-items:center;border-right:1px solid rgba(255,255,255,.1);transition:color .2s;text-decoration:none}
+        .nav-link:visited{color:var(--nav-text)}
+        .nav-link:hover{color:var(--gold)}
+        .nav-right{display:flex;align-items:center;gap:10px}
+        .nav-search{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:var(--nav-text);padding:6px 12px;border-radius:2px;font-family:'DM Mono',monospace;font-size:11px;width:140px;outline:none}
+        .nav-search:focus{border-color:var(--gold)}.nav-search::placeholder{color:rgba(237,229,213,.4)}
+        .btn-subscribe{background:var(--gold);color:#060F09;font-family:'DM Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:8px 16px;border-radius:2px;transition:background .2s;display:inline-block;text-decoration:none}
+        .btn-subscribe:hover{background:#D4B86A}
+        .dark-toggle{color:var(--nav-text);font-size:16px;padding:8px;line-height:1;cursor:pointer;background:none;border:none}
+        .dark-toggle:hover{color:var(--gold)}
+        .nav-hamburger{display:none;flex-direction:column;gap:4px;background:none;border:none;cursor:pointer;padding:8px}
+        .nav-hamburger span{width:20px;height:2px;background:var(--nav-text);display:block;transition:.2s}
+        .nav-mobile-drawer{display:none;position:fixed;top:48px;left:0;right:0;bottom:0;background:var(--nav-bg);z-index:999;overflow-y:auto;padding:16px 24px;flex-direction:column;gap:4px}
+        .nav-mobile-drawer.open{display:flex}
+        .nav-mobile-drawer a{color:var(--nav-text);font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.08);text-decoration:none}
+        .nav-mobile-drawer a:hover{color:var(--gold)}
+        @media(max-width:768px){.nav-hamburger{display:flex}.nav-left,.nav-right .nav-link,.nav-right .nav-search{display:none}}
         
         /* Hero Section */
         .hero {
@@ -578,11 +559,6 @@
             
             .pricing-grid {
                 grid-template-columns: 1fr;
-            }
-            
-            .nav-links {
-                gap: 15px;
-                font-size: 12px;
             }
             
             .filter-buttons {
