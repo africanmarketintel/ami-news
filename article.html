@@ -1375,9 +1375,8 @@ async function amiDbUpdateArticle(id, fields) {
     <p style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin:4px 0 14px">Premium Content</p>
     <h2 class="paywall-headline">This article is for members only</h2>
     <p class="paywall-sub">Subscribe for full access to AMI's deal flow intelligence, market briefings and exclusive analysis across Africa.</p>
-    <div class="paywall-cta">
-      <a id="paywallPlan1" href="membership.html" class="btn-stripe">Subscribe Monthly</a>
-      <a id="paywallPlan2" href="membership.html" class="btn-stripe-alt">Annual — Best Value</a>
+    <div class="paywall-cta" style="grid-template-columns:1fr">
+      <a id="paywallPlan1" href="membership.html" class="btn-stripe">Premium →</a>
     </div>
     <button class="paywall-dismiss" onclick="document.getElementById('paywallOverlay').style.display='none';document.getElementById('paywallBlur').style.display='none'">Maybe later</button>
   </div>
