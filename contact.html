@@ -731,12 +731,7 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
   <h1 id="page-title-display" data-editable="text" data-cms-type="page" data-page-name="contact" data-page-field="title">Contact AMI</h1>
   <div class="page-subtitle" id="page-subtitle-display" data-editable="text" data-cms-type="page" data-page-name="contact" data-page-field="subtitle"><!-- CMS subtitle --></div>
   <div id="page-body-display" data-editable="richtext" data-cms-type="page" data-page-name="contact" data-page-field="body">
-<div class="contact-grid">
-  <div class="contact-card"><div class="cc-label">Editorial</div><div class="cc-val"><a href="mailto:editorial@africanmarketintel.com">editorial@africanmarketintel.com</a></div></div>
-  <div class="contact-card"><div class="cc-label">Subscriptions</div><div class="cc-val"><a href="mailto:support@africanmarketintel.com">support@africanmarketintel.com</a></div></div>
-  <div class="contact-card"><div class="cc-label">Press &amp; Media</div><div class="cc-val"><a href="mailto:press@africanmarketintel.com">press@africanmarketintel.com</a></div></div>
-  <div class="contact-card"><div class="cc-label">Corporate</div><div class="cc-val"><a href="mailto:enterprise@africanmarketintel.com">enterprise@africanmarketintel.com</a></div></div>
-</div>
+<p style="font-family:'DM Mono',monospace;font-size:13px;color:var(--text-soft);margin-bottom:24px">For all enquiries — editorial, subscriptions, press, corporate and advertising — email <a href="mailto:abta@abta.africa" style="color:var(--gold)">abta@abta.africa</a>.</p>
 <div class="contact-form">
   <h2 style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;margin-bottom:4px;color:var(--text);margin-top:0">Send a Message</h2>
   <p style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-soft);margin-bottom:0">We aim to respond within 2 business days.</p>
@@ -745,7 +740,7 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
   <label for="cf-subject">Subject</label>
   <select id="cf-subject">
     <option>Editorial enquiry</option><option>Subscription support</option>
-    <option>Press / media request</option><option>Corporate subscription</option><option>Other</option>
+    <option>Press / media request</option><option>Corporate subscription</option><option>Advertising</option><option>Other</option>
   </select>
   <label for="cf-message">Message</label><textarea id="cf-message" placeholder="Your message…"></textarea>
   <button class="cf-submit" onclick="submitContactForm()">Send Message →</button>
@@ -854,15 +849,53 @@ async function loadCMSContent(pageName) {
 loadCMSContent('contact');
 </script>
 <script>
-function submitContactForm(){
-  const name=document.getElementById('cf-name').value.trim();
-  const email=document.getElementById('cf-email').value.trim();
-  const msg=document.getElementById('cf-message').value.trim();
-  const status=document.getElementById('cf-status');
-  if(!name||!email||!msg){ status.textContent='Please fill in all required fields.'; status.style.color='var(--terra)'; return; }
-  status.textContent='Thank you — your message has been received. We will be in touch shortly.';
-  status.style.color='#2E9B5E';
-  ['cf-name','cf-email','cf-message'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+async function submitContactForm(){
+  const name    = document.getElementById('cf-name').value.trim();
+  const email   = document.getElementById('cf-email').value.trim();
+  const subject = document.getElementById('cf-subject').value.trim();
+  const msg     = document.getElementById('cf-message').value.trim();
+  const status  = document.getElementById('cf-status');
+  const btn     = document.querySelector('.cf-submit');
+
+  if(!name||!email||!msg){
+    status.textContent='Please fill in all required fields.';
+    status.style.color='var(--terra)';
+    return;
+  }
+
+  btn.disabled=true; btn.textContent='Sending…';
+  status.textContent=''; status.style.color='';
+
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/contact_messages`, {
+      method: 'POST',
+      headers: {
+        apikey: SUPABASE_ANON,
+        Authorization: 'Bearer ' + SUPABASE_ANON,
+        'Content-Type': 'application/json',
+        Prefer: 'return=minimal'
+      },
+      body: JSON.stringify({ name, email, subject, message: msg })
+    });
+
+    if(!res.ok){
+      const errText = await res.text();
+      throw new Error(errText);
+    }
+
+    // Success
+    status.textContent='Thank you — your message has been received. We aim to respond within 2 business days.';
+    status.style.color='#2E9B5E';
+    ['cf-name','cf-email','cf-message'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+    document.getElementById('cf-subject').selectedIndex=0;
+
+  } catch(err){
+    console.error('Contact form error:', err);
+    status.textContent='Something went wrong. Please email us directly at abta@abta.africa';
+    status.style.color='var(--terra)';
+  } finally {
+    btn.disabled=false; btn.textContent='Send Message →';
+  }
 }
 </script>
 <script>
