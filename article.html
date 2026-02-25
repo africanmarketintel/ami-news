@@ -605,7 +605,7 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
 .ami-rte-btn:hover{background:#1A3020;color:#C9A84C}
 .ami-rte-sep{width:1px;height:18px;background:#1A3020;margin:0 3px}
 
-.paywall-overlay,.paywall-blur{display:none!important}.lock-icon{display:none!important}.badge-locked{display:none!important}
+/* paywall active when is_locked — JS sets display:flex */
 </style>
 
 <style>
@@ -811,6 +811,55 @@ async function loadArticle() {
         ${a.tags?`<span>${a.tags}</span>`:''}
       </div>
       <div class="af-body" id="articleBody" data-editable="richtext" data-cms-type="article" data-article-field="body" data-article-id="${a.id}">${a.body||'<p>Full article content coming soon.</p>'}</div>`;
+
+    // ── Paywall: trigger for locked articles (non-admin only) ──
+    if(a.is_locked && !window._amiAdminAuthed) {
+      // Truncate headline to first 2 words
+      const hl = document.getElementById('articleHeadline');
+      if(hl) {
+        const words = hl.textContent.trim().split(/\s+/);
+        hl.textContent = words.slice(0, 2).join(' ') + '…';
+      }
+      // Blur standfirst
+      const sf = document.getElementById('articleStandfirst');
+      if(sf) {
+        sf.style.filter = 'blur(5px)';
+        sf.style.userSelect = 'none';
+        sf.style.pointerEvents = 'none';
+      }
+      // Blur entire body
+      const body = document.getElementById('articleBody');
+      if(body) {
+        body.style.filter = 'blur(6px)';
+        body.style.userSelect = 'none';
+        body.style.pointerEvents = 'none';
+        body.style.maxHeight = '120px';
+        body.style.overflow = 'hidden';
+      }
+      // Show overlay + blur fade
+      const ov = document.getElementById('paywallOverlay');
+      const bl = document.getElementById('paywallBlur');
+      if(ov) ov.style.display = 'flex';
+      if(bl) bl.style.display = 'block';
+      // Pull plan names/links from site_settings if available
+      try {
+        const sr = await fetch(
+          `${SUPABASE_URL}/rest/v1/site_settings?key=in.(plan1_link,plan2_link,plan1_name,plan2_name)&select=key,value`,
+          { headers:{ apikey:SUPABASE_ANON, Authorization:'Bearer '+SUPABASE_ANON } }
+        );
+        if(sr.ok) {
+          const ss = await sr.json();
+          const sg = k => (ss.find(x=>x.key===k)||{}).value||'';
+          const p1l=sg('plan1_link'), p2l=sg('plan2_link');
+          const p1n=sg('plan1_name'), p2n=sg('plan2_name');
+          if(p1l) document.getElementById('paywallPlan1').href = p1l;
+          if(p2l) document.getElementById('paywallPlan2').href = p2l;
+          if(p1n) document.getElementById('paywallPlan1').textContent = p1n;
+          if(p2n) document.getElementById('paywallPlan2').textContent = p2n;
+        }
+      } catch(e){ /* fallback to membership.html links */ }
+    }
+
   } catch(e) {
     document.getElementById('articleFull').innerHTML=`<p style="color:var(--text-soft);padding:24px;font-family:DM Mono,monospace">Error loading article: ${e.message}</p>`;
   }
@@ -1317,6 +1366,22 @@ async function amiDbUpdateArticle(id, fields) {
 
 })(); // end IIFE
 </script>
+
+<!-- ═══ PAYWALL OVERLAY ══════════════════════════════════════ -->
+<div id="paywallBlur" class="paywall-blur"></div>
+<div id="paywallOverlay" class="paywall-overlay" role="dialog" aria-modal="true" aria-label="Subscribe to read">
+  <div class="paywall-box">
+    <div class="paywall-logo">African Market <span>Intelligence</span></div>
+    <p style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin:4px 0 14px">Premium Content</p>
+    <h2 class="paywall-headline">This article is for members only</h2>
+    <p class="paywall-sub">Subscribe for full access to AMI's deal flow intelligence, market briefings and exclusive analysis across Africa.</p>
+    <div class="paywall-cta">
+      <a id="paywallPlan1" href="membership.html" class="btn-stripe">Subscribe Monthly</a>
+      <a id="paywallPlan2" href="membership.html" class="btn-stripe-alt">Annual — Best Value</a>
+    </div>
+    <button class="paywall-dismiss" onclick="document.getElementById('paywallOverlay').style.display='none';document.getElementById('paywallBlur').style.display='none'">Maybe later</button>
+  </div>
+</div>
 
 </body>
 </html>
