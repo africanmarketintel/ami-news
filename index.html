@@ -614,11 +614,40 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
 <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
 <!-- ═══ ADMIN PANEL ════════════════════════════════════════ -->
+<!-- ── Admin Login Modal ─────────────────────────────── -->
+<div id="amiLoginModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(6,15,9,.85);backdrop-filter:blur(4px);align-items:center;justify-content:center">
+  <div style="background:#0A1A10;border:1px solid #1A3020;border-top:2px solid #C9A84C;border-radius:4px;padding:36px 40px;width:100%;max-width:360px;box-shadow:0 20px 60px rgba(0,0,0,.6)">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px">
+      <span style="font-family:'Playfair Display',serif;font-size:18px;color:#EDE5D5;letter-spacing:.02em">AMI Admin</span>
+      <button onclick="amiLoginClose()" style="background:none;border:none;color:#6B8C72;font-size:20px;cursor:pointer;line-height:1;padding:0">✕</button>
+    </div>
+    <form id="amiLoginForm" onsubmit="supabaseLogin(event)">
+      <div style="margin-bottom:16px">
+        <label style="display:block;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#6B8C72;margin-bottom:6px">Email</label>
+        <input id="amiLoginEmail" type="email" required autocomplete="email"
+          style="width:100%;background:#060F09;border:1px solid #1A3020;color:#EDE5D5;padding:10px 12px;border-radius:2px;font-family:'Spectral',serif;font-size:14px;outline:none;box-sizing:border-box"
+          onfocus="this.style.borderColor='#C9A84C'" onblur="this.style.borderColor='#1A3020'">
+      </div>
+      <div style="margin-bottom:24px">
+        <label style="display:block;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#6B8C72;margin-bottom:6px">Password</label>
+        <input id="amiLoginPassword" type="password" required autocomplete="current-password"
+          style="width:100%;background:#060F09;border:1px solid #1A3020;color:#EDE5D5;padding:10px 12px;border-radius:2px;font-family:'Spectral',serif;font-size:14px;outline:none;box-sizing:border-box"
+          onfocus="this.style.borderColor='#C9A84C'" onblur="this.style.borderColor='#1A3020'">
+      </div>
+      <p id="amiLoginError" style="color:#E57373;font-family:'DM Mono',monospace;font-size:11px;margin-bottom:16px;min-height:16px"></p>
+      <button id="amiLoginBtn" type="submit"
+        style="width:100%;background:#C9A84C;color:#060F09;border:none;padding:12px;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;border-radius:2px;font-weight:600">
+        Sign in
+      </button>
+    </form>
+  </div>
+</div>
 <div class="admin-overlay" id="adminOverlay">
   <div class="admin-panel">
     <div class="admin-header">
       <div class="admin-logo">⚙ AMI Admin</div>
       <div id="dbStatus" class="admin-status loading">● Connecting…</div>
+      <button onclick="amiAdminLogout()" style="position:absolute;top:12px;right:16px;background:none;border:1px solid #1A3020;color:#6B8C72;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;padding:4px 10px;border-radius:2px;cursor:pointer" title="Sign out">Sign out</button>
       <button class="admin-close-btn" onclick="closeAdmin()" aria-label="Close admin panel">×</button>
     </div>
     <div class="admin-tabs">
@@ -1150,7 +1179,7 @@ const db = {
   async insert(table, data) {
     const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
       method:'POST',
-      headers:{ apikey:SUPABASE_ANON, Authorization:'Bearer '+SUPABASE_ANON, 'Content-Type':'application/json', Prefer:'return=representation' },
+      headers:{ apikey:SUPABASE_ANON, Authorization:'Bearer '+(AUTH_TOKEN||SUPABASE_ANON), 'Content-Type':'application/json', Prefer:'return=representation' },
       body: JSON.stringify(data)
     });
     if(!r.ok) throw new Error(await r.text());
@@ -1161,7 +1190,7 @@ const db = {
     Object.entries(match).forEach(([k,v])=>params.set(k,'eq.'+v));
     const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${params}`, {
       method:'PATCH',
-      headers:{ apikey:SUPABASE_ANON, Authorization:'Bearer '+SUPABASE_ANON, 'Content-Type':'application/json', Prefer:'return=representation' },
+      headers:{ apikey:SUPABASE_ANON, Authorization:'Bearer '+(AUTH_TOKEN||SUPABASE_ANON), 'Content-Type':'application/json', Prefer:'return=representation' },
       body: JSON.stringify(data)
     });
     if(!r.ok) throw new Error(await r.text());
@@ -1172,7 +1201,7 @@ const db = {
     Object.entries(match).forEach(([k,v])=>params.set(k,'eq.'+v));
     const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${params}`, {
       method:'DELETE',
-      headers:{ apikey:SUPABASE_ANON, Authorization:'Bearer '+SUPABASE_ANON }
+      headers:{ apikey:SUPABASE_ANON, Authorization:'Bearer '+(AUTH_TOKEN||SUPABASE_ANON) }
     });
     if(!r.ok) throw new Error(await r.text());
     return true;
@@ -1180,7 +1209,7 @@ const db = {
   async uploadImage(file, path) {
     const r = await fetch(`${SUPABASE_URL}/storage/v1/object/ami-images/${path}`, {
       method:'POST',
-      headers:{ apikey:SUPABASE_ANON, Authorization:'Bearer '+SUPABASE_ANON, 'Content-Type': file.type },
+      headers:{ apikey:SUPABASE_ANON, Authorization:'Bearer '+(AUTH_TOKEN||SUPABASE_ANON), 'Content-Type': file.type },
       body: file
     });
     if(!r.ok) throw new Error(await r.text());
@@ -1528,7 +1557,7 @@ function applyFilters(preservePage=false) {
 // ADMIN
 // ════════════════════════════════════════════════════════════
 // ── Admin password gate ──────────────────────────────────────
-const ADMIN_PASSWORD = 'ami2024'; // ← CHANGE THIS to your own password
+let AUTH_TOKEN = null; // set on successful Supabase login
 let logoClickCount = 0, logoClickTimer = null;
 
 function handleLogoClick() {
@@ -1539,13 +1568,47 @@ function handleLogoClick() {
 }
 
 function promptAdmin() {
-  const pwd = prompt('Enter admin password:');
-  if(pwd === null) return;
-  if(pwd === ADMIN_PASSWORD) {
+  // show login modal instead of password prompt
+  document.getElementById('amiLoginModal').style.display = 'flex';
+  setTimeout(() => {
+    const el = document.getElementById('amiLoginEmail');
+    if(el) el.focus();
+  }, 80);
+}
+
+async function supabaseLogin(e) {
+  e.preventDefault();
+  const email    = document.getElementById('amiLoginEmail').value.trim();
+  const password = document.getElementById('amiLoginPassword').value;
+  const errEl    = document.getElementById('amiLoginError');
+  const btn      = document.getElementById('amiLoginBtn');
+  errEl.textContent = '';
+  btn.textContent   = 'Signing in…';
+  btn.disabled      = true;
+  try {
+    const r = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+      method: 'POST',
+      headers: { apikey: SUPABASE_ANON, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error_description || data.msg || 'Login failed');
+    AUTH_TOKEN = data.access_token;
+    document.getElementById('amiLoginModal').style.display = 'none';
+    document.getElementById('amiLoginForm').reset();
     openAdmin();
-  } else {
-    showToast('Incorrect password','error');
+  } catch(err) {
+    errEl.textContent = err.message;
+  } finally {
+    btn.textContent = 'Sign in';
+    btn.disabled    = false;
   }
+}
+
+function amiLoginClose() {
+  document.getElementById('amiLoginModal').style.display = 'none';
+  document.getElementById('amiLoginForm').reset();
+  document.getElementById('amiLoginError').textContent = '';
 }
 
 function toggleAdminVisibility(show) {
@@ -1656,6 +1719,12 @@ function exportSubscribersCSV() {
   showToast('✓ CSV downloaded');
 }
 
+
+function amiAdminLogout() {
+  AUTH_TOKEN = null;
+  document.getElementById('adminOverlay').classList.remove('open');
+  showToast('Signed out');
+}
 async function openAdmin() {
   // Seed footer link editors with defaults if empty
   [1,2,3].forEach(col => {
