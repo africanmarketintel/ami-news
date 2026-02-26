@@ -585,6 +585,8 @@
 .deals-tab{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:rgba(237,229,213,.55);padding:10px 16px;border-bottom:2px solid transparent;white-space:nowrap;cursor:pointer;transition:color .2s,border-color .2s;background:none;border-top:none;border-left:none;border-right:none}
 .deals-tab:hover,.deals-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
 @media(max-width:600px){.deals-subnav-inner{padding:0 14px}.deals-tab{padding:10px 12px;font-size:9px}}
+/* Locked card — blur enforced via CSS */
+.deal-card-locked .blur-content{filter:blur(5px)!important;user-select:none!important}
 </style>
 <script src="config.js"></script>
 </head>
@@ -669,6 +671,18 @@
         </div>
     </div>
     
+    <!-- Region Sub-nav -->
+    <div class="deals-subnav">
+      <div class="deals-subnav-inner">
+        <button class="deals-tab active" onclick="filterRegion('all',this)">All Regions</button>
+        <button class="deals-tab" onclick="filterRegion('West Africa',this)">West Africa</button>
+        <button class="deals-tab" onclick="filterRegion('East Africa',this)">East Africa</button>
+        <button class="deals-tab" onclick="filterRegion('Central Africa',this)">Central Africa</button>
+        <button class="deals-tab" onclick="filterRegion('Southern Africa',this)">Southern Africa</button>
+        <button class="deals-tab" onclick="filterRegion('North Africa',this)">North Africa</button>
+      </div>
+    </div>
+
     <!-- Deal Cards — loaded dynamically from Supabase -->
     <div class="container">
       <div id="dealsLoading" style="text-align:center;padding:60px 20px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text-soft);letter-spacing:.1em">
@@ -686,6 +700,35 @@
 // ════════════════════════════════════════════════════════════
 let allDeals      = [];
 let activeFilter  = 'all';
+let activeRegion  = 'all';
+
+const REGION_MAP = {
+  'West Africa':    ['Nigeria','Ghana','Senegal','Ivory Coast',"Côte d'Ivoire",'Mali','Burkina Faso','Guinea','Sierra Leone','Liberia','Togo','Benin','Niger','Gambia','Cape Verde','Mauritania'],
+  'East Africa':    ['Kenya','Ethiopia','Tanzania','Uganda','Rwanda','Somalia','South Sudan','Burundi','Djibouti','Eritrea','Madagascar','Mozambique'],
+  'Central Africa': ['DRC','Congo','Cameroon','Gabon','Chad','CAR','Central African Republic','Equatorial Guinea','São Tomé'],
+  'Southern Africa':['South Africa','Zimbabwe','Zambia','Botswana','Namibia','Malawi','Lesotho','Eswatini','Angola'],
+  'North Africa':   ['Egypt','Morocco','Tunisia','Algeria','Libya','Sudan'],
+};
+
+function matchesRegion(deal, region) {
+  if(region === 'all') return true;
+  // tags can be a Supabase array, a JSON string, or a plain string — normalise to a single string
+  let tagsStr = '';
+  if(Array.isArray(deal.tags))          tagsStr = deal.tags.join(' ');
+  else if(typeof deal.tags === 'string') tagsStr = deal.tags;
+  const hay = (tagsStr + ' ' + (deal.headline||'') + ' ' + (deal.standfirst||'')).toLowerCase();
+  // 1. Direct region-name match (e.g. tag is literally "North Africa")
+  if(hay.includes(region.toLowerCase())) return true;
+  // 2. Country-name match
+  return (REGION_MAP[region]||[]).some(c => hay.includes(c.toLowerCase()));
+}
+
+function filterRegion(region, btn) {
+  activeRegion = region;
+  document.querySelectorAll('.deals-tab').forEach(b => b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  renderDeals();
+}
 
 // Sector → badge label mapping
 const BADGE_MAP = {
@@ -716,9 +759,11 @@ function filterDeals(type, btn) {
 function renderDeals() {
   const grid   = document.getElementById('dealsGrid');
   const empty  = document.getElementById('dealsEmpty');
-  const filtered = activeFilter === 'all'
-    ? allDeals
-    : allDeals.filter(d => (d.tags||'').includes(activeFilter) || (d.section||'').includes(activeFilter));
+  const filtered = allDeals.filter(d => {
+    const typeMatch   = activeFilter === 'all' || (d.tags||'').includes(activeFilter) || (d.section||'').includes(activeFilter);
+    const regionMatch = matchesRegion(d, activeRegion);
+    return typeMatch && regionMatch;
+  });
 
   if(!filtered.length) {
     grid.style.display  = 'none';
@@ -733,24 +778,37 @@ function renderDeals() {
     const img   = deal.hero_image
       ? `<img src="${deal.hero_image}" alt="${deal.headline}" style="width:100%;height:160px;object-fit:cover;border-radius:2px 2px 0 0;display:block" onerror="this.style.display='none'">`
       : '';
-    const lockedStyle = deal.is_locked ? 'filter:blur(4px);user-select:none;pointer-events:none' : '';
-    return `
-    <div class="deal-card" style="cursor:pointer;position:relative" onclick="window.location='article.html?id=${deal.id}'">
-      ${img}
-      <div class="deal-type-badge ${badge.cls}">${badge.label}</div>
-      ${deal.is_locked ? `
+    if(deal.is_locked) {
+      return `
+      <div class="deal-card deal-card-locked" style="cursor:pointer;position:relative" onclick="window.location='article.html?id=${deal.id}'">
+        ${img}
+        <div class="deal-type-badge ${badge.cls}">${badge.label}</div>
         <div style="position:absolute;inset:0;top:${deal.hero_image?'160px':'40px'};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;z-index:2;pointer-events:none">
           <div style="font-size:22px">🔒</div>
           <div style="background:var(--gold);color:#060F09;font-family:'DM Mono',monospace;font-size:9px;font-weight:600;letter-spacing:.1em;padding:4px 12px;text-transform:uppercase;border-radius:1px">Members Only</div>
           <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-soft);letter-spacing:.05em">Subscribe to read</div>
-        </div>` : ''}
-      <div class="deal-header" style="padding:14px 16px 0;">
-        <div style="font-family:'Playfair Display',serif;font-size:16px;line-height:1.35;color:var(--text);margin-bottom:10px${deal.is_locked?';filter:blur(4px);user-select:none;pointer-events:none':''}">
-          ${deal.is_locked ? deal.headline.trim().split(/\s+/).slice(0,2).join(' ')+'…' : deal.headline}
         </div>
+        <div class="deal-header" style="padding:14px 16px 0;">
+          <div style="font-family:'Playfair Display',serif;font-size:16px;line-height:1.35;color:var(--text);margin-bottom:10px">
+            ${deal.headline.trim().split(/\s+/).slice(0,2).join(' ')}…
+          </div>
+        </div>
+        <div class="blur-content" style="padding:0 16px 8px;font-family:'Spectral',serif;font-size:13px;color:var(--text-soft);line-height:1.5">${deal.standfirst||''}</div>
+        <div class="deal-date blur-content" style="padding:0 16px 16px;display:flex;justify-content:space-between;align-items:center">
+          <span>${deal.published_date||''}</span>
+          <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft)">${deal.read_time||'3 min'}</span>
+        </div>
+      </div>`;
+    }
+    return `
+    <div class="deal-card" style="cursor:pointer;position:relative" onclick="window.location='article.html?id=${deal.id}'">
+      ${img}
+      <div class="deal-type-badge ${badge.cls}">${badge.label}</div>
+      <div class="deal-header" style="padding:14px 16px 0;">
+        <div style="font-family:'Playfair Display',serif;font-size:16px;line-height:1.35;color:var(--text);margin-bottom:10px">${deal.headline}</div>
       </div>
-      <div style="padding:0 16px 8px;font-family:'Spectral',serif;font-size:13px;color:var(--text-soft);line-height:1.5;${lockedStyle}">${deal.standfirst||''}</div>
-      <div class="deal-date" style="padding:0 16px 16px;display:flex;justify-content:space-between;align-items:center;${lockedStyle}">
+      <div style="padding:0 16px 8px;font-family:'Spectral',serif;font-size:13px;color:var(--text-soft);line-height:1.5">${deal.standfirst||''}</div>
+      <div class="deal-date" style="padding:0 16px 16px;display:flex;justify-content:space-between;align-items:center">
         <span>${deal.published_date||''}</span>
         <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft)">${deal.read_time||'3 min'}</span>
       </div>
@@ -764,7 +822,7 @@ async function loadDeals() {
     return;
   }
   try {
-    const url = `${SUPABASE_URL}/rest/v1/articles?section=eq.Deals&is_published=eq.true&order=created_at.desc&select=*`;
+    const url = `${SUPABASE_URL}/rest/v1/articles?section=eq.Deals&is_published=eq.true&order=published_date.desc&select=*`;
     const r = await fetch(url, {
       headers: { apikey: SUPABASE_ANON, Authorization: `Bearer ${SUPABASE_ANON}` }
     });

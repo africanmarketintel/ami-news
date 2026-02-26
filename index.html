@@ -88,6 +88,7 @@ a{color:inherit;text-decoration:none}button{cursor:pointer;border:none;backgroun
 .card-body{font-size:13px;color:var(--text-soft);line-height:1.65;margin-bottom:14px;font-weight:300}
 .card-footer{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);display:flex;justify-content:space-between;align-items:center}
 .lock-icon{color:var(--gold)}
+.blur-content{filter:blur(5px)!important;user-select:none!important;pointer-events:none!important}
 /* Markets */
 .markets-strip{background:var(--card-bg);border:1px solid var(--divider);border-top:3px solid var(--gold);padding:20px 24px;margin-bottom:32px}
 .strip-title{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-soft);margin-bottom:16px}
@@ -1453,8 +1454,8 @@ function renderCards(articles) {
         <div class="card-content">
           <div class="article-kicker">${a.section||''}</div>
           <h3 class="card-headline">${a.is_locked ? '🔒 ' + a.headline.trim().split(/\s+/).slice(0,2).join(' ') + '…' : a.headline}</h3>
-          <p class="card-body" ${a.is_locked ? 'style="filter:blur(4px);user-select:none;pointer-events:none"' : ''}>${a.standfirst||''}</p>
-          <div class="card-footer" ${a.is_locked ? 'style="filter:blur(4px);user-select:none;pointer-events:none"' : ''}>
+          <p class="${'card-body' + (a.is_locked ? ' blur-content' : '')}">${a.standfirst||''}</p>
+          <div class="${'card-footer' + (a.is_locked ? ' blur-content' : '')}">
             <span>${a.read_time||'3 min'}</span>
             <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-soft)">${a.published_date||''}</span>
           </div>
