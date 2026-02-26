@@ -1233,10 +1233,9 @@ async function init() {
     allMarkets  = markets;
     applySettings(settings);
     renderBreaking(breaking);
-    renderHero();
     renderMarketsStrip();
     renderTicker();
-    renderCards();
+    applyFilters();
     renderTopStories(); renderMostRead();
     // Activate correct section tab if section param set
     if(filterActive !== 'all') {
@@ -1272,10 +1271,11 @@ function heroImgHtml(a, height='220px') {
   return `<div class="hero-img-placeholder" style="height:${height}">📰 ${a.section||''}</div>`;
 }
 
-function renderHero() {
-  const hero  = allArticles.find(a=>a.placement==='hero') || allArticles[0];
-  const side1 = allArticles.find(a=>a.placement==='side1') || allArticles[1];
-  const side2 = allArticles.find(a=>a.placement==='side2') || allArticles[2];
+function renderHero(filtered) {
+  const pool  = (filtered && filtered.length) ? filtered : allArticles;
+  const hero  = pool.find(a=>a.placement==='hero') || pool[0];
+  const side1 = pool.find(a=>a.placement==='side1') || pool[1];
+  const side2 = pool.find(a=>a.placement==='side2') || pool[2];
   if(!hero) return;
 
   document.getElementById('heroGrid').innerHTML = `
@@ -1310,7 +1310,7 @@ function renderHero() {
 
 function renderCards(articles) {
   // Update filtered set
-  filteredCards = (articles || allArticles).filter(a => window.ARCHIVE_MODE ? (a.placement !== 'hero' && a.placement !== 'side1' && a.placement !== 'side2') : a.placement === 'card');
+  filteredCards = (articles || allArticles).filter(a => window.ARCHIVE_MODE ? (a.placement !== 'hero' && a.placement !== 'side1' && a.placement !== 'side2') : (articles ? true : a.placement === 'card'));
   totalArticles = filteredCards.length;
 
   // Paginate
@@ -1548,7 +1548,13 @@ function applyFilters(preservePage=false) {
     return hay.includes(filterActive.toLowerCase());
   });
   if(searchQuery) filtered = filtered.filter(a=>(a.headline||'').toLowerCase().includes(searchQuery)||(a.standfirst||'').toLowerCase().includes(searchQuery)||(a.author_name||'').toLowerCase().includes(searchQuery));
-  renderCards(filtered.filter(a=>a.placement==='card'));
+  if(filterActive !== 'all') {
+    renderHero(filtered);
+    renderCards(filtered);
+  } else {
+    renderHero();
+    renderCards(allArticles.filter(a=>a.placement==='card'));
+  }
 }
 
 // ════════════════════════════════════════════════════════════
