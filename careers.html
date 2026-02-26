@@ -1,1384 +1,4025 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Careers at AMI | African Market Intelligence</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400;1,600&family=Spectral:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Careers at AMI | African Market Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400;1,600&family=Spectral:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
 
-<!-- ✅ CREDENTIALS: Edit config.js once — applies to all pages -->
-<script src="config.js"></script>
-<style>
-:root{--gold:#C9A84C;--gold-light:#F9C53D;--gold-pale:#FDF6E3;--terra:#B85C38;--terra-dark:#8C3A1F;--green:#1E6B3C;--green-mid:#2E9B5E;--ink:#1A1208;--ink-mid:#3D2B1F;--ink-soft:#6B5344;--cream:#FAF7F0;--cream-dark:#F0EAD9;--border:#D4C4A0;--bg:var(--cream);--surface:#fff;--text:var(--ink);--text-soft:var(--ink-soft);--nav-bg:#0A1A10;--nav-text:var(--cream);--header-bg:var(--cream-dark);--divider:var(--border);--card-bg:#fff}
-[data-theme="dark"]{--green:#2E9B5E;--green-mid:#4DBA7F;--bg:#060F09;--surface:#0A1A10;--text:#EDE5D5;--text-soft:#A89070;--nav-bg:#060F09;--nav-text:#EDE5D5;--header-bg:#0A1A10;--divider:#1A3020;--card-bg:#0F2015;--border:#1A3020;--gold-pale:#0D1F12}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Spectral',Georgia,serif;background:var(--bg);color:var(--text);font-size:16px;line-height:1.6;transition:background .3s,color .3s;overflow-x:hidden}
-a{color:inherit;text-decoration:none}button{cursor:pointer;border:none;background:none;font-family:inherit}
-/* Ticker */
-.ticker-bar{background:var(--nav-bg);color:#C9A84C;font-family:'DM Mono',monospace;font-size:11px;padding:6px 0;overflow:hidden;white-space:nowrap}
-.ticker-inner{display:inline-flex;gap:48px;animation:ticker 40s linear infinite}
-.ticker-item{display:flex;gap:8px;align-items:center}.ticker-item .sym{color:#888}
-.up{color:#2E9B5E}.dn{color:#F44336}
-@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-/* Nav */
-.top-nav{background:var(--nav-bg);color:var(--nav-text);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:48px;border-bottom:2px solid var(--gold);position:sticky;top:0;z-index:1000}
-.nav-left{display:flex;align-items:center}
-.nav-link{color:var(--nav-text);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:0 14px;height:48px;display:flex;align-items:center;border-right:1px solid #333;transition:color .2s}.nav-link:visited{color:var(--nav-text)}
-.nav-link:first-child{border-left:1px solid #333}.nav-link:hover{color:var(--gold)}
-.nav-right{display:flex;align-items:center;gap:10px}
-.nav-search{background:rgba(255,255,255,.08);border:1px solid #444;color:var(--nav-text);padding:6px 12px;border-radius:2px;font-family:'DM Mono',monospace;font-size:11px;width:160px;outline:none}
-.nav-search:focus{border-color:var(--gold)}.nav-search::placeholder{color:#777}
-.btn-subscribe{background:var(--gold);color:var(--ink);font-family:'DM Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:8px 16px;border-radius:2px;transition:background .2s;display:inline-block}
-.btn-subscribe:hover{background:var(--gold-light)}
-.dark-toggle{color:var(--nav-text);font-size:16px;padding:8px;line-height:1;transition:color .2s}
-.dark-toggle:hover{color:var(--gold)}
-.admin-btn{background:var(--terra);color:white;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:7px 12px;border-radius:2px;transition:background .2s}
-.admin-btn:hover{background:var(--terra-dark)}
-/* Masthead */
-.masthead{background:var(--header-bg);border-bottom:1px solid var(--divider);padding:20px 24px 16px;text-align:center;position:relative;overflow:hidden}
-.masthead::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23C9A84C' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
-.masthead-name{font-family:'Playfair Display',serif;font-size:clamp(28px,6vw,60px);font-weight:800;letter-spacing:-.02em;color:var(--text);line-height:1;position:relative}
-.masthead-name span{color:var(--gold)}
-.masthead-tagline{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-soft);margin-top:6px;position:relative}
-.masthead-meta{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:12px;border-top:1px solid var(--divider);font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);text-transform:uppercase;letter-spacing:.1em;position:relative}
-.edition-badge{background:var(--terra);color:white;padding:2px 10px;font-size:10px;letter-spacing:.15em}
-/* Section nav */
-.section-nav{border-bottom:2px solid var(--gold);background:var(--surface);overflow-x:auto;scrollbar-width:none}
-.section-nav-inner{display:flex;padding:0 24px}
-.section-tab{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-soft);padding:12px 18px;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;cursor:pointer;transition:color .2s,border-color .2s}
-.section-tab:hover,.section-tab.active{color:var(--terra);border-bottom-color:var(--terra)}
-/* Layout */
-.main-wrapper{max-width:1280px;margin:0 auto;padding:32px 24px;display:grid;grid-template-columns:1fr 300px;gap:40px}
-@media(max-width:900px){.main-wrapper{grid-template-columns:1fr}}
-/* Hero */
-.hero-grid{display:grid;grid-template-columns:2fr 1fr;grid-template-rows:auto auto;gap:1px;background:var(--divider);border:1px solid var(--divider);margin-bottom:32px}
-.hero-main{grid-column:1;grid-row:1/3;background:var(--card-bg);padding:0;position:relative;overflow:hidden}
-.hero-main::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--terra),var(--gold))}
-.hero-img{width:100%;height:220px;object-fit:cover;display:block}
-.hero-img-placeholder{width:100%;height:220px;background:linear-gradient(135deg,var(--ink),var(--ink-mid));display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:11px;color:#555;letter-spacing:.1em}
-.hero-content{padding:24px 28px 28px}
-.hero-side-1,.hero-side-2{background:var(--card-bg);padding:20px 22px;position:relative;overflow:hidden}
-.hero-side-1{border-bottom:1px solid var(--divider)}
-.side-img{width:100%;height:110px;object-fit:cover;display:block;margin-bottom:12px}
-.article-kicker{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
-.article-section{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--terra);margin-bottom:10px;display:flex;align-items:center;gap:8px}
-.article-section::after{content:'';flex:1;height:1px;background:var(--divider)}
-.hero-headline{font-family:'Playfair Display',serif;font-size:clamp(20px,3vw,34px);font-weight:700;line-height:1.2;color:var(--text);margin-bottom:14px;transition:color .2s;cursor:pointer}
-.hero-headline:hover{color:var(--terra)}
-.hero-standfirst{font-size:15px;line-height:1.65;color:var(--text-soft);margin-bottom:16px;font-style:italic;font-weight:300}
-.side-headline{font-family:'Playfair Display',serif;font-size:17px;font-weight:600;line-height:1.3;margin-bottom:10px;transition:color .2s;cursor:pointer}
-.side-headline:hover{color:var(--terra)}
-.side-standfirst{font-size:13px;color:var(--text-soft);line-height:1.6;font-weight:300}
-.article-meta{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);display:flex;gap:14px;align-items:center;flex-wrap:wrap}
-.article-meta .author{color:var(--terra)}
-.article-tag{background:var(--gold-pale);color:var(--ink-mid);padding:2px 8px;font-size:9px;letter-spacing:.1em;text-transform:uppercase;border-left:2px solid var(--gold)}
-[data-theme="dark"] .article-tag{background:#0D1F12;color:var(--gold-light)}
-/* Cards */
-.article-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--divider);border:1px solid var(--divider);margin-bottom:24px}
-.article-card{background:var(--card-bg);padding:0;transition:background .2s;overflow:hidden}
-.article-card:hover{background:var(--gold-pale)}
-[data-theme="dark"] .article-card:hover{background:#0D1F12}
-.card-img{width:100%;height:140px;object-fit:cover;display:block}
-.card-img-placeholder{width:100%;height:140px;background:linear-gradient(135deg,var(--ink-mid),var(--ink));display:flex;align-items:center;justify-content:center;font-size:24px;opacity:.4}
-.card-content{padding:18px}
-.card-headline{font-family:'Playfair Display',serif;font-size:16px;font-weight:600;line-height:1.35;margin-bottom:10px;margin-top:8px;cursor:pointer;transition:color .2s}
-.card-headline:hover{color:var(--terra)}
-.card-body{font-size:13px;color:var(--text-soft);line-height:1.65;margin-bottom:14px;font-weight:300}
-.card-footer{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);display:flex;justify-content:space-between;align-items:center}
-.lock-icon{color:var(--gold)}
-/* Markets */
-.markets-strip{background:var(--card-bg);border:1px solid var(--divider);border-top:3px solid var(--gold);padding:20px 24px;margin-bottom:32px}
-.strip-title{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-soft);margin-bottom:16px}
-.markets-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:16px}
-.market-name{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
-.market-value{font-family:'DM Mono',monospace;font-size:17px;font-weight:500;color:var(--text);line-height:1}
-.market-change{font-family:'DM Mono',monospace;font-size:11px;margin-top:3px}
-/* Opinion */
-.opinion-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--divider);border:1px solid var(--divider);margin-bottom:32px}
-.opinion-card{background:var(--card-bg);padding:22px;border-top:3px solid var(--terra)}
-.opinion-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--terra);margin-bottom:10px}
-.opinion-author{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-soft);margin-bottom:10px;display:flex;align-items:center;gap:10px}
-.author-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:13px;font-weight:800;color:white;flex-shrink:0;object-fit:cover}
-.opinion-headline{font-family:'Playfair Display',serif;font-size:16px;font-style:italic;line-height:1.4;margin-bottom:10px;cursor:pointer}
-.opinion-headline:hover{color:var(--terra)}
-/* Sidebar */
-.sidebar-widget{border:1px solid var(--divider);border-top:3px solid var(--gold);background:var(--card-bg);padding:20px;margin-bottom:24px}
-.widget-title{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-soft);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--divider)}
-.top-story{padding:10px 0;border-bottom:1px solid var(--divider)}.top-story:last-child{border-bottom:none;padding-bottom:0}
-.top-story-num{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:var(--divider);line-height:1;margin-bottom:3px}
-.top-story-headline{font-family:'Playfair Display',serif;font-size:13px;font-weight:600;line-height:1.35;cursor:pointer;transition:color .2s}
-.top-story-headline:hover{color:var(--terra)}
-.newsletter-widget{background:linear-gradient(135deg,#0A1A10,#1A3020);padding:24px;margin-bottom:24px;position:relative;overflow:hidden}
-.newsletter-widget::before{content:'◆';position:absolute;top:-20px;right:-10px;font-size:120px;color:rgba(201,168,76,.08);line-height:1}
-.nw-title{font-family:'Playfair Display',serif;font-size:18px;color:var(--gold);margin-bottom:6px;position:relative}
-.nw-sub{font-size:13px;color:#999;margin-bottom:12px;font-weight:300;position:relative}
-.nw-input{width:100%;background:rgba(255,255,255,.08);border:1px solid #444;color:white;padding:9px 12px;border-radius:2px;font-family:'DM Mono',monospace;font-size:11px;margin-bottom:8px;outline:none}
-.nw-input::placeholder{color:#666}
-.nw-btn{width:100%;background:var(--gold);color:var(--ink);font-family:'DM Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;padding:9px;border-radius:2px}
-.nw-btn:hover{background:var(--gold-light)}
-.data-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--divider);font-family:'DM Mono',monospace;font-size:11px}
-.data-row:last-child{border-bottom:none}
-.data-label{color:var(--text-soft)}.data-value{font-weight:500}
-.section-header{display:flex;align-items:center;gap:16px;margin-bottom:16px}
-.section-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;white-space:nowrap}
-.section-line{flex:1;height:1px;background:var(--divider)}
-.view-more{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--terra);white-space:nowrap}
-.view-more:hover{color:var(--gold)}
-/* Breaking */
-.breaking-banner{background:var(--terra);color:white;padding:10px 24px;display:flex;align-items:center;gap:16px;font-size:13px}
-.breaking-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;background:rgba(255,255,255,.2);padding:3px 10px;flex-shrink:0}
-.breaking-close{margin-left:auto;color:rgba(255,255,255,.7);font-size:18px;padding:0 4px}
-/* Loading skeleton */
-.skeleton{background:linear-gradient(90deg,var(--divider) 25%,var(--card-bg) 50%,var(--divider) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:2px}
-@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-.skel-headline{height:28px;margin-bottom:12px;width:85%}
-.skel-text{height:14px;margin-bottom:8px;width:100%}
-.skel-text-short{height:14px;width:60%}
-/* Paywall */
-.paywall-blur{position:fixed;bottom:0;left:0;right:0;height:45vh;background:linear-gradient(to top,var(--bg) 60%,transparent);pointer-events:none;z-index:1999;display:none}
-.paywall-overlay{position:fixed;inset:0;z-index:2000;display:none;align-items:flex-end;justify-content:center}
-.paywall-box{background:var(--surface);border:1px solid var(--divider);border-top:4px solid var(--gold);box-shadow:0 -8px 48px rgba(0,0,0,.15);padding:40px;max-width:600px;width:90%;margin-bottom:32px;text-align:center;animation:slideUp .5s ease}
-@keyframes slideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
-.paywall-logo{font-family:'Playfair Display',serif;font-size:20px;font-weight:800;color:var(--text);margin-bottom:4px}
-.paywall-logo span{color:var(--gold)}
-.paywall-headline{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;margin-bottom:10px;line-height:1.3}
-.paywall-sub{font-size:14px;color:var(--text-soft);margin-bottom:24px;font-style:italic;font-weight:300}
-.paywall-plans{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
-.plan-card{border:1px solid var(--divider);padding:18px;text-align:left;position:relative;transition:border-color .2s}
-.plan-card:hover{border-color:var(--gold)}
-.plan-card.featured{border-color:var(--gold);background:var(--gold-pale)}
-[data-theme="dark"] .plan-card.featured{background:#0D1F12}
-.plan-badge{position:absolute;top:-10px;right:14px;background:var(--terra);color:white;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:2px 10px}
-.plan-name{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-soft);margin-bottom:8px}
-.plan-price{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;margin-bottom:4px}
-.plan-period{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);margin-bottom:12px}
-.plan-features{list-style:none;font-size:12px;color:var(--text-soft)}
-.plan-features li{padding:3px 0}
-.plan-features li::before{content:'✓ ';color:var(--gold)}
-.paywall-cta{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
-.btn-stripe{background:var(--gold);color:var(--ink);font-family:'DM Mono',monospace;font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:14px;border-radius:2px;display:block;text-align:center;transition:background .2s}
-.btn-stripe:hover{background:var(--gold-light)}
-.btn-stripe-alt{background:var(--terra);color:white;font-family:'DM Mono',monospace;font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:14px;border-radius:2px;display:block;text-align:center;transition:background .2s}
-.btn-stripe-alt:hover{background:var(--terra-dark)}
-.paywall-dismiss{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);letter-spacing:.08em;text-transform:uppercase;text-decoration:underline;cursor:pointer}
-/* Toast */
-.toast{position:fixed;bottom:28px;right:28px;z-index:9999;background:#0D3B1C;border:1px solid #2E9B5E;color:#2E9B5E;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.08em;padding:12px 22px;border-radius:2px;opacity:0;transform:translateY(16px);transition:all .3s;pointer-events:none}
-.toast.show{opacity:1;transform:translateY(0)}
+  <!-- ✅ CREDENTIALS: Edit config.js once — applies to all pages -->
+  <script src="config.js"></script>
+  <style>
+    :root {
+      --gold: #C9A84C;
+      --gold-light: #F9C53D;
+      --gold-pale: #FDF6E3;
+      --terra: #B85C38;
+      --terra-dark: #8C3A1F;
+      --green: #1E6B3C;
+      --green-mid: #2E9B5E;
+      --ink: #1A1208;
+      --ink-mid: #3D2B1F;
+      --ink-soft: #6B5344;
+      --cream: #FAF7F0;
+      --cream-dark: #F0EAD9;
+      --border: #D4C4A0;
+      --bg: var(--cream);
+      --surface: #fff;
+      --text: var(--ink);
+      --text-soft: var(--ink-soft);
+      --nav-bg: #0A1A10;
+      --nav-text: var(--cream);
+      --header-bg: var(--cream-dark);
+      --divider: var(--border);
+      --card-bg: #fff
+    }
 
-/* ═══ ADMIN PANEL ═══════════════════════════════════════════ */
-.admin-overlay{position:fixed;inset:0;z-index:9000;display:none;background:rgba(0,0,0,.55);backdrop-filter:blur(3px)}
-.admin-overlay.open{display:flex}
-.admin-panel{background:#060F09;color:#EDE5D5;width:500px;height:100vh;overflow-y:auto;display:flex;flex-direction:column;box-shadow:4px 0 40px rgba(0,0,0,.6);border-right:2px solid #C9A84C;flex-shrink:0}
-.admin-right{flex:1;background:#0A1A10;overflow-y:auto;padding:28px}
-.admin-header{padding:18px 24px;border-bottom:1px solid #1A3020;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#060F09;z-index:10}
-.admin-logo{font-family:'Playfair Display',serif;font-size:18px;color:#C9A84C}
-.admin-status{font-family:'DM Mono',monospace;font-size:10px;padding:3px 10px;border-radius:1px;border:1px solid}
-.admin-status.connected{color:#2E9B5E;border-color:#2E9B5E;background:rgba(76,175,80,.1)}
-.admin-status.disconnected{color:#F44336;border-color:#F44336;background:rgba(244,67,54,.1)}
-.admin-status.loading{color:#C9A84C;border-color:#C9A84C;background:rgba(201,168,76,.1)}
-.admin-close-btn{color:#888;font-size:22px;padding:4px 8px;transition:color .2s}
-.admin-close-btn:hover{color:#C9A84C}
-.admin-tabs{display:flex;border-bottom:1px solid #1A3020;padding:0 24px}
-.admin-tab{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#888;padding:12px 14px;border-bottom:2px solid transparent;margin-bottom:-1px;cursor:pointer;transition:color .2s,border-color .2s}
-.admin-tab:hover,.admin-tab.active{color:#C9A84C;border-bottom-color:#C9A84C}
-.admin-section{display:none;padding:20px 24px}
-.admin-section.active{display:block}
-.admin-section-title{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:#C9A84C;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid #1A3020}
-.form-group{margin-bottom:14px}
-.form-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#888;margin-bottom:6px;display:block}
-.form-input,.form-textarea,.form-select{width:100%;background:#0A1A10;border:1px solid #1A3020;color:#EDE5D5;padding:9px 12px;border-radius:2px;font-family:'Spectral',serif;font-size:14px;outline:none;transition:border-color .2s}
-.form-input:focus,.form-textarea:focus,.form-select:focus{border-color:#C9A84C}
-.form-textarea{min-height:80px;resize:vertical;line-height:1.6}
-.form-select{font-family:'DM Mono',monospace;font-size:12px}.form-select option{background:#0A1A10}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.btn-save{background:#C9A84C;color:#0A1A10;font-family:'DM Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;padding:12px 24px;border-radius:2px;transition:background .2s;width:100%;margin-top:8px}
-.btn-save:hover{background:#F9C53D}
-.btn-save:disabled{background:#666;cursor:not-allowed}
-.btn-danger{background:#B85C38;color:white;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:2px;transition:background .2s}
-.btn-danger:hover{background:#8C3A1F}
-.admin-article-list{list-style:none}
-.admin-article-item{border:1px solid #1A3020;border-radius:2px;margin-bottom:8px;overflow:hidden}
-.admin-article-header{padding:12px 14px;display:flex;align-items:flex-start;gap:10px;cursor:pointer;transition:background .2s}
-.admin-article-header:hover{background:#0D1F12}
-.admin-article-info{flex:1;min-width:0}
-.admin-article-title{font-family:'Playfair Display',serif;font-size:13px;line-height:1.3;margin-bottom:4px;color:#EDE5D5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.admin-article-meta{font-family:'DM Mono',monospace;font-size:10px;color:#888;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.admin-article-body{display:none;padding:14px;border-top:1px solid #1A3020;background:#060F09}
-.admin-article-body.open{display:block}
-.badge{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border-radius:1px}
-.badge-hero{background:#B85C38;color:white}.badge-locked{background:#1A3020;color:#C9A84C}
-.badge-side1,.badge-side2{background:#1B3A6B;color:white}.badge-card{background:#0D3B1C;color:#2E9B5E}
-.market-edit-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.market-edit-item{background:#0A1A10;border:1px solid #1A3020;padding:12px;border-radius:2px}
-.market-edit-name{font-family:'DM Mono',monospace;font-size:10px;color:#C9A84C;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
-.mini-input{width:100%;background:#060F09;border:1px solid #1A3020;color:#EDE5D5;padding:7px 9px;border-radius:2px;font-family:'DM Mono',monospace;font-size:12px;outline:none;margin-bottom:5px;transition:border-color .2s}
-.mini-input:focus{border-color:#C9A84C}
-.dir-toggle{display:flex;gap:5px}
-.dir-btn{font-family:'DM Mono',monospace;font-size:10px;padding:4px 0;border:1px solid #1A3020;border-radius:1px;color:#888;cursor:pointer;transition:all .2s;flex:1;text-align:center}
-.dir-btn.up.active{background:#0D3B1C;border-color:#2E9B5E;color:#2E9B5E}
-.dir-btn.dn.active{background:#4D1B1B;border-color:#F44336;color:#F44336}
-/* Image upload */
-.img-upload-area{border:2px dashed #1A3020;border-radius:2px;padding:20px;text-align:center;cursor:pointer;transition:border-color .2s;position:relative;margin-bottom:10px}
-.img-upload-area:hover{border-color:#C9A84C}
-.img-upload-area input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
-.img-upload-label{font-family:'DM Mono',monospace;font-size:10px;color:#888;letter-spacing:.1em;text-transform:uppercase}
-.img-preview{width:100%;height:80px;object-fit:cover;border-radius:2px;margin-top:8px;display:none}
-.setting-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #1A3020}
-.setting-row:last-child{border-bottom:none}
-.setting-label{font-family:'DM Mono',monospace;font-size:11px;color:#EDE5D5}
-.setting-desc{font-size:12px;color:#888;margin-top:2px}
-.toggle-switch{position:relative;width:42px;height:22px;flex-shrink:0}
-.toggle-switch input{opacity:0;width:0;height:0}
-.toggle-slider{position:absolute;inset:0;background:#1A3020;border-radius:11px;cursor:pointer;transition:.3s}
-.toggle-slider::before{content:'';position:absolute;left:3px;top:3px;width:16px;height:16px;background:#888;border-radius:50%;transition:.3s}
-.toggle-switch input:checked+.toggle-slider{background:#C9A84C}
-.toggle-switch input:checked+.toggle-slider::before{transform:translateX(20px);background:#0A1A10}
-/* Dashboard stats */
-.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px}
-.stat-card{background:#060F09;border:1px solid #1A3020;border-top:2px solid;padding:18px}
-.stat-card:nth-child(1){border-top-color:#C9A84C}.stat-card:nth-child(2){border-top-color:#B85C38}
-.stat-card:nth-child(3){border-top-color:#2E9B5E}.stat-card:nth-child(4){border-top-color:#1B3A6B}
-.stat-num{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;color:#EDE5D5;line-height:1}
-.stat-label{font-family:'DM Mono',monospace;font-size:10px;color:#888;letter-spacing:.1em;text-transform:uppercase;margin-top:5px}
-/* Footer */
-footer{background:var(--nav-bg);color:#888;padding:40px 24px 24px;margin-top:48px}
-.footer-inner{max-width:1280px;margin:0 auto}
-.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;padding-bottom:40px;border-bottom:1px solid #333;margin-bottom:28px}
-@media(max-width:768px){.footer-top{grid-template-columns:1fr 1fr}}
-.footer-brand{font-family:'Playfair Display',serif;font-size:22px;font-weight:800;color:var(--gold);margin-bottom:12px}
-.footer-about{font-size:13px;line-height:1.7;font-weight:300;max-width:260px}
-.footer-col-title{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
-.footer-links{list-style:none}
-.footer-links li{padding:4px 0}
-.footer-links a{font-size:13px;transition:color .2s;font-weight:300}
-.footer-links a:hover{color:var(--gold)}
-.footer-bottom{display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:10px;flex-wrap:wrap;gap:10px}
+    [data-theme="dark"] {
+      --green: #2E9B5E;
+      --green-mid: #4DBA7F;
+      --bg: #060F09;
+      --surface: #0A1A10;
+      --text: #EDE5D5;
+      --text-soft: #A89070;
+      --nav-bg: #060F09;
+      --nav-text: #EDE5D5;
+      --header-bg: #0A1A10;
+      --divider: #1A3020;
+      --card-bg: #0F2015;
+      --border: #1A3020;
+      --gold-pale: #0D1F12
+    }
 
-/* ═══ PAGINATION ════════════════════════════════════════════ */
-.pagination-bar{display:flex;align-items:center;justify-content:center;gap:6px;padding:32px 0 8px;flex-wrap:wrap}
-.page-btn{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;letter-spacing:.05em;min-width:38px;height:38px;display:flex;align-items:center;justify-content:center;border:1px solid var(--divider);background:var(--card-bg);color:var(--text-soft);border-radius:2px;cursor:pointer;transition:all .2s;text-decoration:none;padding:0 10px}
-.page-btn:hover{border-color:var(--gold);color:var(--gold)}
-.page-btn.active{background:var(--terra);border-color:var(--terra);color:white}
-.page-btn.disabled{opacity:.35;cursor:not-allowed;pointer-events:none}
-.page-btn.nav{background:var(--card-bg)}
-.page-ellipsis{font-family:'DM Mono',monospace;font-size:12px;color:var(--text-soft);padding:0 4px;line-height:38px}
-.pagination-info{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-soft);text-align:center;margin-bottom:4px}
-.archive-header{background:var(--card-bg);border:1px solid var(--divider);border-left:4px solid var(--terra);padding:14px 20px;margin-bottom:0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
-.archive-title{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--terra)}
-.archive-count{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft)}
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    body {
+      font-family: 'Spectral', Georgia, serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 16px;
+      line-height: 1.6;
+      transition: background .3s, color .3s;
+      overflow-x: hidden
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      background: none;
+      font-family: inherit
+    }
+
+    /* Ticker */
+    .ticker-bar {
+      background: var(--nav-bg);
+      color: #C9A84C;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      padding: 6px 0;
+      overflow: hidden;
+      white-space: nowrap
+    }
+
+    .ticker-inner {
+      display: inline-flex;
+      gap: 48px;
+      animation: ticker 40s linear infinite
+    }
+
+    .ticker-item {
+      display: flex;
+      gap: 8px;
+      align-items: center
+    }
+
+    .ticker-item .sym {
+      color: #888
+    }
+
+    .up {
+      color: #2E9B5E
+    }
+
+    .dn {
+      color: #F44336
+    }
+
+    @keyframes ticker {
+      from {
+        transform: translateX(0)
+      }
+
+      to {
+        transform: translateX(-50%)
+      }
+    }
+
+    /* Nav */
+    .top-nav {
+      background: var(--nav-bg);
+      color: var(--nav-text);
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 48px;
+      border-bottom: 2px solid var(--gold);
+      position: sticky;
+      top: 0;
+      z-index: 1000
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center
+    }
+
+    .nav-link {
+      color: var(--nav-text);
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 0 14px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      border-right: 1px solid #333;
+      transition: color .2s
+    }
+
+    .nav-link:visited {
+      color: var(--nav-text)
+    }
+
+    .nav-link:first-child {
+      border-left: 1px solid #333
+    }
+
+    .nav-link:hover {
+      color: var(--gold)
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .nav-search {
+      background: rgba(255, 255, 255, .08);
+      border: 1px solid #444;
+      color: var(--nav-text);
+      padding: 6px 12px;
+      border-radius: 2px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      width: 160px;
+      outline: none
+    }
+
+    .nav-search:focus {
+      border-color: var(--gold)
+    }
+
+    .nav-search::placeholder {
+      color: #777
+    }
+
+    .btn-subscribe {
+      background: var(--gold);
+      color: var(--ink);
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 8px 16px;
+      border-radius: 2px;
+      transition: background .2s;
+      display: inline-block
+    }
+
+    .btn-subscribe:hover {
+      background: var(--gold-light)
+    }
+
+    .dark-toggle {
+      color: var(--nav-text);
+      font-size: 16px;
+      padding: 8px;
+      line-height: 1;
+      transition: color .2s
+    }
+
+    .dark-toggle:hover {
+      color: var(--gold)
+    }
+
+    .admin-btn {
+      background: var(--terra);
+      color: white;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 7px 12px;
+      border-radius: 2px;
+      transition: background .2s
+    }
+
+    .admin-btn:hover {
+      background: var(--terra-dark)
+    }
+
+    /* Masthead */
+    .masthead {
+      background: var(--header-bg);
+      border-bottom: 1px solid var(--divider);
+      padding: 20px 24px 16px;
+      text-align: center;
+      position: relative;
+      overflow: hidden
+    }
+
+    .masthead::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23C9A84C' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")
+    }
+
+    .masthead-name {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(28px, 6vw, 60px);
+      font-weight: 800;
+      letter-spacing: -.02em;
+      color: var(--text);
+      line-height: 1;
+      position: relative
+    }
+
+    .masthead-name span {
+      color: var(--gold)
+    }
+
+    .masthead-tagline {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      margin-top: 6px;
+      position: relative
+    }
+
+    .masthead-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid var(--divider);
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--text-soft);
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      position: relative
+    }
+
+    .edition-badge {
+      background: var(--terra);
+      color: white;
+      padding: 2px 10px;
+      font-size: 10px;
+      letter-spacing: .15em
+    }
+
+    /* Section nav */
+    .section-nav {
+      border-bottom: 2px solid var(--gold);
+      background: var(--surface);
+      overflow-x: auto;
+      scrollbar-width: none
+    }
+
+    .section-nav-inner {
+      display: flex;
+      padding: 0 24px
+    }
+
+    .section-tab {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      padding: 12px 18px;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: color .2s, border-color .2s
+    }
+
+    .section-tab:hover,
+    .section-tab.active {
+      color: var(--terra);
+      border-bottom-color: var(--terra)
+    }
+
+    /* Layout */
+    .main-wrapper {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 32px 24px;
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 40px
+    }
+
+    @media(max-width:900px) {
+      .main-wrapper {
+        grid-template-columns: 1fr
+      }
+    }
+
+    /* Hero */
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      grid-template-rows: auto auto;
+      gap: 1px;
+      background: var(--divider);
+      border: 1px solid var(--divider);
+      margin-bottom: 32px
+    }
+
+    .hero-main {
+      grid-column: 1;
+      grid-row: 1/3;
+      background: var(--card-bg);
+      padding: 0;
+      position: relative;
+      overflow: hidden
+    }
+
+    .hero-main::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--terra), var(--gold))
+    }
+
+    .hero-img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      display: block
+    }
+
+    .hero-img-placeholder {
+      width: 100%;
+      height: 220px;
+      background: linear-gradient(135deg, var(--ink), var(--ink-mid));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: #555;
+      letter-spacing: .1em
+    }
+
+    .hero-content {
+      padding: 24px 28px 28px
+    }
+
+    .hero-side-1,
+    .hero-side-2 {
+      background: var(--card-bg);
+      padding: 20px 22px;
+      position: relative;
+      overflow: hidden
+    }
+
+    .hero-side-1 {
+      border-bottom: 1px solid var(--divider)
+    }
+
+    .side-img {
+      width: 100%;
+      height: 110px;
+      object-fit: cover;
+      display: block;
+      margin-bottom: 12px
+    }
+
+    .article-kicker {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 8px
+    }
+
+    .article-section {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--terra);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .article-section::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--divider)
+    }
+
+    .hero-headline {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(20px, 3vw, 34px);
+      font-weight: 700;
+      line-height: 1.2;
+      color: var(--text);
+      margin-bottom: 14px;
+      transition: color .2s;
+      cursor: pointer
+    }
+
+    .hero-headline:hover {
+      color: var(--terra)
+    }
+
+    .hero-standfirst {
+      font-size: 15px;
+      line-height: 1.65;
+      color: var(--text-soft);
+      margin-bottom: 16px;
+      font-style: italic;
+      font-weight: 300
+    }
+
+    .side-headline {
+      font-family: 'Playfair Display', serif;
+      font-size: 17px;
+      font-weight: 600;
+      line-height: 1.3;
+      margin-bottom: 10px;
+      transition: color .2s;
+      cursor: pointer
+    }
+
+    .side-headline:hover {
+      color: var(--terra)
+    }
+
+    .side-standfirst {
+      font-size: 13px;
+      color: var(--text-soft);
+      line-height: 1.6;
+      font-weight: 300
+    }
+
+    .article-meta {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--text-soft);
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      flex-wrap: wrap
+    }
+
+    .article-meta .author {
+      color: var(--terra)
+    }
+
+    .article-tag {
+      background: var(--gold-pale);
+      color: var(--ink-mid);
+      padding: 2px 8px;
+      font-size: 9px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      border-left: 2px solid var(--gold)
+    }
+
+    [data-theme="dark"] .article-tag {
+      background: #0D1F12;
+      color: var(--gold-light)
+    }
+
+    /* Cards */
+    .article-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--divider);
+      border: 1px solid var(--divider);
+      margin-bottom: 24px
+    }
+
+    .article-card {
+      background: var(--card-bg);
+      padding: 0;
+      transition: background .2s;
+      overflow: hidden
+    }
+
+    .article-card:hover {
+      background: var(--gold-pale)
+    }
+
+    [data-theme="dark"] .article-card:hover {
+      background: #0D1F12
+    }
+
+    .card-img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      display: block
+    }
+
+    .card-img-placeholder {
+      width: 100%;
+      height: 140px;
+      background: linear-gradient(135deg, var(--ink-mid), var(--ink));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      opacity: .4
+    }
+
+    .card-content {
+      padding: 18px
+    }
+
+    .card-headline {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1.35;
+      margin-bottom: 10px;
+      margin-top: 8px;
+      cursor: pointer;
+      transition: color .2s
+    }
+
+    .card-headline:hover {
+      color: var(--terra)
+    }
+
+    .card-body {
+      font-size: 13px;
+      color: var(--text-soft);
+      line-height: 1.65;
+      margin-bottom: 14px;
+      font-weight: 300
+    }
+
+    .card-footer {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--text-soft);
+      display: flex;
+      justify-content: space-between;
+      align-items: center
+    }
+
+    .lock-icon {
+      color: var(--gold)
+    }
+
+    /* Markets */
+    .markets-strip {
+      background: var(--card-bg);
+      border: 1px solid var(--divider);
+      border-top: 3px solid var(--gold);
+      padding: 20px 24px;
+      margin-bottom: 32px
+    }
+
+    .strip-title {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      margin-bottom: 16px
+    }
+
+    .markets-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 16px
+    }
+
+    .market-name {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--text-soft);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: 4px
+    }
+
+    .market-value {
+      font-family: 'DM Mono', monospace;
+      font-size: 17px;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1
+    }
+
+    .market-change {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      margin-top: 3px
+    }
+
+    /* Opinion */
+    .opinion-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--divider);
+      border: 1px solid var(--divider);
+      margin-bottom: 32px
+    }
+
+    .opinion-card {
+      background: var(--card-bg);
+      padding: 22px;
+      border-top: 3px solid var(--terra)
+    }
+
+    .opinion-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--terra);
+      margin-bottom: 10px
+    }
+
+    .opinion-author {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--text-soft);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .author-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 13px;
+      font-weight: 800;
+      color: white;
+      flex-shrink: 0;
+      object-fit: cover
+    }
+
+    .opinion-headline {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-style: italic;
+      line-height: 1.4;
+      margin-bottom: 10px;
+      cursor: pointer
+    }
+
+    .opinion-headline:hover {
+      color: var(--terra)
+    }
+
+    /* Sidebar */
+    .sidebar-widget {
+      border: 1px solid var(--divider);
+      border-top: 3px solid var(--gold);
+      background: var(--card-bg);
+      padding: 20px;
+      margin-bottom: 24px
+    }
+
+    .widget-title {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--divider)
+    }
+
+    .top-story {
+      padding: 10px 0;
+      border-bottom: 1px solid var(--divider)
+    }
+
+    .top-story:last-child {
+      border-bottom: none;
+      padding-bottom: 0
+    }
+
+    .top-story-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 22px;
+      font-weight: 500;
+      color: var(--divider);
+      line-height: 1;
+      margin-bottom: 3px
+    }
+
+    .top-story-headline {
+      font-family: 'Playfair Display', serif;
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.35;
+      cursor: pointer;
+      transition: color .2s
+    }
+
+    .top-story-headline:hover {
+      color: var(--terra)
+    }
+
+    .newsletter-widget {
+      background: linear-gradient(135deg, #0A1A10, #1A3020);
+      padding: 24px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden
+    }
+
+    .newsletter-widget::before {
+      content: '◆';
+      position: absolute;
+      top: -20px;
+      right: -10px;
+      font-size: 120px;
+      color: rgba(201, 168, 76, .08);
+      line-height: 1
+    }
+
+    .nw-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      color: var(--gold);
+      margin-bottom: 6px;
+      position: relative
+    }
+
+    .nw-sub {
+      font-size: 13px;
+      color: #999;
+      margin-bottom: 12px;
+      font-weight: 300;
+      position: relative
+    }
+
+    .nw-input {
+      width: 100%;
+      background: rgba(255, 255, 255, .08);
+      border: 1px solid #444;
+      color: white;
+      padding: 9px 12px;
+      border-radius: 2px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      margin-bottom: 8px;
+      outline: none
+    }
+
+    .nw-input::placeholder {
+      color: #666
+    }
+
+    .nw-btn {
+      width: 100%;
+      background: var(--gold);
+      color: var(--ink);
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 9px;
+      border-radius: 2px
+    }
+
+    .nw-btn:hover {
+      background: var(--gold-light)
+    }
+
+    .data-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--divider);
+      font-family: 'DM Mono', monospace;
+      font-size: 11px
+    }
+
+    .data-row:last-child {
+      border-bottom: none
+    }
+
+    .data-label {
+      color: var(--text-soft)
+    }
+
+    .data-value {
+      font-weight: 500
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 700;
+      white-space: nowrap
+    }
+
+    .section-line {
+      flex: 1;
+      height: 1px;
+      background: var(--divider)
+    }
+
+    .view-more {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--terra);
+      white-space: nowrap
+    }
+
+    .view-more:hover {
+      color: var(--gold)
+    }
+
+    /* Breaking */
+    .breaking-banner {
+      background: var(--terra);
+      color: white;
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 13px
+    }
+
+    .breaking-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      background: rgba(255, 255, 255, .2);
+      padding: 3px 10px;
+      flex-shrink: 0
+    }
+
+    .breaking-close {
+      margin-left: auto;
+      color: rgba(255, 255, 255, .7);
+      font-size: 18px;
+      padding: 0 4px
+    }
+
+    /* Loading skeleton */
+    .skeleton {
+      background: linear-gradient(90deg, var(--divider) 25%, var(--card-bg) 50%, var(--divider) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 2px
+    }
+
+    @keyframes shimmer {
+      0% {
+        background-position: 200% 0
+      }
+
+      100% {
+        background-position: -200% 0
+      }
+    }
+
+    .skel-headline {
+      height: 28px;
+      margin-bottom: 12px;
+      width: 85%
+    }
+
+    .skel-text {
+      height: 14px;
+      margin-bottom: 8px;
+      width: 100%
+    }
+
+    .skel-text-short {
+      height: 14px;
+      width: 60%
+    }
+
+    /* Paywall */
+    .paywall-blur {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 45vh;
+      background: linear-gradient(to top, var(--bg) 60%, transparent);
+      pointer-events: none;
+      z-index: 1999;
+      display: none
+    }
+
+    .paywall-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      display: none;
+      align-items: flex-end;
+      justify-content: center
+    }
+
+    .paywall-box {
+      background: var(--surface);
+      border: 1px solid var(--divider);
+      border-top: 4px solid var(--gold);
+      box-shadow: 0 -8px 48px rgba(0, 0, 0, .15);
+      padding: 40px;
+      max-width: 600px;
+      width: 90%;
+      margin-bottom: 32px;
+      text-align: center;
+      animation: slideUp .5s ease
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(40px);
+        opacity: 0
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1
+      }
+    }
+
+    .paywall-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 4px
+    }
+
+    .paywall-logo span {
+      color: var(--gold)
+    }
+
+    .paywall-headline {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      line-height: 1.3
+    }
+
+    .paywall-sub {
+      font-size: 14px;
+      color: var(--text-soft);
+      margin-bottom: 24px;
+      font-style: italic;
+      font-weight: 300
+    }
+
+    .paywall-plans {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px
+    }
+
+    .plan-card {
+      border: 1px solid var(--divider);
+      padding: 18px;
+      text-align: left;
+      position: relative;
+      transition: border-color .2s
+    }
+
+    .plan-card:hover {
+      border-color: var(--gold)
+    }
+
+    .plan-card.featured {
+      border-color: var(--gold);
+      background: var(--gold-pale)
+    }
+
+    [data-theme="dark"] .plan-card.featured {
+      background: #0D1F12
+    }
+
+    .plan-badge {
+      position: absolute;
+      top: -10px;
+      right: 14px;
+      background: var(--terra);
+      color: white;
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 2px 10px
+    }
+
+    .plan-name {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      margin-bottom: 8px
+    }
+
+    .plan-price {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 4px
+    }
+
+    .plan-period {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--text-soft);
+      margin-bottom: 12px
+    }
+
+    .plan-features {
+      list-style: none;
+      font-size: 12px;
+      color: var(--text-soft)
+    }
+
+    .plan-features li {
+      padding: 3px 0
+    }
+
+    .plan-features li::before {
+      content: '✓ ';
+      color: var(--gold)
+    }
+
+    .paywall-cta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 14px
+    }
+
+    .btn-stripe {
+      background: var(--gold);
+      color: var(--ink);
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 14px;
+      border-radius: 2px;
+      display: block;
+      text-align: center;
+      transition: background .2s
+    }
+
+    .btn-stripe:hover {
+      background: var(--gold-light)
+    }
+
+    .btn-stripe-alt {
+      background: var(--terra);
+      color: white;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 14px;
+      border-radius: 2px;
+      display: block;
+      text-align: center;
+      transition: background .2s
+    }
+
+    .btn-stripe-alt:hover {
+      background: var(--terra-dark)
+    }
+
+    .paywall-dismiss {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--text-soft);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      text-decoration: underline;
+      cursor: pointer
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      z-index: 9999;
+      background: #0D3B1C;
+      border: 1px solid #2E9B5E;
+      color: #2E9B5E;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      letter-spacing: .08em;
+      padding: 12px 22px;
+      border-radius: 2px;
+      opacity: 0;
+      transform: translateY(16px);
+      transition: all .3s;
+      pointer-events: none
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0)
+    }
+
+    /* ═══ ADMIN PANEL ═══════════════════════════════════════════ */
+    .admin-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9000;
+      display: none;
+      background: rgba(0, 0, 0, .55);
+      backdrop-filter: blur(3px)
+    }
+
+    .admin-overlay.open {
+      display: flex
+    }
+
+    .admin-panel {
+      background: #060F09;
+      color: #EDE5D5;
+      width: 500px;
+      height: 100vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 4px 0 40px rgba(0, 0, 0, .6);
+      border-right: 2px solid #C9A84C;
+      flex-shrink: 0
+    }
+
+    .admin-right {
+      flex: 1;
+      background: #0A1A10;
+      overflow-y: auto;
+      padding: 28px
+    }
+
+    .admin-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid #1A3020;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      background: #060F09;
+      z-index: 10
+    }
+
+    .admin-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      color: #C9A84C
+    }
+
+    .admin-status {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      padding: 3px 10px;
+      border-radius: 1px;
+      border: 1px solid
+    }
+
+    .admin-status.connected {
+      color: #2E9B5E;
+      border-color: #2E9B5E;
+      background: rgba(76, 175, 80, .1)
+    }
+
+    .admin-status.disconnected {
+      color: #F44336;
+      border-color: #F44336;
+      background: rgba(244, 67, 54, .1)
+    }
+
+    .admin-status.loading {
+      color: #C9A84C;
+      border-color: #C9A84C;
+      background: rgba(201, 168, 76, .1)
+    }
+
+    .admin-close-btn {
+      color: #888;
+      font-size: 22px;
+      padding: 4px 8px;
+      transition: color .2s
+    }
+
+    .admin-close-btn:hover {
+      color: #C9A84C
+    }
+
+    .admin-tabs {
+      display: flex;
+      border-bottom: 1px solid #1A3020;
+      padding: 0 24px
+    }
+
+    .admin-tab {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: #888;
+      padding: 12px 14px;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      cursor: pointer;
+      transition: color .2s, border-color .2s
+    }
+
+    .admin-tab:hover,
+    .admin-tab.active {
+      color: #C9A84C;
+      border-bottom-color: #C9A84C
+    }
+
+    .admin-section {
+      display: none;
+      padding: 20px 24px
+    }
+
+    .admin-section.active {
+      display: block
+    }
+
+    .admin-section-title {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: #C9A84C;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #1A3020
+    }
+
+    .form-group {
+      margin-bottom: 14px
+    }
+
+    .form-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: #888;
+      margin-bottom: 6px;
+      display: block
+    }
+
+    .form-input,
+    .form-textarea,
+    .form-select {
+      width: 100%;
+      background: #0A1A10;
+      border: 1px solid #1A3020;
+      color: #EDE5D5;
+      padding: 9px 12px;
+      border-radius: 2px;
+      font-family: 'Spectral', serif;
+      font-size: 14px;
+      outline: none;
+      transition: border-color .2s
+    }
+
+    .form-input:focus,
+    .form-textarea:focus,
+    .form-select:focus {
+      border-color: #C9A84C
+    }
+
+    .form-textarea {
+      min-height: 80px;
+      resize: vertical;
+      line-height: 1.6
+    }
+
+    .form-select {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px
+    }
+
+    .form-select option {
+      background: #0A1A10
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px
+    }
+
+    .btn-save {
+      background: #C9A84C;
+      color: #0A1A10;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      padding: 12px 24px;
+      border-radius: 2px;
+      transition: background .2s;
+      width: 100%;
+      margin-top: 8px
+    }
+
+    .btn-save:hover {
+      background: #F9C53D
+    }
+
+    .btn-save:disabled {
+      background: #666;
+      cursor: not-allowed
+    }
+
+    .btn-danger {
+      background: #B85C38;
+      color: white;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 2px;
+      transition: background .2s
+    }
+
+    .btn-danger:hover {
+      background: #8C3A1F
+    }
+
+    .admin-article-list {
+      list-style: none
+    }
+
+    .admin-article-item {
+      border: 1px solid #1A3020;
+      border-radius: 2px;
+      margin-bottom: 8px;
+      overflow: hidden
+    }
+
+    .admin-article-header {
+      padding: 12px 14px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      cursor: pointer;
+      transition: background .2s
+    }
+
+    .admin-article-header:hover {
+      background: #0D1F12
+    }
+
+    .admin-article-info {
+      flex: 1;
+      min-width: 0
+    }
+
+    .admin-article-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 13px;
+      line-height: 1.3;
+      margin-bottom: 4px;
+      color: #EDE5D5;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap
+    }
+
+    .admin-article-meta {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: #888;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center
+    }
+
+    .admin-article-body {
+      display: none;
+      padding: 14px;
+      border-top: 1px solid #1A3020;
+      background: #060F09
+    }
+
+    .admin-article-body.open {
+      display: block
+    }
+
+    .badge {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 1px
+    }
+
+    .badge-hero {
+      background: #B85C38;
+      color: white
+    }
+
+    .badge-locked {
+      background: #1A3020;
+      color: #C9A84C
+    }
+
+    .badge-side1,
+    .badge-side2 {
+      background: #1B3A6B;
+      color: white
+    }
+
+    .badge-card {
+      background: #0D3B1C;
+      color: #2E9B5E
+    }
+
+    .market-edit-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px
+    }
+
+    .market-edit-item {
+      background: #0A1A10;
+      border: 1px solid #1A3020;
+      padding: 12px;
+      border-radius: 2px
+    }
+
+    .market-edit-name {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: #C9A84C;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      margin-bottom: 8px
+    }
+
+    .mini-input {
+      width: 100%;
+      background: #060F09;
+      border: 1px solid #1A3020;
+      color: #EDE5D5;
+      padding: 7px 9px;
+      border-radius: 2px;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      outline: none;
+      margin-bottom: 5px;
+      transition: border-color .2s
+    }
+
+    .mini-input:focus {
+      border-color: #C9A84C
+    }
+
+    .dir-toggle {
+      display: flex;
+      gap: 5px
+    }
+
+    .dir-btn {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      padding: 4px 0;
+      border: 1px solid #1A3020;
+      border-radius: 1px;
+      color: #888;
+      cursor: pointer;
+      transition: all .2s;
+      flex: 1;
+      text-align: center
+    }
+
+    .dir-btn.up.active {
+      background: #0D3B1C;
+      border-color: #2E9B5E;
+      color: #2E9B5E
+    }
+
+    .dir-btn.dn.active {
+      background: #4D1B1B;
+      border-color: #F44336;
+      color: #F44336
+    }
+
+    /* Image upload */
+    .img-upload-area {
+      border: 2px dashed #1A3020;
+      border-radius: 2px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color .2s;
+      position: relative;
+      margin-bottom: 10px
+    }
+
+    .img-upload-area:hover {
+      border-color: #C9A84C
+    }
+
+    .img-upload-area input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%
+    }
+
+    .img-upload-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: #888;
+      letter-spacing: .1em;
+      text-transform: uppercase
+    }
+
+    .img-preview {
+      width: 100%;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 2px;
+      margin-top: 8px;
+      display: none
+    }
+
+    .setting-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #1A3020
+    }
+
+    .setting-row:last-child {
+      border-bottom: none
+    }
+
+    .setting-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: #EDE5D5
+    }
+
+    .setting-desc {
+      font-size: 12px;
+      color: #888;
+      margin-top: 2px
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 42px;
+      height: 22px;
+      flex-shrink: 0
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0
+    }
+
+    .toggle-slider {
+      position: absolute;
+      inset: 0;
+      background: #1A3020;
+      border-radius: 11px;
+      cursor: pointer;
+      transition: .3s
+    }
+
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      left: 3px;
+      top: 3px;
+      width: 16px;
+      height: 16px;
+      background: #888;
+      border-radius: 50%;
+      transition: .3s
+    }
+
+    .toggle-switch input:checked+.toggle-slider {
+      background: #C9A84C
+    }
+
+    .toggle-switch input:checked+.toggle-slider::before {
+      transform: translateX(20px);
+      background: #0A1A10
+    }
+
+    /* Dashboard stats */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 24px
+    }
+
+    .stat-card {
+      background: #060F09;
+      border: 1px solid #1A3020;
+      border-top: 2px solid;
+      padding: 18px
+    }
+
+    .stat-card:nth-child(1) {
+      border-top-color: #C9A84C
+    }
+
+    .stat-card:nth-child(2) {
+      border-top-color: #B85C38
+    }
+
+    .stat-card:nth-child(3) {
+      border-top-color: #2E9B5E
+    }
+
+    .stat-card:nth-child(4) {
+      border-top-color: #1B3A6B
+    }
+
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 30px;
+      font-weight: 700;
+      color: #EDE5D5;
+      line-height: 1
+    }
+
+    .stat-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: #888;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      margin-top: 5px
+    }
+
+    /* Footer */
+    footer {
+      background: var(--nav-bg);
+      color: #888;
+      padding: 40px 24px 24px;
+      margin-top: 48px
+    }
+
+    .footer-inner {
+      max-width: 1280px;
+      margin: 0 auto
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 40px;
+      padding-bottom: 40px;
+      border-bottom: 1px solid #333;
+      margin-bottom: 28px
+    }
+
+    @media(max-width:768px) {
+      .footer-top {
+        grid-template-columns: 1fr 1fr
+      }
+    }
+
+    .footer-brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--gold);
+      margin-bottom: 12px
+    }
+
+    .footer-about {
+      font-size: 13px;
+      line-height: 1.7;
+      font-weight: 300;
+      max-width: 260px
+    }
+
+    .footer-col-title {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 14px
+    }
+
+    .footer-links {
+      list-style: none
+    }
+
+    .footer-links li {
+      padding: 4px 0
+    }
+
+    .footer-links a {
+      font-size: 13px;
+      transition: color .2s;
+      font-weight: 300
+    }
+
+    .footer-links a:hover {
+      color: var(--gold)
+    }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      flex-wrap: wrap;
+      gap: 10px
+    }
+
+    /* ═══ PAGINATION ════════════════════════════════════════════ */
+    .pagination-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 32px 0 8px;
+      flex-wrap: wrap
+    }
+
+    .page-btn {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: .05em;
+      min-width: 38px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--divider);
+      background: var(--card-bg);
+      color: var(--text-soft);
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all .2s;
+      text-decoration: none;
+      padding: 0 10px
+    }
+
+    .page-btn:hover {
+      border-color: var(--gold);
+      color: var(--gold)
+    }
+
+    .page-btn.active {
+      background: var(--terra);
+      border-color: var(--terra);
+      color: white
+    }
+
+    .page-btn.disabled {
+      opacity: .35;
+      cursor: not-allowed;
+      pointer-events: none
+    }
+
+    .page-btn.nav {
+      background: var(--card-bg)
+    }
+
+    .page-ellipsis {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--text-soft);
+      padding: 0 4px;
+      line-height: 38px
+    }
+
+    .pagination-info {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      text-align: center;
+      margin-bottom: 4px
+    }
+
+    .archive-header {
+      background: var(--card-bg);
+      border: 1px solid var(--divider);
+      border-left: 4px solid var(--terra);
+      padding: 14px 20px;
+      margin-bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px
+    }
+
+    .archive-title {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--terra)
+    }
+
+    .archive-count {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--text-soft)
+    }
 
 
-/* ══════════════════════════════════════════════════════════
+    /* ══════════════════════════════════════════════════════════
    WCAG AA + RESPONSIVE — auto-generated patch
 ══════════════════════════════════════════════════════════ */
 
-/* Screen-reader only — hides visually but readable by AT */
-.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;
-  overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    /* Screen-reader only — hides visually but readable by AT */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0
+    }
 
-/* Skip link — WCAG 2.4.1 Bypass Blocks */
-.skip-link{position:absolute;top:-100px;left:8px;z-index:99999;
-  background:var(--gold);color:var(--ink);padding:10px 18px;
-  font-family:'DM Mono',monospace;font-size:12px;font-weight:600;
-  letter-spacing:.08em;text-transform:uppercase;border-radius:2px;
-  text-decoration:none;box-shadow:0 4px 12px rgba(0,0,0,.3);
-  transition:top .15s}
-.skip-link:focus{top:8px}
+    /* Skip link — WCAG 2.4.1 Bypass Blocks */
+    .skip-link {
+      position: absolute;
+      top: -100px;
+      left: 8px;
+      z-index: 99999;
+      background: var(--gold);
+      color: var(--ink);
+      padding: 10px 18px;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      border-radius: 2px;
+      text-decoration: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, .3);
+      transition: top .15s
+    }
 
-/* Visible focus rings — WCAG 2.4.7 Focus Visible */
-*:focus{outline:none}
-*:focus-visible{outline:3px solid #C9A84C !important;outline-offset:3px !important}
-[data-theme="dark"] *:focus-visible{outline-color:#F9C53D !important}
+    .skip-link:focus {
+      top: 8px
+    }
 
-/* Paywall dismiss was a <div> — now <button> */
-button.paywall-dismiss{background:none;border:none;padding:8px 4px;
-  font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);
-  letter-spacing:.08em;text-transform:uppercase;text-decoration:underline;
-  cursor:pointer;min-height:44px}
+    /* Visible focus rings — WCAG 2.4.7 Focus Visible */
+    *:focus {
+      outline: none
+    }
 
-/* Minimum 44×44 touch targets — WCAG 2.5.5 */
-.dark-toggle{min-width:44px;min-height:44px;display:inline-flex;
-  align-items:center;justify-content:center}
-.breaking-close{min-width:44px;min-height:44px;display:inline-flex;
-  align-items:center;justify-content:center}
-.admin-close-btn{min-width:44px;min-height:44px;display:inline-flex;
-  align-items:center;justify-content:center}
-.page-btn{min-width:44px;min-height:44px}
-.section-tab{min-height:44px}
-.nw-btn{min-height:44px}
-.btn-save{min-height:44px}
+    *:focus-visible {
+      outline: 3px solid #C9A84C !important;
+      outline-offset: 3px !important
+    }
 
-/* Footer link contrast fix — WCAG 1.4.3 (was #888 on dark bg ≈ 3.5:1, fails) */
-footer .footer-links a{color:#B0ADC8 !important}
-footer .footer-links a:hover{color:var(--gold) !important}
-.footer-about{color:#A89070}
-.footer-bottom{color:#999}
+    [data-theme="dark"] *:focus-visible {
+      outline-color: #F9C53D !important
+    }
 
-/* ── Mobile hamburger button ──────────────────────── */
-.nav-hamburger{display:none;flex-direction:column;align-items:center;
-  justify-content:center;gap:5px;width:44px;height:48px;padding:0 10px;
-  cursor:pointer;background:none;border:none;color:var(--nav-text);
-  flex-shrink:0}
-.nav-hamburger span{display:block;width:20px;height:2px;background:currentColor;
-  border-radius:1px;transition:transform .25s,opacity .25s}
-.nav-hamburger[aria-expanded="true"] span:nth-child(1){transform:translateY(7px) rotate(45deg)}
-.nav-hamburger[aria-expanded="true"] span:nth-child(2){opacity:0;transform:scaleX(0)}
-.nav-hamburger[aria-expanded="true"] span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+    /* Paywall dismiss was a <div> — now <button> */
+    button.paywall-dismiss {
+      background: none;
+      border: none;
+      padding: 8px 4px;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--text-soft);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      text-decoration: underline;
+      cursor: pointer;
+      min-height: 44px
+    }
 
-/* ── Mobile nav drawer ────────────────────────────── */
-.nav-mobile-drawer{display:none;position:fixed;top:48px;left:0;right:0;
-  bottom:0;background:var(--nav-bg);z-index:998;overflow-y:auto;
-  border-top:2px solid var(--gold)}
-.nav-mobile-drawer.open{display:block}
-.nav-mobile-drawer a,.nav-mobile-drawer button{display:flex;align-items:center;
-  width:100%;padding:14px 24px;font-family:'DM Mono',monospace;font-size:12px;
-  letter-spacing:.08em;text-transform:uppercase;color:var(--nav-text);
-  border-bottom:1px solid rgba(255,255,255,.07);text-decoration:none;
-  min-height:50px;background:none;border-left:none;border-right:none;
-  border-top:none;cursor:pointer}
-.nav-mobile-drawer a:hover,.nav-mobile-drawer a:focus,
-.nav-mobile-drawer button:hover,.nav-mobile-drawer button:focus{
-  background:#0A1A10;color:var(--gold)}
-.nav-mobile-drawer a.mob-active{color:var(--gold)}
-.nav-mobile-search{padding:12px 24px;border-bottom:1px solid rgba(255,255,255,.07)}
-.nav-mobile-search input{width:100%;background:rgba(255,255,255,.08);
-  border:1px solid #444;color:var(--nav-text);padding:10px 14px;
-  font-family:'DM Mono',monospace;font-size:12px;border-radius:2px}
-.nav-mobile-search input:focus{border-color:var(--gold)}
-.mob-subscribe{background:var(--gold) !important;color:var(--ink) !important;
-  margin:16px 24px;border-radius:2px;justify-content:center;
-  font-weight:600;width:calc(100% - 48px) !important;border-bottom:none !important}
+    /* Minimum 44×44 touch targets — WCAG 2.5.5 */
+    .dark-toggle {
+      min-width: 44px;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center
+    }
 
-/* ═══ RESPONSIVE BREAKPOINTS ════════════════════════ */
+    .breaking-close {
+      min-width: 44px;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center
+    }
 
-/* ── Mobile (< 768px) ──────────────────────────────── */
-@media(max-width:767px){
+    .admin-close-btn {
+      min-width: 44px;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center
+    }
 
-  /* Hamburger on, desktop nav links off */
-  .nav-hamburger{display:flex !important}
-  .nav-left,.nav-right{display:none !important}
+    .page-btn {
+      min-width: 44px;
+      min-height: 44px
+    }
 
-  /* Hero: single column stack */
-  .hero-grid{display:flex !important;flex-direction:column !important}
-  .hero-main,.hero-side-1,.hero-side-2{width:100%;border-right:none;
-    border-bottom:1px solid var(--divider)}
+    .section-tab {
+      min-height: 44px
+    }
 
-  /* Cards: 1 column */
-  .article-row{grid-template-columns:1fr !important}
+    .nw-btn {
+      min-height: 44px
+    }
 
-  /* Opinion: 1 column */
-  .opinion-row{grid-template-columns:1fr !important}
+    .btn-save {
+      min-height: 44px
+    }
 
-  /* Most-read: 1 column */
-  #mostReadContainer{grid-template-columns:1fr !important}
+    /* Footer link contrast fix — WCAG 1.4.3 (was #888 on dark bg ≈ 3.5:1, fails) */
+    footer .footer-links a {
+      color: #B0ADC8 !important
+    }
 
-  /* Masthead meta: centred stack */
-  .masthead-meta{flex-direction:column;gap:6px;text-align:center;align-items:center}
-  .masthead{padding:16px 16px 12px}
+    footer .footer-links a:hover {
+      color: var(--gold) !important
+    }
 
-  /* Paywall: stacked */
-  .paywall-plans,.paywall-cta{grid-template-columns:1fr !important}
-  .paywall-box{padding:24px 18px;margin-bottom:0;border-left:none;border-right:none;
-    border-bottom:none;border-radius:0}
-  .paywall-overlay{align-items:flex-end}
+    .footer-about {
+      color: #A89070
+    }
 
-  /* Admin panel full-width */
-  .admin-panel{width:100vw !important;max-width:100vw !important}
+    .footer-bottom {
+      color: #999
+    }
 
-  /* Forms stack */
-  .form-row{grid-template-columns:1fr !important}
-  .market-edit-grid{grid-template-columns:1fr !important}
+    /* ── Mobile hamburger button ──────────────────────── */
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      width: 44px;
+      height: 48px;
+      padding: 0 10px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      color: var(--nav-text);
+      flex-shrink: 0
+    }
 
-  /* Footer: full single column */
-  .footer-top{grid-template-columns:1fr !important}
-  .footer-about{max-width:100% !important}
-  .footer-bottom{flex-direction:column;gap:6px;text-align:center}
+    .nav-hamburger span {
+      display: block;
+      width: 20px;
+      height: 2px;
+      background: currentColor;
+      border-radius: 1px;
+      transition: transform .25s, opacity .25s
+    }
 
-  /* Padding reduction */
-  .main-wrapper{padding:20px 16px !important}
-  .hero-content{padding:18px 16px 20px}
-  .card-content{padding:14px}
+    .nav-hamburger[aria-expanded="true"] span:nth-child(1) {
+      transform: translateY(7px) rotate(45deg)
+    }
 
-  /* Markets: 2-col on mobile */
-  .markets-grid{grid-template-columns:repeat(2,1fr) !important}
+    .nav-hamburger[aria-expanded="true"] span:nth-child(2) {
+      opacity: 0;
+      transform: scaleX(0)
+    }
 
-  /* Section header wraps */
-  .section-header{flex-wrap:wrap;gap:6px}
+    .nav-hamburger[aria-expanded="true"] span:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg)
+    }
 
-  /* Archive filter wraps */
-  .archive-filter-bar{flex-wrap:wrap !important;gap:6px !important}
+    /* ── Mobile nav drawer ────────────────────────────── */
+    .nav-mobile-drawer {
+      display: none;
+      position: fixed;
+      top: 48px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--nav-bg);
+      z-index: 998;
+      overflow-y: auto;
+      border-top: 2px solid var(--gold)
+    }
 
-  /* Ticker slightly smaller */
-  .ticker-inner{gap:28px}
+    .nav-mobile-drawer.open {
+      display: block
+    }
 
-  /* Article page reading width */
-  .article-body{padding:0 !important}
-}
+    .nav-mobile-drawer a,
+    .nav-mobile-drawer button {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      padding: 14px 24px;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--nav-text);
+      border-bottom: 1px solid rgba(255, 255, 255, .07);
+      text-decoration: none;
+      min-height: 50px;
+      background: none;
+      border-left: none;
+      border-right: none;
+      border-top: none;
+      cursor: pointer
+    }
 
-/* ── Tablet (768px – 1024px) ───────────────────────── */
-@media(min-width:768px) and (max-width:1024px){
+    .nav-mobile-drawer a:hover,
+    .nav-mobile-drawer a:focus,
+    .nav-mobile-drawer button:hover,
+    .nav-mobile-drawer button:focus {
+      background: #0A1A10;
+      color: var(--gold)
+    }
 
-  /* 2-column cards */
-  .article-row{grid-template-columns:1fr 1fr !important}
-  .opinion-row{grid-template-columns:1fr 1fr !important}
-  #mostReadContainer{grid-template-columns:1fr 1fr !important}
+    .nav-mobile-drawer a.mob-active {
+      color: var(--gold)
+    }
 
-  /* Hero ratio tweak */
-  .hero-grid{grid-template-columns:3fr 2fr !important}
+    .nav-mobile-search {
+      padding: 12px 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, .07)
+    }
 
-  /* Wrapper padding */
-  .main-wrapper{padding:24px 20px}
+    .nav-mobile-search input {
+      width: 100%;
+      background: rgba(255, 255, 255, .08);
+      border: 1px solid #444;
+      color: var(--nav-text);
+      padding: 10px 14px;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      border-radius: 2px
+    }
 
-  /* Footer: 2-col */
-  .footer-top{grid-template-columns:1fr 1fr !important}
+    .nav-mobile-search input:focus {
+      border-color: var(--gold)
+    }
 
-  /* Reduce nav font on tablet */
-  .nav-link{font-size:10px !important;padding:0 10px !important}
-}
+    .mob-subscribe {
+      background: var(--gold) !important;
+      color: var(--ink) !important;
+      margin: 16px 24px;
+      border-radius: 2px;
+      justify-content: center;
+      font-weight: 600;
+      width: calc(100% - 48px) !important;
+      border-bottom: none !important
+    }
+
+    /* ═══ RESPONSIVE BREAKPOINTS ════════════════════════ */
+
+    /* ── Mobile (< 768px) ──────────────────────────────── */
+    @media(max-width:767px) {
+
+      /* Hamburger on, desktop nav links off */
+      .nav-hamburger {
+        display: flex !important
+      }
+
+      .nav-left,
+      .nav-right {
+        display: none !important
+      }
+
+      /* Hero: single column stack */
+      .hero-grid {
+        display: flex !important;
+        flex-direction: column !important
+      }
+
+      .hero-main,
+      .hero-side-1,
+      .hero-side-2 {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--divider)
+      }
+
+      /* Cards: 1 column */
+      .article-row {
+        grid-template-columns: 1fr !important
+      }
+
+      /* Opinion: 1 column */
+      .opinion-row {
+        grid-template-columns: 1fr !important
+      }
+
+      /* Most-read: 1 column */
+      #mostReadContainer {
+        grid-template-columns: 1fr !important
+      }
+
+      /* Masthead meta: centred stack */
+      .masthead-meta {
+        flex-direction: column;
+        gap: 6px;
+        text-align: center;
+        align-items: center
+      }
+
+      .masthead {
+        padding: 16px 16px 12px
+      }
+
+      /* Paywall: stacked */
+      .paywall-plans,
+      .paywall-cta {
+        grid-template-columns: 1fr !important
+      }
+
+      .paywall-box {
+        padding: 24px 18px;
+        margin-bottom: 0;
+        border-left: none;
+        border-right: none;
+        border-bottom: none;
+        border-radius: 0
+      }
+
+      .paywall-overlay {
+        align-items: flex-end
+      }
+
+      /* Admin panel full-width */
+      .admin-panel {
+        width: 100vw !important;
+        max-width: 100vw !important
+      }
+
+      /* Forms stack */
+      .form-row {
+        grid-template-columns: 1fr !important
+      }
+
+      .market-edit-grid {
+        grid-template-columns: 1fr !important
+      }
+
+      /* Footer: full single column */
+      .footer-top {
+        grid-template-columns: 1fr !important
+      }
+
+      .footer-about {
+        max-width: 100% !important
+      }
+
+      .footer-bottom {
+        flex-direction: column;
+        gap: 6px;
+        text-align: center
+      }
+
+      /* Padding reduction */
+      .main-wrapper {
+        padding: 20px 16px !important
+      }
+
+      .hero-content {
+        padding: 18px 16px 20px
+      }
+
+      .card-content {
+        padding: 14px
+      }
+
+      /* Markets: 2-col on mobile */
+      .markets-grid {
+        grid-template-columns: repeat(2, 1fr) !important
+      }
+
+      /* Section header wraps */
+      .section-header {
+        flex-wrap: wrap;
+        gap: 6px
+      }
+
+      /* Archive filter wraps */
+      .archive-filter-bar {
+        flex-wrap: wrap !important;
+        gap: 6px !important
+      }
+
+      /* Ticker slightly smaller */
+      .ticker-inner {
+        gap: 28px
+      }
+
+      /* Article page reading width */
+      .article-body {
+        padding: 0 !important
+      }
+    }
+
+    /* ── Tablet (768px – 1024px) ───────────────────────── */
+    @media(min-width:768px) and (max-width:1024px) {
+
+      /* 2-column cards */
+      .article-row {
+        grid-template-columns: 1fr 1fr !important
+      }
+
+      .opinion-row {
+        grid-template-columns: 1fr 1fr !important
+      }
+
+      #mostReadContainer {
+        grid-template-columns: 1fr 1fr !important
+      }
+
+      /* Hero ratio tweak */
+      .hero-grid {
+        grid-template-columns: 3fr 2fr !important
+      }
+
+      /* Wrapper padding */
+      .main-wrapper {
+        padding: 24px 20px
+      }
+
+      /* Footer: 2-col */
+      .footer-top {
+        grid-template-columns: 1fr 1fr !important
+      }
+
+      /* Reduce nav font on tablet */
+      .nav-link {
+        font-size: 10px !important;
+        padding: 0 10px !important
+      }
+    }
 
 
-/* ══════════════════════════════════════════════════════
+    /* ══════════════════════════════════════════════════════
    INLINE EDIT MODE — Squarespace-style
 ══════════════════════════════════════════════════════ */
 
-/* ── Floating Edit FAB ───────────────────────────────── */
-.ami-edit-fab{
-  position:fixed;bottom:80px;right:22px;z-index:8900;
-  background:var(--gold);color:var(--ink);
-  font-family:'DM Mono',monospace;font-size:11px;font-weight:700;
-  letter-spacing:.1em;text-transform:uppercase;
-  padding:11px 20px;border-radius:30px;cursor:pointer;
-  box-shadow:0 4px 24px rgba(0,0,0,.35);
-  transition:all .2s;border:none;
-  display:none;align-items:center;gap:8px;
-}
-.ami-edit-fab:hover{background:var(--gold-light);transform:translateY(-2px);box-shadow:0 6px 28px rgba(0,0,0,.4)}
-.ami-edit-fab.active{background:var(--terra);color:white}
-.ami-edit-fab .fab-dot{width:7px;height:7px;border-radius:50%;background:rgba(0,0,0,.3);transition:background .2s}
-.ami-edit-fab.active .fab-dot{background:rgba(255,255,255,.4);animation:fab-pulse 1.5s infinite}
-@keyframes fab-pulse{0%,100%{opacity:1}50%{opacity:.3}}
+    /* ── Floating Edit FAB ───────────────────────────────── */
+    .ami-edit-fab {
+      position: fixed;
+      bottom: 80px;
+      right: 22px;
+      z-index: 8900;
+      background: var(--gold);
+      color: var(--ink);
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 11px 20px;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, .35);
+      transition: all .2s;
+      border: none;
+      display: none;
+      align-items: center;
+      gap: 8px;
+    }
 
-/* ── Save Bar ─────────────────────────────────────────── */
-.ami-edit-bar{
-  position:fixed;bottom:0;left:0;right:0;z-index:8901;
-  background:#060F09;border-top:3px solid var(--gold);
-  padding:10px 24px;display:none;align-items:center;gap:16px;
-  font-family:'DM Mono',monospace;font-size:11px;
-  box-shadow:0 -4px 24px rgba(0,0,0,.4);
-  transform:translateY(100%);transition:transform .25s;
-}
-.ami-edit-bar.visible{display:flex;transform:translateY(0)}
-.ami-edit-bar-label{color:#C9A84C;letter-spacing:.12em;text-transform:uppercase;flex:1}
-.ami-edit-pending{color:#F44336;font-size:10px;letter-spacing:.08em}
-.ami-edit-pending.none{color:#2E9B5E}
-.ami-save-btn{background:var(--gold);color:var(--ink);font-family:'DM Mono',monospace;
-  font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
-  padding:8px 18px;border-radius:2px;border:none;cursor:pointer}
-.ami-save-btn:hover{background:var(--gold-light)}
-.ami-exit-btn{background:transparent;border:1px solid #1A3020;color:#888;
-  font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;
-  padding:8px 14px;border-radius:2px;cursor:pointer;transition:all .2s}
-.ami-exit-btn:hover{border-color:#C9A84C;color:#C9A84C}
+    .ami-edit-fab:hover {
+      background: var(--gold-light);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 28px rgba(0, 0, 0, .4)
+    }
 
-/* ── Editable elements ───────────────────────────────── */
-body.ami-edit-mode [data-editable]{
-  cursor:text;
-  border-radius:3px;
-  transition:outline .15s,background .15s;
-  position:relative;
-}
-body.ami-edit-mode [data-editable]:not([data-editable="image"])::before{
-  content:'✏';
-  position:absolute;
-  top:-10px;right:-4px;
-  font-size:9px;
-  background:var(--gold);color:var(--ink);
-  padding:1px 4px;border-radius:2px;
-  opacity:0;transition:opacity .15s;
-  pointer-events:none;
-  font-style:normal;
-}
-body.ami-edit-mode [data-editable]:hover::before{opacity:1}
-body.ami-edit-mode [data-editable]:hover{
-  outline:2px dashed #C9A84C;
-  outline-offset:4px;
-}
-body.ami-edit-mode [data-editable]:focus,[data-editable]:focus-within{
-  outline:2px solid #C9A84C !important;
-  outline-offset:4px;
-  background:rgba(201,168,76,.05);
-}
-body.ami-edit-mode [data-editable].saved-flash{
-  outline:2px solid #2E9B5E !important;
-  background:rgba(76,175,80,.06);
-  transition:outline .1s,background .1s;
-}
+    .ami-edit-fab.active {
+      background: var(--terra);
+      color: white
+    }
 
-/* ── Image overlay ───────────────────────────────────── */
-body.ami-edit-mode [data-editable="image"]{
-  cursor:pointer !important;
-  position:relative;
-  display:block;
-}
-body.ami-edit-mode [data-editable="image"]::after{
-  content:'📷  Replace Image';
-  position:absolute;inset:0;
-  background:rgba(15,10,6,.72);
-  color:#C9A84C;
-  font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.12em;
-  text-transform:uppercase;
-  display:flex;align-items:center;justify-content:center;
-  opacity:0;transition:opacity .2s;
-  pointer-events:none;
-}
-body.ami-edit-mode [data-editable="image"]:hover::after{opacity:1}
+    .ami-edit-fab .fab-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, .3);
+      transition: background .2s
+    }
 
-/* ── Article card "Edit" button ─────────────────────── */
-.card-edit-overlay{
-  display:none;
-  position:absolute;top:8px;right:8px;z-index:20;
-  background:var(--gold);color:var(--ink);
-  font-family:'DM Mono',monospace;font-size:9px;font-weight:700;
-  letter-spacing:.1em;text-transform:uppercase;
-  padding:4px 10px;border-radius:2px;border:none;cursor:pointer;
-  box-shadow:0 2px 8px rgba(0,0,0,.3);
-}
-body.ami-edit-mode .card-edit-overlay{display:flex;align-items:center;gap:4px}
-body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
-.ami-edit-mode .hero-side-1,.ami-edit-mode .hero-side-2{position:relative}
+    .ami-edit-fab.active .fab-dot {
+      background: rgba(255, 255, 255, .4);
+      animation: fab-pulse 1.5s infinite
+    }
 
-/* ── Image replace dialog ────────────────────────────── */
-.ami-img-dialog{
-  display:none;position:fixed;inset:0;z-index:9999;
-  background:rgba(0,0,0,.7);backdrop-filter:blur(4px);
-  align-items:center;justify-content:center;
-}
-.ami-img-dialog.open{display:flex}
-.ami-img-dialog-box{
-  background:#0A1A10;border:1px solid #1A3020;border-top:4px solid #C9A84C;
-  padding:28px;max-width:480px;width:90%;border-radius:2px;
-  box-shadow:0 8px 40px rgba(0,0,0,.6);
-}
-.ami-img-dialog-title{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.15em;
-  text-transform:uppercase;color:#C9A84C;margin-bottom:16px}
-.ami-img-dialog-preview{width:100%;height:140px;object-fit:cover;border-radius:2px;
-  margin-bottom:14px;display:none;border:1px solid #1A3020}
-.ami-img-dialog-tabs{display:flex;gap:1px;margin-bottom:14px;background:#060F09;border-radius:2px;overflow:hidden}
-.ami-img-tab{flex:1;padding:8px;font-family:'DM Mono',monospace;font-size:10px;
-  letter-spacing:.1em;text-transform:uppercase;color:#888;cursor:pointer;
-  background:transparent;border:none;transition:all .2s;text-align:center}
-.ami-img-tab.active{background:#1A3020;color:#C9A84C}
-.ami-img-panel{display:none}.ami-img-panel.active{display:block}
-.ami-img-url{width:100%;background:#060F09;border:1px solid #1A3020;color:#EDE5D5;
-  padding:9px 12px;font-family:'DM Mono',monospace;font-size:12px;border-radius:2px;
-  outline:none;margin-bottom:10px}
-.ami-img-url:focus{border-color:#C9A84C}
-.ami-img-upload-area{border:2px dashed #1A3020;border-radius:2px;padding:24px;
-  text-align:center;cursor:pointer;position:relative;transition:border-color .2s;margin-bottom:10px}
-.ami-img-upload-area:hover{border-color:#C9A84C}
-.ami-img-upload-area input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
-.ami-img-upload-label{font-family:'DM Mono',monospace;font-size:10px;color:#888;letter-spacing:.1em;text-transform:uppercase}
-.ami-img-dialog-actions{display:flex;gap:8px;margin-top:4px}
-.ami-img-apply{flex:1;background:#C9A84C;color:#0A1A10;font-family:'DM Mono',monospace;
-  font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
-  padding:10px;border:none;border-radius:2px;cursor:pointer}
-.ami-img-apply:hover{background:#F9C53D}
-.ami-img-cancel{background:transparent;border:1px solid #1A3020;color:#888;
-  font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;
-  padding:10px 14px;border-radius:2px;cursor:pointer;transition:all .2s}
-.ami-img-cancel:hover{border-color:#C9A84C;color:#C9A84C}
+    @keyframes fab-pulse {
 
-/* ── Rich text toolbar ───────────────────────────────── */
-.ami-rte-bar{
-  display:none;
-  position:fixed;top:60px;left:50%;transform:translateX(-50%);z-index:9000;
-  background:#0A1A10;border:1px solid #1A3020;border-radius:4px;
-  padding:4px 6px;gap:2px;box-shadow:0 4px 20px rgba(0,0,0,.5);
-  align-items:center;
-  font-family:'DM Mono',monospace;font-size:11px;
-}
-.ami-rte-bar.visible{display:flex}
-.ami-rte-btn{background:none;border:none;color:#888;padding:5px 8px;border-radius:2px;
-  cursor:pointer;font-size:14px;line-height:1;transition:all .2s;min-width:30px;text-align:center}
-.ami-rte-btn:hover{background:#1A3020;color:#C9A84C}
-.ami-rte-sep{width:1px;height:18px;background:#1A3020;margin:0 3px}
+      0%,
+      100% {
+        opacity: 1
+      }
 
-.paywall-overlay,.paywall-blur{display:none!important}.lock-icon{display:none!important}.badge-locked{display:none!important}
-</style>
-<style>
-.static-page { max-width: 860px; margin: 0 auto; padding: 56px 24px 80px; }
-.static-page h1 { font-family:'Playfair Display',serif; font-size:clamp(28px,5vw,48px); font-weight:800; color:var(--text); margin-bottom:8px; }
-.page-subtitle { font-family:'DM Mono',monospace; font-size:11px; letter-spacing:.15em; text-transform:uppercase; color:var(--text-soft); margin-bottom:40px; padding-bottom:18px; border-bottom:2px solid var(--gold); }
-.static-page h2 { font-family:'Playfair Display',serif; font-size:22px; font-weight:700; color:var(--text); margin:40px 0 12px; }
-.static-page p { font-size:16px; line-height:1.8; color:var(--text-soft); margin-bottom:18px; }
-.static-page ul { padding-left:24px; margin-bottom:18px; }
-.static-page ul li { font-size:16px; line-height:1.8; color:var(--text-soft); margin-bottom:6px; }
-.static-page a { color:var(--terra); }
-.static-page a:hover { color:var(--gold); }
-.cms-edit-hint { display:none; font-family:'DM Mono',monospace; font-size:10px; color:var(--text-soft); text-align:right; margin-bottom:16px; }
-.plan-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; margin:32px 0; }
-@media(max-width:600px){ .plan-grid{grid-template-columns:1fr;} }
-.plan-box { border:1px solid var(--divider); border-top:4px solid var(--gold); background:var(--card-bg); padding:32px 28px; }
-.plan-box.featured { border-top-color:var(--terra); }
-.plan-box .pname { font-family:'DM Mono',monospace; font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--text-soft); margin-bottom:8px; }
-.plan-box .pprice { font-family:'Playfair Display',serif; font-size:42px; font-weight:800; color:var(--text); line-height:1; }
-.plan-box .pper { font-family:'DM Mono',monospace; font-size:12px; color:var(--text-soft); margin-bottom:20px; }
-.plan-box ul { list-style:none; padding:0; margin-bottom:24px; }
-.plan-box ul li::before { content:'✓ '; color:var(--gold); font-weight:700; }
-.plan-box .plan-cta { display:block; background:var(--gold); color:var(--ink); font-family:'DM Mono',monospace; font-size:12px; font-weight:500; letter-spacing:.08em; text-transform:uppercase; padding:12px 24px; text-align:center; border-radius:2px; transition:background .2s; }
-.plan-box .plan-cta:hover { background:var(--gold-light); }
-.contact-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; margin:32px 0; }
-@media(max-width:600px){ .contact-grid{grid-template-columns:1fr;} }
-.contact-card { background:var(--card-bg); border:1px solid var(--divider); border-left:4px solid var(--gold); padding:24px; }
-.contact-card .cc-label { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.15em; text-transform:uppercase; color:var(--text-soft); margin-bottom:8px; }
-.contact-card .cc-val { font-family:'Playfair Display',serif; font-size:17px; color:var(--text); }
-.contact-form { background:var(--card-bg); border:1px solid var(--divider); padding:32px; margin-top:32px; border-top:3px solid var(--gold); }
-.contact-form label { display:block; font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--text-soft); margin-bottom:6px; margin-top:18px; }
-.contact-form input, .contact-form textarea, .contact-form select { width:100%; background:var(--bg); border:1px solid var(--divider); color:var(--text); padding:10px 14px; font-family:'Spectral',Georgia,serif; font-size:15px; outline:none; border-radius:2px; }
-.contact-form input:focus, .contact-form textarea:focus { border-color:var(--gold); }
-.contact-form textarea { height:140px; resize:vertical; }
-.contact-form .cf-submit { margin-top:22px; background:var(--gold); color:var(--ink); font-family:'DM Mono',monospace; font-size:12px; font-weight:500; letter-spacing:.1em; text-transform:uppercase; padding:12px 28px; border-radius:2px; cursor:pointer; border:none; transition:background .2s; }
-.contact-form .cf-submit:hover { background:var(--gold-light); }
-.stat-row { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin:32px 0; }
-@media(max-width:600px){ .stat-row{grid-template-columns:1fr 1fr;} }
-.stat-box { text-align:center; background:var(--card-bg); border:1px solid var(--divider); border-top:3px solid var(--gold); padding:28px; }
-.stat-num { font-family:'Playfair Display',serif; font-size:36px; font-weight:800; color:var(--gold); }
-.stat-lbl { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.15em; text-transform:uppercase; color:var(--text-soft); margin-top:6px; }
-.team-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:24px; margin:32px 0; }
-.team-card { background:var(--card-bg); border:1px solid var(--divider); padding:24px; text-align:center; }
-.team-avatar { width:64px; height:64px; border-radius:50%; background:var(--terra); color:white; display:flex; align-items:center; justify-content:center; font-family:'Playfair Display',serif; font-size:22px; font-weight:800; margin:0 auto 14px; }
-.team-name { font-family:'Playfair Display',serif; font-size:16px; font-weight:600; color:var(--text); margin-bottom:4px; }
-.team-role { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-soft); }
-.careers-card { background:var(--card-bg); border:1px solid var(--divider); border-left:4px solid var(--terra); padding:28px; margin-bottom:16px; }
-.careers-card .cj-title { font-family:'Playfair Display',serif; font-size:20px; font-weight:700; color:var(--text); margin-bottom:6px; }
-.careers-card .cj-meta { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-soft); margin-bottom:14px; }
-.careers-card .cj-apply { display:inline-block; background:var(--terra); color:white; font-family:'DM Mono',monospace; font-size:11px; letter-spacing:.08em; text-transform:uppercase; padding:8px 18px; border-radius:2px; margin-top:14px; transition:background .2s; }
-.careers-card .cj-apply:hover { background:var(--terra-dark); }
+      50% {
+        opacity: .3
+      }
+    }
 
-/* ── Most Read items ──────────────────────────────────────── */
-.mr-item{display:flex;align-items:flex-start;gap:14px;background:var(--surface);padding:16px;cursor:pointer;transition:background .15s}
-.mr-item:hover{background:var(--card-bg,var(--surface))}
-.mr-rank{font-family:'Playfair Display',serif;font-size:26px;font-weight:800;color:var(--divider);line-height:1;flex-shrink:0;width:28px;text-align:right}
-.mr-body{flex:1;min-width:0}
-.mr-tag{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--green,#2E9B5E);margin-bottom:5px}
-.mr-headline{font-family:'Playfair Display',serif;font-size:14px;line-height:1.35;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.mr-date{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);margin-top:5px}
-</style>
+    /* ── Save Bar ─────────────────────────────────────────── */
+    .ami-edit-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 8901;
+      background: #060F09;
+      border-top: 3px solid var(--gold);
+      padding: 10px 24px;
+      display: none;
+      align-items: center;
+      gap: 16px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      box-shadow: 0 -4px 24px rgba(0, 0, 0, .4);
+      transform: translateY(100%);
+      transition: transform .25s;
+    }
+
+    .ami-edit-bar.visible {
+      display: flex;
+      transform: translateY(0)
+    }
+
+    .ami-edit-bar-label {
+      color: #C9A84C;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      flex: 1
+    }
+
+    .ami-edit-pending {
+      color: #F44336;
+      font-size: 10px;
+      letter-spacing: .08em
+    }
+
+    .ami-edit-pending.none {
+      color: #2E9B5E
+    }
+
+    .ami-save-btn {
+      background: var(--gold);
+      color: var(--ink);
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 8px 18px;
+      border-radius: 2px;
+      border: none;
+      cursor: pointer
+    }
+
+    .ami-save-btn:hover {
+      background: var(--gold-light)
+    }
+
+    .ami-exit-btn {
+      background: transparent;
+      border: 1px solid #1A3020;
+      color: #888;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 8px 14px;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all .2s
+    }
+
+    .ami-exit-btn:hover {
+      border-color: #C9A84C;
+      color: #C9A84C
+    }
+
+    /* ── Editable elements ───────────────────────────────── */
+    body.ami-edit-mode [data-editable] {
+      cursor: text;
+      border-radius: 3px;
+      transition: outline .15s, background .15s;
+      position: relative;
+    }
+
+    body.ami-edit-mode [data-editable]:not([data-editable="image"])::before {
+      content: '✏';
+      position: absolute;
+      top: -10px;
+      right: -4px;
+      font-size: 9px;
+      background: var(--gold);
+      color: var(--ink);
+      padding: 1px 4px;
+      border-radius: 2px;
+      opacity: 0;
+      transition: opacity .15s;
+      pointer-events: none;
+      font-style: normal;
+    }
+
+    body.ami-edit-mode [data-editable]:hover::before {
+      opacity: 1
+    }
+
+    body.ami-edit-mode [data-editable]:hover {
+      outline: 2px dashed #C9A84C;
+      outline-offset: 4px;
+    }
+
+    body.ami-edit-mode [data-editable]:focus,
+    [data-editable]:focus-within {
+      outline: 2px solid #C9A84C !important;
+      outline-offset: 4px;
+      background: rgba(201, 168, 76, .05);
+    }
+
+    body.ami-edit-mode [data-editable].saved-flash {
+      outline: 2px solid #2E9B5E !important;
+      background: rgba(76, 175, 80, .06);
+      transition: outline .1s, background .1s;
+    }
+
+    /* ── Image overlay ───────────────────────────────────── */
+    body.ami-edit-mode [data-editable="image"] {
+      cursor: pointer !important;
+      position: relative;
+      display: block;
+    }
+
+    body.ami-edit-mode [data-editable="image"]::after {
+      content: '📷  Replace Image';
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 10, 6, .72);
+      color: #C9A84C;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity .2s;
+      pointer-events: none;
+    }
+
+    body.ami-edit-mode [data-editable="image"]:hover::after {
+      opacity: 1
+    }
+
+    /* ── Article card "Edit" button ─────────────────────── */
+    .card-edit-overlay {
+      display: none;
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      z-index: 20;
+      background: var(--gold);
+      color: var(--ink);
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 2px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, .3);
+    }
+
+    body.ami-edit-mode .card-edit-overlay {
+      display: flex;
+      align-items: center;
+      gap: 4px
+    }
+
+    body.ami-edit-mode .article-card,
+    .ami-edit-mode .hero-main,
+    .ami-edit-mode .hero-side-1,
+    .ami-edit-mode .hero-side-2 {
+      position: relative
+    }
+
+    /* ── Image replace dialog ────────────────────────────── */
+    .ami-img-dialog {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(0, 0, 0, .7);
+      backdrop-filter: blur(4px);
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ami-img-dialog.open {
+      display: flex
+    }
+
+    .ami-img-dialog-box {
+      background: #0A1A10;
+      border: 1px solid #1A3020;
+      border-top: 4px solid #C9A84C;
+      padding: 28px;
+      max-width: 480px;
+      width: 90%;
+      border-radius: 2px;
+      box-shadow: 0 8px 40px rgba(0, 0, 0, .6);
+    }
+
+    .ami-img-dialog-title {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: #C9A84C;
+      margin-bottom: 16px
+    }
+
+    .ami-img-dialog-preview {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 2px;
+      margin-bottom: 14px;
+      display: none;
+      border: 1px solid #1A3020
+    }
+
+    .ami-img-dialog-tabs {
+      display: flex;
+      gap: 1px;
+      margin-bottom: 14px;
+      background: #060F09;
+      border-radius: 2px;
+      overflow: hidden
+    }
+
+    .ami-img-tab {
+      flex: 1;
+      padding: 8px;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: #888;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      transition: all .2s;
+      text-align: center
+    }
+
+    .ami-img-tab.active {
+      background: #1A3020;
+      color: #C9A84C
+    }
+
+    .ami-img-panel {
+      display: none
+    }
+
+    .ami-img-panel.active {
+      display: block
+    }
+
+    .ami-img-url {
+      width: 100%;
+      background: #060F09;
+      border: 1px solid #1A3020;
+      color: #EDE5D5;
+      padding: 9px 12px;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      border-radius: 2px;
+      outline: none;
+      margin-bottom: 10px
+    }
+
+    .ami-img-url:focus {
+      border-color: #C9A84C
+    }
+
+    .ami-img-upload-area {
+      border: 2px dashed #1A3020;
+      border-radius: 2px;
+      padding: 24px;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+      transition: border-color .2s;
+      margin-bottom: 10px
+    }
+
+    .ami-img-upload-area:hover {
+      border-color: #C9A84C
+    }
+
+    .ami-img-upload-area input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%
+    }
+
+    .ami-img-upload-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: #888;
+      letter-spacing: .1em;
+      text-transform: uppercase
+    }
+
+    .ami-img-dialog-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px
+    }
+
+    .ami-img-apply {
+      flex: 1;
+      background: #C9A84C;
+      color: #0A1A10;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 10px;
+      border: none;
+      border-radius: 2px;
+      cursor: pointer
+    }
+
+    .ami-img-apply:hover {
+      background: #F9C53D
+    }
+
+    .ami-img-cancel {
+      background: transparent;
+      border: 1px solid #1A3020;
+      color: #888;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 10px 14px;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all .2s
+    }
+
+    .ami-img-cancel:hover {
+      border-color: #C9A84C;
+      color: #C9A84C
+    }
+
+    /* ── Rich text toolbar ───────────────────────────────── */
+    .ami-rte-bar {
+      display: none;
+      position: fixed;
+      top: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9000;
+      background: #0A1A10;
+      border: 1px solid #1A3020;
+      border-radius: 4px;
+      padding: 4px 6px;
+      gap: 2px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, .5);
+      align-items: center;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+    }
+
+    .ami-rte-bar.visible {
+      display: flex
+    }
+
+    .ami-rte-btn {
+      background: none;
+      border: none;
+      color: #888;
+      padding: 5px 8px;
+      border-radius: 2px;
+      cursor: pointer;
+      font-size: 14px;
+      line-height: 1;
+      transition: all .2s;
+      min-width: 30px;
+      text-align: center
+    }
+
+    .ami-rte-btn:hover {
+      background: #1A3020;
+      color: #C9A84C
+    }
+
+    .ami-rte-sep {
+      width: 1px;
+      height: 18px;
+      background: #1A3020;
+      margin: 0 3px
+    }
+
+    .paywall-overlay,
+    .paywall-blur {
+      display: none !important
+    }
+
+    .lock-icon {
+      display: none !important
+    }
+
+    .badge-locked {
+      display: none !important
+    }
+  </style>
+  <style>
+    .static-page {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 56px 24px 80px;
+    }
+
+    .static-page h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(28px, 5vw, 48px);
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .page-subtitle {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      margin-bottom: 40px;
+      padding-bottom: 18px;
+      border-bottom: 2px solid var(--gold);
+    }
+
+    .static-page h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      margin: 40px 0 12px;
+    }
+
+    .static-page p {
+      font-size: 16px;
+      line-height: 1.8;
+      color: var(--text-soft);
+      margin-bottom: 18px;
+    }
+
+    .static-page ul {
+      padding-left: 24px;
+      margin-bottom: 18px;
+    }
+
+    .static-page ul li {
+      font-size: 16px;
+      line-height: 1.8;
+      color: var(--text-soft);
+      margin-bottom: 6px;
+    }
+
+    .static-page a {
+      color: var(--terra);
+    }
+
+    .static-page a:hover {
+      color: var(--gold);
+    }
+
+    .cms-edit-hint {
+      display: none;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--text-soft);
+      text-align: right;
+      margin-bottom: 16px;
+    }
+
+    .plan-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin: 32px 0;
+    }
+
+    @media(max-width:600px) {
+      .plan-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .plan-box {
+      border: 1px solid var(--divider);
+      border-top: 4px solid var(--gold);
+      background: var(--card-bg);
+      padding: 32px 28px;
+    }
+
+    .plan-box.featured {
+      border-top-color: var(--terra);
+    }
+
+    .plan-box .pname {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      margin-bottom: 8px;
+    }
+
+    .plan-box .pprice {
+      font-family: 'Playfair Display', serif;
+      font-size: 42px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .plan-box .pper {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--text-soft);
+      margin-bottom: 20px;
+    }
+
+    .plan-box ul {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 24px;
+    }
+
+    .plan-box ul li::before {
+      content: '✓ ';
+      color: var(--gold);
+      font-weight: 700;
+    }
+
+    .plan-box .plan-cta {
+      display: block;
+      background: var(--gold);
+      color: var(--ink);
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 12px 24px;
+      text-align: center;
+      border-radius: 2px;
+      transition: background .2s;
+    }
+
+    .plan-box .plan-cta:hover {
+      background: var(--gold-light);
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin: 32px 0;
+    }
+
+    @media(max-width:600px) {
+      .contact-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .contact-card {
+      background: var(--card-bg);
+      border: 1px solid var(--divider);
+      border-left: 4px solid var(--gold);
+      padding: 24px;
+    }
+
+    .contact-card .cc-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      margin-bottom: 8px;
+    }
+
+    .contact-card .cc-val {
+      font-family: 'Playfair Display', serif;
+      font-size: 17px;
+      color: var(--text);
+    }
+
+    .contact-form {
+      background: var(--card-bg);
+      border: 1px solid var(--divider);
+      padding: 32px;
+      margin-top: 32px;
+      border-top: 3px solid var(--gold);
+    }
+
+    .contact-form label {
+      display: block;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      margin-bottom: 6px;
+      margin-top: 18px;
+    }
+
+    .contact-form input,
+    .contact-form textarea,
+    .contact-form select {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--divider);
+      color: var(--text);
+      padding: 10px 14px;
+      font-family: 'Spectral', Georgia, serif;
+      font-size: 15px;
+      outline: none;
+      border-radius: 2px;
+    }
+
+    .contact-form input:focus,
+    .contact-form textarea:focus {
+      border-color: var(--gold);
+    }
+
+    .contact-form textarea {
+      height: 140px;
+      resize: vertical;
+    }
+
+    .contact-form .cf-submit {
+      margin-top: 22px;
+      background: var(--gold);
+      color: var(--ink);
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 12px 28px;
+      border-radius: 2px;
+      cursor: pointer;
+      border: none;
+      transition: background .2s;
+    }
+
+    .contact-form .cf-submit:hover {
+      background: var(--gold-light);
+    }
+
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin: 32px 0;
+    }
+
+    @media(max-width:600px) {
+      .stat-row {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .stat-box {
+      text-align: center;
+      background: var(--card-bg);
+      border: 1px solid var(--divider);
+      border-top: 3px solid var(--gold);
+      padding: 28px;
+    }
+
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--gold);
+    }
+
+    .stat-lbl {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      margin-top: 6px;
+    }
+
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 24px;
+      margin: 32px 0;
+    }
+
+    .team-card {
+      background: var(--card-bg);
+      border: 1px solid var(--divider);
+      padding: 24px;
+      text-align: center;
+    }
+
+    .team-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--terra);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 800;
+      margin: 0 auto 14px;
+    }
+
+    .team-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .team-role {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+    }
+
+    .careers-card {
+      background: var(--card-bg);
+      border: 1px solid var(--divider);
+      border-left: 4px solid var(--terra);
+      padding: 28px;
+      margin-bottom: 16px;
+    }
+
+    .careers-card .cj-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .careers-card .cj-meta {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      margin-bottom: 14px;
+    }
+
+    .careers-card .cj-apply {
+      display: inline-block;
+      background: var(--terra);
+      color: white;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 8px 18px;
+      border-radius: 2px;
+      margin-top: 14px;
+      transition: background .2s;
+    }
+
+    .careers-card .cj-apply:hover {
+      background: var(--terra-dark);
+    }
+
+    /* ── Most Read items ──────────────────────────────────────── */
+    .mr-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      background: var(--surface);
+      padding: 16px;
+      cursor: pointer;
+      transition: background .15s
+    }
+
+    .mr-item:hover {
+      background: var(--card-bg, var(--surface))
+    }
+
+    .mr-rank {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--divider);
+      line-height: 1;
+      flex-shrink: 0;
+      width: 28px;
+      text-align: right
+    }
+
+    .mr-body {
+      flex: 1;
+      min-width: 0
+    }
+
+    .mr-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--green, #2E9B5E);
+      margin-bottom: 5px
+    }
+
+    .mr-headline {
+      font-family: 'Playfair Display', serif;
+      font-size: 14px;
+      line-height: 1.35;
+      color: var(--text);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden
+    }
+
+    .mr-date {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--text-soft);
+      margin-top: 5px
+    }
+  </style>
 </head>
+
 <body>
 
-<div class="ticker-bar"><div class="ticker-inner">
-  <span class="ticker-item"><span class="sym">African Market Intelligence</span>&nbsp;·&nbsp;Pan-African Financial News&nbsp;·&nbsp;54 Markets Covered</span>
-</div></div>
-
-<nav class="top-nav" aria-label="Main navigation">
-  <button class="nav-hamburger" id="navHamburger" aria-expanded="false" aria-controls="navMobileDrawer" aria-label="Open navigation menu" onclick="toggleMobileNav()"><span></span><span></span><span></span></button><div class="nav-left">
-    <a href="index.html" class="nav-link" id="nav-home">Home</a>
-    <a href="markets.html" class="nav-link" id="nav-markets">Markets</a>
-    <a href="politics.html" class="nav-link" id="nav-politics">Politics</a>
-    <a href="economy.html" class="nav-link" id="nav-economy">Economy</a>
-    <a href="energy.html" class="nav-link" id="nav-energy">Energy</a>
-    <a href="technology.html" class="nav-link" id="nav-technology">Tech</a>
-    <a href="opinion.html" class="nav-link" id="nav-opinion">Opinion</a>
-    <a href="deals.html"    class="nav-link" id="nav-deals">Deals</a>
-    <a href="archive.html" class="nav-link" id="nav-archive">Archive</a>
-  </div>
-  <div class="nav-right">
-    <input class="nav-search" type="text" placeholder="Search AMI…" oninput="if(this.value)window.location.href='index.html?q='+encodeURIComponent(this.value)">
-    <a href="about.html" class="nav-link" id="nav-about">About</a>
-    <a href="membership.html" class="nav-link" id="nav-membership">Membership</a>
-    <a href="contact.html" class="nav-link" id="nav-contact">Contact</a>
-    <button class="dark-toggle" onclick="toggleDark()" id="themeBtn" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
-    <a href="membership.html" class="btn-subscribe">Subscribe</a>
-  </div>
-</nav>
-
-<!-- ═══ MOBILE NAV DRAWER ════════════════════════════ -->
-<div class="nav-mobile-drawer" id="navMobileDrawer"
-     role="dialog" aria-modal="true"
-     aria-label="Navigation menu" aria-hidden="true">
-  <div class="nav-mobile-search">
-    <input type="search" placeholder="Search AMI…" aria-label="Search articles"
-           oninput="typeof searchArticles==='function'&&searchArticles(this.value)">
-  </div>
-  <a href="index.html">Home</a>
-  <a href="markets.html">Markets</a>
-  <a href="politics.html">Politics</a>
-  <a href="economy.html">Economy</a>
-  <a href="energy.html">Energy</a>
-  <a href="technology.html">Technology</a>
-  <a href="opinion.html">Opinion</a>
-  <a href="deals.html">Deals</a>
-  <a href="archive.html">Archive</a>
-  <a href="about.html">About</a>
-  <a href="membership.html">Membership</a>
-  <a href="contact.html">Contact</a>
-  <a href="membership.html" class="mob-subscribe">Subscribe →</a>
-</div>
-
-
-<header class="masthead" role="banner">
-  <div class="masthead-name"><a href="index.html" style="color:inherit">African Market <span>Intelligence</span></a></div>
-  <div class="masthead-tagline">The Continent's Premium Financial &amp; Business Publication</div>
-  <div class="masthead-meta">
-    <span id="mastDate"></span>
-    <span class="edition-badge">Pan-African Edition</span>
-    <span>Est. 2024 · Nairobi · Lagos · Cairo · Johannesburg</span>
-  </div>
-</header>
-<div class="static-page">
-  <h1 id="page-title-display" data-editable="text" data-cms-type="page" data-page-name="careers" data-page-field="title">Careers at AMI</h1>
-  <div class="page-subtitle" id="page-subtitle-display" data-editable="text" data-cms-type="page" data-page-name="careers" data-page-field="subtitle"><!-- CMS subtitle --></div>
-  <div id="page-body-display" data-editable="richtext" data-cms-type="page" data-page-name="careers" data-page-field="body">
-<p>African Market Intelligence is looking for talented journalists, analysts, and technologists who share our mission: to provide the continent with world-class financial intelligence.</p>
-<h2>Open Positions</h2>
-<div class="careers-card">
-  <div class="cj-title">Senior Markets Reporter</div>
-  <div class="cj-meta">Remote (Africa-based) · Full-time · Markets Desk</div>
-  <p>We are seeking an experienced financial journalist to cover African equity markets, currencies, and commodities. 4+ years covering financial markets required.</p>
-  <a href="mailto:careers@africanmarketintel.com?subject=Senior Markets Reporter Application" class="cj-apply">Apply Now →</a>
-</div>
-<div class="careers-card">
-  <div class="cj-title">East Africa Correspondent</div>
-  <div class="cj-meta">Nairobi, Kenya · Full-time · East Africa Bureau</div>
-  <p>Based in Nairobi, covering business and economic developments across Kenya, Ethiopia, Tanzania, and Uganda.</p>
-  <a href="mailto:careers@africanmarketintel.com?subject=East Africa Correspondent Application" class="cj-apply">Apply Now →</a>
-</div>
-<h2>Working at AMI</h2>
-<ul>
-  <li>Competitive salary benchmarked to international financial journalism standards</li>
-  <li>Fully remote with flexible working hours</li>
-  <li>Annual professional development budget</li>
-  <li>Editorial independence — we report without fear or favour</li>
-</ul>
-<p>Send speculative applications to <a href="mailto:careers@africanmarketintel.com">careers@africanmarketintel.com</a>.</p>
-  </div>
-</div>
-<footer>
-  <div class="footer-inner">
-    <div class="footer-top">
-      <div>
-        <div class="footer-brand">African Market Intelligence</div>
-        <p class="footer-about">The continent's most trusted source for financial news and business intelligence across Africa's 54 markets.</p>
-      </div>
-      <div>
-        <div class="footer-col-title" id="footerCol1Title" data-editable="text" data-cms-type="setting" data-cms-key="footer_col1_title">Sections</div>
-        <ul class="footer-links" id="footerCol1Links">
-          <li><a href="markets.html">Markets</a></li>
-          <li><a href="economy.html">Economy</a></li>
-          <li><a href="politics.html">Politics</a></li>
-          <li><a href="energy.html">Energy</a></li>
-          <li><a href="technology.html">Technology</a></li>
-          <li><a href="opinion.html">Opinion</a></li>
-        </ul>
-      </div>
-      <div>
-        <div class="footer-col-title" id="footerCol2Title" data-editable="text" data-cms-type="setting" data-cms-key="footer_col2_title">Regions</div>
-        <ul class="footer-links" id="footerCol2Links">
-          <li><a href="west-africa.html">West Africa</a></li>
-          <li><a href="east-africa.html">East Africa</a></li>
-          <li><a href="north-africa.html">North Africa</a></li>
-          <li><a href="southern-africa.html">Southern Africa</a></li>
-        </ul>
-      </div>
-      <div>
-        <div class="footer-col-title" id="footerCol3Title" data-editable="text" data-cms-type="setting" data-cms-key="footer_col3_title">Company</div>
-        <ul class="footer-links" id="footerCol3Links">
-          <li><a href="about.html">About AMI</a></li>
-          <li><a href="membership.html">Membership</a></li>
-          <li><a href="careers.html">Careers</a></li>
-          <li><a href="contact.html">Contact</a></li>
-          <li><a href="privacy.html">Privacy Policy</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <span id="copyrightDisplay" data-editable="text" data-cms-type="setting" data-cms-key="copyright">© 2025 African Market Intelligence Ltd. All rights reserved.</span>
-      <span>Terms · Privacy · Cookie Policy</span>
+  <div class="ticker-bar">
+    <div class="ticker-inner">
+      <span class="ticker-item"><span class="sym">African Market Intelligence</span>&nbsp;·&nbsp;Pan-African Financial
+        News&nbsp;·&nbsp;54 Markets Covered</span>
     </div>
   </div>
-</footer>
 
-<script>
-function toggleDark(){
-  const h=document.documentElement, dark=h.getAttribute('data-theme')==='dark';
-  h.setAttribute('data-theme', dark?'light':'dark');
-  document.getElementById('themeBtn').textContent = dark?'🌙':'☀️';
-  localStorage.setItem('amiTheme', dark?'light':'dark');
-}
-
-function toggleMobileNav(){
-  var drawer=document.getElementById("navMobileDrawer");
-  var btn=document.getElementById("navHamburger");
-  var isOpen=drawer.classList.contains("open");
-  drawer.classList.toggle("open",!isOpen);
-  btn.setAttribute("aria-expanded",String(!isOpen));
-  btn.setAttribute("aria-label",isOpen?"Open navigation menu":"Close navigation menu");
-  document.body.style.overflow=isOpen?"":"hidden";
-}
-document.addEventListener("DOMContentLoaded",function(){
-  document.querySelectorAll("#navMobileDrawer a").forEach(function(el){
-    el.addEventListener("click",function(){
-      var drawer=document.getElementById("navMobileDrawer");
-      var btn=document.getElementById("navHamburger");
-      drawer.classList.remove("open");
-      btn.setAttribute("aria-expanded","false");
-      btn.setAttribute("aria-label","Open navigation menu");
-      document.body.style.overflow="";
-    });
-  });
-});
-
-if(localStorage.getItem('amiTheme')==='dark'){
-  document.documentElement.setAttribute('data-theme','dark');
-  document.addEventListener('DOMContentLoaded',function(){
-    const btn=document.getElementById('themeBtn');
-    if(btn) btn.textContent='☀️';
-  });
-}
-document.addEventListener('DOMContentLoaded',function(){
-  const d=document.getElementById('mastDate');
-  if(d) d.textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  const c=document.getElementById('copyrightDisplay');
-  if(c) c.textContent='© '+new Date().getFullYear()+' African Market Intelligence Ltd. All rights reserved.';
-});
-
-// CMS content loader from Supabase
-const db = {
-  async query(table, options={}) {
-    const params = new URLSearchParams();
-    if(options.select) params.set('select', options.select);
-    if(options.eq) Object.entries(options.eq).forEach(([k,v])=>params.set(k,'eq.'+v));
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${params}`, {
-      headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer '+SUPABASE_ANON }
-    });
-    if(!r.ok) throw new Error(await r.text());
-    return r.json();
-  }
-};
-
-async function loadCMSContent(pageName) {
-  if(SUPABASE_URL === 'YOUR_SUPABASE_URL') return; // Not configured yet
-  try {
-    const [t, s, b] = await Promise.all([
-      db.query('site_settings', {select:'key,value', eq:{key:`page_${pageName}_title`}}),
-      db.query('site_settings', {select:'key,value', eq:{key:`page_${pageName}_subtitle`}}),
-      db.query('site_settings', {select:'key,value', eq:{key:`page_${pageName}_body`}}),
-    ]);
-    const titleEl    = document.getElementById('page-title-display');
-    const subtitleEl = document.getElementById('page-subtitle-display');
-    const bodyEl     = document.getElementById('page-body-display');
-    if(titleEl    && t&&t[0]&&t[0].value) titleEl.textContent    = t[0].value;
-    if(subtitleEl && s&&s[0]&&s[0].value) subtitleEl.textContent = s[0].value;
-    if(bodyEl     && b&&b[0]&&b[0].value) bodyEl.innerHTML       = b[0].value;
-  } catch(e) { console.warn('CMS load error:', e.message); }
-}
-</script>
-<script>
-loadCMSContent('careers');
-</script>
-
-<script>
-// Render footer columns from Supabase if configured
-(async function(){
-  if(typeof SUPABASE_URL === 'undefined' || SUPABASE_URL === 'YOUR_SUPABASE_URL') return;
-  const DEFAULTS = {
-    1:[{label:'Markets',href:'markets.html'},{label:'Economy',href:'economy.html'},
-       {label:'Politics',href:'politics.html'},{label:'Energy',href:'energy.html'},
-       {label:'Technology',href:'technology.html'},{label:'Opinion',href:'opinion.html'}],
-    2:[{label:'West Africa',href:'west-africa.html'},{label:'East Africa',href:'east-africa.html'},
-       {label:'North Africa',href:'north-africa.html'},{label:'Southern Africa',href:'southern-africa.html'}],
-    3:[{label:'About AMI',href:'about.html'},{label:'Membership',href:'membership.html'},
-       {label:'Careers',href:'careers.html'},{label:'Contact',href:'contact.html'},
-       {label:'Privacy Policy',href:'privacy.html'}]
-  };
-  function renderCol(titleId, listId, titleVal, linksJson, col){
-    const t=document.getElementById(titleId), l=document.getElementById(listId);
-    if(t&&titleVal) t.textContent=titleVal;
-    if(l){ try{ const links=linksJson?JSON.parse(linksJson):DEFAULTS[col];
-      l.innerHTML=links.map(x=>'<li><a href="'+x.href+'">'+x.label+'</a></li>').join('');
-    }catch(e){} }
-  }
-  try {
-    const params = new URLSearchParams({select:'key,value'});
-    ['footer_col1_title','footer_col1_links',
-     'footer_col2_title','footer_col2_links',
-     'footer_col3_title','footer_col3_links',
-     'footer_about','copyright'].forEach(k=>params.append('key','eq.'+k));
-    const r = await fetch(SUPABASE_URL+'/rest/v1/site_settings?select=key,value',{
-      headers:{apikey:SUPABASE_ANON,Authorization:'Bearer '+SUPABASE_ANON}
-    });
-    if(!r.ok) return;
-    const rows = await r.json();
-    const get = k => (rows.find(x=>x.key===k)||{}).value||'';
-    renderCol('footerCol1Title','footerCol1Links',get('footer_col1_title')||'Sections',get('footer_col1_links'),1);
-    renderCol('footerCol2Title','footerCol2Links',get('footer_col2_title')||'Regions', get('footer_col2_links'),2);
-    renderCol('footerCol3Title','footerCol3Links',get('footer_col3_title')||'Company', get('footer_col3_links'),3);
-    const fa=get('footer_about'), cp=get('copyright');
-    const faEl=document.getElementById('footerAboutDisplay'), cpEl=document.getElementById('copyrightDisplay');
-    if(faEl&&fa) faEl.textContent=fa;
-    if(cpEl&&cp) cpEl.textContent=cp;
-  } catch(e){ /* fail silently — defaults show */ }
-})();
-</script>
-
-<!-- ═══ INLINE EDITOR UI ════════════════════════════════ -->
-<!-- Rich-text toolbar -->
-<div class="ami-rte-bar" id="amiRteBar" role="toolbar" aria-label="Text formatting">
-  <button class="ami-rte-btn" onclick="rteCmd('bold')" title="Bold" aria-label="Bold"><b>B</b></button>
-  <button class="ami-rte-btn" onclick="rteCmd('italic')" title="Italic" aria-label="Italic"><i>I</i></button>
-  <button class="ami-rte-btn" onclick="rteCmd('underline')" title="Underline" aria-label="Underline"><u>U</u></button>
-  <div class="ami-rte-sep"></div>
-  <button class="ami-rte-btn" onclick="rteCmd('formatBlock','h2')" title="Heading" aria-label="Heading">H2</button>
-  <button class="ami-rte-btn" onclick="rteCmd('formatBlock','p')" title="Paragraph" aria-label="Paragraph">¶</button>
-  <button class="ami-rte-btn" onclick="rteCmd('insertUnorderedList')" title="List" aria-label="Bullet list">•—</button>
-  <div class="ami-rte-sep"></div>
-  <button class="ami-rte-btn" onclick="rteCmd('createLink',prompt('URL:'))" title="Link" aria-label="Insert link">🔗</button>
-  <button class="ami-rte-btn" onclick="rteCmd('unlink')" title="Remove link" aria-label="Remove link">✂</button>
-</div>
-
-<!-- Floating edit FAB -->
-<button class="ami-edit-fab" id="amiEditFab" onclick="toggleEditMode()" aria-label="Toggle edit mode" style="display:none">
-  <span class="fab-dot"></span>
-  <span id="amiEditFabLabel">Edit Page</span>
-</button>
-
-<!-- Save bar -->
-<div class="ami-edit-bar" id="amiEditBar" role="toolbar" aria-label="Edit mode controls">
-  <span class="ami-edit-bar-label">✏ Editing this page</span>
-  <span class="ami-edit-pending none" id="amiPendingLabel">All saved</span>
-  <button class="ami-save-btn" onclick="saveAllEdits()">💾 Save All</button>
-  <button class="ami-exit-btn" onclick="toggleEditMode()">Exit Edit Mode</button>
-</div>
-
-<!-- Image replace dialog -->
-<div class="ami-img-dialog" id="amiImgDialog" role="dialog" aria-modal="true" aria-label="Replace image">
-  <div class="ami-img-dialog-box">
-    <div class="ami-img-dialog-title">📷 Replace Image</div>
-    <img class="ami-img-dialog-preview" id="amiImgPreview" alt="Image preview">
-    <div class="ami-img-dialog-tabs">
-      <button class="ami-img-tab active" onclick="switchImgTab('url')" id="amiTabUrl">Paste URL</button>
-      <button class="ami-img-tab" onclick="switchImgTab('upload')" id="amiTabUpload">Upload File</button>
+  <nav class="top-nav" aria-label="Main navigation">
+    <button class="nav-hamburger" id="navHamburger" aria-expanded="false" aria-controls="navMobileDrawer"
+      aria-label="Open navigation menu" onclick="toggleMobileNav()"><span></span><span></span><span></span></button>
+    <div class="nav-left">
+      <a href="index.html" class="nav-link" id="nav-home">Home</a>
+      <a href="markets.html" class="nav-link" id="nav-markets">Markets</a>
+      <a href="politics.html" class="nav-link" id="nav-politics">Politics</a>
+      <a href="economy.html" class="nav-link" id="nav-economy">Economy</a>
+      <a href="energy.html" class="nav-link" id="nav-energy">Energy</a>
+      <a href="technology.html" class="nav-link" id="nav-technology">Tech</a>
+      <a href="opinion.html" class="nav-link" id="nav-opinion">Opinion</a>
+      <a href="deals.html" class="nav-link" id="nav-deals">Deals</a>
+      <a href="archive.html" class="nav-link" id="nav-archive">Archive</a>
     </div>
-    <div class="ami-img-panel active" id="amiImgPanelUrl">
-      <input class="ami-img-url" id="amiImgUrl" type="url" placeholder="https://example.com/image.jpg"
-             oninput="previewImgUrl(this.value)">
+    <div class="nav-right">
+      <input class="nav-search" type="text" placeholder="Search AMI…"
+        oninput="if(this.value)window.location.href='index.html?q='+encodeURIComponent(this.value)">
+      <a href="about.html" class="nav-link" id="nav-about">About</a>
+      <a href="membership.html" class="nav-link" id="nav-membership">Membership</a>
+      <a href="contact.html" class="nav-link" id="nav-contact">Contact</a>
+      <button class="dark-toggle" onclick="toggleDark()" id="themeBtn" aria-label="Toggle dark mode"
+        title="Toggle dark mode">🌙</button>
+      <a href="membership.html" class="btn-subscribe">Subscribe</a>
     </div>
-    <div class="ami-img-panel" id="amiImgPanelUpload">
-      <div class="ami-img-upload-area">
-        <input type="file" accept="image/*" id="amiImgFile" onchange="handleImgFileSelect(this)">
-        <div class="ami-img-upload-label">📁 Click or drag to choose an image</div>
+  </nav>
+
+  <!-- ═══ MOBILE NAV DRAWER ════════════════════════════ -->
+  <div class="nav-mobile-drawer" id="navMobileDrawer" role="dialog" aria-modal="true" aria-label="Navigation menu"
+    aria-hidden="true">
+    <div class="nav-mobile-search">
+      <input type="search" placeholder="Search AMI…" aria-label="Search articles"
+        oninput="typeof searchArticles==='function'&&searchArticles(this.value)">
+    </div>
+    <a href="index.html">Home</a>
+    <a href="markets.html">Markets</a>
+    <a href="politics.html">Politics</a>
+    <a href="economy.html">Economy</a>
+    <a href="energy.html">Energy</a>
+    <a href="technology.html">Technology</a>
+    <a href="opinion.html">Opinion</a>
+    <a href="deals.html">Deals</a>
+    <a href="archive.html">Archive</a>
+    <a href="about.html">About</a>
+    <a href="membership.html">Membership</a>
+    <a href="contact.html">Contact</a>
+    <a href="membership.html" class="mob-subscribe">Subscribe →</a>
+  </div>
+
+
+  <header class="masthead" role="banner">
+    <div class="masthead-name"><a href="index.html" style="color:inherit">African Market <span>Intelligence</span></a>
+    </div>
+    <div class="masthead-tagline">The Continent's Premium Financial &amp; Business Publication</div>
+    <div class="masthead-meta">
+      <span id="mastDate"></span>
+      <span class="edition-badge">Pan-African Edition</span>
+      <span>Est. 2024 · Nairobi · Lagos · Cairo · Johannesburg</span>
+    </div>
+  </header>
+  <div class="static-page">
+    <h1 id="page-title-display" data-editable="text" data-cms-type="page" data-page-name="careers"
+      data-page-field="title">Careers at AMI</h1>
+    <div class="page-subtitle" id="page-subtitle-display" data-editable="text" data-cms-type="page"
+      data-page-name="careers" data-page-field="subtitle"><!-- CMS subtitle --></div>
+    <div id="page-body-display" data-editable="richtext" data-cms-type="page" data-page-name="careers"
+      data-page-field="body">
+      <p>African Market Intelligence is looking for talented journalists, analysts, and technologists who share our
+        mission: to provide the continent with world-class financial intelligence.</p>
+      <h2>Open Positions</h2>
+      <div class="careers-card">
+        <div class="cj-title">Senior Markets Reporter</div>
+        <div class="cj-meta">Remote (Africa-based) · Full-time · Markets Desk</div>
+        <p>We are seeking an experienced financial journalist to cover African equity markets, currencies, and
+          commodities. 4+ years covering financial markets required.</p>
+        <a href="mailto:abta@abta.africa?subject=Senior Markets Reporter Application" class="cj-apply">Apply Now →</a>
+      </div>
+      <div class="careers-card">
+        <div class="cj-title">East Africa Correspondent</div>
+        <div class="cj-meta">Nairobi, Kenya · Full-time · East Africa Bureau</div>
+        <p>Based in Nairobi, covering business and economic developments across Kenya, Ethiopia, Tanzania, and Uganda.
+        </p>
+        <a href="mailto:abta@abta.africa?subject=East Africa Correspondent Application" class="cj-apply">Apply Now →</a>
+      </div>
+      <h2>Working at AMI</h2>
+      <ul>
+        <li>Competitive salary benchmarked to international financial journalism standards</li>
+        <li>Fully remote with flexible working hours</li>
+        <li>Annual professional development budget</li>
+        <li>Editorial independence — we report without fear or favour</li>
+      </ul>
+      <p>Send speculative applications to <a href="mailto:abta@abta.africa">abta@abta.africa</a>.</p>
+    </div>
+  </div>
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div>
+          <div class="footer-brand">African Market Intelligence</div>
+          <p class="footer-about">The continent's most trusted source for financial news and business intelligence
+            across Africa's 54 markets.</p>
+        </div>
+        <div>
+          <div class="footer-col-title" id="footerCol1Title" data-editable="text" data-cms-type="setting"
+            data-cms-key="footer_col1_title">Sections</div>
+          <ul class="footer-links" id="footerCol1Links">
+            <li><a href="markets.html">Markets</a></li>
+            <li><a href="economy.html">Economy</a></li>
+            <li><a href="politics.html">Politics</a></li>
+            <li><a href="energy.html">Energy</a></li>
+            <li><a href="technology.html">Technology</a></li>
+            <li><a href="opinion.html">Opinion</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title" id="footerCol2Title" data-editable="text" data-cms-type="setting"
+            data-cms-key="footer_col2_title">Regions</div>
+          <ul class="footer-links" id="footerCol2Links">
+            <li><a href="west-africa.html">West Africa</a></li>
+            <li><a href="east-africa.html">East Africa</a></li>
+            <li><a href="north-africa.html">North Africa</a></li>
+            <li><a href="southern-africa.html">Southern Africa</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title" id="footerCol3Title" data-editable="text" data-cms-type="setting"
+            data-cms-key="footer_col3_title">Company</div>
+          <ul class="footer-links" id="footerCol3Links">
+            <li><a href="about.html">About AMI</a></li>
+            <li><a href="membership.html">Membership</a></li>
+            <li><a href="careers.html">Careers</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="privacy.html">Privacy Policy</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span id="copyrightDisplay" data-editable="text" data-cms-type="setting" data-cms-key="copyright">© 2025 African
+          Market Intelligence Ltd. All rights reserved.</span>
+        <span>Terms · Privacy · Cookie Policy</span>
       </div>
     </div>
-    <div class="ami-img-dialog-actions">
-      <button class="ami-img-apply" onclick="applyImage()">Apply Image →</button>
-      <button class="ami-img-cancel" onclick="closeImgDialog()">Cancel</button>
-    </div>
-  </div>
-</div>
+  </footer>
 
-
-<script>
-// ════════════════════════════════════════════════════════
-// AMI INLINE EDITOR — Squarespace-style page editing
-// ════════════════════════════════════════════════════════
-(function() {
-
-var amiEditActive   = false;   // is edit mode on?
-var amiPendingCount = 0;       // unsaved changes
-var amiImgTarget    = null;    // current image element being replaced
-var amiImgField     = null;    // its cms-key or article-field
-var amiImgType      = null;    // 'setting' | 'article' | 'page'
-var amiImgArticleId = null;    // for article images
-var amiLastRteEl    = null;    // element rich-text bar is attached to
-var amiUploadedUrl  = null;    // result of file upload
-
-// ── Show FAB after admin opens ──────────────────────────
-window.amiShowEditFab = function() {
-  var fab = document.getElementById('amiEditFab');
-  if(fab) { fab.style.display = 'flex'; }
-};
-window.amiHideEditFab = function() {
-  var fab = document.getElementById('amiEditFab');
-  if(fab && !amiEditActive) fab.style.display = 'none';
-};
-
-// ── Toggle Edit Mode ──────────────────────────────────
-window.toggleEditMode = function() {
-  amiEditActive ? exitEditMode() : enterEditMode();
-};
-
-function enterEditMode() {
-  amiEditActive = true;
-  document.body.classList.add('ami-edit-mode');
-  document.getElementById('amiEditFabLabel').textContent = 'Editing…';
-  document.getElementById('amiEditFab').classList.add('active');
-
-  // Make static settings editable
-  document.querySelectorAll('[data-editable="text"]').forEach(function(el) {
-    el.setAttribute('contenteditable', 'true');
-    el.setAttribute('spellcheck', 'true');
-    el.dataset.originalContent = el.innerHTML;
-    el.addEventListener('blur', onTextBlur);
-    el.addEventListener('focus', onTextFocus);
-    el.addEventListener('keydown', onEditKeydown);
-  });
-
-  // Rich-text elements (bodies, article body)
-  document.querySelectorAll('[data-editable="richtext"]').forEach(function(el) {
-    el.setAttribute('contenteditable', 'true');
-    el.setAttribute('spellcheck', 'true');
-    el.dataset.originalContent = el.innerHTML;
-    el.addEventListener('blur', onRteBlur);
-    el.addEventListener('focus', onRteFocus);
-  });
-
-  // Image elements
-  document.querySelectorAll('[data-editable="image"]').forEach(function(el) {
-    el.addEventListener('click', onImageClick);
-    el.style.cursor = 'pointer';
-  });
-
-  // Add edit buttons to article cards (rendered dynamically)
-  setupCardEditButtons();
-
-  // Show save bar
-  var bar = document.getElementById('amiEditBar');
-  bar.classList.add('visible');
-  updatePendingLabel();
-}
-
-function exitEditMode() {
-  amiEditActive = false;
-  document.body.classList.remove('ami-edit-mode');
-  document.getElementById('amiEditFabLabel').textContent = 'Edit Page';
-  document.getElementById('amiEditFab').classList.remove('active');
-
-  // Disable contenteditable
-  document.querySelectorAll('[contenteditable="true"]').forEach(function(el) {
-    el.setAttribute('contenteditable', 'false');
-    el.removeEventListener('blur', onTextBlur);
-    el.removeEventListener('blur', onRteBlur);
-    el.removeEventListener('focus', onTextFocus);
-    el.removeEventListener('focus', onRteFocus);
-    el.removeEventListener('keydown', onEditKeydown);
-    el.removeEventListener('click', onImageClick);
-  });
-
-  // Remove image listeners
-  document.querySelectorAll('[data-editable="image"]').forEach(function(el) {
-    el.removeEventListener('click', onImageClick);
-  });
-
-  // Remove card edit buttons
-  document.querySelectorAll('.card-edit-overlay').forEach(function(el) { el.remove(); });
-
-  // Hide save bar & rte bar
-  document.getElementById('amiEditBar').classList.remove('visible');
-  document.getElementById('amiRteBar').classList.remove('visible');
-
-  amiPendingCount = 0;
-  updatePendingLabel();
-}
-
-// ── Pending change tracking ─────────────────────────
-function addPending() {
-  amiPendingCount++;
-  updatePendingLabel();
-}
-function removePending() {
-  if(amiPendingCount > 0) amiPendingCount--;
-  updatePendingLabel();
-}
-function updatePendingLabel() {
-  var el = document.getElementById('amiPendingLabel');
-  if(!el) return;
-  if(amiPendingCount === 0) {
-    el.textContent = 'All saved ✓';
-    el.className = 'ami-edit-pending none';
-  } else {
-    el.textContent = amiPendingCount + ' unsaved change' + (amiPendingCount !== 1 ? 's' : '');
-    el.className = 'ami-edit-pending';
-  }
-}
-
-// ── Text field blur → auto-save ─────────────────────
-function onTextFocus(e) {
-  // Select all text on first focus for easy replacement
-}
-function onEditKeydown(e) {
-  if(e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    e.target.blur();
-  }
-  if(e.key === 'Escape') {
-    // Restore original
-    e.target.innerHTML = e.target.dataset.originalContent || '';
-    e.target.blur();
-  }
-}
-function onTextBlur(e) {
-  var el = e.target;
-  var newVal = el.textContent.trim();
-  var oldVal = (el.dataset.originalContent || '').trim();
-  if(newVal === oldVal) return;
-  el.dataset.originalContent = el.innerHTML;
-  var type    = el.dataset.cmsType;
-  var key     = el.dataset.cmsKey;
-  var artId   = el.dataset.articleId;
-  var artFld  = el.dataset.articleField;
-  var pageName= el.dataset.pageName;
-  var pageFld = el.dataset.pageField;
-  saveFieldChange(el, type, key, artId, artFld, pageName, pageFld, newVal);
-}
-
-// ── Richtext blur → auto-save ───────────────────────
-function onRteFocus(e) {
-  amiLastRteEl = e.target;
-  document.getElementById('amiRteBar').classList.add('visible');
-}
-function onRteBlur(e) {
-  // Small delay so clicking RTE bar buttons doesn't dismiss it
-  setTimeout(function() {
-    if(document.activeElement && document.activeElement.closest('.ami-rte-bar')) return;
-    document.getElementById('amiRteBar').classList.remove('visible');
-    amiLastRteEl = null;
-    var el = e.target;
-    var newVal = el.innerHTML.trim();
-    var oldVal = (el.dataset.originalContent || '').trim();
-    if(newVal === oldVal) return;
-    el.dataset.originalContent = el.innerHTML;
-    var type    = el.dataset.cmsType;
-    var key     = el.dataset.cmsKey;
-    var artId   = el.dataset.articleId;
-    var artFld  = el.dataset.articleField;
-    var pageName= el.dataset.pageName;
-    var pageFld = el.dataset.pageField;
-    saveFieldChange(el, type, key, artId, artFld, pageName, pageFld, newVal);
-  }, 150);
-}
-window.rteCmd = function(cmd, val) {
-  document.execCommand(cmd, false, val || null);
-  if(amiLastRteEl) amiLastRteEl.focus();
-};
-
-// ── Core save function ─────────────────────────────
-async function saveFieldChange(el, type, cmsKey, artId, artFld, pageName, pageFld, value) {
-  addPending();
-  try {
-    if(type === 'setting') {
-      // site_settings table
-      await amiDbUpsertSetting(cmsKey, value);
-    } else if(type === 'breaking') {
-      // breaking_news table (update text)
-      await amiDbUpdateBreaking(value);
-    } else if(type === 'article' && artId && artFld) {
-      // articles table
-      var upd = {};
-      upd[artFld] = value;
-      await amiDbUpdateArticle(artId, upd);
-    } else if(type === 'page' && pageName && pageFld) {
-      // site_settings with page_${pageName}_${pageFld}
-      await amiDbUpsertSetting('page_' + pageName + '_' + pageFld, value);
+  <script>
+    function toggleDark() {
+      const h = document.documentElement, dark = h.getAttribute('data-theme') === 'dark';
+      h.setAttribute('data-theme', dark ? 'light' : 'dark');
+      document.getElementById('themeBtn').textContent = dark ? '🌙' : '☀️';
+      localStorage.setItem('amiTheme', dark ? 'light' : 'dark');
     }
-    // Flash green
-    el.classList.add('saved-flash');
-    setTimeout(function() { el.classList.remove('saved-flash'); }, 800);
-    removePending();
-    if(typeof showToast === 'function') showToast('✓ Saved');
-  } catch(err) {
-    removePending();
-    addPending(); // keep as unsaved
-    if(typeof showToast === 'function') showToast('✗ Save failed: ' + err.message, 'error');
-  }
-}
 
-// ── Save All button ────────────────────────────────
-window.saveAllEdits = async function() {
-  // Force blur on all active contenteditable elements
-  document.querySelectorAll('[contenteditable="true"]').forEach(function(el) {
-    if(document.activeElement === el) el.blur();
-  });
-  if(typeof showToast === 'function') showToast('✓ All changes saved');
-  amiPendingCount = 0;
-  updatePendingLabel();
-};
-
-// ── Image click → open dialog ────────────────────────
-function onImageClick(e) {
-  e.preventDefault(); e.stopPropagation();
-  var el      = e.currentTarget;
-  amiImgTarget    = el;
-  amiImgField     = el.dataset.cmsKey || el.dataset.articleField;
-  amiImgType      = el.dataset.cmsType;
-  amiImgArticleId = el.dataset.articleId;
-  amiUploadedUrl  = null;
-  // Show current image URL
-  var currentSrc = el.src || el.getAttribute('data-src') || '';
-  document.getElementById('amiImgUrl').value = currentSrc;
-  document.getElementById('amiImgPreview').src = currentSrc;
-  document.getElementById('amiImgPreview').style.display = currentSrc ? 'block' : 'none';
-  switchImgTab('url');
-  document.getElementById('amiImgDialog').classList.add('open');
-}
-window.switchImgTab = function(tab) {
-  ['url','upload'].forEach(function(t) {
-    document.getElementById('amiTabUrl' === 'amiTab' + t.charAt(0).toUpperCase() + t.slice(1) ||
-      'amiTab' + t).classList.toggle('active', t === tab);
-    document.getElementById('amiImgPanel' + t.charAt(0).toUpperCase() + t.slice(1)).classList.toggle('active', t === tab);
-  });
-  document.getElementById('amiTab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
-  document.getElementById('amiTabUrl' === 'amiTab' + (tab === 'url' ? 'Upload' : 'Url') ? 'x':'amiTab' +
-    (tab === 'url' ? 'Upload' : 'Url')).classList.remove('active');
-  document.getElementById('amiImgPanel' + (tab === 'url' ? 'Url' : 'Upload')).classList.add('active');
-  document.getElementById('amiImgPanel' + (tab === 'url' ? 'Upload' : 'Url')).classList.remove('active');
-};
-window.previewImgUrl = function(url) {
-  var prev = document.getElementById('amiImgPreview');
-  if(url) { prev.src = url; prev.style.display = 'block'; } else { prev.style.display = 'none'; }
-};
-window.handleImgFileSelect = function(input) {
-  var file = input.files[0]; if(!file) return;
-  var prev = document.getElementById('amiImgPreview');
-  var reader = new FileReader();
-  reader.onload = function(e) { prev.src = e.target.result; prev.style.display = 'block'; };
-  reader.readAsDataURL(file);
-  // Upload to Supabase storage
-  if(typeof db !== 'undefined' && db.uploadImage) {
-    var path = 'inline/' + Date.now() + '-' + file.name;
-    db.uploadImage(file, path).then(function(url) { amiUploadedUrl = url; })
-      .catch(function(err) { if(typeof showToast === 'function') showToast('Upload failed: ' + err.message, 'error'); });
-  }
-};
-window.closeImgDialog = function() {
-  document.getElementById('amiImgDialog').classList.remove('open');
-  amiImgTarget = amiImgField = amiImgType = amiImgArticleId = null;
-};
-window.applyImage = async function() {
-  var url = amiUploadedUrl || document.getElementById('amiImgUrl').value.trim();
-  if(!url) { closeImgDialog(); return; }
-  // Update DOM immediately
-  if(amiImgTarget) amiImgTarget.src = url;
-  // Save to Supabase
-  try {
-    addPending();
-    if(amiImgType === 'setting') {
-      await amiDbUpsertSetting(amiImgField, url);
-    } else if(amiImgType === 'article' && amiImgArticleId) {
-      var upd = {}; upd[amiImgField] = url;
-      await amiDbUpdateArticle(amiImgArticleId, upd);
-    } else if(amiImgType === 'page' && amiImgField) {
-      await amiDbUpsertSetting(amiImgField, url);
+    function toggleMobileNav() {
+      var drawer = document.getElementById("navMobileDrawer");
+      var btn = document.getElementById("navHamburger");
+      var isOpen = drawer.classList.contains("open");
+      drawer.classList.toggle("open", !isOpen);
+      btn.setAttribute("aria-expanded", String(!isOpen));
+      btn.setAttribute("aria-label", isOpen ? "Open navigation menu" : "Close navigation menu");
+      document.body.style.overflow = isOpen ? "" : "hidden";
     }
-    removePending();
-    if(typeof showToast === 'function') showToast('✓ Image updated');
-  } catch(err) {
-    if(typeof showToast === 'function') showToast('✗ ' + err.message, 'error');
-  }
-  closeImgDialog();
-};
+    document.addEventListener("DOMContentLoaded", function () {
+      document.querySelectorAll("#navMobileDrawer a").forEach(function (el) {
+        el.addEventListener("click", function () {
+          var drawer = document.getElementById("navMobileDrawer");
+          var btn = document.getElementById("navHamburger");
+          drawer.classList.remove("open");
+          btn.setAttribute("aria-expanded", "false");
+          btn.setAttribute("aria-label", "Open navigation menu");
+          document.body.style.overflow = "";
+        });
+      });
+    });
 
-// ── Article card edit buttons ─────────────────────────
-function setupCardEditButtons() {
-  // Find all clickable article cards and add an edit overlay
-  var clickEls = document.querySelectorAll('[onclick*="openArticle"]');
-  clickEls.forEach(function(el) {
-    // Only add to the card container, not nested elements
-    if(el.classList.contains('article-card') ||
-       el.classList.contains('hero-main') ||
-       el.classList.contains('hero-side-1') ||
-       el.classList.contains('hero-side-2')) {
-      if(el.querySelector('.card-edit-overlay')) return;
-      var match = (el.getAttribute('onclick') || '').match(/openArticle\((\d+)\)/);
-      if(!match) return;
-      var artId = match[1];
-      var btn = document.createElement('button');
-      btn.className = 'card-edit-overlay';
-      btn.innerHTML = '✏ Edit';
-      btn.setAttribute('aria-label', 'Edit this article');
-      btn.setAttribute('title', 'Edit this article in admin panel');
-      btn.onclick = function(e) {
-        e.stopPropagation();
-        // Open admin panel and pre-select this article
-        if(typeof openAdmin === 'function') openAdmin();
-        setTimeout(function() {
-          var editEl = document.getElementById('edit-' + artId);
-          if(editEl) {
-            editEl.classList.add('open');
-            editEl.scrollIntoView({behavior:'smooth', block:'center'});
-          }
-        }, 400);
+    if (localStorage.getItem('amiTheme') === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      document.addEventListener('DOMContentLoaded', function () {
+        const btn = document.getElementById('themeBtn');
+        if (btn) btn.textContent = '☀️';
+      });
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+      const d = document.getElementById('mastDate');
+      if (d) d.textContent = new Date().toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      const c = document.getElementById('copyrightDisplay');
+      if (c) c.textContent = '© ' + new Date().getFullYear() + ' African Market Intelligence Ltd. All rights reserved.';
+    });
+
+    // CMS content loader from Supabase
+    const db = {
+      async query(table, options = {}) {
+        const params = new URLSearchParams();
+        if (options.select) params.set('select', options.select);
+        if (options.eq) Object.entries(options.eq).forEach(([k, v]) => params.set(k, 'eq.' + v));
+        const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${params}`, {
+          headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer ' + SUPABASE_ANON }
+        });
+        if (!r.ok) throw new Error(await r.text());
+        return r.json();
+      }
+    };
+
+    async function loadCMSContent(pageName) {
+      if (SUPABASE_URL === 'YOUR_SUPABASE_URL') return; // Not configured yet
+      try {
+        const [t, s, b] = await Promise.all([
+          db.query('site_settings', { select: 'key,value', eq: { key: `page_${pageName}_title` } }),
+          db.query('site_settings', { select: 'key,value', eq: { key: `page_${pageName}_subtitle` } }),
+          db.query('site_settings', { select: 'key,value', eq: { key: `page_${pageName}_body` } }),
+        ]);
+        const titleEl = document.getElementById('page-title-display');
+        const subtitleEl = document.getElementById('page-subtitle-display');
+        const bodyEl = document.getElementById('page-body-display');
+        if (titleEl && t && t[0] && t[0].value) titleEl.textContent = t[0].value;
+        if (subtitleEl && s && s[0] && s[0].value) subtitleEl.textContent = s[0].value;
+        if (bodyEl && b && b[0] && b[0].value) bodyEl.innerHTML = b[0].value;
+      } catch (e) { console.warn('CMS load error:', e.message); }
+    }
+  </script>
+  <script>
+    loadCMSContent('careers');
+  </script>
+
+  <script>
+    // Render footer columns from Supabase if configured
+    (async function () {
+      if (typeof SUPABASE_URL === 'undefined' || SUPABASE_URL === 'YOUR_SUPABASE_URL') return;
+      const DEFAULTS = {
+        1: [{ label: 'Markets', href: 'markets.html' }, { label: 'Economy', href: 'economy.html' },
+        { label: 'Politics', href: 'politics.html' }, { label: 'Energy', href: 'energy.html' },
+        { label: 'Technology', href: 'technology.html' }, { label: 'Opinion', href: 'opinion.html' }],
+        2: [{ label: 'West Africa', href: 'west-africa.html' }, { label: 'East Africa', href: 'east-africa.html' },
+        { label: 'North Africa', href: 'north-africa.html' }, { label: 'Southern Africa', href: 'southern-africa.html' }],
+        3: [{ label: 'About AMI', href: 'about.html' }, { label: 'Membership', href: 'membership.html' },
+        { label: 'Careers', href: 'careers.html' }, { label: 'Contact', href: 'contact.html' },
+        { label: 'Privacy Policy', href: 'privacy.html' }]
       };
-      el.style.position = 'relative';
-      el.appendChild(btn);
-    }
-  });
-}
+      function renderCol(titleId, listId, titleVal, linksJson, col) {
+        const t = document.getElementById(titleId), l = document.getElementById(listId);
+        if (t && titleVal) t.textContent = titleVal;
+        if (l) {
+          try {
+            const links = linksJson ? JSON.parse(linksJson) : DEFAULTS[col];
+            l.innerHTML = links.map(x => '<li><a href="' + x.href + '">' + x.label + '</a></li>').join('');
+          } catch (e) { }
+        }
+      }
+      try {
+        const params = new URLSearchParams({ select: 'key,value' });
+        ['footer_col1_title', 'footer_col1_links',
+          'footer_col2_title', 'footer_col2_links',
+          'footer_col3_title', 'footer_col3_links',
+          'footer_about', 'copyright'].forEach(k => params.append('key', 'eq.' + k));
+        const r = await fetch(SUPABASE_URL + '/rest/v1/site_settings?select=key,value', {
+          headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer ' + SUPABASE_ANON }
+        });
+        if (!r.ok) return;
+        const rows = await r.json();
+        const get = k => (rows.find(x => x.key === k) || {}).value || '';
+        renderCol('footerCol1Title', 'footerCol1Links', get('footer_col1_title') || 'Sections', get('footer_col1_links'), 1);
+        renderCol('footerCol2Title', 'footerCol2Links', get('footer_col2_title') || 'Regions', get('footer_col2_links'), 2);
+        renderCol('footerCol3Title', 'footerCol3Links', get('footer_col3_title') || 'Company', get('footer_col3_links'), 3);
+        const fa = get('footer_about'), cp = get('copyright');
+        const faEl = document.getElementById('footerAboutDisplay'), cpEl = document.getElementById('copyrightDisplay');
+        if (faEl && fa) faEl.textContent = fa;
+        if (cpEl && cp) cpEl.textContent = cp;
+      } catch (e) { /* fail silently — defaults show */ }
+    })();
+  </script>
 
-// ── Supabase helpers ─────────────────────────────────
-async function amiDbUpsertSetting(key, value) {
-  if(typeof SUPABASE_URL === 'undefined' || SUPABASE_URL === 'YOUR_SUPABASE_URL')
-    throw new Error('Supabase not configured');
-  var ANON = typeof SUPABASE_ANON !== 'undefined' ? SUPABASE_ANON : '';
-  // Try update first, then insert
-  var res = await fetch(SUPABASE_URL + '/rest/v1/site_settings?key=eq.' + encodeURIComponent(key), {
-    method: 'PATCH',
-    headers: {
-      'apikey': ANON, 'Authorization': 'Bearer ' + ANON,
-      'Content-Type': 'application/json', 'Prefer': 'return=minimal'
-    },
-    body: JSON.stringify({ key: key, value: value })
-  });
-  if(!res.ok) {
-    // insert
-    var res2 = await fetch(SUPABASE_URL + '/rest/v1/site_settings', {
-      method: 'POST',
-      headers: {
-        'apikey': ANON, 'Authorization': 'Bearer ' + ANON,
-        'Content-Type': 'application/json', 'Prefer': 'return=minimal'
-      },
-      body: JSON.stringify({ key: key, value: value })
-    });
-    if(!res2.ok) throw new Error(await res2.text());
-  }
-}
-async function amiDbUpdateBreaking(text) {
-  if(typeof SUPABASE_URL === 'undefined' || SUPABASE_URL === 'YOUR_SUPABASE_URL')
-    throw new Error('Supabase not configured');
-  var ANON = typeof SUPABASE_ANON !== 'undefined' ? SUPABASE_ANON : '';
-  var res = await fetch(SUPABASE_URL + '/rest/v1/breaking_news?order=created_at.desc&limit=1', {
-    headers: { 'apikey': ANON, 'Authorization': 'Bearer ' + ANON }
-  });
-  var rows = await res.json();
-  if(rows && rows[0]) {
-    await fetch(SUPABASE_URL + '/rest/v1/breaking_news?id=eq.' + rows[0].id, {
-      method: 'PATCH',
-      headers: {
-        'apikey': ANON, 'Authorization': 'Bearer ' + ANON,
-        'Content-Type': 'application/json', 'Prefer': 'return=minimal'
-      },
-      body: JSON.stringify({ text: text })
-    });
-  }
-}
-async function amiDbUpdateArticle(id, fields) {
-  if(typeof SUPABASE_URL === 'undefined' || SUPABASE_URL === 'YOUR_SUPABASE_URL')
-    throw new Error('Supabase not configured');
-  var ANON = typeof SUPABASE_ANON !== 'undefined' ? SUPABASE_ANON : '';
-  var res = await fetch(SUPABASE_URL + '/rest/v1/articles?id=eq.' + id, {
-    method: 'PATCH',
-    headers: {
-      'apikey': ANON, 'Authorization': 'Bearer ' + ANON,
-      'Content-Type': 'application/json', 'Prefer': 'return=minimal'
-    },
-    body: JSON.stringify(fields)
-  });
-  if(!res.ok) throw new Error(await res.text());
-}
+  <!-- ═══ INLINE EDITOR UI ════════════════════════════════ -->
+  <!-- Rich-text toolbar -->
+  <div class="ami-rte-bar" id="amiRteBar" role="toolbar" aria-label="Text formatting">
+    <button class="ami-rte-btn" onclick="rteCmd('bold')" title="Bold" aria-label="Bold"><b>B</b></button>
+    <button class="ami-rte-btn" onclick="rteCmd('italic')" title="Italic" aria-label="Italic"><i>I</i></button>
+    <button class="ami-rte-btn" onclick="rteCmd('underline')" title="Underline" aria-label="Underline"><u>U</u></button>
+    <div class="ami-rte-sep"></div>
+    <button class="ami-rte-btn" onclick="rteCmd('formatBlock','h2')" title="Heading" aria-label="Heading">H2</button>
+    <button class="ami-rte-btn" onclick="rteCmd('formatBlock','p')" title="Paragraph" aria-label="Paragraph">¶</button>
+    <button class="ami-rte-btn" onclick="rteCmd('insertUnorderedList')" title="List"
+      aria-label="Bullet list">•—</button>
+    <div class="ami-rte-sep"></div>
+    <button class="ami-rte-btn" onclick="rteCmd('createLink',prompt('URL:'))" title="Link"
+      aria-label="Insert link">🔗</button>
+    <button class="ami-rte-btn" onclick="rteCmd('unlink')" title="Remove link" aria-label="Remove link">✂</button>
+  </div>
 
-})(); // end IIFE
-</script>
+  <!-- Floating edit FAB -->
+  <button class="ami-edit-fab" id="amiEditFab" onclick="toggleEditMode()" aria-label="Toggle edit mode"
+    style="display:none">
+    <span class="fab-dot"></span>
+    <span id="amiEditFabLabel">Edit Page</span>
+  </button>
+
+  <!-- Save bar -->
+  <div class="ami-edit-bar" id="amiEditBar" role="toolbar" aria-label="Edit mode controls">
+    <span class="ami-edit-bar-label">✏ Editing this page</span>
+    <span class="ami-edit-pending none" id="amiPendingLabel">All saved</span>
+    <button class="ami-save-btn" onclick="saveAllEdits()">💾 Save All</button>
+    <button class="ami-exit-btn" onclick="toggleEditMode()">Exit Edit Mode</button>
+  </div>
+
+  <!-- Image replace dialog -->
+  <div class="ami-img-dialog" id="amiImgDialog" role="dialog" aria-modal="true" aria-label="Replace image">
+    <div class="ami-img-dialog-box">
+      <div class="ami-img-dialog-title">📷 Replace Image</div>
+      <img class="ami-img-dialog-preview" id="amiImgPreview" alt="Image preview">
+      <div class="ami-img-dialog-tabs">
+        <button class="ami-img-tab active" onclick="switchImgTab('url')" id="amiTabUrl">Paste URL</button>
+        <button class="ami-img-tab" onclick="switchImgTab('upload')" id="amiTabUpload">Upload File</button>
+      </div>
+      <div class="ami-img-panel active" id="amiImgPanelUrl">
+        <input class="ami-img-url" id="amiImgUrl" type="url" placeholder="https://example.com/image.jpg"
+          oninput="previewImgUrl(this.value)">
+      </div>
+      <div class="ami-img-panel" id="amiImgPanelUpload">
+        <div class="ami-img-upload-area">
+          <input type="file" accept="image/*" id="amiImgFile" onchange="handleImgFileSelect(this)">
+          <div class="ami-img-upload-label">📁 Click or drag to choose an image</div>
+        </div>
+      </div>
+      <div class="ami-img-dialog-actions">
+        <button class="ami-img-apply" onclick="applyImage()">Apply Image →</button>
+        <button class="ami-img-cancel" onclick="closeImgDialog()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    // ════════════════════════════════════════════════════════
+    // AMI INLINE EDITOR — Squarespace-style page editing
+    // ════════════════════════════════════════════════════════
+    (function () {
+
+      var amiEditActive = false;   // is edit mode on?
+      var amiPendingCount = 0;       // unsaved changes
+      var amiImgTarget = null;    // current image element being replaced
+      var amiImgField = null;    // its cms-key or article-field
+      var amiImgType = null;    // 'setting' | 'article' | 'page'
+      var amiImgArticleId = null;    // for article images
+      var amiLastRteEl = null;    // element rich-text bar is attached to
+      var amiUploadedUrl = null;    // result of file upload
+
+      // ── Show FAB after admin opens ──────────────────────────
+      window.amiShowEditFab = function () {
+        var fab = document.getElementById('amiEditFab');
+        if (fab) { fab.style.display = 'flex'; }
+      };
+      window.amiHideEditFab = function () {
+        var fab = document.getElementById('amiEditFab');
+        if (fab && !amiEditActive) fab.style.display = 'none';
+      };
+
+      // ── Toggle Edit Mode ──────────────────────────────────
+      window.toggleEditMode = function () {
+        amiEditActive ? exitEditMode() : enterEditMode();
+      };
+
+      function enterEditMode() {
+        amiEditActive = true;
+        document.body.classList.add('ami-edit-mode');
+        document.getElementById('amiEditFabLabel').textContent = 'Editing…';
+        document.getElementById('amiEditFab').classList.add('active');
+
+        // Make static settings editable
+        document.querySelectorAll('[data-editable="text"]').forEach(function (el) {
+          el.setAttribute('contenteditable', 'true');
+          el.setAttribute('spellcheck', 'true');
+          el.dataset.originalContent = el.innerHTML;
+          el.addEventListener('blur', onTextBlur);
+          el.addEventListener('focus', onTextFocus);
+          el.addEventListener('keydown', onEditKeydown);
+        });
+
+        // Rich-text elements (bodies, article body)
+        document.querySelectorAll('[data-editable="richtext"]').forEach(function (el) {
+          el.setAttribute('contenteditable', 'true');
+          el.setAttribute('spellcheck', 'true');
+          el.dataset.originalContent = el.innerHTML;
+          el.addEventListener('blur', onRteBlur);
+          el.addEventListener('focus', onRteFocus);
+        });
+
+        // Image elements
+        document.querySelectorAll('[data-editable="image"]').forEach(function (el) {
+          el.addEventListener('click', onImageClick);
+          el.style.cursor = 'pointer';
+        });
+
+        // Add edit buttons to article cards (rendered dynamically)
+        setupCardEditButtons();
+
+        // Show save bar
+        var bar = document.getElementById('amiEditBar');
+        bar.classList.add('visible');
+        updatePendingLabel();
+      }
+
+      function exitEditMode() {
+        amiEditActive = false;
+        document.body.classList.remove('ami-edit-mode');
+        document.getElementById('amiEditFabLabel').textContent = 'Edit Page';
+        document.getElementById('amiEditFab').classList.remove('active');
+
+        // Disable contenteditable
+        document.querySelectorAll('[contenteditable="true"]').forEach(function (el) {
+          el.setAttribute('contenteditable', 'false');
+          el.removeEventListener('blur', onTextBlur);
+          el.removeEventListener('blur', onRteBlur);
+          el.removeEventListener('focus', onTextFocus);
+          el.removeEventListener('focus', onRteFocus);
+          el.removeEventListener('keydown', onEditKeydown);
+          el.removeEventListener('click', onImageClick);
+        });
+
+        // Remove image listeners
+        document.querySelectorAll('[data-editable="image"]').forEach(function (el) {
+          el.removeEventListener('click', onImageClick);
+        });
+
+        // Remove card edit buttons
+        document.querySelectorAll('.card-edit-overlay').forEach(function (el) { el.remove(); });
+
+        // Hide save bar & rte bar
+        document.getElementById('amiEditBar').classList.remove('visible');
+        document.getElementById('amiRteBar').classList.remove('visible');
+
+        amiPendingCount = 0;
+        updatePendingLabel();
+      }
+
+      // ── Pending change tracking ─────────────────────────
+      function addPending() {
+        amiPendingCount++;
+        updatePendingLabel();
+      }
+      function removePending() {
+        if (amiPendingCount > 0) amiPendingCount--;
+        updatePendingLabel();
+      }
+      function updatePendingLabel() {
+        var el = document.getElementById('amiPendingLabel');
+        if (!el) return;
+        if (amiPendingCount === 0) {
+          el.textContent = 'All saved ✓';
+          el.className = 'ami-edit-pending none';
+        } else {
+          el.textContent = amiPendingCount + ' unsaved change' + (amiPendingCount !== 1 ? 's' : '');
+          el.className = 'ami-edit-pending';
+        }
+      }
+
+      // ── Text field blur → auto-save ─────────────────────
+      function onTextFocus(e) {
+        // Select all text on first focus for easy replacement
+      }
+      function onEditKeydown(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          e.target.blur();
+        }
+        if (e.key === 'Escape') {
+          // Restore original
+          e.target.innerHTML = e.target.dataset.originalContent || '';
+          e.target.blur();
+        }
+      }
+      function onTextBlur(e) {
+        var el = e.target;
+        var newVal = el.textContent.trim();
+        var oldVal = (el.dataset.originalContent || '').trim();
+        if (newVal === oldVal) return;
+        el.dataset.originalContent = el.innerHTML;
+        var type = el.dataset.cmsType;
+        var key = el.dataset.cmsKey;
+        var artId = el.dataset.articleId;
+        var artFld = el.dataset.articleField;
+        var pageName = el.dataset.pageName;
+        var pageFld = el.dataset.pageField;
+        saveFieldChange(el, type, key, artId, artFld, pageName, pageFld, newVal);
+      }
+
+      // ── Richtext blur → auto-save ───────────────────────
+      function onRteFocus(e) {
+        amiLastRteEl = e.target;
+        document.getElementById('amiRteBar').classList.add('visible');
+      }
+      function onRteBlur(e) {
+        // Small delay so clicking RTE bar buttons doesn't dismiss it
+        setTimeout(function () {
+          if (document.activeElement && document.activeElement.closest('.ami-rte-bar')) return;
+          document.getElementById('amiRteBar').classList.remove('visible');
+          amiLastRteEl = null;
+          var el = e.target;
+          var newVal = el.innerHTML.trim();
+          var oldVal = (el.dataset.originalContent || '').trim();
+          if (newVal === oldVal) return;
+          el.dataset.originalContent = el.innerHTML;
+          var type = el.dataset.cmsType;
+          var key = el.dataset.cmsKey;
+          var artId = el.dataset.articleId;
+          var artFld = el.dataset.articleField;
+          var pageName = el.dataset.pageName;
+          var pageFld = el.dataset.pageField;
+          saveFieldChange(el, type, key, artId, artFld, pageName, pageFld, newVal);
+        }, 150);
+      }
+      window.rteCmd = function (cmd, val) {
+        document.execCommand(cmd, false, val || null);
+        if (amiLastRteEl) amiLastRteEl.focus();
+      };
+
+      // ── Core save function ─────────────────────────────
+      async function saveFieldChange(el, type, cmsKey, artId, artFld, pageName, pageFld, value) {
+        addPending();
+        try {
+          if (type === 'setting') {
+            // site_settings table
+            await amiDbUpsertSetting(cmsKey, value);
+          } else if (type === 'breaking') {
+            // breaking_news table (update text)
+            await amiDbUpdateBreaking(value);
+          } else if (type === 'article' && artId && artFld) {
+            // articles table
+            var upd = {};
+            upd[artFld] = value;
+            await amiDbUpdateArticle(artId, upd);
+          } else if (type === 'page' && pageName && pageFld) {
+            // site_settings with page_${pageName}_${pageFld}
+            await amiDbUpsertSetting('page_' + pageName + '_' + pageFld, value);
+          }
+          // Flash green
+          el.classList.add('saved-flash');
+          setTimeout(function () { el.classList.remove('saved-flash'); }, 800);
+          removePending();
+          if (typeof showToast === 'function') showToast('✓ Saved');
+        } catch (err) {
+          removePending();
+          addPending(); // keep as unsaved
+          if (typeof showToast === 'function') showToast('✗ Save failed: ' + err.message, 'error');
+        }
+      }
+
+      // ── Save All button ────────────────────────────────
+      window.saveAllEdits = async function () {
+        // Force blur on all active contenteditable elements
+        document.querySelectorAll('[contenteditable="true"]').forEach(function (el) {
+          if (document.activeElement === el) el.blur();
+        });
+        if (typeof showToast === 'function') showToast('✓ All changes saved');
+        amiPendingCount = 0;
+        updatePendingLabel();
+      };
+
+      // ── Image click → open dialog ────────────────────────
+      function onImageClick(e) {
+        e.preventDefault(); e.stopPropagation();
+        var el = e.currentTarget;
+        amiImgTarget = el;
+        amiImgField = el.dataset.cmsKey || el.dataset.articleField;
+        amiImgType = el.dataset.cmsType;
+        amiImgArticleId = el.dataset.articleId;
+        amiUploadedUrl = null;
+        // Show current image URL
+        var currentSrc = el.src || el.getAttribute('data-src') || '';
+        document.getElementById('amiImgUrl').value = currentSrc;
+        document.getElementById('amiImgPreview').src = currentSrc;
+        document.getElementById('amiImgPreview').style.display = currentSrc ? 'block' : 'none';
+        switchImgTab('url');
+        document.getElementById('amiImgDialog').classList.add('open');
+      }
+      window.switchImgTab = function (tab) {
+        ['url', 'upload'].forEach(function (t) {
+          document.getElementById('amiTabUrl' === 'amiTab' + t.charAt(0).toUpperCase() + t.slice(1) ||
+            'amiTab' + t).classList.toggle('active', t === tab);
+          document.getElementById('amiImgPanel' + t.charAt(0).toUpperCase() + t.slice(1)).classList.toggle('active', t === tab);
+        });
+        document.getElementById('amiTab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+        document.getElementById('amiTabUrl' === 'amiTab' + (tab === 'url' ? 'Upload' : 'Url') ? 'x' : 'amiTab' +
+          (tab === 'url' ? 'Upload' : 'Url')).classList.remove('active');
+        document.getElementById('amiImgPanel' + (tab === 'url' ? 'Url' : 'Upload')).classList.add('active');
+        document.getElementById('amiImgPanel' + (tab === 'url' ? 'Upload' : 'Url')).classList.remove('active');
+      };
+      window.previewImgUrl = function (url) {
+        var prev = document.getElementById('amiImgPreview');
+        if (url) { prev.src = url; prev.style.display = 'block'; } else { prev.style.display = 'none'; }
+      };
+      window.handleImgFileSelect = function (input) {
+        var file = input.files[0]; if (!file) return;
+        var prev = document.getElementById('amiImgPreview');
+        var reader = new FileReader();
+        reader.onload = function (e) { prev.src = e.target.result; prev.style.display = 'block'; };
+        reader.readAsDataURL(file);
+        // Upload to Supabase storage
+        if (typeof db !== 'undefined' && db.uploadImage) {
+          var path = 'inline/' + Date.now() + '-' + file.name;
+          db.uploadImage(file, path).then(function (url) { amiUploadedUrl = url; })
+            .catch(function (err) { if (typeof showToast === 'function') showToast('Upload failed: ' + err.message, 'error'); });
+        }
+      };
+      window.closeImgDialog = function () {
+        document.getElementById('amiImgDialog').classList.remove('open');
+        amiImgTarget = amiImgField = amiImgType = amiImgArticleId = null;
+      };
+      window.applyImage = async function () {
+        var url = amiUploadedUrl || document.getElementById('amiImgUrl').value.trim();
+        if (!url) { closeImgDialog(); return; }
+        // Update DOM immediately
+        if (amiImgTarget) amiImgTarget.src = url;
+        // Save to Supabase
+        try {
+          addPending();
+          if (amiImgType === 'setting') {
+            await amiDbUpsertSetting(amiImgField, url);
+          } else if (amiImgType === 'article' && amiImgArticleId) {
+            var upd = {}; upd[amiImgField] = url;
+            await amiDbUpdateArticle(amiImgArticleId, upd);
+          } else if (amiImgType === 'page' && amiImgField) {
+            await amiDbUpsertSetting(amiImgField, url);
+          }
+          removePending();
+          if (typeof showToast === 'function') showToast('✓ Image updated');
+        } catch (err) {
+          if (typeof showToast === 'function') showToast('✗ ' + err.message, 'error');
+        }
+        closeImgDialog();
+      };
+
+      // ── Article card edit buttons ─────────────────────────
+      function setupCardEditButtons() {
+        // Find all clickable article cards and add an edit overlay
+        var clickEls = document.querySelectorAll('[onclick*="openArticle"]');
+        clickEls.forEach(function (el) {
+          // Only add to the card container, not nested elements
+          if (el.classList.contains('article-card') ||
+            el.classList.contains('hero-main') ||
+            el.classList.contains('hero-side-1') ||
+            el.classList.contains('hero-side-2')) {
+            if (el.querySelector('.card-edit-overlay')) return;
+            var match = (el.getAttribute('onclick') || '').match(/openArticle\((\d+)\)/);
+            if (!match) return;
+            var artId = match[1];
+            var btn = document.createElement('button');
+            btn.className = 'card-edit-overlay';
+            btn.innerHTML = '✏ Edit';
+            btn.setAttribute('aria-label', 'Edit this article');
+            btn.setAttribute('title', 'Edit this article in admin panel');
+            btn.onclick = function (e) {
+              e.stopPropagation();
+              // Open admin panel and pre-select this article
+              if (typeof openAdmin === 'function') openAdmin();
+              setTimeout(function () {
+                var editEl = document.getElementById('edit-' + artId);
+                if (editEl) {
+                  editEl.classList.add('open');
+                  editEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+              }, 400);
+            };
+            el.style.position = 'relative';
+            el.appendChild(btn);
+          }
+        });
+      }
+
+      // ── Supabase helpers ─────────────────────────────────
+      async function amiDbUpsertSetting(key, value) {
+        if (typeof SUPABASE_URL === 'undefined' || SUPABASE_URL === 'YOUR_SUPABASE_URL')
+          throw new Error('Supabase not configured');
+        var ANON = typeof SUPABASE_ANON !== 'undefined' ? SUPABASE_ANON : '';
+        // Try update first, then insert
+        var res = await fetch(SUPABASE_URL + '/rest/v1/site_settings?key=eq.' + encodeURIComponent(key), {
+          method: 'PATCH',
+          headers: {
+            'apikey': ANON, 'Authorization': 'Bearer ' + ANON,
+            'Content-Type': 'application/json', 'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({ key: key, value: value })
+        });
+        if (!res.ok) {
+          // insert
+          var res2 = await fetch(SUPABASE_URL + '/rest/v1/site_settings', {
+            method: 'POST',
+            headers: {
+              'apikey': ANON, 'Authorization': 'Bearer ' + ANON,
+              'Content-Type': 'application/json', 'Prefer': 'return=minimal'
+            },
+            body: JSON.stringify({ key: key, value: value })
+          });
+          if (!res2.ok) throw new Error(await res2.text());
+        }
+      }
+      async function amiDbUpdateBreaking(text) {
+        if (typeof SUPABASE_URL === 'undefined' || SUPABASE_URL === 'YOUR_SUPABASE_URL')
+          throw new Error('Supabase not configured');
+        var ANON = typeof SUPABASE_ANON !== 'undefined' ? SUPABASE_ANON : '';
+        var res = await fetch(SUPABASE_URL + '/rest/v1/breaking_news?order=created_at.desc&limit=1', {
+          headers: { 'apikey': ANON, 'Authorization': 'Bearer ' + ANON }
+        });
+        var rows = await res.json();
+        if (rows && rows[0]) {
+          await fetch(SUPABASE_URL + '/rest/v1/breaking_news?id=eq.' + rows[0].id, {
+            method: 'PATCH',
+            headers: {
+              'apikey': ANON, 'Authorization': 'Bearer ' + ANON,
+              'Content-Type': 'application/json', 'Prefer': 'return=minimal'
+            },
+            body: JSON.stringify({ text: text })
+          });
+        }
+      }
+      async function amiDbUpdateArticle(id, fields) {
+        if (typeof SUPABASE_URL === 'undefined' || SUPABASE_URL === 'YOUR_SUPABASE_URL')
+          throw new Error('Supabase not configured');
+        var ANON = typeof SUPABASE_ANON !== 'undefined' ? SUPABASE_ANON : '';
+        var res = await fetch(SUPABASE_URL + '/rest/v1/articles?id=eq.' + id, {
+          method: 'PATCH',
+          headers: {
+            'apikey': ANON, 'Authorization': 'Bearer ' + ANON,
+            'Content-Type': 'application/json', 'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify(fields)
+        });
+        if (!res.ok) throw new Error(await res.text());
+      }
+
+    })(); // end IIFE
+  </script>
 
 </body>
+
 </html>
