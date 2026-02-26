@@ -1083,6 +1083,7 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
   <button type="button" class="section-tab active" onclick="filterSection(event,'all')">All Africa</button>
   <button type="button" class="section-tab" onclick="filterSection(event,'West Africa')">West Africa</button>
   <button type="button" class="section-tab" onclick="filterSection(event,'East Africa')">East Africa</button>
+  <button type="button" class="section-tab" onclick="filterSection(event,'Central Africa')">Central Africa</button>
   <button type="button" class="section-tab" onclick="filterSection(event,'Southern Africa')">Southern Africa</button>
   <button type="button" class="section-tab" onclick="filterSection(event,'North Africa')">North Africa</button>
 </div></div>
@@ -1744,10 +1745,22 @@ function searchArticles(q) {
   currentPage  = 1;
   applyFilters();
 }
+const REGION_MAP = {
+  'West Africa':    ['nigeria','ghana','senegal','ivory coast',"côte d'ivoire",'mali','burkina faso','guinea','sierra leone','liberia','togo','benin','niger','gambia','cape verde','mauritania','western africa','west africa'],
+  'East Africa':    ['kenya','ethiopia','tanzania','uganda','rwanda','somalia','south sudan','burundi','djibouti','eritrea','madagascar','mozambique','eastern africa','east africa'],
+  'Central Africa': ['drc','congo','cameroon','gabon','chad','car','central african republic','equatorial guinea','são tomé','central africa'],
+  'Southern Africa':['south africa','zimbabwe','zambia','botswana','namibia','malawi','lesotho','eswatini','angola','southern africa'],
+  'North Africa':   ['egypt','morocco','tunisia','algeria','libya','sudan','northern africa','north africa'],
+};
+function articleMatchesRegion(a, region) {
+  const tagsStr = Array.isArray(a.tags) ? a.tags.join(' ') : (a.tags||'');
+  const hay = (tagsStr + ' ' + (a.section||'') + ' ' + (a.headline||'') + ' ' + (a.standfirst||'')).toLowerCase();
+  return (REGION_MAP[region]||[]).some(term => hay.includes(term));
+}
 function applyFilters(preservePage=false) {
-  if(!preservePage) currentPage = 1; // reset to page 1 on new search/filter
+  if(!preservePage) currentPage = 1;
   let filtered = allArticles;
-  if(filterActive !== 'all') filtered = filtered.filter(a=>(a.section||'').includes(filterActive) || (a.tags||'').includes(filterActive));
+  if(filterActive !== 'all') filtered = filtered.filter(a => articleMatchesRegion(a, filterActive));
   if(searchQuery) filtered = filtered.filter(a=>(a.headline||'').toLowerCase().includes(searchQuery)||(a.standfirst||'').toLowerCase().includes(searchQuery)||(a.author_name||'').toLowerCase().includes(searchQuery));
   renderCards(filtered.filter(a=>a.placement==='card'));
 }
