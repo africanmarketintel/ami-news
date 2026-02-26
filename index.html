@@ -1745,8 +1745,6 @@ function filterSection(e, section) {
   const newUrl = section === 'all' ? window.location.pathname : `?section=${encodeURIComponent(section)}${q}`;
   history.pushState({page:1, filterActive:section, searchQuery}, '', newUrl);
   applyFilters();
-  // Scroll to article content
-  setTimeout(()=>{ document.getElementById('main-content')?.scrollIntoView({behavior:'smooth', block:'start'}); }, 50);
 }
 function searchArticles(q) {
   searchQuery  = q.toLowerCase();
