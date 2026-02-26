@@ -1383,10 +1383,18 @@ function heroImgHtml(a, height='220px') {
   return `<div class="hero-img-placeholder" style="height:${height}">📰 ${a.section||''}</div>`;
 }
 
-function renderHero() {
-  const hero  = allArticles.find(a=>a.placement==='hero') || allArticles[0];
-  const side1 = allArticles.find(a=>a.placement==='side1') || allArticles[1];
-  const side2 = allArticles.find(a=>a.placement==='side2') || allArticles[2];
+function renderHero(filtered) {
+  // When a region filter is active, pick top 3 from filtered set; otherwise use editorial placements
+  let hero, side1, side2;
+  if(filtered && filtered.length) {
+    hero  = filtered[0];
+    side1 = filtered[1] || null;
+    side2 = filtered[2] || null;
+  } else {
+    hero  = allArticles.find(a=>a.placement==='hero')  || allArticles[0];
+    side1 = allArticles.find(a=>a.placement==='side1') || allArticles[1];
+    side2 = allArticles.find(a=>a.placement==='side2') || allArticles[2];
+  }
   if(!hero) return;
 
   document.getElementById('heroGrid').innerHTML = `
@@ -1762,7 +1770,14 @@ function applyFilters(preservePage=false) {
   let filtered = allArticles;
   if(filterActive !== 'all') filtered = filtered.filter(a => articleMatchesRegion(a, filterActive));
   if(searchQuery) filtered = filtered.filter(a=>(a.headline||'').toLowerCase().includes(searchQuery)||(a.standfirst||'').toLowerCase().includes(searchQuery)||(a.author_name||'').toLowerCase().includes(searchQuery));
-  renderCards(filtered.filter(a=>a.placement==='card'));
+  // When a region is active, re-render hero with top matching articles; otherwise use editorial placements
+  if(filterActive !== 'all') {
+    renderHero(filtered);
+    renderCards(filtered);
+  } else {
+    renderHero(null);
+    renderCards(filtered.filter(a=>a.placement==='card'));
+  }
 }
 
 // ════════════════════════════════════════════════════════════
