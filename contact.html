@@ -800,6 +800,29 @@ function toggleDark(){
   document.getElementById('themeBtn').textContent = dark?'🌙':'☀️';
   localStorage.setItem('amiTheme', dark?'light':'dark');
 }
+
+function toggleMobileNav(){
+  var drawer=document.getElementById("navMobileDrawer");
+  var btn=document.getElementById("navHamburger");
+  var isOpen=drawer.classList.contains("open");
+  drawer.classList.toggle("open",!isOpen);
+  btn.setAttribute("aria-expanded",String(!isOpen));
+  btn.setAttribute("aria-label",isOpen?"Open navigation menu":"Close navigation menu");
+  document.body.style.overflow=isOpen?"":"hidden";
+}
+document.addEventListener("DOMContentLoaded",function(){
+  document.querySelectorAll("#navMobileDrawer a").forEach(function(el){
+    el.addEventListener("click",function(){
+      var drawer=document.getElementById("navMobileDrawer");
+      var btn=document.getElementById("navHamburger");
+      drawer.classList.remove("open");
+      btn.setAttribute("aria-expanded","false");
+      btn.setAttribute("aria-label","Open navigation menu");
+      document.body.style.overflow="";
+    });
+  });
+});
+
 if(localStorage.getItem('amiTheme')==='dark'){
   document.documentElement.setAttribute('data-theme','dark');
   document.addEventListener('DOMContentLoaded',function(){
@@ -856,41 +879,25 @@ async function submitContactForm(){
   const msg     = document.getElementById('cf-message').value.trim();
   const status  = document.getElementById('cf-status');
   const btn     = document.querySelector('.cf-submit');
-
   if(!name||!email||!msg){
     status.textContent='Please fill in all required fields.';
     status.style.color='var(--terra)';
     return;
   }
-
   btn.disabled=true; btn.textContent='Sending…';
   status.textContent=''; status.style.color='';
-
   try {
     const res = await fetch(`${SUPABASE_URL}/rest/v1/contact_messages`, {
       method: 'POST',
-      headers: {
-        apikey: SUPABASE_ANON,
-        Authorization: 'Bearer ' + SUPABASE_ANON,
-        'Content-Type': 'application/json',
-        Prefer: 'return=minimal'
-      },
+      headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer ' + SUPABASE_ANON, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
       body: JSON.stringify({ name, email, subject, message: msg })
     });
-
-    if(!res.ok){
-      const errText = await res.text();
-      throw new Error(errText);
-    }
-
-    // Success
+    if(!res.ok) throw new Error(await res.text());
     status.textContent='Thank you — your message has been received. We aim to respond within 2 business days.';
     status.style.color='#2E9B5E';
     ['cf-name','cf-email','cf-message'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
     document.getElementById('cf-subject').selectedIndex=0;
-
   } catch(err){
-    console.error('Contact form error:', err);
     status.textContent='Something went wrong. Please email us directly at abta@abta.africa';
     status.style.color='var(--terra)';
   } finally {

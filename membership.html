@@ -694,7 +694,7 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
     <a href="membership.html" class="nav-link" id="nav-membership" style="color:var(--gold);border-bottom:2px solid var(--gold)">Membership</a>
     <a href="contact.html" class="nav-link" id="nav-contact">Contact</a>
     <button class="dark-toggle" onclick="toggleDark()" id="themeBtn" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
-    <a href="membership.html" class="btn-subscribe">Subscribe</a>
+    <a href="deals.html" class="btn-subscribe">Deal Tracker</a>
   </div>
 </nav>
 
@@ -745,7 +745,7 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
     <div class="pper">always · no account required</div>
     <ul>
       <li>All news, analysis &amp; opinion</li>
-      <li>Live African market data</li>
+      <li>African market data</li>
       <li>Regional coverage — 54 markets</li>
       <li>AMI Weekly Brief newsletter</li>
       <li>Archive access</li>
@@ -758,11 +758,12 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
     <div class="pprice">$39</div>
     <div class="pper">per month · billed monthly</div>
     <ul>
+      <li>Everything in Free</li>
       <li>Full Deal Tracker dashboard</li>
       <li>PE &amp; Venture · M&amp;A · Infrastructure</li>
       <li>Debt &amp; Mez · DFI · Exits · People</li>
     </ul>
-    <a href="https://buy.stripe.com/YOUR_DEAL_MONTHLY" class="plan-cta" target="_blank">Subscribe Monthly →</a>
+    <a href="https://buy.stripe.com/fZu7sE8lY4YieZ74z2aVa0e" class="plan-cta" target="_blank">Subscribe Monthly →</a>
   </div>
 
   <div class="plan-box featured">
@@ -781,11 +782,11 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
 </div>
 <h2>Frequently Asked Questions</h2>
 <h2 style="font-size:16px;margin-top:20px">Is all the news really free?</h2>
-<p>Yes. Every article, analysis piece, opinion column and market data page on AMI is free to read with no account required. AMI is supported by Deal Tracker subscriptions, not advertising or content paywalls.</p>
+<p>Yes. Every article, analysis piece, opinion column and market data page on AMI is free to read with no account required. AMI is supported by Deal Tracker subscriptions and advertising.</p>
 <h2 style="font-size:16px;margin-top:20px">What is the AMI Deal Tracker?</h2>
-<p>A monthly curated database of private equity, venture capital, M&amp;A, infrastructure, debt, DFI and exit transactions across Africa's 54 markets. Subscribers get a full web dashboard, a downloadable Excel database and weekly deal alert emails.</p>
+<p>A monthly curated database of private equity, venture capital, M&amp;A, infrastructure, debt, DFI and exit transactions across Africa's 54 markets. Subscribers get a full web dashboard and the AMI Weekly Brief newsletter.</p>
 <h2 style="font-size:16px;margin-top:20px">Can I cancel at any time?</h2>
-<p>Yes. Monthly plans cancel anytime. Annual plans are billed once and run for 12 months with no auto-renewal unless you choose it.</p>
+<p>Yes. Monthly plans cancel anytime. Annual plans are billed once and run for 12 months with auto-renewal, which you can choose to cancel anytime.</p>
 <h2 style="font-size:16px;margin-top:20px">Do you offer corporate or team plans?</h2>
 <p>Yes — <a href="contact.html">contact us</a> for team and enterprise pricing for fund managers, advisers and institutional subscribers.</p>
 <p style="margin-top:40px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text-soft);text-align:center">🔒 Secure checkout powered by Stripe · Cancel anytime</p>
@@ -843,6 +844,29 @@ function toggleDark(){
   document.getElementById('themeBtn').textContent = dark?'🌙':'☀️';
   localStorage.setItem('amiTheme', dark?'light':'dark');
 }
+
+function toggleMobileNav(){
+  var drawer=document.getElementById("navMobileDrawer");
+  var btn=document.getElementById("navHamburger");
+  var isOpen=drawer.classList.contains("open");
+  drawer.classList.toggle("open",!isOpen);
+  btn.setAttribute("aria-expanded",String(!isOpen));
+  btn.setAttribute("aria-label",isOpen?"Open navigation menu":"Close navigation menu");
+  document.body.style.overflow=isOpen?"":"hidden";
+}
+document.addEventListener("DOMContentLoaded",function(){
+  document.querySelectorAll("#navMobileDrawer a").forEach(function(el){
+    el.addEventListener("click",function(){
+      var drawer=document.getElementById("navMobileDrawer");
+      var btn=document.getElementById("navHamburger");
+      drawer.classList.remove("open");
+      btn.setAttribute("aria-expanded","false");
+      btn.setAttribute("aria-label","Open navigation menu");
+      document.body.style.overflow="";
+    });
+  });
+});
+
 if(localStorage.getItem('amiTheme')==='dark'){
   document.documentElement.setAttribute('data-theme','dark');
   document.addEventListener('DOMContentLoaded',function(){
@@ -905,15 +929,12 @@ loadCMSContent('membership');
     const p1price = get('plan1_price'), p2price = get('plan2_price');
     const p1link  = get('plan1_link'),  p2link  = get('plan2_link');
     const p1name  = get('plan1_name'),  p2name  = get('plan2_name');
-    // Update prices
     const priceEls = document.querySelectorAll('.pprice');
     if(p1price && priceEls[1]) priceEls[1].textContent = p1price;
     if(p2price && priceEls[2]) priceEls[2].textContent = p2price;
-    // Update Stripe links
     const ctaEls = document.querySelectorAll('.plan-cta');
     if(p1link && ctaEls[1]) ctaEls[1].href = p1link;
     if(p2link && ctaEls[2]) ctaEls[2].href = p2link;
-    // Update plan names if set
     const nameEls = document.querySelectorAll('.pname');
     if(p1name && nameEls[1]) nameEls[1].textContent = p1name;
     if(p2name && nameEls[2]) nameEls[2].textContent = p2name;

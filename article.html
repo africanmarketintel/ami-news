@@ -763,6 +763,29 @@ function toggleDark(){
   document.getElementById('themeBtn').textContent=dark?'🌙':'☀️';
   localStorage.setItem('amiTheme',dark?'light':'dark');
 }
+
+function toggleMobileNav(){
+  var drawer=document.getElementById("navMobileDrawer");
+  var btn=document.getElementById("navHamburger");
+  var isOpen=drawer.classList.contains("open");
+  drawer.classList.toggle("open",!isOpen);
+  btn.setAttribute("aria-expanded",String(!isOpen));
+  btn.setAttribute("aria-label",isOpen?"Open navigation menu":"Close navigation menu");
+  document.body.style.overflow=isOpen?"":"hidden";
+}
+document.addEventListener("DOMContentLoaded",function(){
+  document.querySelectorAll("#navMobileDrawer a").forEach(function(el){
+    el.addEventListener("click",function(){
+      var drawer=document.getElementById("navMobileDrawer");
+      var btn=document.getElementById("navHamburger");
+      drawer.classList.remove("open");
+      btn.setAttribute("aria-expanded","false");
+      btn.setAttribute("aria-label","Open navigation menu");
+      document.body.style.overflow="";
+    });
+  });
+});
+
 // Restore theme
 if(localStorage.getItem('amiTheme')==='dark'){
   document.documentElement.setAttribute('data-theme','dark');
@@ -1376,7 +1399,7 @@ async function amiDbUpdateArticle(id, fields) {
     <h2 class="paywall-headline">This article is for members only</h2>
     <p class="paywall-sub">Subscribe for full access to AMI's deal flow intelligence, market briefings and exclusive analysis across Africa.</p>
     <div class="paywall-cta" style="grid-template-columns:1fr">
-      <a id="paywallPlan1" href="membership.html" class="btn-stripe">Premium →</a>
+      <a id="paywallPlan1" href="deals.html" class="btn-stripe">Deal Tracker →</a>
     </div>
     <button class="paywall-dismiss" onclick="document.getElementById('paywallOverlay').style.display='none';document.getElementById('paywallBlur').style.display='none'">Maybe later</button>
   </div>

@@ -1064,7 +1064,7 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
   <a href="about.html">About</a>
   <a href="membership.html">Membership</a>
   <a href="contact.html">Contact</a>
-  <a href="membership.html" class="mob-subscribe">Subscribe →</a>
+  <a href="deals.html" class="mob-subscribe">Deal Tracker →</a>
 </div>
 
 
@@ -1320,7 +1320,7 @@ document.getElementById('mastDate').textContent =
 // Stripe links
 document.getElementById('stripeDigital').href = STRIPE_DIGITAL;
 document.getElementById('stripePremium').href = STRIPE_PREMIUM;
-document.getElementById('navSubscribeBtn').href = STRIPE_PREMIUM;
+// navSubscribeBtn always points to deals.html — do not override
 
 async function init() {
   if(!SUPABASE_URL || SUPABASE_URL === 'YOUR_SUPABASE_URL' || !SUPABASE_ANON || SUPABASE_ANON === 'YOUR_SUPABASE_ANON_KEY') {
@@ -1697,7 +1697,7 @@ function applySettings(settings) {
   // Stripe
   const d1 = get('plan1_link'); const d2 = get('plan2_link');
   if(d1){ document.getElementById('stripeDigital').href = d1; }
-  if(d2){ document.getElementById('stripePremium').href = d2; document.getElementById('navSubscribeBtn').href = d2; }
+  if(d2){ document.getElementById('stripePremium').href = d2; }
   // Footer columns — titles + link lists
   renderFooterColumn('footerCol1Title','footerCol1Links',
     get('footer_col1_title')||'Sections', get('footer_col1_links'), 1);
@@ -2269,6 +2269,29 @@ function toggleDark(){
   h.setAttribute('data-theme',dark?'light':'dark');
   document.getElementById('themeBtn').textContent=dark?'🌙':'☀️';
 }
+
+function toggleMobileNav(){
+  const drawer=document.getElementById('navMobileDrawer');
+  const btn=document.getElementById('navHamburger');
+  const isOpen=drawer.classList.contains('open');
+  drawer.classList.toggle('open',!isOpen);
+  btn.setAttribute('aria-expanded',String(!isOpen));
+  btn.setAttribute('aria-label',isOpen?'Open navigation menu':'Close navigation menu');
+  document.body.style.overflow=isOpen?'':'hidden';
+}
+// Close mobile nav when a link is clicked
+document.addEventListener('DOMContentLoaded',function(){
+  document.querySelectorAll('#navMobileDrawer a').forEach(function(el){
+    el.addEventListener('click',function(){
+      const drawer=document.getElementById('navMobileDrawer');
+      const btn=document.getElementById('navHamburger');
+      drawer.classList.remove('open');
+      btn.setAttribute('aria-expanded','false');
+      btn.setAttribute('aria-label','Open navigation menu');
+      document.body.style.overflow='';
+    });
+  });
+});
 
 function showPaywall(){ document.getElementById('paywallOverlay').style.display='flex'; document.getElementById('paywallBlur').style.display='block'; }
 function closePaywall(){ document.getElementById('paywallOverlay').style.display='none'; document.getElementById('paywallBlur').style.display='none'; }
