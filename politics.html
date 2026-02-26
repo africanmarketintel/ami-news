@@ -1542,7 +1542,11 @@ function searchArticles(q) {
 function applyFilters(preservePage=false) {
   if(!preservePage) currentPage = 1; // reset to page 1 on new search/filter
   let filtered = allArticles;
-  if(filterActive !== 'all') filtered = filtered.filter(a=>(a.section||'').includes(filterActive) || (a.tags||'').includes(filterActive));
+  if(filterActive !== 'all') filtered = filtered.filter(a=>{
+    const tagsStr = Array.isArray(a.tags) ? a.tags.join(' ') : (a.tags||'');
+    const hay = (tagsStr + ' ' + (a.section||'')).toLowerCase();
+    return hay.includes(filterActive.toLowerCase());
+  });
   if(searchQuery) filtered = filtered.filter(a=>(a.headline||'').toLowerCase().includes(searchQuery)||(a.standfirst||'').toLowerCase().includes(searchQuery)||(a.author_name||'').toLowerCase().includes(searchQuery));
   renderCards(filtered.filter(a=>a.placement==='card'));
 }
