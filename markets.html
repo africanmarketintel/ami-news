@@ -1927,7 +1927,7 @@ async function publishArticle() {
       bodyRaw = bodyRaw.split(/\n\n+/).filter(p=>p.trim()).map(p=>`<p>${p.trim()}</p>`).join('\n');
     }
 
-    const authorName = '';
+    const authorName = document.getElementById('new-author').value;
     await db.insert('articles', {
       headline:        headline,
       standfirst:      document.getElementById('new-standfirst').value,
