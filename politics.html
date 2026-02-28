@@ -6,10 +6,8 @@
 <title>Politics | African Market Intelligence</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400;1,600&family=Spectral:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-
 <!-- ✅ CREDENTIALS: Edit config.js once — applies to all pages -->
 <script src="config.js"></script>
-
 <style>
 :root{--gold:#C9A84C;--gold-light:#F9C53D;--gold-pale:#FDF6E3;--terra:#B85C38;--terra-dark:#8C3A1F;--green:#1E6B3C;--green-mid:#2E9B5E;--ink:#1A1208;--ink-mid:#3D2B1F;--ink-soft:#6B5344;--cream:#FAF7F0;--cream-dark:#F0EAD9;--border:#D4C4A0;--bg:var(--cream);--surface:#fff;--text:var(--ink);--text-soft:var(--ink-soft);--nav-bg:#0A1A10;--nav-text:var(--cream);--header-bg:var(--cream-dark);--divider:var(--border);--card-bg:#fff}
 [data-theme="dark"]{--green:#2E9B5E;--green-mid:#4DBA7F;--bg:#060F09;--surface:#0A1A10;--text:#EDE5D5;--text-soft:#A89070;--nav-bg:#060F09;--nav-text:#EDE5D5;--header-bg:#0A1A10;--divider:#1A3020;--card-bg:#0F2015;--border:#1A3020;--gold-pale:#0D1F12}
@@ -166,7 +164,6 @@ a{color:inherit;text-decoration:none}button{cursor:pointer;border:none;backgroun
 /* Toast */
 .toast{position:fixed;bottom:28px;right:28px;z-index:9999;background:#0D3B1C;border:1px solid #2E9B5E;color:#2E9B5E;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.08em;padding:12px 22px;border-radius:2px;opacity:0;transform:translateY(16px);transition:all .3s;pointer-events:none}
 .toast.show{opacity:1;transform:translateY(0)}
-
 /* ═══ ADMIN PANEL ═══════════════════════════════════════════ */
 .admin-overlay{position:fixed;inset:0;z-index:9000;display:none;background:rgba(0,0,0,.55);backdrop-filter:blur(3px)}
 .admin-overlay.open{display:flex}
@@ -255,7 +252,6 @@ footer{background:var(--nav-bg);color:#888;padding:40px 24px 24px;margin-top:48p
 .footer-links a{font-size:13px;transition:color .2s;font-weight:300}
 .footer-links a:hover{color:var(--gold)}
 .footer-bottom{display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:10px;flex-wrap:wrap;gap:10px}
-
 /* ═══ PAGINATION ════════════════════════════════════════════ */
 .pagination-bar{display:flex;align-items:center;justify-content:center;gap:6px;padding:32px 0 8px;flex-wrap:wrap}
 .page-btn{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;letter-spacing:.05em;min-width:38px;height:38px;display:flex;align-items:center;justify-content:center;border:1px solid var(--divider);background:var(--card-bg);color:var(--text-soft);border-radius:2px;cursor:pointer;transition:all .2s;text-decoration:none;padding:0 10px}
@@ -268,16 +264,12 @@ footer{background:var(--nav-bg);color:#888;padding:40px 24px 24px;margin-top:48p
 .archive-header{background:var(--card-bg);border:1px solid var(--divider);border-left:4px solid var(--terra);padding:14px 20px;margin-bottom:0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
 .archive-title{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--terra)}
 .archive-count{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft)}
-
-
 /* ══════════════════════════════════════════════════════════
    WCAG AA + RESPONSIVE — auto-generated patch
 ══════════════════════════════════════════════════════════ */
-
 /* Screen-reader only — hides visually but readable by AT */
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;
   overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-
 /* Skip link — WCAG 2.4.1 Bypass Blocks */
 .skip-link{position:absolute;top:-100px;left:8px;z-index:99999;
   background:var(--gold);color:var(--ink);padding:10px 18px;
@@ -286,18 +278,15 @@ footer{background:var(--nav-bg);color:#888;padding:40px 24px 24px;margin-top:48p
   text-decoration:none;box-shadow:0 4px 12px rgba(0,0,0,.3);
   transition:top .15s}
 .skip-link:focus{top:8px}
-
 /* Visible focus rings — WCAG 2.4.7 Focus Visible */
 *:focus{outline:none}
 *:focus-visible{outline:3px solid #C9A84C !important;outline-offset:3px !important}
 [data-theme="dark"] *:focus-visible{outline-color:#F9C53D !important}
-
 /* Paywall dismiss was a <div> — now <button> */
 button.paywall-dismiss{background:none;border:none;padding:8px 4px;
   font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);
   letter-spacing:.08em;text-transform:uppercase;text-decoration:underline;
   cursor:pointer;min-height:44px}
-
 /* Minimum 44×44 touch targets — WCAG 2.5.5 */
 .dark-toggle{min-width:44px;min-height:44px;display:inline-flex;
   align-items:center;justify-content:center}
@@ -309,13 +298,11 @@ button.paywall-dismiss{background:none;border:none;padding:8px 4px;
 .section-tab{min-height:44px}
 .nw-btn{min-height:44px}
 .btn-save{min-height:44px}
-
 /* Footer link contrast fix — WCAG 1.4.3 (was #888 on dark bg ≈ 3.5:1, fails) */
 footer .footer-links a{color:#B0ADC8 !important}
 footer .footer-links a:hover{color:var(--gold) !important}
 .footer-about{color:#A89070}
 .footer-bottom{color:#999}
-
 /* ── Mobile hamburger button ──────────────────────── */
 .nav-hamburger{display:none;flex-direction:column;align-items:center;
   justify-content:center;gap:5px;width:44px;height:48px;padding:0 10px;
@@ -326,7 +313,6 @@ footer .footer-links a:hover{color:var(--gold) !important}
 .nav-hamburger[aria-expanded="true"] span:nth-child(1){transform:translateY(7px) rotate(45deg)}
 .nav-hamburger[aria-expanded="true"] span:nth-child(2){opacity:0;transform:scaleX(0)}
 .nav-hamburger[aria-expanded="true"] span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
-
 /* ── Mobile nav drawer ────────────────────────────── */
 .nav-mobile-drawer{display:none;position:fixed;top:48px;left:0;right:0;
   bottom:0;background:var(--nav-bg);z-index:998;overflow-y:auto;
@@ -350,99 +336,72 @@ footer .footer-links a:hover{color:var(--gold) !important}
 .mob-subscribe{background:var(--gold) !important;color:var(--ink) !important;
   margin:16px 24px;border-radius:2px;justify-content:center;
   font-weight:600;width:calc(100% - 48px) !important;border-bottom:none !important}
-
 /* ═══ RESPONSIVE BREAKPOINTS ════════════════════════ */
-
 /* ── Mobile (< 768px) ──────────────────────────────── */
 @media(max-width:767px){
-
   /* Hamburger on, desktop nav links off */
   .nav-hamburger{display:flex !important}
   .nav-left,.nav-right{display:none !important}
-
   /* Hero: single column stack */
   .hero-grid{display:flex !important;flex-direction:column !important}
   .hero-main,.hero-side-1,.hero-side-2{width:100%;border-right:none;
     border-bottom:1px solid var(--divider)}
-
   /* Cards: 1 column */
   .article-row{grid-template-columns:1fr !important}
-
   /* Opinion: 1 column */
   .opinion-row{grid-template-columns:1fr !important}
-
   /* Most-read: 1 column */
   #mostReadContainer{grid-template-columns:1fr !important}
-
   /* Masthead meta: centred stack */
   .masthead-meta{flex-direction:column;gap:6px;text-align:center;align-items:center}
   .masthead{padding:16px 16px 12px}
-
   /* Paywall: stacked */
   .paywall-plans,.paywall-cta{grid-template-columns:1fr !important}
   .paywall-box{padding:24px 18px;margin-bottom:0;border-left:none;border-right:none;
     border-bottom:none;border-radius:0}
   .paywall-overlay{align-items:flex-end}
-
   /* Admin panel full-width */
   .admin-panel{width:100vw !important;max-width:100vw !important}
-
   /* Forms stack */
   .form-row{grid-template-columns:1fr !important}
   .market-edit-grid{grid-template-columns:1fr !important}
-
   /* Footer: full single column */
   .footer-top{grid-template-columns:1fr !important}
   .footer-about{max-width:100% !important}
   .footer-bottom{flex-direction:column;gap:6px;text-align:center}
-
   /* Padding reduction */
   .main-wrapper{padding:20px 16px !important}
   .hero-content{padding:18px 16px 20px}
   .card-content{padding:14px}
-
   /* Markets: 2-col on mobile */
   .markets-grid{grid-template-columns:repeat(2,1fr) !important}
-
   /* Section header wraps */
   .section-header{flex-wrap:wrap;gap:6px}
-
   /* Archive filter wraps */
   .archive-filter-bar{flex-wrap:wrap !important;gap:6px !important}
-
   /* Ticker slightly smaller */
   .ticker-inner{gap:28px}
-
   /* Article page reading width */
   .article-body{padding:0 !important}
 }
-
 /* ── Tablet (768px – 1024px) ───────────────────────── */
 @media(min-width:768px) and (max-width:1024px){
-
   /* 2-column cards */
   .article-row{grid-template-columns:1fr 1fr !important}
   .opinion-row{grid-template-columns:1fr 1fr !important}
   #mostReadContainer{grid-template-columns:1fr 1fr !important}
-
   /* Hero ratio tweak */
   .hero-grid{grid-template-columns:3fr 2fr !important}
-
   /* Wrapper padding */
   .main-wrapper{padding:24px 20px}
-
   /* Footer: 2-col */
   .footer-top{grid-template-columns:1fr 1fr !important}
-
   /* Reduce nav font on tablet */
   .nav-link{font-size:10px !important;padding:0 10px !important}
 }
-
-
 /* ══════════════════════════════════════════════════════
    INLINE EDIT MODE — Squarespace-style
 ══════════════════════════════════════════════════════ */
-
 /* ── Floating Edit FAB ───────────────────────────────── */
 .ami-edit-fab{
   position:fixed;bottom:80px;right:22px;z-index:8900;
@@ -459,7 +418,6 @@ footer .footer-links a:hover{color:var(--gold) !important}
 .ami-edit-fab .fab-dot{width:7px;height:7px;border-radius:50%;background:rgba(0,0,0,.3);transition:background .2s}
 .ami-edit-fab.active .fab-dot{background:rgba(255,255,255,.4);animation:fab-pulse 1.5s infinite}
 @keyframes fab-pulse{0%,100%{opacity:1}50%{opacity:.3}}
-
 /* ── Save Bar ─────────────────────────────────────────── */
 .ami-edit-bar{
   position:fixed;bottom:0;left:0;right:0;z-index:8901;
@@ -481,7 +439,6 @@ footer .footer-links a:hover{color:var(--gold) !important}
   font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;
   padding:8px 14px;border-radius:2px;cursor:pointer;transition:all .2s}
 .ami-exit-btn:hover{border-color:#C9A84C;color:#C9A84C}
-
 /* ── Editable elements ───────────────────────────────── */
 body.ami-edit-mode [data-editable]{
   cursor:text;
@@ -515,7 +472,6 @@ body.ami-edit-mode [data-editable].saved-flash{
   background:rgba(76,175,80,.06);
   transition:outline .1s,background .1s;
 }
-
 /* ── Image overlay ───────────────────────────────────── */
 body.ami-edit-mode [data-editable="image"]{
   cursor:pointer !important;
@@ -534,7 +490,6 @@ body.ami-edit-mode [data-editable="image"]::after{
   pointer-events:none;
 }
 body.ami-edit-mode [data-editable="image"]:hover::after{opacity:1}
-
 /* ── Article card "Edit" button ─────────────────────── */
 .card-edit-overlay{
   display:none;
@@ -548,7 +503,6 @@ body.ami-edit-mode [data-editable="image"]:hover::after{opacity:1}
 body.ami-edit-mode .card-edit-overlay{display:flex;align-items:center;gap:4px}
 body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
 .ami-edit-mode .hero-side-1,.ami-edit-mode .hero-side-2{position:relative}
-
 /* ── Image replace dialog ────────────────────────────── */
 .ami-img-dialog{
   display:none;position:fixed;inset:0;z-index:9999;
@@ -589,7 +543,6 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
   font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;
   padding:10px 14px;border-radius:2px;cursor:pointer;transition:all .2s}
 .ami-img-cancel:hover{border-color:#C9A84C;color:#C9A84C}
-
 /* ── Rich text toolbar ───────────────────────────────── */
 .ami-rte-bar{
   display:none;
@@ -604,10 +557,8 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
   cursor:pointer;font-size:14px;line-height:1;transition:all .2s;min-width:30px;text-align:center}
 .ami-rte-btn:hover{background:#1A3020;color:#C9A84C}
 .ami-rte-sep{width:1px;height:18px;background:#1A3020;margin:0 3px}
-
 .region-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-soft);padding:0 14px 0 2px;display:flex;align-items:center;opacity:.55;flex-shrink:0;user-select:none;pointer-events:none}
 .paywall-overlay,.paywall-blur{display:none!important}.lock-icon{display:none!important}.badge-locked{display:none!important}
-
 /* ── Most Read items ──────────────────────────────────────── */
 .mr-item{display:flex;align-items:flex-start;gap:14px;background:var(--surface);padding:16px;cursor:pointer;transition:background .15s}
 .mr-item:hover{background:var(--card-bg,var(--surface))}
@@ -619,9 +570,7 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
 </style>
 </head>
 <body>
-
 <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
-
 <!-- ═══ ADMIN PANEL ════════════════════════════════════════ -->
 <!-- ── Admin Login Modal ─────────────────────────────── -->
 <div id="amiLoginModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(6,15,9,.85);backdrop-filter:blur(4px);align-items:center;justify-content:center">
@@ -665,9 +614,7 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
       <div class="admin-tab" onclick="switchTab(event,'breaking')">Breaking</div>
       <div class="admin-tab" onclick="switchTab(event,'settings')">Settings</div>
       <div class="admin-tab" onclick="switchTab(event,'subscribers')">Subscribers</div>
-      <div class="admin-tab" onclick="switchTab(event,'pages')">Pages</div>
     </div>
-
     <!-- ARTICLES TAB -->
     <div class="admin-section active" id="tab-articles">
       <div class="admin-section-title">➕ Publish New Article</div>
@@ -726,11 +673,9 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
           <button class="btn-save" id="publishBtn" onclick="publishArticle()" style="margin-top:14px">📢 Publish to Site →</button>
         </div>
       </details>
-
       <div class="admin-section-title">📰 Live Articles</div>
       <div id="adminArticleList" style="font-family:'DM Mono',monospace;font-size:11px;color:#888">Loading articles…</div>
     </div>
-
     <!-- MARKETS TAB -->
     <div class="admin-section" id="tab-markets">
       <div class="admin-section-title">Update Market Data</div>
@@ -739,7 +684,6 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
       </div>
       <button class="btn-save" onclick="saveMarkets()" style="margin-top:18px">💾 Save All Markets →</button>
     </div>
-
     <!-- BREAKING NEWS TAB -->
     <div class="admin-section" id="tab-breaking">
       <div class="admin-section-title">Breaking News Banner</div>
@@ -751,10 +695,8 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
       </div>
       <button class="btn-save" onclick="saveBreaking()">💾 Update Breaking News →</button>
     </div>
-
     <!-- SETTINGS TAB -->
     <div class="admin-section" id="tab-settings">
-
       <!-- ── Site Identity ───────────────────────── -->
       <div class="admin-section-title">🏛 Site Identity</div>
       <div class="form-group"><label class="form-label">Publication Name</label>
@@ -765,7 +707,6 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
         <input class="form-input" id="editionLabel" value="Pan-African Edition"></div>
       <div class="form-group"><label class="form-label">Location Line</label>
         <input class="form-input" id="locationLine" value="Est. 2024 · Nairobi · Lagos · Cairo · Johannesburg"></div>
-
       <!-- ── Newsletter Widget ──────────────────── -->
       <div class="admin-section-title" style="margin-top:22px">📧 Newsletter Widget</div>
       <div class="form-group"><label class="form-label">Widget Title</label>
@@ -776,7 +717,6 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
         <input class="form-input" id="newsletterBtn" placeholder="Subscribe Free →"></div>
       <div class="form-group"><label class="form-label">Newsletter Sign-up URL (optional)</label>
         <input class="form-input" id="newsletterLink" placeholder="https://… or leave blank"></div>
-
       <!-- ── Subscription Plans ─────────────────── -->
       <div class="admin-section-title" style="margin-top:22px">💳 Subscription Plans</div>
       <div class="form-row">
@@ -795,18 +735,15 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
       </div>
       <div class="form-group" style="margin-top:8px"><label class="form-label">Plan 2 Stripe Link</label>
         <input class="form-input" id="plan2Link" placeholder="https://buy.stripe.com/…"></div>
-
       <!-- ── Footer Content ──────────────────────── -->
       <div class="admin-section-title" style="margin-top:22px">🦶 Footer Content</div>
       <div class="form-group"><label class="form-label">Footer About Text</label>
         <textarea class="form-textarea" id="footerAboutText" placeholder="The continent's most trusted source…"></textarea></div>
       <div class="form-group"><label class="form-label">Copyright Line</label>
         <input class="form-input" id="copyrightText" placeholder="© 2025 African Market Intelligence Ltd."></div>
-
       <!-- ── Footer Links Editor ─────────────────── -->
       <div class="admin-section-title" style="margin-top:22px">🔗 Footer Navigation Links</div>
       <p style="font-size:11px;color:#888;font-family:'DM Mono',monospace;margin-bottom:16px;line-height:1.6">Edit every link that appears in the footer columns. Changes go live on all pages immediately after saving.</p>
-
       <!-- Column 1 -->
       <div style="background:#060F09;border:1px solid #1A3020;border-top:2px solid #C9A84C;padding:16px;margin-bottom:14px;border-radius:2px">
         <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#C9A84C;margin-bottom:10px">Column 1</div>
@@ -816,7 +753,6 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
         <div id="fc1Editor"></div>
         <button onclick="addFooterLinkRow(1)" style="width:100%;margin-top:8px;background:transparent;border:1px dashed #1A3020;color:#888;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:7px;cursor:pointer;border-radius:2px;transition:all .2s" onmouseover="this.style.borderColor='#C9A84C';this.style.color='#C9A84C'" onmouseout="this.style.borderColor='#1A3020';this.style.color='#888'">+ Add Link</button>
       </div>
-
       <!-- Column 2 -->
       <div style="background:#060F09;border:1px solid #1A3020;border-top:2px solid #B85C38;padding:16px;margin-bottom:14px;border-radius:2px">
         <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#B85C38;margin-bottom:10px">Column 2</div>
@@ -826,7 +762,6 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
         <div id="fc2Editor"></div>
         <button onclick="addFooterLinkRow(2)" style="width:100%;margin-top:8px;background:transparent;border:1px dashed #1A3020;color:#888;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:7px;cursor:pointer;border-radius:2px;transition:all .2s" onmouseover="this.style.borderColor='#C9A84C';this.style.color='#C9A84C'" onmouseout="this.style.borderColor='#1A3020';this.style.color='#888'">+ Add Link</button>
       </div>
-
       <!-- Column 3 -->
       <div style="background:#060F09;border:1px solid #1A3020;border-top:2px solid #2E9B5E;padding:16px;margin-bottom:20px;border-radius:2px">
         <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#2E9B5E;margin-bottom:10px">Column 3</div>
@@ -836,7 +771,6 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
         <div id="fc3Editor"></div>
         <button onclick="addFooterLinkRow(3)" style="width:100%;margin-top:8px;background:transparent;border:1px dashed #1A3020;color:#888;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:7px;cursor:pointer;border-radius:2px;transition:all .2s" onmouseover="this.style.borderColor='#C9A84C';this.style.color='#C9A84C'" onmouseout="this.style.borderColor='#1A3020';this.style.color='#888'">+ Add Link</button>
       </div>
-
       <!-- ── Misc ─────────────────────────────────── -->
       <div class="setting-row">
         <div><div class="setting-label">Paywall Active</div><div class="setting-desc">Auto-show paywall after 30 seconds</div></div>
@@ -846,11 +780,8 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
         <div><div class="setting-label">Dark Mode Default</div></div>
         <label class="toggle-switch"><input type="checkbox" id="darkDefault" onchange="toggleDark()"><span class="toggle-slider"></span></label>
       </div>
-
       <button class="btn-save" onclick="saveSettings()">💾 Save All Settings →</button>
     </div>
-  </div>
-
   <!-- SUBSCRIBERS TAB -->
   <div class="admin-section" id="tab-subscribers">
     <div class="admin-section-title">Newsletter Subscribers</div>
@@ -881,7 +812,7 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
       </div>
     </div>
   </div>
-
+  </div>
   <!-- Dashboard right panel -->
   <div class="admin-right">
     <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#EDE5D5;margin-bottom:6px">Dashboard</div>
@@ -904,18 +835,15 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
     </div>
   </div>
 </div>
-
 <!-- ═══ SITE ═══════════════════════════════════════════════ -->
 <div class="breaking-banner" id="breakingBanner" role="alert" aria-live="assertive" style="display:none">
   <span class="breaking-label">Breaking</span>
   <span id="breakingTextDisplay" data-editable="text" data-cms-type="breaking" data-cms-key="breaking_text"></span>
   <button class="breaking-close" onclick="this.parentElement.style.display='none'" aria-label="Dismiss breaking news">×</button>
 </div>
-
 <div class="ticker-bar"><div class="ticker-inner" id="tickerInner">
   <span class="ticker-item"><span class="sym">Loading markets…</span></span>
 </div></div>
-
 <nav class="top-nav" aria-label="Main navigation">
   <button class="nav-hamburger" id="navHamburger" aria-expanded="false" aria-controls="navMobileDrawer" aria-label="Open navigation menu" onclick="toggleMobileNav()"><span></span><span></span><span></span></button><div class="nav-left">
     <a href="index.html"      class="nav-link" id="nav-home" aria-current="page" style="color:var(--gold);border-bottom:2px solid var(--gold)">Home</a>
@@ -935,7 +863,6 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
     <a href="deals.html"     id="navSubscribeBtn" class="btn-subscribe">Deal Tracker</a>
   </div>
 </nav>
-
 <!-- ═══ MOBILE NAV DRAWER ════════════════════════════ -->
 <div class="nav-mobile-drawer" id="navMobileDrawer"
      role="dialog" aria-modal="true"
@@ -956,8 +883,6 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
   <a href="contact.html">Contact</a>
   <a href="membership.html" class="mob-subscribe">Subscribe →</a>
 </div>
-
-
 <header class="masthead" role="banner">
   <div class="masthead-name" id="siteNameDisplay" data-editable="text" data-cms-type="setting" data-cms-key="site_name" onclick="handleLogoClick()" style="cursor:default" title="">African Market <span>Intelligence</span></div>
   <div class="masthead-tagline" id="siteTaglineDisplay" data-editable="text" data-cms-type="setting" data-cms-key="tagline">The Continent's Premium Financial & Business Publication</div>
@@ -967,7 +892,6 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
     <span id="locationDisplay" data-editable="text" data-cms-type="setting" data-cms-key="location_line">Est. 2024 · Nairobi · Lagos · Cairo · Johannesburg</span>
   </div>
 </header>
-
 <div class="section-nav" role="navigation" aria-label="Filter by region"><div class="section-nav-inner">
   <span class="region-label">Region</span>
   <button type="button" class="section-tab active" onclick="filterSection(event,'all')">All Africa</button>
@@ -976,7 +900,6 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
   <button type="button" class="section-tab" onclick="filterSection(event,'Southern Africa')">Southern Africa</button>
   <button type="button" class="section-tab" onclick="filterSection(event,'North Africa')">North Africa</button>
 </div></div>
-
 <div class="main-wrapper">
   <main id="main-content">
     <!-- Hero -->
@@ -1002,7 +925,6 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
         <div class="skeleton skel-text-short"></div>
       </div>
     </div>
-
     <!-- Markets strip -->
     <div class="markets-strip">
       <div class="strip-title">African Markets at a Glance</div>
@@ -1013,7 +935,6 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
         <div class="skeleton" style="height:60px;border-radius:4px"></div>
       </div>
     </div>
-
     <div class="section-header">
       <h2 class="section-title">Latest News</h2><div class="section-line"></div>
       <a href="#" class="view-more" id="viewAllLink">View all →</a>
@@ -1029,7 +950,6 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
         <div class="article-card"><div class="card-img-placeholder">⏳</div><div class="card-content"><div class="skeleton skel-headline"></div><div class="skeleton skel-text"></div></div></div>
       </div>
     </div>
-
     <!-- Most Read -->
     <div id="paginationBar" class="pagination-bar"></div>
     <div class="section-header" style="margin-top:32px">
@@ -1037,7 +957,6 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
     </div>
     <div id="mostReadContainer" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--divider);border:1px solid var(--divider);margin-bottom:32px"></div>
   </main>
-
   <aside>
     <div class="newsletter-widget">
       <div class="nw-title" id="nwTitleDisplay" data-editable="text" data-cms-type="setting" data-cms-key="newsletter_title">AMI Morning Brief</div>
@@ -1055,7 +974,7 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
         <img id="sidebarAdImg"
              src="https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=400&h=300"
              alt="AIM — Pan-African Trade Intelligence"
-             style="width:100%;height:400px;object-fit:cover;display:card">
+             style="width:100%;height:180px;object-fit:cover;display:block">
         <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(10,26,16,.88) 0%,transparent 55%);pointer-events:none"></div>
         <div style="position:absolute;bottom:0;left:0;right:0;padding:14px 16px">
           <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:3px">Sponsored</div>
@@ -1066,7 +985,6 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
     </div>
   </aside>
 </div>
-
 <footer>
   <div class="footer-inner">
     <div class="footer-top">
@@ -1109,7 +1027,6 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
     </div>
   </div>
 </footer>
-
 <!-- Paywall -->
 <div class="paywall-blur" id="paywallBlur"></div>
 <div class="paywall-overlay" id="paywallOverlay">
@@ -1131,7 +1048,6 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
     <button class="paywall-dismiss" onclick="closePaywall()">Continue with limited access</button>
   </div>
 </div>
-
 <script>
 // ════════════════════════════════════════════════════════════
 // SUPABASE CLIENT
@@ -1151,22 +1067,22 @@ const db = {
   async insert(table, data) {
     const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
       method:'POST',
-      headers:{ apikey:SUPABASE_ANON, Authorization:'Bearer '+(AUTH_TOKEN||SUPABASE_ANON), 'Content-Type':'application/json', Prefer:'return=representation' },
+      headers:{ apikey:SUPABASE_ANON, Authorization:'Bearer '+(AUTH_TOKEN||SUPABASE_ANON), 'Content-Type':'application/json', Prefer:'return=minimal' },
       body: JSON.stringify(data)
     });
     if(!r.ok) throw new Error(await r.text());
-    return r.json();
+    const t1 = await r.text(); return t1 ? JSON.parse(t1) : {};
   },
   async update(table, data, match) {
     const params = new URLSearchParams();
     Object.entries(match).forEach(([k,v])=>params.set(k,'eq.'+v));
     const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${params}`, {
       method:'PATCH',
-      headers:{ apikey:SUPABASE_ANON, Authorization:'Bearer '+(AUTH_TOKEN||SUPABASE_ANON), 'Content-Type':'application/json', Prefer:'return=representation' },
+      headers:{ apikey:SUPABASE_ANON, Authorization:'Bearer '+(AUTH_TOKEN||SUPABASE_ANON), 'Content-Type':'application/json', Prefer:'return=minimal' },
       body: JSON.stringify(data)
     });
     if(!r.ok) throw new Error(await r.text());
-    return r.json();
+    const t2 = await r.text(); return t2 ? JSON.parse(t2) : {};
   },
   async delete(table, match) {
     const params = new URLSearchParams();
@@ -1188,7 +1104,6 @@ const db = {
     return `${SUPABASE_URL}/storage/v1/object/public/ami-images/${path}`;
   }
 };
-
 // ════════════════════════════════════════════════════════════
 // STATE
 // ════════════════════════════════════════════════════════════
@@ -1200,31 +1115,25 @@ let searchQuery    = '';
 const ARTICLES_PER_PAGE = 9; // articles per page (3 rows of 3)
 let currentPage    = 1;
 let totalArticles  = 0;
-
 // ════════════════════════════════════════════════════════════
 // INIT
 // ════════════════════════════════════════════════════════════
 document.getElementById('mastDate').textContent =
   new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-
 // section tabs handled by filterSection()
-
 // Stripe links
 document.getElementById('stripeDigital').href = STRIPE_DIGITAL;
 document.getElementById('stripePremium').href = STRIPE_PREMIUM;
 document.getElementById('navSubscribeBtn').href = STRIPE_PREMIUM;
-
 async function init() {
   if(!SUPABASE_URL || SUPABASE_URL === 'YOUR_SUPABASE_URL' || !SUPABASE_ANON || SUPABASE_ANON === 'YOUR_SUPABASE_ANON_KEY') {
     showConfigBanner(); return;
   }
-
   // Read page/section/q from URL
   const params = new URLSearchParams(window.location.search);
   currentPage  = parseInt(params.get('page')) || 1;
   if(params.get('section')) filterActive = params.get('section');
   if(params.get('q'))       searchQuery  = params.get('q');
-
   try {
     const [articles, markets, settings, breaking] = await Promise.all([
       db.query('articles', { select:'*', eq:{is_published:'true'}, order:'created_at.desc' }),
@@ -1252,7 +1161,6 @@ async function init() {
     showToast('⚠ Could not connect to database. Check your Supabase credentials.','error');
   }
 }
-
 // Handle browser back/forward
 window.addEventListener('popstate', e => {
   if(e.state){
@@ -1262,25 +1170,20 @@ window.addEventListener('popstate', e => {
     applyFilters();
   }
 });
-
 // ════════════════════════════════════════════════════════════
 // RENDER FUNCTIONS
 // ════════════════════════════════════════════════════════════
-
 function articleUrl(a) { return `article.html?id=${a.id}`; }
-
 function heroImgHtml(a, height='220px') {
   if(a.hero_image) return `<img src="${a.hero_image}" class="hero-img" alt="${a.headline}" style="height:${height}" onerror="this.style.display='none'">`;
   return `<div class="hero-img-placeholder" style="height:${height}">📰 ${a.section||''}</div>`;
 }
-
 function renderHero(filtered) {
   const pool  = (filtered && filtered.length) ? filtered : allArticles;
   const hero  = pool.find(a=>a.placement==='hero') || pool[0];
   const side1 = pool.find(a=>a.placement==='side1') || pool[1];
   const side2 = pool.find(a=>a.placement==='side2') || pool[2];
   if(!hero) return;
-
   document.getElementById('heroGrid').innerHTML = `
     <div class="hero-main" style="background:var(--card-bg)">
       ${heroImgHtml(hero,'200px')}
@@ -1310,16 +1213,13 @@ function renderHero(filtered) {
       <div class="article-meta" style="margin-top:12px"><span class="author">${side2.author_name||''}</span><span>${side2.read_time||''}</span>${side2.is_locked?'<span class="article-tag">Premium</span>':''}</div>
     </div>`:'<div class="hero-side-2" style="background:var(--card-bg)"></div>'}`;
 }
-
 function renderCards(articles) {
   // Update filtered set
   filteredCards = (articles || allArticles).filter(a => window.ARCHIVE_MODE ? (a.placement !== 'hero' && a.placement !== 'side1' && a.placement !== 'side2') : (articles ? true : a.placement === 'card'));
   totalArticles = filteredCards.length;
-
   // Paginate
   const start = (currentPage - 1) * ARTICLES_PER_PAGE;
   const page  = filteredCards.slice(start, start + ARTICLES_PER_PAGE);
-
   const container = document.getElementById('articleCardsContainer');
   if(!filteredCards.length){
     container.innerHTML = '<p style="color:var(--text-soft);font-family:DM Mono,monospace;font-size:12px;padding:24px 0">No articles found.</p>';
@@ -1327,7 +1227,6 @@ function renderCards(articles) {
     document.getElementById('archiveHeader').style.display = 'none';
     return;
   }
-
   // Show archive header on page 2+
   const archiveHeader = document.getElementById('archiveHeader');
   const archiveCount  = document.getElementById('archiveCount');
@@ -1335,7 +1234,6 @@ function renderCards(articles) {
   document.getElementById('archiveTitle').textContent = searchQuery ? `Search: "${searchQuery}"` : section;
   archiveCount.textContent = `${totalArticles} article${totalArticles!==1?'s':''} · Page ${currentPage} of ${Math.ceil(totalArticles/ARTICLES_PER_PAGE)}`;
   archiveHeader.style.display = 'flex';
-
   const rows = [];
   for(let i = 0; i < page.length; i += 3){
     const chunk = page.slice(i, i + 3);
@@ -1358,16 +1256,13 @@ function renderCards(articles) {
   container.innerHTML = rows.join('');
   renderPagination();
 }
-
 function renderPagination() {
   const totalPages = Math.ceil(totalArticles / ARTICLES_PER_PAGE);
   const bar = document.getElementById('paginationBar');
   if(totalPages <= 1){ bar.innerHTML = ''; return; }
-
   const pages = buildPageNumbers(currentPage, totalPages);
   const section = filterActive !== 'all' ? `&section=${encodeURIComponent(filterActive)}` : '';
   const q = searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : '';
-
   bar.innerHTML = `
     <a class="page-btn nav ${currentPage===1?'disabled':''}" onclick="goToPage(${currentPage-1})" href="?page=${currentPage-1}${section}${q}" aria-label="Previous page">← Prev</a>
     ${pages.map(p => p === '...'
@@ -1377,7 +1272,6 @@ function renderPagination() {
     <a class="page-btn nav ${currentPage===totalPages?'disabled':''}" onclick="goToPage(${currentPage+1})" href="?page=${currentPage+1}${section}${q}" aria-label="Next page">Next →</a>
   `;
 }
-
 function buildPageNumbers(current, total) {
   if(total <= 7) return Array.from({length:total}, (_,i)=>i+1);
   const pages = [];
@@ -1388,7 +1282,6 @@ function buildPageNumbers(current, total) {
   pages.push(total);
   return pages;
 }
-
 function goToPage(page) {
   event.preventDefault();
   const totalPages = Math.ceil(totalArticles / ARTICLES_PER_PAGE);
@@ -1403,7 +1296,6 @@ function goToPage(page) {
   // Scroll to top of article grid smoothly
   document.getElementById('archiveHeader')?.scrollIntoView({behavior:'smooth', block:'start'});
 }
-
 function renderMarketsStrip() {
   document.getElementById('marketsDisplay').innerHTML = allMarkets.map(m=>`
     <div class="market-item">
@@ -1412,12 +1304,10 @@ function renderMarketsStrip() {
       <div class="market-change ${m.direction}">${m.direction==='up'?'▲':'▼'} ${m.change}</div>
     </div>`).join('');
 }
-
 function renderTicker() {
   const items = allMarkets.map(m=>`<span class="ticker-item"><span class="sym">${m.id.toUpperCase()}</span> ${m.value} <span class="${m.direction}">${m.direction==='up'?'▲':'▼'} ${m.change}</span></span>`).join('');
   document.getElementById('tickerInner').innerHTML = items + items; // duplicate for seamless loop
 }
-
 function renderTopStories() {
   const top = allArticles.slice(0,5);
   document.getElementById('topStoriesList').innerHTML = top.map((a,i)=>`
@@ -1426,8 +1316,6 @@ function renderTopStories() {
       <div class="top-story-headline">${a.headline}</div>
     </div>`).join('');
 }
-
-
 function renderMostRead() {
   const el = document.getElementById('mostReadContainer');
   if (!el) return;
@@ -1451,14 +1339,12 @@ function renderMostRead() {
       </div>
     </div>`).join('');
 }
-
 function renderBreaking(breaking) {
   if(breaking && breaking.length>0 && breaking[0].is_active) {
     document.getElementById('breakingTextDisplay').textContent = breaking[0].text;
     document.getElementById('breakingBanner').style.display = 'flex';
   }
 }
-
 function applySettings(settings) {
   if(!settings) return;
   const get = key => (settings.find(s=>s.key===key)?.value) || '';
@@ -1518,7 +1404,6 @@ function applySettings(settings) {
   };
   Object.entries(fields).forEach(([id,val])=>{ const el=document.getElementById(id); if(el&&val) el.value=val; });
 }
-
 // ════════════════════════════════════════════════════════════
 // SEARCH & FILTER
 // ════════════════════════════════════════════════════════════
@@ -1559,21 +1444,18 @@ function applyFilters(preservePage=false) {
     renderCards(allArticles.filter(a=>a.placement==='card'));
   }
 }
-
 // ════════════════════════════════════════════════════════════
 // ADMIN
 // ════════════════════════════════════════════════════════════
 // ── Admin password gate ──────────────────────────────────────
 let AUTH_TOKEN = null; // set on successful Supabase login
 let logoClickCount = 0, logoClickTimer = null;
-
 function handleLogoClick() {
   logoClickCount++;
   clearTimeout(logoClickTimer);
   logoClickTimer = setTimeout(()=>{ logoClickCount=0; }, 2000);
   if(logoClickCount >= 5) { logoClickCount=0; promptAdmin(); }
 }
-
 function promptAdmin() {
   // show login modal instead of password prompt
   document.getElementById('amiLoginModal').style.display = 'flex';
@@ -1582,7 +1464,6 @@ function promptAdmin() {
     if(el) el.focus();
   }, 80);
 }
-
 async function supabaseLogin(e) {
   e.preventDefault();
   const email    = document.getElementById('amiLoginEmail').value.trim();
@@ -1611,13 +1492,11 @@ async function supabaseLogin(e) {
     btn.disabled    = false;
   }
 }
-
 function amiLoginClose() {
   document.getElementById('amiLoginModal').style.display = 'none';
   document.getElementById('amiLoginForm').reset();
   document.getElementById('amiLoginError').textContent = '';
 }
-
 function toggleAdminVisibility(show) {
   // Optionally show a visible admin button when toggled on from within admin
   let btn = document.getElementById('visibleAdminBtn');
@@ -1632,7 +1511,6 @@ function toggleAdminVisibility(show) {
     btn.remove();
   }
 }
-
 async function handleNewsletterSignup() {
   const input = document.querySelector('.nw-input');
   const email = input?.value?.trim();
@@ -1671,13 +1549,17 @@ async function handleNewsletterSignup() {
       }
     }
   } catch(e){
-    showToast('✗ Could not subscribe: '+e.message,'error');
+    if(e.message && e.message.includes('23505')){
+      showToast('✓ You are already subscribed!');
+      input.value = '';
+    } else {
+      showToast('✗ Could not subscribe: '+e.message,'error');
+    }
   } finally {
     btn.disabled = false;
     btn.textContent = origText;
   }
 }
-
 // ── Subscriber management (admin) ────────────────────────────
 async function loadSubscribers() {
   document.getElementById('subscriberList').innerHTML =
@@ -1709,7 +1591,6 @@ async function loadSubscribers() {
       '<div style="padding:24px;color:#F44336;font-size:11px">Error: '+e.message+'</div>';
   }
 }
-
 function exportSubscribersCSV() {
   const rows = document.querySelectorAll('#subscriberList > div');
   if(!rows.length){ showToast('Load subscribers first','error'); return; }
@@ -1725,8 +1606,6 @@ function exportSubscribersCSV() {
   a.click(); URL.revokeObjectURL(url);
   showToast('✓ CSV downloaded');
 }
-
-
 function amiAdminLogout() {
   AUTH_TOKEN = null;
   document.getElementById('adminOverlay').classList.remove('open');
@@ -1759,7 +1638,6 @@ function switchTab(e,tab){
   document.getElementById('tab-'+tab).classList.add('active');
   if(tab==='subscribers') loadSubscribers();
 }
-
 async function loadAdminData() {
   const [arts, mkts, brk] = await Promise.all([
     db.query('articles', { select:'*', order:'created_at.desc' }),
@@ -1783,7 +1661,6 @@ async function loadAdminData() {
     document.getElementById('statSubscribers').textContent = subs.length;
   } catch(e){}
 }
-
 function renderAdminArticleList(articles) {
   const el = document.getElementById('adminArticleList');
   if(!articles || !articles.length){ el.innerHTML='<div style="color:#555;padding:16px 0">No articles yet. Publish your first above.</div>'; return; }
@@ -1836,9 +1713,7 @@ function renderAdminArticleList(articles) {
       </div>
     </li>`).join('')}</ul>`;
 }
-
 function toggleEdit(id){ document.getElementById('edit-'+id).classList.toggle('open'); }
-
 async function uploadAndSetImage(input, articleId) {
   const file = input.files[0]; if(!file) return;
   showToast('⏳ Uploading image…', 'loading');
@@ -1849,7 +1724,6 @@ async function uploadAndSetImage(input, articleId) {
     showToast('✓ Image uploaded — save the article to apply');
   } catch(e) { showToast('✗ Upload failed: '+e.message,'error'); }
 }
-
 async function deleteArticle(id) {
   if(!confirm('Delete this article permanently from the database?')) return;
   try {
@@ -1859,7 +1733,6 @@ async function deleteArticle(id) {
     renderHero(); renderCards(); renderTopStories(); renderMostRead(); renderMostRead();
   } catch(e){ showToast('✗ '+e.message,'error'); }
 }
-
 async function saveArticle(id) {
   const btn = event.target; btn.disabled=true; btn.textContent='Saving…';
   try {
@@ -1888,7 +1761,6 @@ async function saveArticle(id) {
   } catch(e){ showToast('✗ '+e.message,'error'); }
   finally{ btn.disabled=false; btn.textContent='💾 Save Changes →'; }
 }
-
 // Image preview helper
 function previewImage(input, previewId, areaId) {
   const file = input.files[0]; if(!file) return;
@@ -1899,7 +1771,6 @@ function previewImage(input, previewId, areaId) {
   };
   reader.readAsDataURL(file);
 }
-
 async function publishArticle() {
   const btn = document.getElementById('publishBtn');
   const headline = document.getElementById('new-headline').value.trim();
@@ -1911,7 +1782,6 @@ async function publishArticle() {
     const heroFile   = document.getElementById('new-hero-file').files[0];
     let authorPhotoUrl = '';
     const authorFile = document.getElementById('new-author-file').files[0];
-
     if(heroFile) {
       showToast('⏳ Uploading hero image…','loading');
       heroImageUrl = await db.uploadImage(heroFile, `articles/hero-${Date.now()}-${heroFile.name}`);
@@ -1919,12 +1789,10 @@ async function publishArticle() {
     if(authorFile) {
       authorPhotoUrl = await db.uploadImage(authorFile, `authors/${Date.now()}-${authorFile.name}`);
     }
-
     let bodyRaw = document.getElementById('new-body').value;
     if(bodyRaw.trim() && !bodyRaw.trim().startsWith('<')) {
       bodyRaw = bodyRaw.split(/\n\n+/).filter(p=>p.trim()).map(p=>`<p>${p.trim()}</p>`).join('\n');
     }
-
     const authorName = document.getElementById('new-author').value;
     await db.insert('articles', {
       headline:        headline,
@@ -1944,7 +1812,6 @@ async function publishArticle() {
       is_published:    true,
       tags:            document.getElementById('new-tags').value,
     });
-
     // Clear form
     ['new-headline','new-standfirst','new-body','new-author','new-author-role','new-readtime','new-section','new-tags','new-hero-url'].forEach(id=>{
       const el=document.getElementById(id); if(el) el.value='';
@@ -1953,14 +1820,12 @@ async function publishArticle() {
     if(document.getElementById('new-most-read')) document.getElementById('new-most-read').checked=false;
     document.getElementById('heroPreview').style.display='none';
     document.getElementById('authorPreview').style.display='none';
-
     showToast('✓ Article published to database — live on site!');
     await loadAdminData();
     renderHero(); renderCards(); renderTopStories(); renderMostRead(); renderMostRead();
   } catch(e){ showToast('✗ '+e.message,'error'); }
   finally{ btn.disabled=false; btn.textContent='📢 Publish to Site →'; }
 }
-
 function renderMarketEditor(markets) {
   document.getElementById('marketEditGrid').innerHTML=(markets||allMarkets).map(m=>`
     <div class="market-edit-item">
@@ -1973,12 +1838,10 @@ function renderMarketEditor(markets) {
       </div>
     </div>`).join('');
 }
-
 function setDir(id,dir,el){
   el.closest('.dir-toggle').querySelectorAll('.dir-btn').forEach(b=>b.classList.remove('active'));
   el.classList.add('active');
 }
-
 async function saveMarkets() {
   try {
     await Promise.all(allMarkets.map(m => {
@@ -1995,7 +1858,6 @@ async function saveMarkets() {
     showToast('✓ Market data saved to database');
   } catch(e){ showToast('✗ '+e.message,'error'); }
 }
-
 async function saveBreaking() {
   try {
     const text   = document.getElementById('breakingText').value;
@@ -2012,7 +1874,6 @@ async function saveBreaking() {
     showToast('✓ Breaking news saved');
   } catch(e){ showToast('✗ '+e.message,'error'); }
 }
-
 async function saveSettings() {
   try {
     const settings = [
@@ -2048,7 +1909,6 @@ async function saveSettings() {
     showToast('✓ All settings saved and live on site');
   } catch(e){ showToast('✗ '+e.message,'error'); }
 }
-
 // ════════════════════════════════════════════════════════════
 // UI HELPERS
 // ════════════════════════════════════════════════════════════
@@ -2057,7 +1917,6 @@ function toggleDark(){
   h.setAttribute('data-theme',dark?'light':'dark');
   document.getElementById('themeBtn').textContent=dark?'🌙':'☀️';
 }
-
 function toggleMobileNav(){
   var drawer=document.getElementById("navMobileDrawer");
   var btn=document.getElementById("navHamburger");
@@ -2079,11 +1938,8 @@ document.addEventListener("DOMContentLoaded",function(){
     });
   });
 });
-
-
 function showPaywall(){ document.getElementById('paywallOverlay').style.display='flex'; document.getElementById('paywallBlur').style.display='block'; }
 function closePaywall(){ document.getElementById('paywallOverlay').style.display='none'; document.getElementById('paywallBlur').style.display='none'; }
-
 function showToast(msg, type='success'){
   const t=document.getElementById('toast'); t.textContent=msg;
   if(type==='error'){ t.style.background='#4D1B1B'; t.style.borderColor='#F44336'; t.style.color='#F44336'; }
@@ -2091,7 +1947,6 @@ function showToast(msg, type='success'){
   else { t.style.background='#0D3B1C'; t.style.borderColor='#2E9B5E'; t.style.color='#2E9B5E'; }
   t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),4000);
 }
-
 function showConfigBanner(){
   document.getElementById('heroGrid').innerHTML=`
     <div style="grid-column:1/-1;background:var(--card-bg);padding:48px;text-align:center;border:2px dashed var(--gold)">
@@ -2100,8 +1955,6 @@ function showConfigBanner(){
       <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-soft)">See the included <strong>supabase-setup.sql</strong> file for full setup instructions.</div>
     </div>`;
 }
-
-
 // ════════════════════════════════════════════════════════════
 // PAGES CMS — load & save static page content via Supabase
 // ════════════════════════════════════════════════════════════
@@ -2122,7 +1975,6 @@ async function loadPageContent(page) {
     showToast('✓ Loaded ' + page + ' content from database');
   } catch(e) { showToast('✗ ' + e.message, 'error'); }
 }
-
 async function savePage() {
   const page     = document.getElementById('pages-selector').value;
   const titleVal = document.getElementById('page-title').value;
@@ -2148,7 +2000,6 @@ async function savePage() {
   } catch(e) { showToast('✗ ' + e.message, 'error'); }
   finally { if(btn){ btn.disabled=false; btn.textContent='💾 Save Page Content →'; } }
 }
-
 // ════════════════════════════════════════════════════════════
 // FOOTER LINKS CMS EDITOR
 // ════════════════════════════════════════════════════════════
@@ -2175,7 +2026,6 @@ const FOOTER_DEFAULTS = {
     {label:'Privacy Policy',href:'privacy.html'},
   ]
 };
-
 function addFooterLinkRow(col, label='', href='') {
   const container = document.getElementById('fc' + col + 'Editor');
   if(!container) return;
@@ -2188,7 +2038,6 @@ function addFooterLinkRow(col, label='', href='') {
     '<button onclick="this.parentElement.remove()" style="background:#4D1B1B;border:1px solid #F44336;color:#F44336;border-radius:2px;cursor:pointer;font-size:14px;line-height:1;width:26px;height:26px;display:flex;align-items:center;justify-content:center;flex-shrink:0">×</button>';
   container.appendChild(row);
 }
-
 function getFooterLinksJSON(col) {
   const rows = document.querySelectorAll('#fc' + col + 'Editor .fc-link-row');
   const links = Array.from(rows).map(r => {
@@ -2197,7 +2046,6 @@ function getFooterLinksJSON(col) {
   }).filter(l => l.label || l.href);
   return JSON.stringify(links);
 }
-
 function populateFooterEditor(col, linksJson) {
   const container = document.getElementById('fc' + col + 'Editor');
   if(!container) return;
@@ -2207,7 +2055,6 @@ function populateFooterEditor(col, linksJson) {
   catch(e) { links = FOOTER_DEFAULTS[col]; }
   (links||FOOTER_DEFAULTS[col]).forEach(l => addFooterLinkRow(col, l.label, l.href));
 }
-
 function renderFooterColumn(titleId, listId, titleVal, linksJson, col) {
   const titleEl = document.getElementById(titleId);
   const listEl  = document.getElementById(listId);
@@ -2226,7 +2073,6 @@ function renderFooterColumn(titleId, listId, titleVal, linksJson, col) {
 filterActive = 'Politics';
 init();
 </script>
-
 <!-- ═══ INLINE EDITOR UI ════════════════════════════════ -->
 <!-- Rich-text toolbar -->
 <div class="ami-rte-bar" id="amiRteBar" role="toolbar" aria-label="Text formatting">
@@ -2241,13 +2087,11 @@ init();
   <button class="ami-rte-btn" onclick="rteCmd('createLink',prompt('URL:'))" title="Link" aria-label="Insert link">🔗</button>
   <button class="ami-rte-btn" onclick="rteCmd('unlink')" title="Remove link" aria-label="Remove link">✂</button>
 </div>
-
 <!-- Floating edit FAB -->
 <button class="ami-edit-fab" id="amiEditFab" onclick="toggleEditMode()" aria-label="Toggle edit mode" style="display:none">
   <span class="fab-dot"></span>
   <span id="amiEditFabLabel">Edit Page</span>
 </button>
-
 <!-- Save bar -->
 <div class="ami-edit-bar" id="amiEditBar" role="toolbar" aria-label="Edit mode controls">
   <span class="ami-edit-bar-label">✏ Editing this page</span>
@@ -2255,7 +2099,6 @@ init();
   <button class="ami-save-btn" onclick="saveAllEdits()">💾 Save All</button>
   <button class="ami-exit-btn" onclick="toggleEditMode()">Exit Edit Mode</button>
 </div>
-
 <!-- Image replace dialog -->
 <div class="ami-img-dialog" id="amiImgDialog" role="dialog" aria-modal="true" aria-label="Replace image">
   <div class="ami-img-dialog-box">
@@ -2281,14 +2124,11 @@ init();
     </div>
   </div>
 </div>
-
-
 <script>
 // ════════════════════════════════════════════════════════
 // AMI INLINE EDITOR — Squarespace-style page editing
-// ════════════════════════════════════════════════════════
+// ══��═════════════════════════════════════════════════════
 (function() {
-
 var amiEditActive   = false;   // is edit mode on?
 var amiPendingCount = 0;       // unsaved changes
 var amiImgTarget    = null;    // current image element being replaced
@@ -2297,7 +2137,6 @@ var amiImgType      = null;    // 'setting' | 'article' | 'page'
 var amiImgArticleId = null;    // for article images
 var amiLastRteEl    = null;    // element rich-text bar is attached to
 var amiUploadedUrl  = null;    // result of file upload
-
 // ── Show FAB after admin opens ──────────────────────────
 window.amiShowEditFab = function() {
   var fab = document.getElementById('amiEditFab');
@@ -2307,18 +2146,15 @@ window.amiHideEditFab = function() {
   var fab = document.getElementById('amiEditFab');
   if(fab && !amiEditActive) fab.style.display = 'none';
 };
-
 // ── Toggle Edit Mode ──────────────────────────────────
 window.toggleEditMode = function() {
   amiEditActive ? exitEditMode() : enterEditMode();
 };
-
 function enterEditMode() {
   amiEditActive = true;
   document.body.classList.add('ami-edit-mode');
   document.getElementById('amiEditFabLabel').textContent = 'Editing…';
   document.getElementById('amiEditFab').classList.add('active');
-
   // Make static settings editable
   document.querySelectorAll('[data-editable="text"]').forEach(function(el) {
     el.setAttribute('contenteditable', 'true');
@@ -2328,7 +2164,6 @@ function enterEditMode() {
     el.addEventListener('focus', onTextFocus);
     el.addEventListener('keydown', onEditKeydown);
   });
-
   // Rich-text elements (bodies, article body)
   document.querySelectorAll('[data-editable="richtext"]').forEach(function(el) {
     el.setAttribute('contenteditable', 'true');
@@ -2337,28 +2172,23 @@ function enterEditMode() {
     el.addEventListener('blur', onRteBlur);
     el.addEventListener('focus', onRteFocus);
   });
-
   // Image elements
   document.querySelectorAll('[data-editable="image"]').forEach(function(el) {
     el.addEventListener('click', onImageClick);
     el.style.cursor = 'pointer';
   });
-
   // Add edit buttons to article cards (rendered dynamically)
   setupCardEditButtons();
-
   // Show save bar
   var bar = document.getElementById('amiEditBar');
   bar.classList.add('visible');
   updatePendingLabel();
 }
-
 function exitEditMode() {
   amiEditActive = false;
   document.body.classList.remove('ami-edit-mode');
   document.getElementById('amiEditFabLabel').textContent = 'Edit Page';
   document.getElementById('amiEditFab').classList.remove('active');
-
   // Disable contenteditable
   document.querySelectorAll('[contenteditable="true"]').forEach(function(el) {
     el.setAttribute('contenteditable', 'false');
@@ -2369,23 +2199,18 @@ function exitEditMode() {
     el.removeEventListener('keydown', onEditKeydown);
     el.removeEventListener('click', onImageClick);
   });
-
   // Remove image listeners
   document.querySelectorAll('[data-editable="image"]').forEach(function(el) {
     el.removeEventListener('click', onImageClick);
   });
-
   // Remove card edit buttons
   document.querySelectorAll('.card-edit-overlay').forEach(function(el) { el.remove(); });
-
   // Hide save bar & rte bar
   document.getElementById('amiEditBar').classList.remove('visible');
   document.getElementById('amiRteBar').classList.remove('visible');
-
   amiPendingCount = 0;
   updatePendingLabel();
 }
-
 // ── Pending change tracking ─────────────────────────
 function addPending() {
   amiPendingCount++;
@@ -2406,7 +2231,6 @@ function updatePendingLabel() {
     el.className = 'ami-edit-pending';
   }
 }
-
 // ── Text field blur → auto-save ─────────────────────
 function onTextFocus(e) {
   // Select all text on first focus for easy replacement
@@ -2436,7 +2260,6 @@ function onTextBlur(e) {
   var pageFld = el.dataset.pageField;
   saveFieldChange(el, type, key, artId, artFld, pageName, pageFld, newVal);
 }
-
 // ── Richtext blur → auto-save ───────────────────────
 function onRteFocus(e) {
   amiLastRteEl = e.target;
@@ -2466,7 +2289,6 @@ window.rteCmd = function(cmd, val) {
   document.execCommand(cmd, false, val || null);
   if(amiLastRteEl) amiLastRteEl.focus();
 };
-
 // ── Core save function ─────────────────────────────
 async function saveFieldChange(el, type, cmsKey, artId, artFld, pageName, pageFld, value) {
   addPending();
@@ -2497,7 +2319,6 @@ async function saveFieldChange(el, type, cmsKey, artId, artFld, pageName, pageFl
     if(typeof showToast === 'function') showToast('✗ Save failed: ' + err.message, 'error');
   }
 }
-
 // ── Save All button ────────────────────────────────
 window.saveAllEdits = async function() {
   // Force blur on all active contenteditable elements
@@ -2508,7 +2329,6 @@ window.saveAllEdits = async function() {
   amiPendingCount = 0;
   updatePendingLabel();
 };
-
 // ── Image click → open dialog ────────────────────────
 function onImageClick(e) {
   e.preventDefault(); e.stopPropagation();
@@ -2528,15 +2348,10 @@ function onImageClick(e) {
 }
 window.switchImgTab = function(tab) {
   ['url','upload'].forEach(function(t) {
-    document.getElementById('amiTabUrl' === 'amiTab' + t.charAt(0).toUpperCase() + t.slice(1) ||
-      'amiTab' + t).classList.toggle('active', t === tab);
-    document.getElementById('amiImgPanel' + t.charAt(0).toUpperCase() + t.slice(1)).classList.toggle('active', t === tab);
+    var cap = t.charAt(0).toUpperCase() + t.slice(1);
+    document.getElementById('amiTab' + cap).classList.toggle('active', t === tab);
+    document.getElementById('amiImgPanel' + cap).classList.toggle('active', t === tab);
   });
-  document.getElementById('amiTab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
-  document.getElementById('amiTabUrl' === 'amiTab' + (tab === 'url' ? 'Upload' : 'Url') ? 'x':'amiTab' +
-    (tab === 'url' ? 'Upload' : 'Url')).classList.remove('active');
-  document.getElementById('amiImgPanel' + (tab === 'url' ? 'Url' : 'Upload')).classList.add('active');
-  document.getElementById('amiImgPanel' + (tab === 'url' ? 'Upload' : 'Url')).classList.remove('active');
 };
 window.previewImgUrl = function(url) {
   var prev = document.getElementById('amiImgPreview');
@@ -2582,7 +2397,6 @@ window.applyImage = async function() {
   }
   closeImgDialog();
 };
-
 // ── Article card edit buttons ─────────────────────────
 function setupCardEditButtons() {
   // Find all clickable article cards and add an edit overlay
@@ -2619,7 +2433,6 @@ function setupCardEditButtons() {
     }
   });
 }
-
 // ── Supabase helpers ─────────────────────────────────
 async function amiDbUpsertSetting(key, value) {
   if(typeof SUPABASE_URL === 'undefined' || SUPABASE_URL === 'YOUR_SUPABASE_URL')
@@ -2680,9 +2493,7 @@ async function amiDbUpdateArticle(id, fields) {
   });
   if(!res.ok) throw new Error(await res.text());
 }
-
 })(); // end IIFE
 </script>
-
 </body>
 </html>
