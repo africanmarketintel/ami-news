@@ -88,6 +88,7 @@ a{color:inherit;text-decoration:none}button{cursor:pointer;border:none;backgroun
 .card-body{font-size:13px;color:var(--text-soft);line-height:1.65;margin-bottom:14px;font-weight:300}
 .card-footer{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);display:flex;justify-content:space-between;align-items:center}
 .lock-icon{color:var(--gold)}
+.blur-content{filter:blur(5px)!important;user-select:none!important;pointer-events:none!important}
 /* Markets */
 .markets-strip{background:var(--card-bg);border:1px solid var(--divider);border-top:3px solid var(--gold);padding:20px 24px;margin-bottom:32px}
 .strip-title{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-soft);margin-bottom:16px}
@@ -849,7 +850,28 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
 
       <button class="btn-save" onclick="saveSettings()">💾 Save All Settings →</button>
     </div>
-  </div>
+
+    <!-- PAGES TAB -->
+    <div class="admin-section" id="tab-pages">
+    <div class="admin-section-title">✏ Edit Static Page Content</div>
+    <div class="form-group">
+      <label class="form-label" for="pages-selector">Page</label>
+      <select class="form-select" id="pages-selector" onchange="loadPageContent(this.value)">
+        <option value="about">About</option>
+        <option value="contact">Contact</option>
+        <option value="careers">Careers</option>
+        <option value="privacy">Privacy Policy</option>
+        <option value="membership">Membership</option>
+      </select>
+    </div>
+    <div class="form-group"><label class="form-label" for="page-title">Page Title</label>
+      <input class="form-input" id="page-title" placeholder="Page title…"></div>
+    <div class="form-group"><label class="form-label" for="page-subtitle">Subtitle / Tagline</label>
+      <input class="form-input" id="page-subtitle" placeholder="Short subtitle…"></div>
+    <div class="form-group"><label class="form-label" for="page-body">Body Content (HTML supported)</label>
+      <textarea class="form-textarea" id="page-body" style="min-height:200px;font-family:'DM Mono',monospace;font-size:12px;line-height:1.6"></textarea></div>
+    <button class="btn-save" onclick="savePage()">💾 Save Page Content →</button>
+  </div><!-- /tab-pages -->
 
   <!-- SUBSCRIBERS TAB -->
   <div class="admin-section" id="tab-subscribers">
@@ -880,7 +902,8 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
         <div style="padding:24px;text-align:center;color:#555">Click Refresh to load subscribers</div>
       </div>
     </div>
-  </div>
+  </div><!-- /tab-subscribers -->
+</div><!-- /admin-panel -->
 
   <!-- Dashboard right panel -->
   <div class="admin-right">
@@ -924,7 +947,9 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
     <a href="economy.html"    class="nav-link" id="nav-economy">Economy</a>
     <a href="energy.html"     class="nav-link" id="nav-energy" style="color:var(--gold);border-bottom:2px solid var(--gold)">Energy</a>
     <a href="technology.html" class="nav-link" id="nav-technology">Tech</a>
+    <a href="opinion.html"    class="nav-link" id="nav-opinion">Opinion</a>
     <a href="deals.html"    class="nav-link" id="nav-deals">Deals</a>
+    <a href="archive.html"    class="nav-link" id="nav-archive">Archive</a>
   </div>
   <div class="nav-right">
     <label for="navSearchInput" class="sr-only">Search articles</label><input class="nav-search" type="search" id="navSearchInput" placeholder="Search AMI…" aria-label="Search articles" oninput="searchArticles(this.value)">
@@ -950,7 +975,9 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
   <a href="economy.html">Economy</a>
   <a href="energy.html">Energy</a>
   <a href="technology.html">Technology</a>
+  <a href="opinion.html">Opinion</a>
   <a href="deals.html">Deals</a>
+  <a href="archive.html">Archive</a>
   <a href="about.html">About</a>
   <a href="membership.html">Membership</a>
   <a href="contact.html">Contact</a>
@@ -973,6 +1000,7 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
   <button type="button" class="section-tab active" onclick="filterSection(event,'all')">All Africa</button>
   <button type="button" class="section-tab" onclick="filterSection(event,'West Africa')">West Africa</button>
   <button type="button" class="section-tab" onclick="filterSection(event,'East Africa')">East Africa</button>
+  <button type="button" class="section-tab" onclick="filterSection(event,'Central Africa')">Central Africa</button>
   <button type="button" class="section-tab" onclick="filterSection(event,'Southern Africa')">Southern Africa</button>
   <button type="button" class="section-tab" onclick="filterSection(event,'North Africa')">North Africa</button>
 </div></div>
@@ -1053,15 +1081,67 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
     <div class="sidebar-widget" style="padding:0;overflow:hidden;border-top:3px solid var(--terra)">
       <a href="membership.html" id="sidebarAdLink" style="display:block;position:relative;text-decoration:none">
         <img id="sidebarAdImg"
-             src="https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=400&h=300"
-             alt="AIM — Pan-African Trade Intelligence"
+             src="https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=400&h=250"
+             alt="ABTA — Africa's Trade Intelligence Network"
              style="width:100%;height:400px;object-fit:cover;display:card">
         <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(10,26,16,.88) 0%,transparent 55%);pointer-events:none"></div>
         <div style="position:absolute;bottom:0;left:0;right:0;padding:14px 16px">
           <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:3px">Sponsored</div>
-          <div style="font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:#fff;line-height:1.25;margin-bottom:4px">AIM Membership</div>
+          <div style="font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:#fff;line-height:1.25;margin-bottom:4px">ABTA Membership</div>
           <div style="font-family:'DM Mono',monospace;font-size:10px;color:#bbb">Pan-African trade intelligence →</div>
         </div>
+      </a>
+    </div>
+
+    <!-- ═══ OPPORTUNITIES WIDGET ════════════════════════ -->
+    <div class="sidebar-widget" style="border-top:3px solid var(--green)">
+      <div class="widget-title">Opportunities</div>
+      <div id="opportunitiesList">
+
+        <div style="padding:11px 0;border-bottom:1px solid var(--divider)">
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--green-mid);margin-bottom:5px">&#x1F4B0; Investment</div>
+          <div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:600;line-height:1.35;cursor:pointer;color:var(--text);transition:color .2s"
+               onmouseover="this.style.color='var(--terra)'" onmouseout="this.style.color='var(--text)'"
+               onclick="location.href='deals.html'">
+            $500M AfCFTA Infrastructure Fund — Open to African DFIs
+          </div>
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);margin-top:5px">Closing Mar 2026</div>
+        </div>
+
+        <div style="padding:11px 0;border-bottom:1px solid var(--divider)">
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--terra);margin-bottom:5px">&#x1F4BC; Career</div>
+          <div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:600;line-height:1.35;cursor:pointer;color:var(--text);transition:color .2s"
+               onmouseover="this.style.color='var(--terra)'" onmouseout="this.style.color='var(--text)'"
+               onclick="location.href='careers.html'">
+            Trade Finance Analyst — Afreximbank, Cairo
+          </div>
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);margin-top:5px">Posted 2 days ago</div>
+        </div>
+
+        <div style="padding:11px 0;border-bottom:1px solid var(--divider)">
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:5px">&#x1F4C5; Event</div>
+          <div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:600;line-height:1.35;cursor:pointer;color:var(--text);transition:color .2s"
+               onmouseover="this.style.color='var(--terra)'" onmouseout="this.style.color='var(--text)'"
+               onclick="location.href='about.html'">
+            ABTA Trade Summit 2026 — London, April 2026
+          </div>
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);margin-top:5px">Register now</div>
+        </div>
+
+        <div style="padding:11px 0">
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:5px">&#x1F30D; Trade</div>
+          <div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:600;line-height:1.35;cursor:pointer;color:var(--text);transition:color .2s"
+               onmouseover="this.style.color='var(--terra)'" onmouseout="this.style.color='var(--text)'"
+               onclick="location.href='deals.html'">
+            UK–Africa DCTS: Export Gateway for SMEs — Apply Now
+          </div>
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);margin-top:5px">Deadline: 30 Apr 2026</div>
+        </div>
+
+      </div>
+      <a href="deals.html" style="display:block;margin-top:14px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--terra);text-decoration:none"
+         onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--terra)'">
+        View all opportunities →
       </a>
     </div>
   </aside>
@@ -1151,11 +1231,10 @@ const db = {
   async insert(table, data) {
     const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
       method:'POST',
-      headers:{ apikey:SUPABASE_ANON, Authorization:'Bearer '+(AUTH_TOKEN||SUPABASE_ANON), 'Content-Type':'application/json', Prefer:'return=representation' },
+      headers:{ apikey:SUPABASE_ANON, Authorization:'Bearer '+(AUTH_TOKEN||SUPABASE_ANON), 'Content-Type':'application/json', Prefer:'return=minimal' },
       body: JSON.stringify(data)
     });
     if(!r.ok) throw new Error(await r.text());
-    return r.json();
   },
   async update(table, data, match) {
     const params = new URLSearchParams();
@@ -1242,10 +1321,13 @@ async function init() {
     renderTopStories(); renderMostRead();
     // Activate correct section tab if section param set
     if(filterActive !== 'all') {
-      document.querySelectorAll('.section-tab').forEach(t=>{
-        if(t.textContent.includes(filterActive)) t.classList.add('active');
+      const tabs = document.querySelectorAll('.section-tab');
+      let matched = false;
+      tabs.forEach(t=>{
+        if(t.textContent.trim().includes(filterActive)) { t.classList.add('active'); matched = true; }
         else t.classList.remove('active');
       });
+      if(!matched && tabs.length) { tabs[0].classList.add('active'); }
     }
   } catch(e) {
     console.error(e);
@@ -1346,9 +1428,9 @@ function renderCards(articles) {
           : `<div class="card-img-placeholder">📰</div>`}
         <div class="card-content">
           <div class="article-kicker">${a.section||''}</div>
-          <h3 class="card-headline">${a.is_locked?'🔒 ':''} ${a.headline}</h3>
-          <p class="card-body">${a.standfirst||''}</p>
-          <div class="card-footer">
+          <h3 class="card-headline">${a.is_locked ? '🔒 ' + a.headline.trim().split(/\s+/).slice(0,2).join(' ') + '…' : a.headline}</h3>
+          <p class="${'card-body'+(a.is_locked?' blur-content':'')}">${a.standfirst||''}</p>
+          <div class="${'card-footer'+(a.is_locked?' blur-content':'')}">
             <span>${a.read_time||'3 min'} ${a.is_locked?'<span class="lock-icon">🔒</span>':''}</span>
             <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-soft)">${a.published_date||''}</span>
           </div>
@@ -1646,32 +1728,30 @@ async function handleNewsletterSignup() {
   btn.textContent = 'Subscribing…';
   btn.disabled = true;
   try {
-    // Check if already subscribed
-    const existing = await db.query('subscribers', { select:'id', eq:{email} });
-    if(existing && existing.length > 0){
+    await db.insert('subscribers', {
+      email,
+      source: 'homepage_widget',
+      subscribed_at: new Date().toISOString()
+    });
+    showToast('✓ Subscribed! Welcome to the AMI Morning Brief.');
+    input.value = '';
+    // Show thank you state
+    const widget = input.closest('.newsletter-widget');
+    if(widget){
+      widget.innerHTML = `
+        <div style="text-align:center;padding:12px 0">
+          <div style="font-size:28px;margin-bottom:8px">📬</div>
+          <div style="font-family:'Playfair Display',serif;font-size:18px;color:#C9A84C;margin-bottom:6px">You're in!</div>
+          <div style="font-size:13px;color:#999;font-weight:300">Check your inbox tomorrow morning for your first briefing.</div>
+        </div>`;
+    }
+  } catch(e){
+    if(e.message.includes('23505') || e.message.includes('unique')) {
       showToast('✓ You are already subscribed!');
       input.value = '';
     } else {
-      await db.insert('subscribers', {
-        email,
-        source: 'homepage_widget',
-        subscribed_at: new Date().toISOString()
-      });
-      showToast('✓ Subscribed! Welcome to the AMI Morning Brief.');
-      input.value = '';
-      // Show thank you state
-      const widget = input.closest('.newsletter-widget');
-      if(widget){
-        widget.innerHTML = `
-          <div style="text-align:center;padding:12px 0">
-            <div style="font-size:28px;margin-bottom:8px">📬</div>
-            <div style="font-family:'Playfair Display',serif;font-size:18px;color:#C9A84C;margin-bottom:6px">You're in!</div>
-            <div style="font-size:13px;color:#999;font-weight:300">Check your inbox tomorrow morning for your first briefing.</div>
-          </div>`;
-      }
+      showToast('✗ Could not subscribe: '+e.message,'error');
     }
-  } catch(e){
-    showToast('✗ Could not subscribe: '+e.message,'error');
   } finally {
     btn.disabled = false;
     btn.textContent = origText;
@@ -1925,7 +2005,7 @@ async function publishArticle() {
       bodyRaw = bodyRaw.split(/\n\n+/).filter(p=>p.trim()).map(p=>`<p>${p.trim()}</p>`).join('\n');
     }
 
-    const authorName = document.getElementById('new-author').value;
+    const authorName = '';
     await db.insert('articles', {
       headline:        headline,
       standfirst:      document.getElementById('new-standfirst').value,
@@ -2527,16 +2607,10 @@ function onImageClick(e) {
   document.getElementById('amiImgDialog').classList.add('open');
 }
 window.switchImgTab = function(tab) {
-  ['url','upload'].forEach(function(t) {
-    document.getElementById('amiTabUrl' === 'amiTab' + t.charAt(0).toUpperCase() + t.slice(1) ||
-      'amiTab' + t).classList.toggle('active', t === tab);
-    document.getElementById('amiImgPanel' + t.charAt(0).toUpperCase() + t.slice(1)).classList.toggle('active', t === tab);
-  });
-  document.getElementById('amiTab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
-  document.getElementById('amiTabUrl' === 'amiTab' + (tab === 'url' ? 'Upload' : 'Url') ? 'x':'amiTab' +
-    (tab === 'url' ? 'Upload' : 'Url')).classList.remove('active');
-  document.getElementById('amiImgPanel' + (tab === 'url' ? 'Url' : 'Upload')).classList.add('active');
-  document.getElementById('amiImgPanel' + (tab === 'url' ? 'Upload' : 'Url')).classList.remove('active');
+  document.getElementById('amiTabUrl').classList.toggle('active', tab === 'url');
+  document.getElementById('amiTabUpload').classList.toggle('active', tab === 'upload');
+  document.getElementById('amiImgPanelUrl').classList.toggle('active', tab === 'url');
+  document.getElementById('amiImgPanelUpload').classList.toggle('active', tab === 'upload');
 };
 window.previewImgUrl = function(url) {
   var prev = document.getElementById('amiImgPreview');
