@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Energy | African Market Intelligence</title>
+<title>African Market Intelligence</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400;1,600&family=Spectral:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 
@@ -607,7 +607,32 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
 .ami-rte-sep{width:1px;height:18px;background:#1A3020;margin:0 3px}
 
 .region-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-soft);padding:0 14px 0 2px;display:flex;align-items:center;opacity:.55;flex-shrink:0;user-select:none;pointer-events:none}
-.paywall-overlay,.paywall-blur{display:none!important}.lock-icon{display:none!important}.badge-locked{display:none!important}
+/* lock styles active */
+
+/* ── First-visit lead gen modal ──────────────────────────── */
+.fv-overlay{position:fixed;inset:0;background:rgba(6,15,9,.82);z-index:9000;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px)}
+.fv-box{background:var(--cream,#FAF7F0);max-width:520px;width:100%;border-top:4px solid var(--gold,#C9A84C);box-shadow:0 24px 80px rgba(0,0,0,.4);animation:fvIn .4s ease;position:relative;overflow:hidden}
+.fv-box::before{content:'◆';position:absolute;top:-30px;right:-10px;font-size:160px;color:rgba(201,168,76,.06);line-height:1;pointer-events:none}
+@keyframes fvIn{from{transform:translateY(24px);opacity:0}to{transform:translateY(0);opacity:1}}
+.fv-header{background:var(--nav-bg,#0A1A10);padding:28px 32px 22px;text-align:center;position:relative}
+.fv-logo{font-family:'Playfair Display',serif;font-size:28px;font-weight:800;color:#EDE5D5;letter-spacing:-.02em;line-height:1}
+.fv-logo span{color:var(--gold,#C9A84C)}
+.fv-tagline{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(237,229,213,.5);margin-top:6px}
+.fv-body{padding:28px 32px}
+.fv-desc{font-family:'Spectral',Georgia,serif;font-size:15px;line-height:1.75;color:#3D2B1F;margin-bottom:20px}
+.fv-badge{display:inline-flex;align-items:center;gap:8px;background:#0D3B1C;color:#2E9B5E;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;padding:6px 14px;margin-bottom:24px}
+.fv-badge::before{content:'●';font-size:8px}
+.fv-form{display:flex;gap:8px;margin-bottom:12px}
+.fv-input{flex:1;background:#fff;border:1px solid #D4C4A0;color:#1A1208;font-family:'DM Mono',monospace;font-size:12px;padding:11px 14px;outline:none;min-width:0}
+.fv-input:focus{border-color:var(--gold,#C9A84C)}
+.fv-input::placeholder{color:#999}
+.fv-btn{background:var(--gold,#C9A84C);color:#060F09;font-family:'DM Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:11px 20px;border:none;cursor:pointer;white-space:nowrap;transition:background .2s;flex-shrink:0}
+.fv-btn:hover{background:#D4B86A}
+.fv-terms{font-family:'DM Mono',monospace;font-size:9px;color:#9A8070;line-height:1.6;margin-bottom:20px}
+.fv-terms a{color:#9A8070;text-decoration:underline}
+.fv-skip{display:block;text-align:center;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#9A8070;cursor:pointer;padding:4px;transition:color .2s;background:none;border:none;width:100%}
+.fv-skip:hover{color:var(--gold,#C9A84C)}
+@media(max-width:480px){.fv-form{flex-direction:column}.fv-header{padding:22px 20px 18px}.fv-body{padding:22px 20px}.fv-logo{font-size:22px}}
 
 /* ── Most Read items ──────────────────────────────────────── */
 .mr-item{display:flex;align-items:flex-start;gap:14px;background:var(--surface);padding:16px;cursor:pointer;transition:background .15s}
@@ -725,6 +750,48 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
           <label style="font-family:'DM Mono',monospace;font-size:10px;color:#888;display:flex;align-items:center;gap:6px;margin-top:8px">
             <input type="checkbox" id="new-most-read"> 📌 Add to Most Read</label>
           <button class="btn-save" id="publishBtn" onclick="publishArticle()" style="margin-top:14px">📢 Publish to Site →</button>
+        </div>
+      </details>
+
+
+      <!-- ═══ BULK & ARCHIVE TOOLS ═══════════════════════════════ -->
+      <details style="border:1px solid #1A3020;border-radius:2px;overflow:hidden;margin-bottom:20px" id="bulkToolsDetails">
+        <summary style="padding:12px 14px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#C9A84C;cursor:pointer;background:#0A1A10;list-style:none">🗂 Bulk &amp; Archive Tools</summary>
+        <div style="padding:16px;background:#060F09">
+
+          <!-- ── Batch Archive by Date ─────────────────────────── -->
+          <div class="admin-section-title" style="font-size:10px;margin-bottom:10px">📅 Move Articles to Archive by Date</div>
+          <p style="font-size:11px;color:#888;font-family:'DM Mono',monospace;margin-bottom:12px;line-height:1.7">
+            Moves all articles published <em>before</em> a chosen date from their current placement to
+            <strong style="color:#C9A84C">Archive Only</strong>. They stay on the Archive page but are removed from the homepage.
+          </p>
+          <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;margin-bottom:10px">
+            <div style="flex:1;min-width:160px">
+              <label class="form-label" for="batchArchiveDate">Archive all articles published before</label>
+              <input type="date" class="form-input" id="batchArchiveDate">
+            </div>
+            <button class="btn-save" style="white-space:nowrap;margin:0;padding:9px 16px;width:auto" onclick="previewBatchArchive()">Preview →</button>
+          </div>
+          <div id="batchArchivePreview" style="font-family:'DM Mono',monospace;font-size:11px;color:#888;line-height:1.8;min-height:16px"></div>
+          <button class="btn-save" id="batchArchiveConfirmBtn" style="display:none;margin-top:10px;background:#1B3A6B" onclick="confirmBatchArchive()">📦 Move All to Archive →</button>
+
+          <div style="border-top:1px solid #1A3020;margin:20px 0 18px"></div>
+
+          <!-- ── CSV Bulk Import ───────────────────────────────── -->
+          <div class="admin-section-title" style="font-size:10px;margin-bottom:10px">📋 CSV Bulk Import (for older content)</div>
+          <p style="font-size:11px;color:#888;font-family:'DM Mono',monospace;margin-bottom:12px;line-height:1.7">
+            Paste a CSV exported from Excel, Google Sheets, or any text editor.<br>
+            All imported articles default to <strong style="color:#C9A84C">Archive</strong> placement and are marked published.
+            Accepted column names (any order, case-insensitive):<br>
+            <span style="color:#C9A84C">headline · standfirst · body · section · author · date · tags · read_time</span><br>
+            Also recognised as aliases: <span style="color:#555">title, summary, description, content, category, byline, keywords, published_date</span>
+          </p>
+          <textarea class="form-textarea" id="csvImportText"
+            style="min-height:130px;font-family:'DM Mono',monospace;font-size:11px"
+            placeholder='headline,standfirst,section,author,date&#10;"Nigeria raises interest rates to 27.25%","The CBN governor cited rising inflation…","Economy","Amara Osei","2024-01-15"&#10;"Kenya GDP growth beats forecast","Output rose 5.6% in Q3…","East Africa","Zara Mwenda","2024-02-20"'></textarea>
+          <button class="btn-save" style="margin-top:8px" onclick="csvImportPreview()">📊 Parse &amp; Preview →</button>
+          <div id="csvImportPreview" style="margin-top:14px"></div>
+
         </div>
       </details>
 
@@ -850,28 +917,44 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
 
       <button class="btn-save" onclick="saveSettings()">💾 Save All Settings →</button>
     </div>
-  </div><!-- /tab-settings -->
+  </div>
 
+  <!-- PAGES TAB -->
   <div class="admin-section" id="tab-pages">
-    <div class="admin-section-title">✏ Edit Static Page Content</div>
+    <div class="admin-section-title">📄 Edit Static Pages</div>
+    <p style="font-size:11px;color:#888;font-family:'DM Mono',monospace;margin-bottom:16px;line-height:1.6">Select a page, edit its content, then save. Changes go live immediately on the selected page.</p>
     <div class="form-group">
-      <label class="form-label" for="pages-selector">Page</label>
-      <select class="form-select" id="pages-selector" onchange="loadPageContent(this.value)">
+      <label class="form-label">Select Page</label>
+      <select class="form-input" id="pages-selector" onchange="loadPageContent(this.value)">
         <option value="about">About</option>
         <option value="contact">Contact</option>
-        <option value="careers">Careers</option>
-        <option value="privacy">Privacy Policy</option>
         <option value="membership">Membership</option>
+        <option value="privacy">Privacy Policy</option>
+        <option value="deals">Deal Tracker</option>
       </select>
     </div>
-    <div class="form-group"><label class="form-label" for="page-title">Page Title</label>
+    <div class="form-group"><label class="form-label">Page Title</label>
       <input class="form-input" id="page-title" placeholder="Page title…"></div>
-    <div class="form-group"><label class="form-label" for="page-subtitle">Subtitle / Tagline</label>
+    <div class="form-group"><label class="form-label">Page Subtitle / Tagline</label>
       <input class="form-input" id="page-subtitle" placeholder="Short subtitle…"></div>
-    <div class="form-group"><label class="form-label" for="page-body">Body Content (HTML supported)</label>
-      <textarea class="form-textarea" id="page-body" style="min-height:200px;font-family:'DM Mono',monospace;font-size:12px;line-height:1.6"></textarea></div>
-    <button class="btn-save" onclick="savePage()">💾 Save Page Content →</button>
-  </div><!-- /tab-pages -->
+    <div class="form-group"><label class="form-label">Page Body (HTML supported)</label>
+      <textarea class="form-textarea" id="page-body" style="height:220px;font-family:'DM Mono',monospace;font-size:11px" placeholder="Page body content — HTML accepted…"></textarea></div>
+    <div class="admin-section-title" style="margin-top:22px">💳 Membership Pricing</div>
+    <p style="font-size:11px;color:#888;font-family:'DM Mono',monospace;margin-bottom:12px;line-height:1.6">These update the membership page prices and paywall buttons live.</p>
+    <div class="form-row">
+      <div class="form-group" style="margin:0"><label class="form-label">Monthly Price</label>
+        <input class="form-input" id="mp-plan1-price" placeholder="$39"></div>
+      <div class="form-group" style="margin:0"><label class="form-label">Monthly Stripe Link</label>
+        <input class="form-input" id="mp-plan1-link" placeholder="https://buy.stripe.com/…"></div>
+    </div>
+    <div class="form-row" style="margin-top:8px">
+      <div class="form-group" style="margin:0"><label class="form-label">Annual Price</label>
+        <input class="form-input" id="mp-plan2-price" placeholder="$385"></div>
+      <div class="form-group" style="margin:0"><label class="form-label">Annual Stripe Link</label>
+        <input class="form-input" id="mp-plan2-link" placeholder="https://buy.stripe.com/…"></div>
+    </div>
+    <button class="btn-save" style="margin-top:16px;width:100%" onclick="savePageAndPricing()">💾 Save Page &amp; Pricing →</button>
+  </div>
 
   <!-- SUBSCRIBERS TAB -->
   <div class="admin-section" id="tab-subscribers">
@@ -902,8 +985,7 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
         <div style="padding:24px;text-align:center;color:#555">Click Refresh to load subscribers</div>
       </div>
     </div>
-  </div><!-- /tab-subscribers -->
-</div><!-- /admin-panel -->
+  </div>
 
   <!-- Dashboard right panel -->
   <div class="admin-right">
@@ -945,7 +1027,7 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
     <a href="markets.html"    class="nav-link" id="nav-markets">Markets</a>
     <a href="politics.html"   class="nav-link" id="nav-politics">Politics</a>
     <a href="economy.html"    class="nav-link" id="nav-economy">Economy</a>
-    <a href="energy.html"     class="nav-link" id="nav-energy" style="color:var(--gold);border-bottom:2px solid var(--gold)">Energy</a>
+    <a href="energy.html"     class="nav-link" id="nav-energy">Energy</a>
     <a href="technology.html" class="nav-link" id="nav-technology">Tech</a>
     <a href="deals.html"    class="nav-link" id="nav-deals">Deals</a>
   </div>
@@ -977,7 +1059,7 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
   <a href="about.html">About</a>
   <a href="membership.html">Membership</a>
   <a href="contact.html">Contact</a>
-  <a href="membership.html" class="mob-subscribe">Subscribe →</a>
+  <a href="deals.html" class="mob-subscribe">Deal Tracker →</a>
 </div>
 
 
@@ -1077,67 +1159,15 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
     <div class="sidebar-widget" style="padding:0;overflow:hidden;border-top:3px solid var(--terra)">
       <a href="membership.html" id="sidebarAdLink" style="display:block;position:relative;text-decoration:none">
         <img id="sidebarAdImg"
-             src="https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=400&h=250"
-             alt="ABTA — Africa's Trade Intelligence Network"
+             src="https://images.pexels.com/photos/8655018/pexels-photo-8655018.jpeg?auto=compress&cs=tinysrgb&w=400&h=250"
+             alt="AMI — Africa's Trade Intelligence"
              style="width:100%;height:400px;object-fit:cover;display:card">
         <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(10,26,16,.88) 0%,transparent 55%);pointer-events:none"></div>
         <div style="position:absolute;bottom:0;left:0;right:0;padding:14px 16px">
           <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:3px">Sponsored</div>
-          <div style="font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:#fff;line-height:1.25;margin-bottom:4px">ABTA Membership</div>
+          <div style="font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:#fff;line-height:1.25;margin-bottom:4px">AMI Membership</div>
           <div style="font-family:'DM Mono',monospace;font-size:10px;color:#bbb">Pan-African trade intelligence →</div>
         </div>
-      </a>
-    </div>
-
-    <!-- ═══ OPPORTUNITIES WIDGET ════════════════════════ -->
-    <div class="sidebar-widget" style="border-top:3px solid var(--green)">
-      <div class="widget-title">Opportunities</div>
-      <div id="opportunitiesList">
-
-        <div style="padding:11px 0;border-bottom:1px solid var(--divider)">
-          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--green-mid);margin-bottom:5px">&#x1F4B0; Investment</div>
-          <div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:600;line-height:1.35;cursor:pointer;color:var(--text);transition:color .2s"
-               onmouseover="this.style.color='var(--terra)'" onmouseout="this.style.color='var(--text)'"
-               onclick="location.href='deals.html'">
-            $500M AfCFTA Infrastructure Fund — Open to African DFIs
-          </div>
-          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);margin-top:5px">Closing Mar 2026</div>
-        </div>
-
-        <div style="padding:11px 0;border-bottom:1px solid var(--divider)">
-          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--terra);margin-bottom:5px">&#x1F4BC; Career</div>
-          <div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:600;line-height:1.35;cursor:pointer;color:var(--text);transition:color .2s"
-               onmouseover="this.style.color='var(--terra)'" onmouseout="this.style.color='var(--text)'"
-               onclick="location.href='careers.html'">
-            Trade Finance Analyst — Afreximbank, Cairo
-          </div>
-          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);margin-top:5px">Posted 2 days ago</div>
-        </div>
-
-        <div style="padding:11px 0;border-bottom:1px solid var(--divider)">
-          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:5px">&#x1F4C5; Event</div>
-          <div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:600;line-height:1.35;cursor:pointer;color:var(--text);transition:color .2s"
-               onmouseover="this.style.color='var(--terra)'" onmouseout="this.style.color='var(--text)'"
-               onclick="location.href='about.html'">
-            ABTA Trade Summit 2026 — London, April 2026
-          </div>
-          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);margin-top:5px">Register now</div>
-        </div>
-
-        <div style="padding:11px 0">
-          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:5px">&#x1F30D; Trade</div>
-          <div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:600;line-height:1.35;cursor:pointer;color:var(--text);transition:color .2s"
-               onmouseover="this.style.color='var(--terra)'" onmouseout="this.style.color='var(--text)'"
-               onclick="location.href='deals.html'">
-            UK–Africa DCTS: Export Gateway for SMEs — Apply Now
-          </div>
-          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);margin-top:5px">Deadline: 30 Apr 2026</div>
-        </div>
-
-      </div>
-      <a href="deals.html" style="display:block;margin-top:14px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--terra);text-decoration:none"
-         onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--terra)'">
-        View all opportunities →
       </a>
     </div>
   </aside>
@@ -1173,7 +1203,6 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
         <ul class="footer-links" id="footerCol3Links">
           <li><a href="about.html">About AMI</a></li>
           <li><a href="membership.html">Membership</a></li>
-          <li><a href="careers.html">Careers</a></li>
           <li><a href="contact.html">Contact</a></li>
           <li><a href="privacy.html">Privacy Policy</a></li>
         </ul>
