@@ -1222,7 +1222,7 @@ const db = {
     if(options.order)   params.set('order', options.order);
     if(options.limit)   params.set('limit', options.limit);
     const url = `${SUPABASE_URL}/rest/v1/${table}?${params}`;
-    const r = await fetch(url, { headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer '+SUPABASE_ANON } });
+    const r = await fetch(url, { headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer '+(AUTH_TOKEN||SUPABASE_ANON) } });
     if(!r.ok) throw new Error(await r.text());
     return r.json();
   },
@@ -1252,6 +1252,16 @@ const db = {
     const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${params}`, {
       method:'DELETE',
       headers:{ apikey:SUPABASE_ANON, Authorization:'Bearer '+(AUTH_TOKEN||SUPABASE_ANON) }
+    });
+    if(!r.ok) throw new Error(await r.text());
+    return true;
+  },
+  async upsert(table, data, conflictCol) {
+    const col = conflictCol || 'id';
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?on_conflict=${col}`, {
+      method:'POST',
+      headers:{ apikey:SUPABASE_ANON, Authorization:'Bearer '+(AUTH_TOKEN||SUPABASE_ANON), 'Content-Type':'application/json', Prefer:'resolution=merge-duplicates,return=minimal' },
+      body: JSON.stringify(data)
     });
     if(!r.ok) throw new Error(await r.text());
     return true;
@@ -1712,10 +1722,9 @@ function toggleAdminVisibility(show) {
 }
 
 async function handleNewsletterSignup() {
-  const input = document.querySelector('.nw-input');
+  const input = document.getElementById('nwEmailInput');
   const email = input?.value?.trim();
   if(!email){ showToast('Please enter your email address','error'); return; }
-  // Basic email validation
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
     showToast('Please enter a valid email address','error'); return;
   }
@@ -1724,20 +1733,26 @@ async function handleNewsletterSignup() {
   btn.textContent = 'Subscribing…';
   btn.disabled = true;
   try {
-    // Check if already subscribed
-    const existing = await db.query('subscribers', { select:'id', eq:{email} });
-    if(existing && existing.length > 0){
-      showToast('✓ You are already subscribed!');
+    // Single upsert — no SELECT needed, works with anon key only.
+    // Empty array response = email already existed; populated = newly inserted.
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/subscribers?on_conflict=email`, {
+      method: 'POST',
+      headers: {
+        apikey: SUPABASE_ANON,
+        Authorization: 'Bearer ' + SUPABASE_ANON,
+        'Content-Type': 'application/json',
+        Prefer: 'resolution=ignore-duplicates,return=representation'
+      },
+      body: JSON.stringify({ email, source: 'homepage_widget', subscribed_at: new Date().toISOString() })
+    });
+    if(!r.ok) throw new Error(await r.text());
+    const result = await r.json();
+    if(result && result.length === 0) {
+      showToast('✓ You\'re already subscribed with that address.');
       input.value = '';
     } else {
-      await db.insert('subscribers', {
-        email,
-        source: 'homepage_widget',
-        subscribed_at: new Date().toISOString()
-      });
       showToast('✓ Subscribed! Welcome to the AMI Morning Brief.');
       input.value = '';
-      // Show thank you state
       const widget = input.closest('.newsletter-widget');
       if(widget){
         widget.innerHTML = `
@@ -1867,7 +1882,7 @@ function renderAdminArticleList(articles) {
   if(!articles || !articles.length){ el.innerHTML='<div style="color:#555;padding:16px 0">No articles yet. Publish your first above.</div>'; return; }
   el.innerHTML = `<ul class="admin-article-list">${articles.map(a=>`
     <li class="admin-article-item">
-      <div class="admin-article-header" onclick="toggleEdit(${a.id})">
+      <div class="admin-article-header" onclick="toggleEdit('${a.id}')">
         <div class="admin-article-info">
           <div class="admin-article-title">${a.headline}</div>
           <div class="admin-article-meta">
@@ -1879,7 +1894,7 @@ function renderAdminArticleList(articles) {
           </div>
         </div>
         <div style="display:flex;gap:6px">
-          <button class="btn-danger" onclick="event.stopPropagation();deleteArticle(${a.id})">✕</button>
+          <button class="btn-danger" onclick="event.stopPropagation();deleteArticle('${a.id}')">✕</button>
         </div>
       </div>
       <div class="admin-article-body" id="edit-${a.id}">
@@ -1888,7 +1903,7 @@ function renderAdminArticleList(articles) {
         <div class="form-group"><label class="form-label">Full Article Body</label><textarea class="form-textarea" id="eb-${a.id}" style="min-height:120px;font-family:'DM Mono',monospace;font-size:11px">${(a.body||'').replace(/</g,'&lt;')}</textarea></div>
         <div class="form-group"><label class="form-label">Hero Image URL</label><input class="form-input" id="ei-${a.id}" value="${a.hero_image||''}"></div>
         <div class="form-group"><label class="form-label">Replace Image</label>
-          <div class="img-upload-area"><input type="file" accept="image/*" onchange="uploadAndSetImage(this,${a.id})"><div class="img-upload-label">📷 Upload new image</div></div>
+          <div class="img-upload-area"><input type="file" accept="image/*" onchange="uploadAndSetImage(this,'${a.id}')"><div class="img-upload-label">📷 Upload new image</div></div>
           ${a.hero_image?`<img src="${a.hero_image}" style="width:100%;height:80px;object-fit:cover;border-radius:2px;margin-top:6px">`:''}
         </div>
         <div class="form-row">
@@ -1910,7 +1925,7 @@ function renderAdminArticleList(articles) {
           <label style="font-family:'DM Mono',monospace;font-size:10px;color:#888;display:flex;align-items:center;gap:5px"><input type="checkbox" id="ep2-${a.id}" ${a.is_published?'checked':''}> ✅ Published</label>
           <label style="font-family:'DM Mono',monospace;font-size:10px;color:#888;display:flex;align-items:center;gap:5px"><input type="checkbox" id="emr-${a.id}" ${a.is_most_read?'checked':''}> 📌 Most Read</label>
         </div>
-        <button class="btn-save" onclick="saveArticle(${a.id})" style="margin-top:12px">💾 Save Changes →</button>
+        <button class="btn-save" onclick="saveArticle('${a.id}', event)" style="margin-top:12px">💾 Save Changes →</button>
       </div>
     </li>`).join('')}</ul>`;
 }
@@ -1934,11 +1949,11 @@ async function deleteArticle(id) {
     await db.delete('articles', {id});
     showToast('✓ Article deleted');
     await loadAdminData();
-    renderHero(); renderCards(); renderTopStories(); renderMostRead(); renderMostRead();
+    renderHero(); renderCards(); renderTopStories(); renderMostRead();
   } catch(e){ showToast('✗ '+e.message,'error'); }
 }
 
-async function saveArticle(id) {
+async function saveArticle(id, event) {
   const btn = event.target; btn.disabled=true; btn.textContent='Saving…';
   try {
     let bodyRaw = document.getElementById('eb-'+id).value;
@@ -1962,7 +1977,7 @@ async function saveArticle(id) {
     }, {id});
     showToast('✓ Saved to database — live on site now');
     await loadAdminData();
-    renderHero(); renderCards(); renderTopStories(); renderMostRead(); renderMostRead();
+    renderHero(); renderCards(); renderTopStories(); renderMostRead();
   } catch(e){ showToast('✗ '+e.message,'error'); }
   finally{ btn.disabled=false; btn.textContent='💾 Save Changes →'; }
 }
@@ -2034,7 +2049,7 @@ async function publishArticle() {
 
     showToast('✓ Article published to database — live on site!');
     await loadAdminData();
-    renderHero(); renderCards(); renderTopStories(); renderMostRead(); renderMostRead();
+    renderHero(); renderCards(); renderTopStories(); renderMostRead();
   } catch(e){ showToast('✗ '+e.message,'error'); }
   finally{ btn.disabled=false; btn.textContent='📢 Publish to Site →'; }
 }
@@ -2118,10 +2133,7 @@ async function saveSettings() {
       { key:'footer_col2_links',value:getFooterLinksJSON(2) },
       { key:'footer_col3_links',value:getFooterLinksJSON(3) },
     ];
-    await Promise.all(settings.map(s =>
-      db.update('site_settings',{value:s.value},{key:s.key})
-        .catch(()=>db.insert('site_settings',{key:s.key,value:s.value}))
-    ));
+    await db.upsert('site_settings', settings, 'key');
     applySettings(settings.map(s=>({key:s.key,value:s.value})));
     showToast('✓ All settings saved and live on site');
   } catch(e){ showToast('✗ '+e.message,'error'); }
@@ -2209,19 +2221,11 @@ async function savePage() {
   const btn = document.querySelector('#tab-pages .btn-save');
   if(btn){ btn.disabled=true; btn.textContent='Saving…'; }
   try {
-    const upsert = async (key, value) => {
-      try { await db.update('site_settings',{value},{key}); }
-      catch(e) {
-        const rows = await db.query('site_settings',{select:'id',eq:{key}});
-        if(rows&&rows.length) await db.update('site_settings',{value},{key});
-        else await db.insert('site_settings',{key,value});
-      }
-    };
-    await Promise.all([
-      upsert(`page_${page}_title`,   titleVal),
-      upsert(`page_${page}_subtitle`, subVal),
-      upsert(`page_${page}_body`,    bodyVal),
-    ]);
+    await db.upsert('site_settings', [
+      { key: `page_${page}_title`,    value: titleVal },
+      { key: `page_${page}_subtitle`, value: subVal   },
+      { key: `page_${page}_body`,     value: bodyVal  },
+    ], 'key');
     showToast('✓ ' + page + ' page saved — live on site now!');
   } catch(e) { showToast('✗ ' + e.message, 'error'); }
   finally { if(btn){ btn.disabled=false; btn.textContent='💾 Save Page Content →'; } }
@@ -2697,41 +2701,32 @@ async function amiDbUpsertSetting(key, value) {
   if(typeof SUPABASE_URL === 'undefined' || SUPABASE_URL === 'YOUR_SUPABASE_URL')
     throw new Error('Supabase not configured');
   var ANON = typeof SUPABASE_ANON !== 'undefined' ? SUPABASE_ANON : '';
-  // Try update first, then insert
-  var res = await fetch(SUPABASE_URL + '/rest/v1/site_settings?key=eq.' + encodeURIComponent(key), {
-    method: 'PATCH',
+  var TOKEN = (typeof AUTH_TOKEN !== 'undefined' && AUTH_TOKEN) ? AUTH_TOKEN : ANON;
+  var res = await fetch(SUPABASE_URL + '/rest/v1/site_settings?on_conflict=key', {
+    method: 'POST',
     headers: {
-      'apikey': ANON, 'Authorization': 'Bearer ' + ANON,
-      'Content-Type': 'application/json', 'Prefer': 'return=minimal'
+      'apikey': ANON, 'Authorization': 'Bearer ' + TOKEN,
+      'Content-Type': 'application/json',
+      'Prefer': 'resolution=merge-duplicates,return=minimal'
     },
     body: JSON.stringify({ key: key, value: value })
   });
-  if(!res.ok) {
-    // insert
-    var res2 = await fetch(SUPABASE_URL + '/rest/v1/site_settings', {
-      method: 'POST',
-      headers: {
-        'apikey': ANON, 'Authorization': 'Bearer ' + ANON,
-        'Content-Type': 'application/json', 'Prefer': 'return=minimal'
-      },
-      body: JSON.stringify({ key: key, value: value })
-    });
-    if(!res2.ok) throw new Error(await res2.text());
-  }
+  if(!res.ok) throw new Error(await res.text());
 }
 async function amiDbUpdateBreaking(text) {
   if(typeof SUPABASE_URL === 'undefined' || SUPABASE_URL === 'YOUR_SUPABASE_URL')
     throw new Error('Supabase not configured');
   var ANON = typeof SUPABASE_ANON !== 'undefined' ? SUPABASE_ANON : '';
+  var TOKEN = (typeof AUTH_TOKEN !== 'undefined' && AUTH_TOKEN) ? AUTH_TOKEN : ANON;
   var res = await fetch(SUPABASE_URL + '/rest/v1/breaking_news?order=created_at.desc&limit=1', {
-    headers: { 'apikey': ANON, 'Authorization': 'Bearer ' + ANON }
+    headers: { 'apikey': ANON, 'Authorization': 'Bearer ' + TOKEN }
   });
   var rows = await res.json();
   if(rows && rows[0]) {
     await fetch(SUPABASE_URL + '/rest/v1/breaking_news?id=eq.' + rows[0].id, {
       method: 'PATCH',
       headers: {
-        'apikey': ANON, 'Authorization': 'Bearer ' + ANON,
+        'apikey': ANON, 'Authorization': 'Bearer ' + TOKEN,
         'Content-Type': 'application/json', 'Prefer': 'return=minimal'
       },
       body: JSON.stringify({ text: text })
@@ -2742,10 +2737,11 @@ async function amiDbUpdateArticle(id, fields) {
   if(typeof SUPABASE_URL === 'undefined' || SUPABASE_URL === 'YOUR_SUPABASE_URL')
     throw new Error('Supabase not configured');
   var ANON = typeof SUPABASE_ANON !== 'undefined' ? SUPABASE_ANON : '';
+  var TOKEN = (typeof AUTH_TOKEN !== 'undefined' && AUTH_TOKEN) ? AUTH_TOKEN : ANON;
   var res = await fetch(SUPABASE_URL + '/rest/v1/articles?id=eq.' + id, {
     method: 'PATCH',
     headers: {
-      'apikey': ANON, 'Authorization': 'Bearer ' + ANON,
+      'apikey': ANON, 'Authorization': 'Bearer ' + TOKEN,
       'Content-Type': 'application/json', 'Prefer': 'return=minimal'
     },
     body: JSON.stringify(fields)
