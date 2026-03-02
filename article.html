@@ -4,6 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Article | African Market Intelligence</title>
+
+<meta property="og:type"        content="article">
+<meta property="og:site_name"   content="African Market Intelligence">
+<meta property="og:title"       id="ogTitle"       content="">
+<meta property="og:description" id="ogDescription" content="">
+<meta property="og:url"         id="ogUrl"         content="">
+<meta property="og:image"       id="ogImage"       content="">
+<meta name="twitter:card"        content="summary_large_image">
+<meta name="twitter:title"       id="twTitle"       content="">
+<meta name="twitter:description" id="twDescription" content="">
+<meta name="twitter:image"       id="twImage"       content="">
+   
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400;1,600&family=Spectral:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 
@@ -815,6 +827,16 @@ async function loadArticle() {
     if(!rows||!rows.length){ document.getElementById('articleFull').innerHTML='<p style="color:var(--text-soft);padding:24px;font-family:DM Mono,monospace">Article not found.</p>'; return; }
     const a = rows[0];
     document.title = a.headline + ' | African Market Intelligence';
+     const _sm = (id,v) => { const el=document.getElementById(id); if(el) el.setAttribute('content',v); };
+
+     _sm('ogTitle',       a.headline);
+     _sm('ogDescription', a.standfirst || '');
+     _sm('ogUrl',         window.location.href);
+     _sm('ogImage',       a.hero_image || '');
+     _sm('twTitle',       a.headline);
+     _sm('twDescription', a.standfirst || '');
+     _sm('twImage',       a.hero_image || '');
+
     const avatar = a.author_photo
       ? `<img src="${a.author_photo}" class="af-avatar" onerror="this.style.display='none'">`
       : `<div class="af-avatar">${(a.author_initials||'?')}</div>`;
