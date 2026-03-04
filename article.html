@@ -827,16 +827,6 @@ async function loadArticle() {
     if(!rows||!rows.length){ document.getElementById('articleFull').innerHTML='<p style="color:var(--text-soft);padding:24px;font-family:DM Mono,monospace">Article not found.</p>'; return; }
     const a = rows[0];
     document.title = a.headline + ' | African Market Intelligence';
-     const _sm = (id,v) => { const el=document.getElementById(id); if(el) el.setAttribute('content',v); };
-
-     _sm('ogTitle',       a.headline);
-     _sm('ogDescription', a.standfirst || '');
-     _sm('ogUrl',         window.location.href);
-     _sm('ogImage',       a.hero_image || '');
-     _sm('twTitle',       a.headline);
-     _sm('twDescription', a.standfirst || '');
-     _sm('twImage',       a.hero_image || '');
-
     const avatar = a.author_photo
       ? `<img src="${a.author_photo}" class="af-avatar" onerror="this.style.display='none'">`
       : `<div class="af-avatar">${(a.author_initials||'?')}</div>`;
@@ -846,7 +836,6 @@ async function loadArticle() {
       <h1 class="af-headline" id="articleHeadline" data-editable="text" data-cms-type="article" data-article-field="headline" data-article-id="${a.id}">${a.headline}</h1>
       ${a.standfirst?`<p class="af-standfirst" id="articleStandfirst" data-editable="text" data-cms-type="article" data-article-field="standfirst" data-article-id="${a.id}">${a.standfirst}</p>`:''}
       <div class="af-meta">
-
         <span>${a.published_date||''}</span>
         <span>${a.read_time||''}</span>
         ${a.tags?`<span>${a.tags}</span>`:''}
@@ -855,50 +844,46 @@ async function loadArticle() {
 
     // ── Paywall: trigger for locked articles (non-admin only) ──
     if(a.is_locked && !window._amiAdminAuthed) {
-      // Truncate headline to first 2 words
-      const hl = document.getElementById('articleHeadline');
-      if(hl) {
-        const words = hl.textContent.trim().split(/\s+/);
-        hl.textContent = words.slice(0, 2).join(' ') + '…';
-      }
-      // Blur standfirst
-      const sf = document.getElementById('articleStandfirst');
-      if(sf) {
-        sf.style.filter = 'blur(5px)';
-        sf.style.userSelect = 'none';
-        sf.style.pointerEvents = 'none';
-      }
-      // Blur entire body
+      // Headline: left intact — SEO + reader context
+      // Standfirst: left intact — best teaser copy you have
+
+      // Body: show lede only, blur everything after (Economist-style)
       const body = document.getElementById('articleBody');
       if(body) {
-        body.style.filter = 'blur(6px)';
-        body.style.userSelect = 'none';
-        body.style.pointerEvents = 'none';
-        body.style.maxHeight = '120px';
-        body.style.overflow = 'hidden';
+        const firstPara = body.querySelector('p');
+        body.querySelectorAll('p, h2, h3, ul, ol, blockquote').forEach(el => {
+          if(el !== firstPara) {
+            el.style.filter     = 'blur(5px)';
+            el.style.userSelect = 'none';
+          }
+        });
+        body.style.maxHeight = '280px';
+        body.style.overflow  = 'hidden';
       }
-      // Show overlay + blur fade
+
+      // Show overlay + gradient fade
       const ov = document.getElementById('paywallOverlay');
       const bl = document.getElementById('paywallBlur');
       if(ov) ov.style.display = 'flex';
       if(bl) bl.style.display = 'block';
-      // Pull plan names/links from site_settings if available
+
+      // Pull plan names/links from site_settings
       try {
         const sr = await fetch(
           `${SUPABASE_URL}/rest/v1/site_settings?key=in.(plan1_link,plan2_link,plan1_name,plan2_name)&select=key,value`,
           { headers:{ apikey:SUPABASE_ANON, Authorization:'Bearer '+SUPABASE_ANON } }
         );
         if(sr.ok) {
-          const ss = await sr.json();
-          const sg = k => (ss.find(x=>x.key===k)||{}).value||'';
-          const p1l=sg('plan1_link'), p2l=sg('plan2_link');
-          const p1n=sg('plan1_name'), p2n=sg('plan2_name');
-          if(p1l) document.getElementById('paywallPlan1').href = p1l;
-          if(p2l) document.getElementById('paywallPlan2').href = p2l;
-          if(p1n) document.getElementById('paywallPlan1').textContent = p1n;
-          if(p2n) document.getElementById('paywallPlan2').textContent = p2n;
+          const ss  = await sr.json();
+          const sg  = k => (ss.find(x => x.key === k) || {}).value || '';
+          const p1l = sg('plan1_link'), p2l = sg('plan2_link');
+          const p1n = sg('plan1_name'), p2n = sg('plan2_name');
+          const el1 = document.getElementById('paywallPlan1');
+          const el2 = document.getElementById('paywallPlan2');
+          if(el1) { if(p1l) el1.href = p1l; if(p1n) el1.textContent = p1n; }
+          if(el2) { if(p2l) el2.href = p2l; if(p2n) el2.textContent = p2n; }
         }
-      } catch(e){ /* fallback to membership.html links */ }
+      } catch(e) { /* fallback to static links in HTML */ }
     }
 
   } catch(e) {
@@ -906,6 +891,7 @@ async function loadArticle() {
   }
 }
 loadArticle().then(function(){ if(typeof amiShowEditFab==='function' && window._amiAdminAuthed) amiShowEditFab(); });
+
 </script>
 <script>
 // Render footer columns from Supabase if configured
