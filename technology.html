@@ -1429,10 +1429,10 @@ function renderCards(articles) {
           ? `<img src="${a.hero_image}" class="card-img" alt="${a.headline}" onerror="this.outerHTML='<div class=card-img-placeholder>📰</div>'">`
           : `<div class="card-img-placeholder">📰</div>`}
         <div class="card-content">
-          <div class="article-kicker">${a.section||''}</div>
-          <h3 class="card-headline">${a.is_locked ? '🔒 ' + a.headline.trim().split(/\s+/).slice(0,2).join(' ') + '…' : a.headline}</h3>
-          <p class="${'card-body'+(a.is_locked?' blur-content':'')}">${a.standfirst||''}</p>
-          <div class="${'card-footer'+(a.is_locked?' blur-content':'')}">
+          <div class="article-kicker">${a.section||''}${a.is_locked ? ' <span class="af-tag">Premium</span>' : ''}</div>
+          <h3 class="card-headline">${a.headline}</h3>
+          <p class="card-body">${a.standfirst||''}</p>
+          <div class="card-footer">
             <span>${a.read_time||'3 min'} ${a.is_locked?'<span class="lock-icon">🔒</span>':''}</span>
             <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-soft)">${a.published_date||''}</span>
           </div>
