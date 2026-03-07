@@ -618,6 +618,23 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
 .ami-rte-sep{width:1px;height:18px;background:#1A3020;margin:0 3px}
 
 /* paywall active when is_locked — JS sets display:flex */
+
+/* ── Inline fade paywall ─────────────────── */
+.af-body.paywall-locked {
+  position: relative;
+  max-height: 200px;
+  overflow: hidden;
+}
+.af-body.paywall-locked::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 130px;
+  background: linear-gradient(to bottom, transparent 0%, var(--bg) 100%);
+  pointer-events: none;
+}
 </style>
 
 <style>
