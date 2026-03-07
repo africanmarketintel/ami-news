@@ -859,31 +859,17 @@ async function loadArticle() {
       </div>
       <div class="af-body" id="articleBody" data-editable="richtext" data-cms-type="article" data-article-field="body" data-article-id="${a.id}">${a.body||'<p>Full article content coming soon.</p>'}</div>`;
 
-     // ── Paywall: trigger for locked articles (non-admin only) ──
+      // ── Paywall: trigger for locked articles (non-admin only) ──
     if(a.is_locked && !window._amiAdminAuthed) {
-      // Headline + standfirst + meta: fully visible
-      // Body: Bloomberg-style inline fade
       const body = document.getElementById('articleBody');
       if(body) {
         body.classList.add('paywall-locked');
-        const pib = document.createElement('div');
-        pib.id = 'paywallInlineBox';
-        pib.className = 'paywall-inline-box';
-        pib.innerHTML = `
-          <div class="pib-logo">African Market <span>Intelligence</span></div>
-          <div class="pib-rule"></div>
-          <h2 class="pib-headline">Subscribe to continue reading</h2>
-          <p class="pib-sub">This article is available to AMI members only. Get full access to deal flow intelligence, market briefings and exclusive analysis across Africa.</p>
-          <div class="pib-btns">
-            <a id="paywallPlan1" href="membership.html" class="pib-btn-primary">Become a Member →</a>
-            <a id="paywallPlan2" href="membership.html" class="pib-btn-secondary">View Plans</a>
-          </div>
-          <p class="pib-note">Already a member? <a href="#" style="color:var(--gold);text-decoration:underline">Sign in</a></p>`;
-        body.insertAdjacentElement('afterend', pib);
       }
-      // Fixed overlay intentionally not shown — inline box handles it
+      // Show original overlay + gradient fade
       const ov = document.getElementById('paywallOverlay');
-      const bl = document.getElementById('paywallBlur');    
+      const bl = document.getElementById('paywallBlur');
+      if(ov) ov.style.display = 'flex';
+      if(bl) bl.style.display = 'block';    
 
       // Pull plan names/links from site_settings
       try {
