@@ -883,7 +883,7 @@ async function loadArticle() {
           const p1n = sg('plan1_name'), p2n = sg('plan2_name');
           const el1 = document.getElementById('paywallPlan1');
           const el2 = document.getElementById('paywallPlan2');
-          if(el1) { if(p1l) el1.href = p1l; if(p1n) el1.textContent = p1n; }
+          if(el1) { if(p1l) el1.href = p1l; }
           if(el2) { if(p2l) el2.href = p2l; if(p2n) el2.textContent = p2n; }
         }
       } catch(e) { /* fallback to static links in HTML */ }
