@@ -2927,8 +2927,8 @@ async function amiDbUpdateArticle(id, fields) {
 
 <script>
 (function(){
-  // Show modal on first visit only
-  if(!localStorage.getItem('amiVisited')){
+  // Show modal on first visit only — skip for paid subscribers
+  if(!localStorage.getItem('amiVisited') && !localStorage.getItem('ami_subscriber')){
     setTimeout(function(){ document.getElementById('fvOverlay').style.display='flex'; }, 800);
   }
 })();
