@@ -2960,5 +2960,125 @@ async function fvSubscribe(){
 }
 </script>
 
+<!-- ── Subscriber verify modal ──────────────────────────────── -->
+<div id="amiVerifyOverlay" style="display:none;position:fixed;inset:0;background:rgba(6,15,9,.85);z-index:9999;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(4px)">
+  <div style="background:#FAF7F0;max-width:440px;width:100%;border-top:4px solid #C9A84C;box-shadow:0 24px 80px rgba(0,0,0,.5);padding:36px 32px;font-family:'Spectral',Georgia,serif;position:relative">
+    <button onclick="amiVerifyClose()" style="position:absolute;top:12px;right:14px;background:none;border:none;font-size:20px;color:#9A8070;cursor:pointer;line-height:1">×</button>
+    <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:800;color:#1A1208;margin-bottom:4px">Verify Your Access</div>
+    <p style="font-size:13px;color:#6B5344;margin-bottom:20px;line-height:1.6">Enter the email address you used when subscribing to unlock your premium access.</p>
+    <div id="amiVerifyForm">
+      <input id="amiVerifyEmail" type="email" placeholder="your@email.com" autocomplete="email"
+        style="width:100%;background:#fff;border:1px solid #D4C4A0;color:#1A1208;font-family:'DM Mono',monospace;font-size:13px;padding:12px 14px;outline:none;margin-bottom:10px;box-sizing:border-box"
+        onkeydown="if(event.key==='Enter') amiVerifySubmit()">
+      <button id="amiVerifyBtn" onclick="amiVerifySubmit()"
+        style="width:100%;background:#C9A84C;color:#060F09;font-family:'DM Mono',monospace;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:13px;border:none;cursor:pointer;transition:background .2s"
+        onmouseover="this.style.background='#D4B86A'" onmouseout="this.style.background='#C9A84C'">
+        Verify Subscription →
+      </button>
+    </div>
+    <div id="amiVerifySuccess" style="display:none;text-align:center;padding:12px 0">
+      <div style="font-size:32px;margin-bottom:10px">✓</div>
+      <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1A1208;margin-bottom:6px">Access Confirmed</div>
+      <p style="font-size:13px;color:#6B5344">Welcome back. The page will reload with your subscriber access.</p>
+    </div>
+    <div id="amiVerifyError" style="display:none;background:#FFF0ED;border-left:3px solid #B85C38;padding:10px 14px;margin-top:10px;font-family:'DM Mono',monospace;font-size:11px;color:#8C3A1F"></div>
+  </div>
+</div>
+
+<script>
+// ── Subscriber state check on load ─────────────────────────
+window.amiIsSubscriber = localStorage.getItem('ami_subscriber') === 'true';
+if (window.amiIsSubscriber) {
+  window.amiPaywallSuppressed = true;
+  localStorage.setItem('amiVisited', '1');
+  var _navBtn = document.getElementById('navSubscribeBtn');
+  if (_navBtn) {
+    _navBtn.textContent = '✓ Subscribed';
+    _navBtn.style.background = '#2E7D4F';
+    _navBtn.style.cursor = 'default';
+    _navBtn.onclick = function(e){ e.preventDefault(); };
+  }
+}
+
+function amiVerifyAccess() {
+  if (window.amiIsSubscriber) {
+    typeof showToast === 'function' && showToast('✓ You already have subscriber access!');
+    return;
+  }
+  var overlay = document.getElementById('amiVerifyOverlay');
+  if (overlay) {
+    overlay.style.display = 'flex';
+    setTimeout(function(){ document.getElementById('amiVerifyEmail').focus(); }, 100);
+  }
+}
+
+function amiVerifyClose() {
+  var overlay = document.getElementById('amiVerifyOverlay');
+  if (overlay) overlay.style.display = 'none';
+  var form    = document.getElementById('amiVerifyForm');
+  var success = document.getElementById('amiVerifySuccess');
+  var error   = document.getElementById('amiVerifyError');
+  var input   = document.getElementById('amiVerifyEmail');
+  var btn     = document.getElementById('amiVerifyBtn');
+  if (form)    form.style.display    = '';
+  if (success) success.style.display = 'none';
+  if (error)   error.style.display   = 'none';
+  if (input)   input.value           = '';
+  if (btn)     { btn.textContent = 'Verify Subscription →'; btn.disabled = false; }
+}
+
+async function amiVerifySubmit() {
+  var input = document.getElementById('amiVerifyEmail');
+  var btn   = document.getElementById('amiVerifyBtn');
+  var error = document.getElementById('amiVerifyError');
+  var email = input ? input.value.trim() : '';
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (input) input.style.borderColor = '#B85C38';
+    return;
+  }
+  if (input)  input.style.borderColor = '#D4C4A0';
+  if (error)  error.style.display     = 'none';
+  if (btn)    { btn.textContent = 'Checking…'; btn.disabled = true; }
+  try {
+    var url  = (typeof SUPABASE_URL  !== 'undefined' ? SUPABASE_URL  : '').replace(/\/$/, '');
+    var anon = (typeof SUPABASE_ANON !== 'undefined' ? SUPABASE_ANON : '');
+    if (!url || !anon) throw new Error('Config not loaded. Please refresh and try again.');
+    var res = await fetch(url + '/rest/v1/rpc/verify_subscriber', {
+      method:  'POST',
+      headers: { 'Content-Type':'application/json', 'apikey':anon, 'Authorization':'Bearer '+anon },
+      body: JSON.stringify({ p_email: email })
+    });
+    if (!res.ok) throw new Error('Server error: ' + await res.text());
+    var isPaid = await res.json();
+    if (isPaid === true) {
+      localStorage.setItem('ami_subscriber', 'true');
+      localStorage.setItem('ami_email',      email);
+      localStorage.setItem('amiVisited',     '1');
+      window.amiIsSubscriber      = true;
+      window.amiPaywallSuppressed = true;
+      var pw = document.getElementById('paywallOverlay'); if (pw) pw.style.display = 'none';
+      var pb = document.getElementById('paywallBlur');    if (pb) pb.style.display = 'none';
+      var fv = document.getElementById('fvOverlay');      if (fv) fv.style.display = 'none';
+      var form    = document.getElementById('amiVerifyForm');
+      var success = document.getElementById('amiVerifySuccess');
+      if (form)    form.style.display    = 'none';
+      if (success) success.style.display = 'block';
+      setTimeout(function(){ window.location.reload(); }, 2000);
+    } else {
+      if (error) { error.textContent = 'No active subscription found for ' + email + '. Contact us at contact@ami.abta.africa if you believe this is an error.'; error.style.display = 'block'; }
+      if (btn)   { btn.textContent = 'Verify Subscription →'; btn.disabled = false; }
+    }
+  } catch(e) {
+    if (error) { error.textContent = 'Could not verify: ' + (e.message || 'Unknown error.'); error.style.display = 'block'; }
+    if (btn)   { btn.textContent = 'Verify Subscription →'; btn.disabled = false; }
+  }
+}
+
+document.addEventListener('click', function(e){
+  var overlay = document.getElementById('amiVerifyOverlay');
+  if (overlay && e.target === overlay) amiVerifyClose();
+});
+</script>
+
 </body>
 </html>
