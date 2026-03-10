@@ -1716,7 +1716,7 @@ function applySettings(settings) {
     populateFooterEditor(3, get('footer_col3_links'));
   }
   // Paywall
-  if(get('paywall_active')==='true') setTimeout(showPaywall, 30000);
+  if(get('paywall_active')==='true' && !window.amiIsSubscriber && !window.amiPaywallSuppressed) setTimeout(showPaywall, 30000);
   // Populate admin form fields
   const fields = {
     siteName:get('site_name'), siteTagline:get('tagline'), editionLabel:get('edition'),
