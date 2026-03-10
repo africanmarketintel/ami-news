@@ -4020,9 +4020,7 @@
 
     // section tabs handled by filterSection()
 
-    // Stripe links
-    document.getElementById('stripeDigital').href = STRIPE_DIGITAL;
-    document.getElementById('stripePremium').href = STRIPE_PREMIUM;
+    // Stripe links are set from Supabase plan1_link / plan2_link via applySettings()
     // navSubscribeBtn always points to deals.html — do not override
 
     async function init() {
