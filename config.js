@@ -19,5 +19,5 @@
 
 const SUPABASE_URL = 'https://ucpjwyghwxjalkfvmbro.supabase.co';   // paste your Project URL here  e.g. https://xxxx.supabase.co
 const SUPABASE_ANON = 'sb_publishable_7cI4RoxyLr88DhwDWRC1vg_DSpczsHt';   // paste your anon/public key here
-const STRIPE_DIGITAL = 'https://buy.stripe.com/YOUR_DIGITAL_LINK';
-const STRIPE_PREMIUM = 'https://buy.stripe.com/YOUR_PREMIUM_LINK';
+const STRIPE_DIGITAL = 'https://buy.stripe.com/9B63co7hU1M69EN5D6aVa0i?prefilled_promo_code=FIRSTMONTH';
+const STRIPE_PREMIUM = 'https://buy.stripe.com/bJe6oAdGiaiCbMV4z2aVa0f';
