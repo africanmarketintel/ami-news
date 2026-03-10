@@ -4001,6 +4001,13 @@
     };
 
     // ════════════════════════════════════════════════════════════
+    // SUBSCRIBER STATE — set before init() so applySettings() sees it
+    // ════════════════════════════════════════════════════════════
+    window.amiIsSubscriber     = localStorage.getItem('ami_subscriber') === 'true';
+    window.amiPaywallSuppressed = window.amiIsSubscriber;
+    if (window.amiIsSubscriber) localStorage.setItem('amiVisited', '1');
+
+    // ════════════════════════════════════════════════════════════
     // STATE
     // ════════════════════════════════════════════════════════════
     let allArticles = [];
@@ -4993,7 +5000,11 @@
       });
     });
 
-    function showPaywall() { document.getElementById('paywallOverlay').style.display = 'flex'; document.getElementById('paywallBlur').style.display = 'block'; }
+    function showPaywall() {
+      if (window.amiIsSubscriber || window.amiPaywallSuppressed) return;
+      document.getElementById('paywallOverlay').style.display = 'flex';
+      document.getElementById('paywallBlur').style.display = 'block';
+    }
     function closePaywall() { document.getElementById('paywallOverlay').style.display = 'none'; document.getElementById('paywallBlur').style.display = 'none'; }
 
     function showToast(msg, type = 'success') {
@@ -5703,14 +5714,6 @@
   </div>
 
   <script>
-    // ── Subscriber state check on load ─────────────────────────
-    window.amiIsSubscriber = localStorage.getItem('ami_subscriber') === 'true';
-    if (window.amiIsSubscriber) {
-      window.amiPaywallSuppressed = true;
-      localStorage.setItem('amiVisited', '1');
-      // navSubscribeBtn is Deal Tracker — do not override
-    }
-
     function amiVerifyAccess() {
       if (window.amiIsSubscriber) {
         typeof showToast === 'function' && showToast('✓ You already have subscriber access!');
