@@ -186,11 +186,11 @@
     '<div id="amiPanelSignIn" style="padding:24px 32px 32px">',
       '<div style="margin-bottom:14px">',
         '<label style="font-family:\'DM Mono\',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#6B5344;display:block;margin-bottom:6px">Email Address</label>',
-        '<input id="amiLoginEmail" type="email" placeholder="your@email.com" autocomplete="email" style="width:100%;background:#fff;border:1px solid #D4C4A0;color:#1A1208;font-family:\'DM Mono\',monospace;font-size:13px;padding:12px 14px;outline:none;box-sizing:border-box;transition:border-color .2s" onkeydown="if(event.key===\'Enter\')document.getElementById(\'amiLoginPassword\').focus()" onfocus="this.style.borderColor=\'#C9A84C\'" onblur="this.style.borderColor=\'#D4C4A0\'">',
+        '<input id="amiSubEmail" type="email" placeholder="your@email.com" autocomplete="email" style="width:100%;background:#fff;border:1px solid #D4C4A0;color:#1A1208;font-family:\'DM Mono\',monospace;font-size:13px;padding:12px 14px;outline:none;box-sizing:border-box;transition:border-color .2s" onkeydown="if(event.key===\'Enter\')document.getElementById(\'amiSubPassword\').focus()" onfocus="this.style.borderColor=\'#C9A84C\'" onblur="this.style.borderColor=\'#D4C4A0\'">',
       '</div>',
       '<div style="margin-bottom:6px">',
         '<label style="font-family:\'DM Mono\',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#6B5344;display:block;margin-bottom:6px">Password</label>',
-        '<input id="amiLoginPassword" type="password" placeholder="••••••••" autocomplete="current-password" style="width:100%;background:#fff;border:1px solid #D4C4A0;color:#1A1208;font-family:\'DM Mono\',monospace;font-size:13px;padding:12px 14px;outline:none;box-sizing:border-box;transition:border-color .2s" onkeydown="if(event.key===\'Enter\')window.amiDoSignIn()" onfocus="this.style.borderColor=\'#C9A84C\'" onblur="this.style.borderColor=\'#D4C4A0\'">',
+        '<input id="amiSubPassword" type="password" placeholder="••••••••" autocomplete="current-password" style="width:100%;background:#fff;border:1px solid #D4C4A0;color:#1A1208;font-family:\'DM Mono\',monospace;font-size:13px;padding:12px 14px;outline:none;box-sizing:border-box;transition:border-color .2s" onkeydown="if(event.key===\'Enter\')window.amiDoSignIn()" onfocus="this.style.borderColor=\'#C9A84C\'" onblur="this.style.borderColor=\'#D4C4A0\'">',
       '</div>',
       '<div style="text-align:right;margin-bottom:18px;margin-top:6px">',
         '<button onclick="window.amiSwitchTab(\'reset\')" style="background:none;border:none;font-family:\'DM Mono\',monospace;font-size:10px;letter-spacing:.06em;color:#C9A84C;cursor:pointer;padding:0;text-decoration:underline">Forgot password?</button>',
@@ -295,7 +295,7 @@
     } else {
       // ── Not logged in: show Login button ──
       var btn = document.createElement('button');
-      btn.id        = 'amiLoginBtn';
+      btn.id        = 'amiNavLoginBtn';
       btn.className = 'btn-subscribe';
       btn.setAttribute('style', 'cursor:pointer;border:none');
       btn.textContent = 'Login';
@@ -362,7 +362,7 @@
     overlay.style.display = 'flex';
     window.amiSwitchTab(tab || 'signin');
     setTimeout(function () {
-      var f = document.getElementById('amiLoginEmail');
+      var f = document.getElementById('amiSubEmail');
       if (f) f.focus();
     }, 80);
   };
@@ -381,7 +381,7 @@
       if (b) { b.textContent = pair[1]; b.disabled = false; }
     });
     // Clear inputs
-    ['amiLoginEmail','amiLoginPassword','amiSetupEmail','amiSetupPassword','amiSetupConfirm','amiResetEmail'].forEach(function (id) {
+    ['amiSubEmail','amiSubPassword','amiSetupEmail','amiSetupPassword','amiSetupConfirm','amiResetEmail'].forEach(function (id) {
       var el = document.getElementById(id);
       if (el) { el.value = ''; el.style.borderColor = '#D4C4A0'; }
     });
@@ -423,8 +423,8 @@
   // ═══════════════════════════════════════════════════════════════
 
   window.amiDoSignIn = async function () {
-    var emailEl = document.getElementById('amiLoginEmail');
-    var passEl  = document.getElementById('amiLoginPassword');
+    var emailEl = document.getElementById('amiSubEmail');
+    var passEl  = document.getElementById('amiSubPassword');
     var btn     = document.getElementById('amiSignInBtn');
     var errorEl = document.getElementById('amiSignInError');
 
