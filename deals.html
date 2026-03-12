@@ -1,17 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AMI Deal Tracker - Africa's Complete Monthly Record of Capital Movement</title>
-    
+
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Mono:wght@400;500&family=Spectral:wght@400;600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Mono:wght@400;500&family=Spectral:wght@400;600&display=swap"
+        rel="stylesheet">
 
     <!-- ✅ CREDENTIALS: Edit config.js once — applies to all pages -->
     <script src="config.js"></script>
     <script src="login.js"></script>
-    
+
     <style>
         :root {
             --gold: #C9A84C;
@@ -34,45 +37,190 @@
             --divider: #D4C4A0;
             --green: #2E9B5E;
         }
-        
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         html {
             scroll-behavior: smooth;
         }
-        
+
         body {
             font-family: 'Spectral', serif;
             background-color: #ffffff;
             color: var(--ink);
             line-height: 1.6;
         }
-        
+
         /* Navigation — AMI shared theme */
-        .top-nav{background:var(--nav-bg);color:var(--nav-text);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:48px;border-bottom:2px solid var(--gold);position:sticky;top:0;z-index:1000}
-        .nav-left{display:flex;align-items:center}
-        .nav-link{color:var(--nav-text);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:0 14px;height:48px;display:flex;align-items:center;border-right:1px solid rgba(255,255,255,.1);transition:color .2s;text-decoration:none}
-        .nav-link:visited{color:var(--nav-text)}
-        .nav-link:hover{color:var(--gold)}
-        .nav-right{display:flex;align-items:center;gap:10px}
-        .nav-search{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:var(--nav-text);padding:6px 12px;border-radius:2px;font-family:'DM Mono',monospace;font-size:11px;width:140px;outline:none}
-        .nav-search:focus{border-color:var(--gold)}.nav-search::placeholder{color:rgba(237,229,213,.4)}
-        .btn-subscribe{background:var(--gold);color:#060F09;font-family:'DM Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:8px 16px;border-radius:2px;transition:background .2s;display:inline-block;text-decoration:none}
-        .btn-subscribe:hover{background:#D4B86A}
-        .dark-toggle{color:var(--nav-text);font-size:16px;padding:8px;line-height:1;cursor:pointer;background:none;border:none}
-        .dark-toggle:hover{color:var(--gold)}
-        .nav-hamburger{display:none;flex-direction:column;gap:4px;background:none;border:none;cursor:pointer;padding:8px}
-        .nav-hamburger span{width:20px;height:2px;background:var(--nav-text);display:block;transition:.2s}
-        .nav-mobile-drawer{display:none;position:fixed;top:48px;left:0;right:0;bottom:0;background:var(--nav-bg);z-index:999;overflow-y:auto;padding:16px 24px;flex-direction:column;gap:4px}
-        .nav-mobile-drawer.open{display:flex}
-        .nav-mobile-drawer a{color:var(--nav-text);font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.08);text-decoration:none}
-        .nav-mobile-drawer a:hover{color:var(--gold)}
-        @media(max-width:768px){.nav-hamburger{display:flex}.nav-left,.nav-right .nav-link,.nav-right .nav-search{display:none}}
-        
+        .top-nav {
+            background: var(--nav-bg);
+            color: var(--nav-text);
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 48px;
+            border-bottom: 2px solid var(--gold);
+            position: sticky;
+            top: 0;
+            z-index: 1000
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center
+        }
+
+        .nav-link {
+            color: var(--nav-text);
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            padding: 0 14px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            border-right: 1px solid rgba(255, 255, 255, .1);
+            transition: color .2s;
+            text-decoration: none
+        }
+
+        .nav-link:visited {
+            color: var(--nav-text)
+        }
+
+        .nav-link:hover {
+            color: var(--gold)
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 10px
+        }
+
+        .nav-search {
+            background: rgba(255, 255, 255, .08);
+            border: 1px solid rgba(255, 255, 255, .15);
+            color: var(--nav-text);
+            padding: 6px 12px;
+            border-radius: 2px;
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            width: 140px;
+            outline: none
+        }
+
+        .nav-search:focus {
+            border-color: var(--gold)
+        }
+
+        .nav-search::placeholder {
+            color: rgba(237, 229, 213, .4)
+        }
+
+        .btn-subscribe {
+            background: var(--gold);
+            color: #060F09;
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            padding: 8px 16px;
+            border-radius: 2px;
+            transition: background .2s;
+            display: inline-block;
+            text-decoration: none
+        }
+
+        .btn-subscribe:hover {
+            background: #D4B86A
+        }
+
+        .dark-toggle {
+            color: var(--nav-text);
+            font-size: 16px;
+            padding: 8px;
+            line-height: 1;
+            cursor: pointer;
+            background: none;
+            border: none
+        }
+
+        .dark-toggle:hover {
+            color: var(--gold)
+        }
+
+        .nav-hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px
+        }
+
+        .nav-hamburger span {
+            width: 20px;
+            height: 2px;
+            background: var(--nav-text);
+            display: block;
+            transition: .2s
+        }
+
+        .nav-mobile-drawer {
+            display: none;
+            position: fixed;
+            top: 48px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--nav-bg);
+            z-index: 999;
+            overflow-y: auto;
+            padding: 16px 24px;
+            flex-direction: column;
+            gap: 4px
+        }
+
+        .nav-mobile-drawer.open {
+            display: flex
+        }
+
+        .nav-mobile-drawer a {
+            color: var(--nav-text);
+            font-family: 'DM Mono', monospace;
+            font-size: 12px;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+            text-decoration: none
+        }
+
+        .nav-mobile-drawer a:hover {
+            color: var(--gold)
+        }
+
+        @media(max-width:768px) {
+            .nav-hamburger {
+                display: flex
+            }
+
+            .nav-left,
+            .nav-right .nav-link,
+            .nav-right .nav-search {
+                display: none
+            }
+        }
+
         /* Hero Section */
         .hero {
             background: linear-gradient(135deg, var(--ink) 0%, var(--ink-mid) 100%);
@@ -82,7 +230,7 @@
             position: relative;
             overflow: hidden;
         }
-        
+
         .hero::before {
             content: '';
             position: absolute;
@@ -93,14 +241,14 @@
             background: radial-gradient(circle, rgba(201, 168, 76, 0.1) 0%, transparent 70%);
             border-radius: 50%;
         }
-        
+
         .hero-content {
             position: relative;
             z-index: 2;
             max-width: 800px;
             margin: 0 auto;
         }
-        
+
         .hero h1 {
             font-family: 'Playfair Display', serif;
             font-size: 56px;
@@ -109,7 +257,7 @@
             margin-bottom: 20px;
             letter-spacing: 1px;
         }
-        
+
         .hero-subtitle {
             font-size: 22px;
             color: var(--cream);
@@ -117,13 +265,13 @@
             margin-bottom: 10px;
             font-style: italic;
         }
-        
+
         .hero-description {
             font-size: 15px;
             color: var(--cream-dark);
             line-height: 1.8;
         }
-        
+
         /* Stats Bar */
         .stats-bar {
             display: grid;
@@ -132,17 +280,17 @@
             background-color: var(--cream);
             border-bottom: 2px solid var(--border);
         }
-        
+
         .stat-item {
             padding: 30px 40px;
             text-align: center;
             border-right: 1px solid var(--border);
         }
-        
+
         .stat-item:last-child {
             border-right: none;
         }
-        
+
         .stat-number {
             font-family: 'DM Mono', monospace;
             font-size: 28px;
@@ -150,7 +298,7 @@
             color: var(--terra);
             margin-bottom: 5px;
         }
-        
+
         .stat-label {
             font-size: 12px;
             text-transform: uppercase;
@@ -158,7 +306,7 @@
             letter-spacing: 1px;
             font-weight: 600;
         }
-        
+
         /* Filter Bar */
         .filter-bar {
             padding: 30px 40px;
@@ -166,7 +314,7 @@
             border-bottom: 1px solid var(--border);
             text-align: center;
         }
-        
+
         .filter-bar-title {
             font-size: 12px;
             text-transform: uppercase;
@@ -175,14 +323,14 @@
             margin-bottom: 15px;
             font-weight: 600;
         }
-        
+
         .filter-buttons {
             display: flex;
             gap: 12px;
             justify-content: center;
             flex-wrap: wrap;
         }
-        
+
         .filter-btn {
             background-color: #ffffff;
             border: 2px solid var(--border);
@@ -196,26 +344,26 @@
             letter-spacing: 0.5px;
             transition: all 0.3s;
         }
-        
+
         .filter-btn:hover {
             border-color: var(--gold);
             color: var(--gold);
             background-color: var(--gold-pale);
         }
-        
+
         .filter-btn.active {
             background-color: var(--gold);
             color: var(--ink);
             border-color: var(--gold);
         }
-        
+
         /* Main Content */
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 40px;
         }
-        
+
         /* Deal Cards Grid */
         .deals-grid {
             display: grid;
@@ -223,7 +371,7 @@
             gap: 30px;
             margin: 40px 0;
         }
-        
+
         .deal-card {
             background-color: var(--cream);
             border-left: 4px solid var(--gold);
@@ -233,13 +381,13 @@
             display: flex;
             flex-direction: column;
         }
-        
+
         .deal-card:hover {
             box-shadow: 0 8px 24px rgba(14, 11, 30, 0.12);
             transform: translateY(-4px);
             border-left-color: var(--terra);
         }
-        
+
         .deal-type-badge {
             display: inline-block;
             background-color: var(--ink);
@@ -254,36 +402,36 @@
             font-family: 'DM Mono', monospace;
             width: fit-content;
         }
-        
+
         .deal-type-badge.pe {
             background-color: var(--terra);
         }
-        
+
         .deal-type-badge.vc {
             background-color: var(--ink-mid);
         }
-        
+
         .deal-type-badge.infrastructure {
             background-color: var(--gold);
             color: var(--ink);
         }
-        
+
         .deal-type-badge.dfi {
             background-color: var(--terra-dark);
         }
-        
+
         .deal-type-badge.ma {
             background-color: #5a4a70;
         }
-        
+
         .deal-type-badge.trade {
             background-color: #6a5a80;
         }
-        
+
         .deal-header {
             margin-bottom: 12px;
         }
-        
+
         .deal-investor {
             font-family: 'Playfair Display', serif;
             font-size: 16px;
@@ -293,17 +441,17 @@
             align-items: center;
             gap: 8px;
         }
-        
+
         .deal-arrow {
             color: var(--gold);
             font-size: 18px;
         }
-        
+
         .deal-investee {
             color: var(--ink);
             font-weight: 600;
         }
-        
+
         .deal-amount {
             background-color: var(--ink);
             color: var(--gold);
@@ -315,7 +463,7 @@
             margin-bottom: 10px;
             font-family: 'DM Mono', monospace;
         }
-        
+
         .deal-location {
             font-size: 12px;
             color: var(--ink-soft);
@@ -324,7 +472,7 @@
             gap: 8px;
             align-items: center;
         }
-        
+
         .deal-summary {
             font-size: 13px;
             color: var(--ink);
@@ -332,7 +480,7 @@
             flex-grow: 1;
             margin-bottom: 12px;
         }
-        
+
         .deal-date {
             font-size: 11px;
             color: var(--ink-soft);
@@ -343,7 +491,7 @@
             padding-top: 12px;
             border-top: 1px solid var(--border);
         }
-        
+
         /* Subscribe Section */
         .subscribe-section {
             background: linear-gradient(135deg, var(--ink) 0%, var(--ink-mid) 100%);
@@ -353,7 +501,7 @@
             border-bottom: 3px solid var(--terra);
             margin: 60px 0 0 0;
         }
-        
+
         .subscribe-section h2 {
             font-family: 'Playfair Display', serif;
             font-size: 40px;
@@ -361,7 +509,7 @@
             color: var(--gold);
             margin-bottom: 20px;
         }
-        
+
         .subscribe-benefits {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -370,21 +518,21 @@
             margin: 40px auto;
             text-align: left;
         }
-        
+
         .benefit-item {
             font-size: 14px;
             line-height: 1.8;
             display: flex;
             gap: 12px;
         }
-        
+
         .benefit-icon {
             color: var(--gold);
             font-size: 16px;
             font-weight: 700;
             flex-shrink: 0;
         }
-        
+
         .cta-button {
             display: inline-block;
             background-color: var(--gold);
@@ -400,19 +548,19 @@
             transition: all 0.3s;
             border: 2px solid var(--gold);
         }
-        
+
         .cta-button:hover {
             background-color: transparent;
             color: var(--gold);
         }
-        
+
         /* Pricing Section */
         .pricing-section {
             padding: 60px 40px;
             background-color: var(--cream);
             border-bottom: 1px solid var(--border);
         }
-        
+
         .section-title {
             font-family: 'Playfair Display', serif;
             font-size: 36px;
@@ -421,7 +569,7 @@
             text-align: center;
             margin-bottom: 50px;
         }
-        
+
         .pricing-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -429,7 +577,7 @@
             max-width: 700px;
             margin: 0 auto;
         }
-        
+
         .pricing-card {
             background-color: #ffffff;
             border: 2px solid var(--border);
@@ -438,17 +586,17 @@
             transition: all 0.3s;
             border-radius: 4px;
         }
-        
+
         .pricing-card:hover {
             border-color: var(--gold);
             box-shadow: 0 8px 24px rgba(201, 168, 76, 0.15);
         }
-        
+
         .pricing-card.featured {
             border-color: var(--gold);
             background: linear-gradient(to bottom, var(--gold-pale), #ffffff);
         }
-        
+
         .pricing-period {
             font-size: 14px;
             color: var(--ink-soft);
@@ -456,7 +604,7 @@
             letter-spacing: 1px;
             margin-bottom: 12px;
         }
-        
+
         .pricing-amount {
             font-family: 'Playfair Display', serif;
             font-size: 48px;
@@ -464,13 +612,13 @@
             color: var(--terra);
             margin-bottom: 8px;
         }
-        
+
         .pricing-subtext {
             font-size: 12px;
             color: var(--ink-soft);
             margin-bottom: 25px;
         }
-        
+
         .pricing-cta {
             background-color: var(--ink);
             color: var(--gold);
@@ -486,13 +634,13 @@
             border: 2px solid var(--ink);
             cursor: pointer;
         }
-        
+
         .pricing-cta:hover {
             background-color: var(--gold);
             color: var(--ink);
             border-color: var(--gold);
         }
-        
+
         /* Footer */
         footer {
             background-color: var(--ink);
@@ -502,7 +650,7 @@
             font-size: 12px;
             border-top: 3px solid var(--terra);
         }
-        
+
         .footer-logo {
             font-family: 'Playfair Display', serif;
             font-size: 20px;
@@ -511,136 +659,191 @@
             margin-bottom: 10px;
             letter-spacing: 1px;
         }
-        
+
         .footer-text {
             margin: 8px 0;
             color: var(--cream-dark);
         }
-        
+
         .footer-links {
             margin-top: 20px;
             padding-top: 20px;
             border-top: 1px solid var(--ink-mid);
         }
-        
+
         .footer-links a {
             color: var(--gold);
             text-decoration: none;
             margin: 0 15px;
             transition: color 0.3s;
         }
-        
+
         .footer-links a:hover {
             color: var(--cream);
         }
-        
+
         /* Responsive */
         @media (max-width: 768px) {
             .deals-grid {
                 grid-template-columns: 1fr;
             }
-            
+
             .hero h1 {
                 font-size: 36px;
             }
-            
+
             .stats-bar {
                 grid-template-columns: 1fr;
             }
-            
+
             .stat-item {
                 border-right: none;
                 border-bottom: 1px solid var(--border);
             }
-            
+
             .stat-item:last-child {
                 border-bottom: none;
             }
-            
+
             .subscribe-benefits {
                 grid-template-columns: 1fr;
             }
-            
+
             .pricing-grid {
                 grid-template-columns: 1fr;
             }
-            
+
             .filter-buttons {
                 gap: 8px;
             }
-            
+
             .filter-btn {
                 padding: 8px 14px;
                 font-size: 11px;
             }
-            
+
             .container {
                 padding: 20px;
             }
-            
+
             .hero {
                 padding: 40px 20px;
             }
         }
-    
-.deals-subnav{background:var(--nav-bg);border-bottom:1px solid rgba(201,168,76,.25);padding:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-.deals-subnav::-webkit-scrollbar{display:none}
-.deals-subnav-inner{display:flex;min-width:max-content;padding:0 24px}
-.deals-tab{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:rgba(237,229,213,.55);padding:10px 16px;border-bottom:2px solid transparent;white-space:nowrap;cursor:pointer;transition:color .2s,border-color .2s;background:none;border-top:none;border-left:none;border-right:none}
-.deals-tab:hover,.deals-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
-@media(max-width:600px){.deals-subnav-inner{padding:0 14px}.deals-tab{padding:10px 12px;font-size:9px}}
-/* Locked card — blur enforced via CSS */
-.deal-card-locked .blur-content{filter:blur(5px)!important;user-select:none!important}
-</style>
-<script src="config.js"></script>
-</head>
-<body>
-<nav class="top-nav" aria-label="Main navigation">
-  <button class="nav-hamburger" id="navHamburger" aria-expanded="false" aria-controls="navMobileDrawer" aria-label="Open navigation menu" onclick="toggleMobileNav()"><span></span><span></span><span></span></button><div class="nav-left">
-    <a href="index.html"      class="nav-link" id="nav-home">Home</a>
-    <a href="markets.html"    class="nav-link" id="nav-markets">Markets</a>
-    <a href="economy.html"    class="nav-link" id="nav-economy">Economy</a>
-    <a href="politics.html"   class="nav-link" id="nav-politics">Politics</a>
-    <a href="energy.html"     class="nav-link" id="nav-energy">Energy</a>
-    <a href="technology.html" class="nav-link" id="nav-technology">Tech</a>
-    <a href="deals.html"      class="nav-link" id="nav-deals" aria-current="page" style="color:var(--gold);border-bottom:2px solid var(--gold)">Deals</a>
-  </div>
-  <div class="nav-right">
-    <a href="about.html"      class="nav-link" id="nav-about">About</a>
-    <a href="membership.html" class="nav-link" id="nav-membership">Membership</a>
-    <button class="dark-toggle" onclick="toggleDark()" id="themeBtn" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
-    <a href="membership.html" id="navSubscribeBtn" class="btn-subscribe">Subscribe</a>
-  </div>
-</nav>
 
-<!-- ═══ MOBILE NAV DRAWER ════════════════════════════ -->
-<div class="nav-mobile-drawer" id="navMobileDrawer"
-     role="dialog" aria-modal="true"
-     aria-label="Navigation menu" aria-hidden="true">
-  <div class="nav-mobile-search">
-    <input type="search" placeholder="Search AMI…" aria-label="Search articles">
-  </div>
-  <a href="index.html">Home</a>
-  <a href="markets.html">Markets</a>
-  <a href="economy.html">Economy</a>
-  <a href="politics.html">Politics</a>
-  <a href="energy.html">Energy</a>
-  <a href="technology.html">Technology</a>
-  <a href="deals.html" class="mob-active">Deals</a>
-  <a href="about.html">About</a>
-  <a href="membership.html">Membership</a>
-  <a href="membership.html" class="mob-subscribe">Subscribe →</a>
-</div>
-    
+        .deals-subnav {
+            background: var(--nav-bg);
+            border-bottom: 1px solid rgba(201, 168, 76, .25);
+            padding: 0;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none
+        }
+
+        .deals-subnav::-webkit-scrollbar {
+            display: none
+        }
+
+        .deals-subnav-inner {
+            display: flex;
+            min-width: max-content;
+            padding: 0 24px
+        }
+
+        .deals-tab {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: rgba(237, 229, 213, .55);
+            padding: 10px 16px;
+            border-bottom: 2px solid transparent;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: color .2s, border-color .2s;
+            background: none;
+            border-top: none;
+            border-left: none;
+            border-right: none
+        }
+
+        .deals-tab:hover,
+        .deals-tab.active {
+            color: var(--gold);
+            border-bottom-color: var(--gold)
+        }
+
+        @media(max-width:600px) {
+            .deals-subnav-inner {
+                padding: 0 14px
+            }
+
+            .deals-tab {
+                padding: 10px 12px;
+                font-size: 9px
+            }
+        }
+
+        /* Locked card — blur enforced via CSS */
+        .deal-card-locked .blur-content {
+            filter: blur(5px) !important;
+            user-select: none !important
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="top-nav" aria-label="Main navigation">
+        <button class="nav-hamburger" id="navHamburger" aria-expanded="false" aria-controls="navMobileDrawer"
+            aria-label="Open navigation menu"
+            onclick="toggleMobileNav()"><span></span><span></span><span></span></button>
+        <div class="nav-left">
+            <a href="index.html" class="nav-link" id="nav-home">Home</a>
+            <a href="markets.html" class="nav-link" id="nav-markets">Markets</a>
+            <a href="economy.html" class="nav-link" id="nav-economy">Economy</a>
+            <a href="politics.html" class="nav-link" id="nav-politics">Politics</a>
+            <a href="energy.html" class="nav-link" id="nav-energy">Energy</a>
+            <a href="technology.html" class="nav-link" id="nav-technology">Tech</a>
+            <a href="deals.html" class="nav-link" id="nav-deals" aria-current="page"
+                style="color:var(--gold);border-bottom:2px solid var(--gold)">Deals</a>
+        </div>
+        <div class="nav-right">
+            <a href="about.html" class="nav-link" id="nav-about">About</a>
+            <a href="membership.html" class="nav-link" id="nav-membership">Membership</a>
+            <button class="dark-toggle" onclick="toggleDark()" id="themeBtn" aria-label="Toggle dark mode"
+                title="Toggle dark mode">🌙</button>
+            <a href="membership.html" id="navSubscribeBtn" class="btn-subscribe">Subscribe</a>
+        </div>
+    </nav>
+
+    <!-- ═══ MOBILE NAV DRAWER ════════════════════════════ -->
+    <div class="nav-mobile-drawer" id="navMobileDrawer" role="dialog" aria-modal="true" aria-label="Navigation menu"
+        aria-hidden="true">
+        <div class="nav-mobile-search">
+            <input type="search" placeholder="Search AMI…" aria-label="Search articles">
+        </div>
+        <a href="index.html">Home</a>
+        <a href="markets.html">Markets</a>
+        <a href="economy.html">Economy</a>
+        <a href="politics.html">Politics</a>
+        <a href="energy.html">Energy</a>
+        <a href="technology.html">Technology</a>
+        <a href="deals.html" class="mob-active">Deals</a>
+        <a href="about.html">About</a>
+        <a href="membership.html">Membership</a>
+        <a href="membership.html" class="mob-subscribe">Subscribe →</a>
+    </div>
+
     <!-- Hero Section -->
     <section class="hero" id="deals">
         <div class="hero-content">
             <h1>AMI DEAL TRACKER</h1>
             <p class="hero-subtitle">Africa's complete monthly record of capital movement</p>
-            <p class="hero-description">Track investments, M&A, and infrastructure projects across 38 African countries. Updated monthly with comprehensive database, league tables, and sector analysis.</p>
+            <p class="hero-description">Track investments, M&A, and infrastructure projects across 38 African countries.
+                Updated monthly with comprehensive database, league tables, and sector analysis.</p>
         </div>
     </section>
-    
+
     <!-- Stats Bar -->
     <div class="stats-bar">
         <div class="stat-item">
@@ -656,7 +859,7 @@
             <div class="stat-label">Updated</div>
         </div>
     </div>
-    
+
     <!-- Filter Bar -->
     <div class="filter-bar">
         <div class="filter-bar-title">Filter by Deal Type</div>
@@ -670,201 +873,208 @@
             <button class="filter-btn" onclick="filterDeals('Exits',this)">Exits</button>
         </div>
     </div>
-    
+
     <!-- Region Sub-nav -->
     <div class="deals-subnav">
-      <div class="deals-subnav-inner">
-        <button class="deals-tab active" onclick="filterRegion('all',this)">All Regions</button>
-        <button class="deals-tab" onclick="filterRegion('West Africa',this)">West Africa</button>
-        <button class="deals-tab" onclick="filterRegion('East Africa',this)">East Africa</button>
-        <button class="deals-tab" onclick="filterRegion('Central Africa',this)">Central Africa</button>
-        <button class="deals-tab" onclick="filterRegion('Southern Africa',this)">Southern Africa</button>
-        <button class="deals-tab" onclick="filterRegion('North Africa',this)">North Africa</button>
-      </div>
+        <div class="deals-subnav-inner">
+            <button class="deals-tab active" onclick="filterRegion('all',this)">All Regions</button>
+            <button class="deals-tab" onclick="filterRegion('West Africa',this)">West Africa</button>
+            <button class="deals-tab" onclick="filterRegion('East Africa',this)">East Africa</button>
+            <button class="deals-tab" onclick="filterRegion('Central Africa',this)">Central Africa</button>
+            <button class="deals-tab" onclick="filterRegion('Southern Africa',this)">Southern Africa</button>
+            <button class="deals-tab" onclick="filterRegion('North Africa',this)">North Africa</button>
+        </div>
     </div>
 
     <!-- Deal Cards — loaded dynamically from Supabase -->
     <div class="container">
-      <div id="dealsLoading" style="text-align:center;padding:60px 20px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text-soft);letter-spacing:.1em">
-        LOADING DEALS…
-      </div>
-      <div class="deals-grid" id="dealsGrid" style="display:none"></div>
-      <p id="dealsEmpty" style="display:none;text-align:center;padding:60px 20px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text-soft)">
-        No deals found for this filter.
-      </p>
+        <div id="dealsLoading"
+            style="text-align:center;padding:60px 20px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text-soft);letter-spacing:.1em">
+            LOADING DEALS…
+        </div>
+        <div class="deals-grid" id="dealsGrid" style="display:none"></div>
+        <p id="dealsEmpty"
+            style="display:none;text-align:center;padding:60px 20px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text-soft)">
+            No deals found for this filter.
+        </p>
     </div>
 
     <script>
-// ════════════════════════════════════════════════════════════
-// DEALS — dynamic Supabase loader
-// ════════════════════════════════════════════════════════════
-let allDeals      = [];
-let activeFilter  = 'all';
-let activeRegion  = 'all';
+        // ════════════════════════════════════════════════════════════
+        // DEALS — dynamic Supabase loader
+        // ════════════════════════════════════════════════════════════
+        let allDeals = [];
+        let activeFilter = 'all';
+        let activeRegion = 'all';
 
-const REGION_MAP = {
-  'West Africa':    ['Nigeria','Ghana','Senegal','Ivory Coast',"Côte d'Ivoire",'Mali','Burkina Faso','Guinea','Sierra Leone','Liberia','Togo','Benin','Niger','Gambia','Cape Verde','Mauritania'],
-  'East Africa':    ['Kenya','Ethiopia','Tanzania','Uganda','Rwanda','Somalia','South Sudan','Burundi','Djibouti','Eritrea','Madagascar','Mozambique'],
-  'Central Africa': ['DRC','Congo','Cameroon','Gabon','Chad','CAR','Central African Republic','Equatorial Guinea','São Tomé'],
-  'Southern Africa':['South Africa','Zimbabwe','Zambia','Botswana','Namibia','Malawi','Lesotho','Eswatini','Angola'],
-  'North Africa':   ['Egypt','Morocco','Tunisia','Algeria','Libya','Sudan'],
-};
+        const REGION_MAP = {
+            'West Africa': ['Nigeria', 'Ghana', 'Senegal', 'Ivory Coast', "Côte d'Ivoire", 'Mali', 'Burkina Faso', 'Guinea', 'Sierra Leone', 'Liberia', 'Togo', 'Benin', 'Niger', 'Gambia', 'Cape Verde', 'Mauritania'],
+            'East Africa': ['Kenya', 'Ethiopia', 'Tanzania', 'Uganda', 'Rwanda', 'Somalia', 'South Sudan', 'Burundi', 'Djibouti', 'Eritrea', 'Madagascar', 'Mozambique'],
+            'Central Africa': ['DRC', 'Congo', 'Cameroon', 'Gabon', 'Chad', 'CAR', 'Central African Republic', 'Equatorial Guinea', 'São Tomé'],
+            'Southern Africa': ['South Africa', 'Zimbabwe', 'Zambia', 'Botswana', 'Namibia', 'Malawi', 'Lesotho', 'Eswatini', 'Angola'],
+            'North Africa': ['Egypt', 'Morocco', 'Tunisia', 'Algeria', 'Libya', 'Sudan'],
+        };
 
-function matchesRegion(deal, region) {
-  if(region === 'all') return true;
-  // tags can be a Supabase array, a JSON string, or a plain string — normalise to a single string
-  let tagsStr = '';
-  if(Array.isArray(deal.tags))          tagsStr = deal.tags.join(' ');
-  else if(typeof deal.tags === 'string') tagsStr = deal.tags;
-  const hay = (tagsStr + ' ' + (deal.headline||'') + ' ' + (deal.standfirst||'')).toLowerCase();
-  // 1. Direct region-name match (e.g. tag is literally "North Africa")
-  if(hay.includes(region.toLowerCase())) return true;
-  // 2. Country-name match
-  return (REGION_MAP[region]||[]).some(c => hay.includes(c.toLowerCase()));
-}
+        function matchesRegion(deal, region) {
+            if (region === 'all') return true;
+            // tags can be a Supabase array, a JSON string, or a plain string — normalise to a single string
+            let tagsStr = '';
+            if (Array.isArray(deal.tags)) tagsStr = deal.tags.join(' ');
+            else if (typeof deal.tags === 'string') tagsStr = deal.tags;
+            const hay = (tagsStr + ' ' + (deal.headline || '') + ' ' + (deal.standfirst || '')).toLowerCase();
+            // 1. Direct region-name match (e.g. tag is literally "North Africa")
+            if (hay.includes(region.toLowerCase())) return true;
+            // 2. Country-name match
+            return (REGION_MAP[region] || []).some(c => hay.includes(c.toLowerCase()));
+        }
 
-function filterRegion(region, btn) {
-  activeRegion = region;
-  document.querySelectorAll('.deals-tab').forEach(b => b.classList.remove('active'));
-  if(btn) btn.classList.add('active');
-  renderDeals();
-}
+        function filterRegion(region, btn) {
+            activeRegion = region;
+            document.querySelectorAll('.deals-tab').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            renderDeals();
+        }
 
-// Sector → badge label mapping
-const BADGE_MAP = {
-  'PE & Venture':  { label:'PRIVATE EQUITY / VENTURE', cls:'pe'             },
-  'M&A':           { label:'M&A',                       cls:'ma'             },
-  'Infrastructure':{ label:'INFRASTRUCTURE',            cls:'infrastructure' },
-  'Debt & Mez':    { label:'DEBT & MEZZANINE',          cls:'debt'           },
-  'DFI & Impact':  { label:'DFI & IMPACT',              cls:'dfi'            },
-  'Exits':         { label:'EXIT',                      cls:'exit'           },
-  'People':        { label:'PEOPLE',                    cls:'people'         },
-};
+        // Sector → badge label mapping
+        const BADGE_MAP = {
+            'PE & Venture': { label: 'PRIVATE EQUITY / VENTURE', cls: 'pe' },
+            'M&A': { label: 'M&A', cls: 'ma' },
+            'Infrastructure': { label: 'INFRASTRUCTURE', cls: 'infrastructure' },
+            'Debt & Mez': { label: 'DEBT & MEZZANINE', cls: 'debt' },
+            'DFI & Impact': { label: 'DFI & IMPACT', cls: 'dfi' },
+            'Exits': { label: 'EXIT', cls: 'exit' },
+            'People': { label: 'PEOPLE', cls: 'people' },
+        };
 
-function getBadge(tags) {
-  if(!tags) return { label:'DEAL', cls:'pe' };
-  for(const [key, val] of Object.entries(BADGE_MAP)) {
-    if(tags.includes(key)) return val;
-  }
-  return { label:'DEAL', cls:'pe' };
-}
+        function getBadge(tags) {
+            if (!tags) return { label: 'DEAL', cls: 'pe' };
+            for (const [key, val] of Object.entries(BADGE_MAP)) {
+                if (tags.includes(key)) return val;
+            }
+            return { label: 'DEAL', cls: 'pe' };
+        }
 
-function filterDeals(type, btn) {
-  activeFilter = type;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  if(btn) btn.classList.add('active');
-  renderDeals();
-}
+        function filterDeals(type, btn) {
+            activeFilter = type;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            renderDeals();
+        }
 
-function renderDeals() {
-  const grid   = document.getElementById('dealsGrid');
-  const empty  = document.getElementById('dealsEmpty');
-  const filtered = allDeals.filter(d => {
-    const typeMatch   = activeFilter === 'all' || (d.tags||'').includes(activeFilter) || (d.section||'').includes(activeFilter);
-    const regionMatch = matchesRegion(d, activeRegion);
-    return typeMatch && regionMatch;
-  });
+        function renderDeals() {
+            const grid = document.getElementById('dealsGrid');
+            const empty = document.getElementById('dealsEmpty');
+            const filtered = allDeals.filter(d => {
+                const typeMatch = activeFilter === 'all' || (d.tags || '').includes(activeFilter) || (d.section || '').includes(activeFilter);
+                const regionMatch = matchesRegion(d, activeRegion);
+                return typeMatch && regionMatch;
+            });
 
-  if(!filtered.length) {
-    grid.style.display  = 'none';
-    empty.style.display = 'block';
-    return;
-  }
-  empty.style.display = 'none';
-  grid.style.display  = '';
+            if (!filtered.length) {
+                grid.style.display = 'none';
+                empty.style.display = 'block';
+                return;
+            }
+            empty.style.display = 'none';
+            grid.style.display = '';
 
-  grid.innerHTML = filtered.map(deal => {
-    const badge = getBadge(deal.tags);
-    const img   = deal.hero_image
-      ? `<img src="${deal.hero_image}" alt="${deal.headline}" style="width:100%;height:160px;object-fit:cover;border-radius:2px 2px 0 0;display:block" onerror="this.style.display='none'">`
-      : '';
-    if(deal.is_locked) {
-      return `
+            // Treat card as unlocked if the user is a logged-in subscriber
+            const isSubscriber = window.amiIsSubscriber === true
+                || localStorage.getItem('ami_subscriber') === 'true';
+
+            grid.innerHTML = filtered.map(deal => {
+                const badge = getBadge(deal.tags);
+                const img = deal.hero_image
+                    ? `<img src="${deal.hero_image}" alt="${deal.headline}" style="width:100%;height:160px;object-fit:cover;border-radius:2px 2px 0 0;display:block" onerror="this.style.display='none'">`
+                    : '';
+                if (deal.is_locked && !isSubscriber) {
+                    return `
       <div class="deal-card deal-card-locked" style="cursor:pointer;position:relative" onclick="window.location='article.html?id=${deal.id}'">
         ${img}
         <div class="deal-type-badge ${badge.cls}">${badge.label}</div>
-        <div style="position:absolute;inset:0;top:${deal.hero_image?'160px':'40px'};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;z-index:2;pointer-events:none">
+        <div style="position:absolute;inset:0;top:${deal.hero_image ? '160px' : '40px'};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;z-index:2;pointer-events:none">
           <div style="font-size:22px">🔒</div>
           <div style="background:var(--gold);color:#060F09;font-family:'DM Mono',monospace;font-size:9px;font-weight:600;letter-spacing:.1em;padding:4px 12px;text-transform:uppercase;border-radius:1px">Members Only</div>
           <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-soft);letter-spacing:.05em">Subscribe to read</div>
         </div>
         <div class="deal-header" style="padding:14px 16px 0;">
           <div style="font-family:'Playfair Display',serif;font-size:16px;line-height:1.35;color:var(--text);margin-bottom:10px">
-            ${deal.headline.trim().split(/\s+/).slice(0,2).join(' ')}…
+            ${deal.headline.trim().split(/\s+/).slice(0, 2).join(' ')}…
           </div>
         </div>
-        <div class="blur-content" style="padding:0 16px 8px;font-family:'Spectral',serif;font-size:13px;color:var(--text-soft);line-height:1.5">${deal.standfirst||''}</div>
+        <div class="blur-content" style="padding:0 16px 8px;font-family:'Spectral',serif;font-size:13px;color:var(--text-soft);line-height:1.5">${deal.standfirst || ''}</div>
         <div class="deal-date blur-content" style="padding:0 16px 16px;display:flex;justify-content:space-between;align-items:center">
-          <span>${deal.published_date||''}</span>
-          <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft)">${deal.read_time||'3 min'}</span>
+          <span>${deal.published_date || ''}</span>
+          <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft)">${deal.read_time || '3 min'}</span>
         </div>
       </div>`;
-    }
-    return `
+                }
+                return `
     <div class="deal-card" style="cursor:pointer;position:relative" onclick="window.location='article.html?id=${deal.id}'">
       ${img}
       <div class="deal-type-badge ${badge.cls}">${badge.label}</div>
       <div class="deal-header" style="padding:14px 16px 0;">
         <div style="font-family:'Playfair Display',serif;font-size:16px;line-height:1.35;color:var(--text);margin-bottom:10px">${deal.headline}</div>
       </div>
-      <div style="padding:0 16px 8px;font-family:'Spectral',serif;font-size:13px;color:var(--text-soft);line-height:1.5">${deal.standfirst||''}</div>
+      <div style="padding:0 16px 8px;font-family:'Spectral',serif;font-size:13px;color:var(--text-soft);line-height:1.5">${deal.standfirst || ''}</div>
       <div class="deal-date" style="padding:0 16px 16px;display:flex;justify-content:space-between;align-items:center">
-        <span>${deal.published_date||''}</span>
-        <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft)">${deal.read_time||'3 min'}</span>
+        <span>${deal.published_date || ''}</span>
+        <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft)">${deal.read_time || '3 min'}</span>
       </div>
     </div>`;
-  }).join('');
-}
+            }).join('');
+        }
 
-async function loadDeals() {
-  if(!SUPABASE_URL || SUPABASE_URL === '' || SUPABASE_URL === 'YOUR_SUPABASE_URL') {
-    document.getElementById('dealsLoading').textContent = 'Configure Supabase in config.js to load deals.';
-    return;
-  }
-  try {
-    const url = `${SUPABASE_URL}/rest/v1/articles?section=eq.Deals&is_published=eq.true&order=published_date.desc&select=*`;
-    const r = await fetch(url, {
-      headers: { apikey: SUPABASE_ANON, Authorization: `Bearer ${SUPABASE_ANON}` }
-    });
-    if(!r.ok) throw new Error(await r.text());
-    allDeals = await r.json();
+        async function loadDeals() {
+            if (!SUPABASE_URL || SUPABASE_URL === '' || SUPABASE_URL === 'YOUR_SUPABASE_URL') {
+                document.getElementById('dealsLoading').textContent = 'Configure Supabase in config.js to load deals.';
+                return;
+            }
+            try {
+                const url = `${SUPABASE_URL}/rest/v1/articles?section=eq.Deals&is_published=eq.true&order=published_date.desc&select=*`;
+                const r = await fetch(url, {
+                    headers: { apikey: SUPABASE_ANON, Authorization: `Bearer ${SUPABASE_ANON}` }
+                });
+                if (!r.ok) throw new Error(await r.text());
+                allDeals = await r.json();
 
-    document.getElementById('dealsLoading').style.display = 'none';
-    renderDeals();
-  } catch(err) {
-    document.getElementById('dealsLoading').textContent = 'Could not load deals — ' + err.message;
-    console.error('Deals load error:', err);
-  }
-}
+                document.getElementById('dealsLoading').style.display = 'none';
+                renderDeals();
+            } catch (err) {
+                document.getElementById('dealsLoading').textContent = 'Could not load deals — ' + err.message;
+                console.error('Deals load error:', err);
+            }
+        }
 
-// Dark mode toggle (matches other AMI pages)
-function toggleDark() {
-  const html = document.documentElement;
-  const isDark = html.getAttribute('data-theme') === 'dark';
-  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
-  localStorage.setItem('ami-theme', isDark ? 'light' : 'dark');
-  const btn = document.getElementById('themeBtn');
-  if(btn) btn.textContent = isDark ? '🌙' : '☀️';
-}
+        // Dark mode toggle (matches other AMI pages)
+        function toggleDark() {
+            const html = document.documentElement;
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('ami-theme', isDark ? 'light' : 'dark');
+            const btn = document.getElementById('themeBtn');
+            if (btn) btn.textContent = isDark ? '🌙' : '☀️';
+        }
 
-function toggleMobileNav() {
-  const drawer = document.getElementById('navMobileDrawer');
-  const btn    = document.getElementById('navHamburger');
-  if(!drawer) return;
-  const open = drawer.classList.toggle('open');
-  btn.setAttribute('aria-expanded', open);
-}
+        function toggleMobileNav() {
+            const drawer = document.getElementById('navMobileDrawer');
+            const btn = document.getElementById('navHamburger');
+            if (!drawer) return;
+            const open = drawer.classList.toggle('open');
+            btn.setAttribute('aria-expanded', open);
+        }
 
-// Restore saved theme
-(function(){
-  const saved = localStorage.getItem('ami-theme');
-  if(saved) document.documentElement.setAttribute('data-theme', saved);
-  const btn = document.getElementById('themeBtn');
-  if(btn) btn.textContent = saved === 'light' ? '🌙' : '☀️';
-})();
+        // Restore saved theme
+        (function () {
+            const saved = localStorage.getItem('ami-theme');
+            if (saved) document.documentElement.setAttribute('data-theme', saved);
+            const btn = document.getElementById('themeBtn');
+            if (btn) btn.textContent = saved === 'light' ? '🌙' : '☀️';
+        })();
 
-window.addEventListener('DOMContentLoaded', loadDeals);
+        window.addEventListener('DOMContentLoaded', loadDeals);
     </script>
 
 </body>
+
 </html>
