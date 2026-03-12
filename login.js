@@ -202,7 +202,12 @@
 
     // ── Set Up Account panel ──
     '<div id="amiPanelSetup" style="display:none;padding:24px 32px 32px">',
-      '<div style="background:#F5F0E8;border-left:3px solid #C9A84C;padding:10px 14px;margin-bottom:18px;font-family:\'DM Mono\',monospace;font-size:11px;color:#6B5344;line-height:1.5">Use the email address you used to pay via Stripe. If you haven\'t subscribed yet, <a href="membership.html" style="color:#C9A84C">get membership here →</a></div>',
+      // Welcome banner — shown only when arriving from Stripe success URL (?setup=1)
+      '<div id="amiSetupWelcome" style="display:none;background:#F0FFF5;border:1px solid #A8D8B9;border-left:4px solid #2E7D4F;padding:14px 16px;margin-bottom:18px;font-family:\'DM Mono\',monospace;font-size:12px;color:#1A4D2E;line-height:1.6">',
+        '<div style="font-weight:700;font-size:13px;margin-bottom:4px">🎉 Payment confirmed — welcome to AMI Premium!</div>',
+        'Create your login password below so you can access your subscription on any device.',
+      '</div>',
+      '<div id="amiSetupInfoBanner" style="background:#F5F0E8;border-left:3px solid #C9A84C;padding:10px 14px;margin-bottom:18px;font-family:\'DM Mono\',monospace;font-size:11px;color:#6B5344;line-height:1.5">Use the email address you used to pay via Stripe. If you haven\'t subscribed yet, <a href="membership.html" style="color:#C9A84C">get membership here →</a></div>',
       '<div style="margin-bottom:14px">',
         '<label style="font-family:\'DM Mono\',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#6B5344;display:block;margin-bottom:6px">Subscription Email</label>',
         '<input id="amiSetupEmail" type="email" placeholder="your@email.com" autocomplete="email" style="width:100%;background:#fff;border:1px solid #D4C4A0;color:#1A1208;font-family:\'DM Mono\',monospace;font-size:13px;padding:12px 14px;outline:none;box-sizing:border-box;transition:border-color .2s" onfocus="this.style.borderColor=\'#C9A84C\'" onblur="this.style.borderColor=\'#D4C4A0\'">',
@@ -699,6 +704,48 @@
   }
 
   // ═══════════════════════════════════════════════════════════════
+  // POST-PAYMENT REDIRECT HANDLER
+  // Stripe success_url should be set to:
+  //   https://ami.abta.africa/?setup=1
+  // When a new subscriber lands with ?setup=1, automatically open
+  // the Set Up Account tab and show a welcome message.
+  // ═══════════════════════════════════════════════════════════════
+
+  function handlePostPaymentRedirect() {
+    var params = new URLSearchParams(window.location.search);
+    if (params.get('setup') !== '1') return;
+
+    // Clean the URL so refreshing doesn't re-trigger the banner
+    var cleanUrl = window.location.pathname + (window.location.hash || '');
+    history.replaceState(null, '', cleanUrl);
+
+    // Pre-filled email if Stripe passes it (e.g. ?setup=1&email=user@example.com)
+    var prefillEmail = params.get('email') || '';
+
+    // Open the modal with a brief delay to ensure DOM is fully injected
+    setTimeout(function () {
+      window.amiOpenLogin('setup');
+
+      // Show the welcome banner, hide the generic info banner
+      var welcomeBanner = document.getElementById('amiSetupWelcome');
+      var infoBanner    = document.getElementById('amiSetupInfoBanner');
+      if (welcomeBanner) welcomeBanner.style.display = 'block';
+      if (infoBanner)    infoBanner.style.display    = 'none';
+
+      // Pre-fill email field if we have one
+      if (prefillEmail) {
+        var emailEl = document.getElementById('amiSetupEmail');
+        if (emailEl) {
+          emailEl.value = prefillEmail;
+          // Move focus to password field since email is already filled
+          var passEl = document.getElementById('amiSetupPassword');
+          if (passEl) passEl.focus();
+        }
+      }
+    }, 350);
+  }
+
+  // ═══════════════════════════════════════════════════════════════
   // INITIALISE
   // ═══════════════════════════════════════════════════════════════
 
@@ -731,6 +778,7 @@
     injectLoginButton();
     updateMobileNav();
     handleAuthRedirect();
+    handlePostPaymentRedirect();
   }
 
   if (document.readyState === 'loading') {
