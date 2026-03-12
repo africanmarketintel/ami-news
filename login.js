@@ -204,7 +204,7 @@
     '<div id="amiPanelSetup" style="display:none;padding:24px 32px 32px">',
       // Welcome banner — shown only when arriving from Stripe success URL (?setup=1)
       '<div id="amiSetupWelcome" style="display:none;background:#F0FFF5;border:1px solid #A8D8B9;border-left:4px solid #2E7D4F;padding:14px 16px;margin-bottom:18px;font-family:\'DM Mono\',monospace;font-size:12px;color:#1A4D2E;line-height:1.6">',
-        '<div style="font-weight:700;font-size:13px;margin-bottom:4px">Payment confirmed — welcome to AMI Premium!</div>',
+        '<div style="font-weight:700;font-size:13px;margin-bottom:4px">🎉 Payment confirmed — welcome to AMI Premium!</div>',
         'Create your login password below so you can access your subscription on any device.',
       '</div>',
       '<div id="amiSetupInfoBanner" style="background:#F5F0E8;border-left:3px solid #C9A84C;padding:10px 14px;margin-bottom:18px;font-family:\'DM Mono\',monospace;font-size:11px;color:#6B5344;line-height:1.5">Use the email address you used to pay via Stripe. If you haven\'t subscribed yet, <a href="membership.html" style="color:#C9A84C">get membership here →</a></div>',
@@ -458,7 +458,7 @@
       var isPaid = await checkSubscriberStatus(email, data.access_token);
       if (!isPaid) {
         if (errorEl) {
-          errorEl.innerHTML = 'No active subscription found for this account. <a href="membership.html" style="color:#B85C38;text-decoration:underline">Get membership →</a>';
+          errorEl.innerHTML = 'We don\'t have a completed payment on record for this account. If you\'ve just subscribed, please wait a few minutes and try again. Otherwise — <a href="membership.html" style="color:#B85C38;text-decoration:underline">complete your subscription →</a>';
           errorEl.style.display = 'block';
         }
         if (btn) { btn.textContent = 'Sign In →'; btn.disabled = false; }
@@ -522,8 +522,9 @@
       var isPaid = await checkSubscriberStatus(email, null);
       if (!isPaid) {
         if (errorEl) {
-          errorEl.innerHTML = 'No active subscription found for <strong>' + email + '</strong>. '
-            + 'Please <a href="membership.html" style="color:#B85C38;text-decoration:underline">subscribe first →</a>';
+          errorEl.innerHTML = 'We don\'t have a completed payment on record for <strong>' + email + '</strong>. '
+            + 'If you\'ve just subscribed, please wait a few minutes and try again. Otherwise — '
+            + '<a href="membership.html" style="color:#B85C38;text-decoration:underline">complete your subscription →</a>';
           errorEl.style.display = 'block';
         }
         if (btn) { btn.textContent = 'Create Account →'; btn.disabled = false; }
@@ -624,7 +625,8 @@
     var type   = params.get('type');
     var token  = params.get('access_token');
 
-    if (type === 'recovery' && token) {
+    // 'recovery' = password reset link clicked; 'invite' = post-payment account setup email clicked
+    if ((type === 'recovery' || type === 'invite') && token) {
       history.replaceState(null, '', window.location.pathname + window.location.search);
       showSetNewPasswordModal(token);
     }
@@ -715,15 +717,39 @@
     var params = new URLSearchParams(window.location.search);
     if (params.get('setup') !== '1') return;
 
-    // Clean the URL so refreshing doesn't re-trigger the banner
+    // Clean the URL regardless of what we do next
     var cleanUrl = window.location.pathname + (window.location.hash || '');
     history.replaceState(null, '', cleanUrl);
 
-    // Pre-filled email if Stripe passes it (e.g. ?setup=1&email=user@example.com)
+    // Already fully logged in — nothing to do, they have an account
+    if (isLoggedIn()) return;
+
+    // Pre-filled email if passed (e.g. ?setup=1&email=user@example.com)
     var prefillEmail = params.get('email') || '';
 
     // Open the modal with a brief delay to ensure DOM is fully injected
     setTimeout(function () {
+
+      // If they have a stored email it means they've set up before — send them
+      // straight to Sign In rather than the setup form
+      var knownEmail = getSession().email || localStorage.getItem('ami_email') || '';
+      if (knownEmail) {
+        window.amiOpenLogin('signin');
+        var siEmail = document.getElementById('amiSubEmail');
+        if (siEmail) siEmail.value = knownEmail;
+        // Show a soft nudge so they understand why they landed here
+        var siErr = document.getElementById('amiSignInError');
+        if (siErr) {
+          siErr.style.background    = '#F5F0E8';
+          siErr.style.borderColor   = '#C9A84C';
+          siErr.style.color         = '#6B5344';
+          siErr.innerHTML = '✓ Your subscription is active. Sign in to access your account.';
+          siErr.style.display = 'block';
+        }
+        return;
+      }
+
+      // First-time setup
       window.amiOpenLogin('setup');
 
       // Show the welcome banner, hide the generic info banner
