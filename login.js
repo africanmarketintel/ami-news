@@ -204,7 +204,7 @@
     '<div id="amiPanelSetup" style="display:none;padding:24px 32px 32px">',
       // Welcome banner — shown only when arriving from Stripe success URL (?setup=1)
       '<div id="amiSetupWelcome" style="display:none;background:#F0FFF5;border:1px solid #A8D8B9;border-left:4px solid #2E7D4F;padding:14px 16px;margin-bottom:18px;font-family:\'DM Mono\',monospace;font-size:12px;color:#1A4D2E;line-height:1.6">',
-        '<div style="font-weight:700;font-size:13px;margin-bottom:4px">🎉 Payment confirmed — welcome to AMI Premium!</div>',
+        '<div style="font-weight:700;font-size:13px;margin-bottom:4px">Payment confirmed — welcome to AMI Premium!</div>',
         'Create your login password below so you can access your subscription on any device.',
       '</div>',
       '<div id="amiSetupInfoBanner" style="background:#F5F0E8;border-left:3px solid #C9A84C;padding:10px 14px;margin-bottom:18px;font-family:\'DM Mono\',monospace;font-size:11px;color:#6B5344;line-height:1.5">Use the email address you used to pay via Stripe. If you haven\'t subscribed yet, <a href="membership.html" style="color:#C9A84C">get membership here →</a></div>',
