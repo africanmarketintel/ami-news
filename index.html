@@ -12,7 +12,7 @@
 
   <!-- ✅ CREDENTIALS: Edit config.js once — applies to all pages -->
   <script src="config.js"></script>
-  <script src="login.js"></script>  
+  <script src="login.js"></script>
 
   <style>
     :root {
@@ -729,7 +729,40 @@
       color: var(--text-soft);
       padding-bottom: 14px;
       border-bottom: 2px solid var(--gold, #C9A84C);
-      margin-bottom: 4px
+      margin-bottom: 20px
+    }
+
+    /* ── Sectioned search results ── */
+    .search-section-group {
+      margin-bottom: 32px
+    }
+
+    .search-section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--divider);
+      margin-bottom: 2px
+    }
+
+    .search-section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--text)
+    }
+
+    .search-section-count {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      font-weight: 700;
+      background: var(--gold, #C9A84C);
+      color: #060F09;
+      padding: 2px 7px;
+      letter-spacing: .05em
     }
 
     /* Markets */
@@ -1016,6 +1049,45 @@
     .view-more:hover {
       color: var(--gold)
     }
+
+    /* Beta Banner */
+    .beta-banner {
+      background: var(--cream-dark);
+      border-bottom: 1px solid var(--divider);
+      padding: 8px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--ink-mid);
+    }
+    [data-theme="dark"] .beta-banner {
+      background: #1A1208;
+      color: var(--text-soft);
+      border-bottom-color: var(--divider);
+    }
+    .beta-tag {
+      background: var(--ink);
+      color: var(--gold);
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 2px 10px;
+      flex-shrink: 0;
+      border-radius: 2px;
+    }
+    [data-theme="dark"] .beta-tag {
+      background: var(--gold);
+      color: var(--ink);
+    }
+    .beta-banner a {
+      color: var(--terra);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .beta-banner a:hover { color: var(--gold); }
 
     /* Breaking */
     .breaking-banner {
@@ -3829,6 +3901,11 @@
     </div>
   </div>
 
+  <div class="beta-banner">
+    <span class="beta-tag">Beta</span>
+    What do you think of this service? Your <a href="mailto:info@abta.africa?subject=AMI%20Feedback">feedback</a> will help us to improve it.
+  </div>
+
   <div class="main-wrapper">
     <main id="main-content">
       <!-- Hero -->
@@ -4106,7 +4183,7 @@
     // ════════════════════════════════════════════════════════════
     // SUBSCRIBER STATE — set before init() so applySettings() sees it
     // ════════════════════════════════════════════════════════════
-    window.amiIsSubscriber     = localStorage.getItem('ami_subscriber') === 'true';
+    window.amiIsSubscriber = localStorage.getItem('ami_subscriber') === 'true';
     window.amiPaywallSuppressed = window.amiIsSubscriber;
     if (window.amiIsSubscriber) localStorage.setItem('amiVisited', '1');
 
@@ -4162,7 +4239,7 @@
 
         // If ?q= in URL, pre-fill search input and show results
         if (searchQuery) {
-          document.querySelectorAll('.nav-search, #navSearchInput').forEach(function(el) {
+          document.querySelectorAll('.nav-search, #navSearchInput').forEach(function (el) {
             el.value = searchQuery;
           });
           applyFilters();
@@ -4275,39 +4352,58 @@
       archiveCount.textContent = `${totalArticles} article${totalArticles !== 1 ? 's' : ''} · Page ${currentPage} of ${Math.ceil(totalArticles / ARTICLES_PER_PAGE)}`;
       archiveHeader.style.display = 'flex';
 
-      // ── Search mode: Google-style list ──────────────────────────
+      // ── Search mode: sectioned by category ──────────────────────
       if (searchQuery) {
         function highlight(text, q) {
           if (!text || !q) return text || '';
           return text.replace(new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi'),
             '<mark class="sri-highlight">$1</mark>');
         }
-        const items = page.map(a => {
-          const section = a.section || 'AMI';
-          const url = articleUrl(a);
-          const breadcrumb = `ami.abta.africa › ${section}`;
-          const title = highlight(a.headline, searchQuery);
-          const snippet = highlight(a.standfirst || '', searchQuery);
+
+        // Group page results by section
+        const groups = {};
+        page.forEach(a => {
+          const sec = (a.section || 'General').trim();
+          if (!groups[sec]) groups[sec] = [];
+          groups[sec].push(a);
+        });
+
+        // Sort sections: most results first
+        const sortedSections = Object.keys(groups).sort((x, y) => groups[y].length - groups[x].length);
+
+        const sectionsHtml = sortedSections.map(sec => {
+          const items = groups[sec].map(a => {
+            const url = articleUrl(a);
+            const title = highlight(a.headline, searchQuery);
+            const snippet = highlight(a.standfirst || '', searchQuery);
+            return `
+          <div class="search-result-item" role="link" tabindex="0"
+            onclick="window.location.href='${url}'"
+            onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();window.location.href='${url}'}">
+            <div class="sri-title">${title}</div>
+            <div class="sri-snippet">${snippet}</div>
+            <div class="sri-meta">
+              ${a.published_date ? `<span>${a.published_date}</span>` : ''}
+              <span>${a.read_time || '3 min read'}</span>
+              ${a.author_name ? `<span>${a.author_name}</span>` : ''}
+              ${a.is_locked ? '<span class="sri-premium">Premium</span>' : ''}
+            </div>
+          </div>`;
+          }).join('');
+
           return `
-        <div class="search-result-item" role="link" tabindex="0"
-          onclick="window.location.href='${url}'"
-          onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();window.location.href='${url}'}">
-          <div class="sri-breadcrumb">
-            <span class="sri-breadcrumb-site">${breadcrumb}</span>
+        <div class="search-section-group">
+          <div class="search-section-header">
+            <span class="search-section-label">${sec}</span>
+            <span class="search-section-count">${groups[sec].length}</span>
           </div>
-          <div class="sri-title">${title}</div>
-          <div class="sri-snippet">${snippet}</div>
-          <div class="sri-meta">
-            ${a.published_date ? `<span>${a.published_date}</span>` : ''}
-            <span>${a.read_time || '3 min read'}</span>
-            ${a.author_name ? `<span>${a.author_name}</span>` : ''}
-            ${a.is_locked ? '<span class="sri-premium">Premium</span>' : ''}
-          </div>
+          <div class="search-results-list">${items}</div>
         </div>`;
         }).join('');
+
         container.innerHTML = `
         <div class="search-results-count">${totalArticles} result${totalArticles !== 1 ? 's' : ''} for &ldquo;${searchQuery}&rdquo;</div>
-        <div class="search-results-list">${items}</div>`;
+        ${sectionsHtml}`;
         renderPagination();
         return;
       }
@@ -4630,13 +4726,18 @@
       let filtered = allArticles;
       if (filterActive !== 'all') filtered = filtered.filter(a => articleMatchesRegion(a, filterActive));
       if (searchQuery) filtered = filtered.filter(a => (a.headline || '').toLowerCase().includes(searchQuery) || (a.standfirst || '').toLowerCase().includes(searchQuery) || (a.author_name || '').toLowerCase().includes(searchQuery));
+
+      // Hide hero grid in search mode; restore it otherwise
+      const heroGrid = document.getElementById('heroGrid');
+      if (heroGrid) heroGrid.style.display = searchQuery ? 'none' : '';
+
       // When a region is active, re-render hero with top matching articles; otherwise use editorial placements
       if (filterActive !== 'all') {
-        renderHero(filtered);
+        if (!searchQuery) renderHero(filtered);
         renderCards(filtered);
       } else {
-        renderHero(null);
-        renderCards(filtered.filter(a => a.placement === 'card'));
+        if (!searchQuery) renderHero(null);
+        renderCards(filtered.filter(a => searchQuery ? true : a.placement === 'card'));
       }
     }
 
