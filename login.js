@@ -936,6 +936,55 @@
     updateMobileNav();
     handleAuthRedirect();
     handlePostPaymentRedirect();
+    setupGlobalSearch();
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  // GLOBAL SEARCH REDIRECT
+  // On non-homepage pages, redirect search queries to /?q=value
+  // ═══════════════════════════════════════════════════════════════
+
+  function setupGlobalSearch() {
+    var path = window.location.pathname;
+    var isHome = path === '/' || path === '/index.html' || path.endsWith('/index.html') || path === '';
+    if (isHome) return;
+
+    function redirectToSearch(val) {
+      if (!val || !val.trim()) return;
+      window.location.href = '/?q=' + encodeURIComponent(val.trim());
+    }
+
+    function attachToInput(input) {
+      // Remove any existing oninput handler so it doesn't call a local searchArticles
+      input.removeAttribute('oninput');
+
+      // Redirect on Enter key
+      input.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') redirectToSearch(this.value);
+      });
+
+      // Redirect after user stops typing (600ms debounce, min 3 chars)
+      var timer;
+      input.addEventListener('input', function () {
+        var val = this.value;
+        clearTimeout(timer);
+        if (val.trim().length >= 3) {
+          timer = setTimeout(function () { redirectToSearch(val); }, 600);
+        }
+      });
+    }
+
+    // Attach to nav search inputs immediately
+    document.querySelectorAll('.nav-search, #navSearchInput, [type="search"]').forEach(attachToInput);
+
+    // Also catch any inputs injected later (e.g. mobile nav)
+    var observer = new MutationObserver(function () {
+      document.querySelectorAll('.nav-search:not([data-gsearch]), #navSearchInput:not([data-gsearch]), [type="search"]:not([data-gsearch])').forEach(function (input) {
+        input.setAttribute('data-gsearch', '1');
+        attachToInput(input);
+      });
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
   }
 
   if (document.readyState === 'loading') {

@@ -627,6 +627,111 @@
       pointer-events: none !important
     }
 
+    /* ── Google-style search results ── */
+    .search-results-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0
+    }
+
+    .search-result-item {
+      padding: 18px 0;
+      border-bottom: 1px solid var(--divider);
+      cursor: pointer;
+      transition: background .15s
+    }
+
+    .search-result-item:last-child {
+      border-bottom: none
+    }
+
+    .search-result-item:hover .sri-title {
+      text-decoration: underline
+    }
+
+    .sri-breadcrumb {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--text-soft);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 4px
+    }
+
+    .sri-breadcrumb-site {
+      color: #2E7D4F
+    }
+
+    [data-theme="dark"] .sri-breadcrumb-site {
+      color: #5BAF7A
+    }
+
+    .sri-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--terra, #B85C38);
+      line-height: 1.3;
+      margin-bottom: 6px
+    }
+
+    [data-theme="dark"] .sri-title {
+      color: #C9A84C
+    }
+
+    .sri-snippet {
+      font-family: 'Spectral', Georgia, serif;
+      font-size: 13px;
+      color: var(--text-soft);
+      line-height: 1.65;
+      margin-bottom: 8px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden
+    }
+
+    .sri-meta {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--text-soft);
+      display: flex;
+      align-items: center;
+      gap: 12px
+    }
+
+    .sri-premium {
+      background: var(--gold, #C9A84C);
+      color: #060F09;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 2px 7px
+    }
+
+    mark.sri-highlight {
+      background: #FFF3C4;
+      color: inherit;
+      border-radius: 2px;
+      padding: 0 1px
+    }
+
+    [data-theme="dark"] mark.sri-highlight {
+      background: #3A3010;
+      color: #EDE5D5
+    }
+
+    .search-results-count {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--text-soft);
+      padding-bottom: 14px;
+      border-bottom: 2px solid var(--gold, #C9A84C);
+      margin-bottom: 4px
+    }
+
     /* Markets */
     .markets-strip {
       background: var(--card-bg);
@@ -3693,6 +3798,8 @@
   </div>
 
 
+
+
   <header class="masthead" role="banner">
     <div class="masthead-name" id="siteNameDisplay" data-editable="text" data-cms-type="setting"
       data-cms-key="site_name" onclick="handleLogoClick()" style="cursor:default" title="">African Market
@@ -3852,11 +3959,6 @@
           <p class="footer-about" id="footerAboutDisplay" data-editable="text" data-cms-type="setting"
             data-cms-key="footer_about">The continent's most trusted source for financial news and business intelligence
             across Africa's 54 markets.</p>
-          <p style="margin-top:12px"><button onclick="amiVerifyAccess()"
-              style="background:none;border:1px solid rgba(201,168,76,.4);color:rgba(201,168,76,.8);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:6px 12px;cursor:pointer;transition:all .2s"
-              onmouseover="this.style.borderColor='#C9A84C';this.style.color='#C9A84C'"
-              onmouseout="this.style.borderColor='rgba(201,168,76,.4)';this.style.color='rgba(201,168,76,.8)'">Already a
-              subscriber? Verify access →</button></p>
         </div>
         <div>
           <div class="footer-col-title" id="footerCol1Title" data-editable="text" data-cms-type="setting"
@@ -4056,8 +4158,20 @@
         renderHero();
         renderMarketsStrip();
         renderTicker();
-        renderCards();
         renderTopStories(); renderMostRead();
+
+        // If ?q= in URL, pre-fill search input and show results
+        if (searchQuery) {
+          document.querySelectorAll('.nav-search, #navSearchInput').forEach(function(el) {
+            el.value = searchQuery;
+          });
+          applyFilters();
+          var cardsSection = document.getElementById('articleCardsContainer');
+          if (cardsSection) cardsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+          renderCards();
+        }
+
         // Activate correct section tab if section param set
         if (filterActive !== 'all') {
           document.querySelectorAll('.section-tab').forEach(t => {
@@ -4161,6 +4275,44 @@
       archiveCount.textContent = `${totalArticles} article${totalArticles !== 1 ? 's' : ''} · Page ${currentPage} of ${Math.ceil(totalArticles / ARTICLES_PER_PAGE)}`;
       archiveHeader.style.display = 'flex';
 
+      // ── Search mode: Google-style list ──────────────────────────
+      if (searchQuery) {
+        function highlight(text, q) {
+          if (!text || !q) return text || '';
+          return text.replace(new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi'),
+            '<mark class="sri-highlight">$1</mark>');
+        }
+        const items = page.map(a => {
+          const section = a.section || 'AMI';
+          const url = articleUrl(a);
+          const breadcrumb = `ami.abta.africa › ${section}`;
+          const title = highlight(a.headline, searchQuery);
+          const snippet = highlight(a.standfirst || '', searchQuery);
+          return `
+        <div class="search-result-item" role="link" tabindex="0"
+          onclick="window.location.href='${url}'"
+          onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();window.location.href='${url}'}">
+          <div class="sri-breadcrumb">
+            <span class="sri-breadcrumb-site">${breadcrumb}</span>
+          </div>
+          <div class="sri-title">${title}</div>
+          <div class="sri-snippet">${snippet}</div>
+          <div class="sri-meta">
+            ${a.published_date ? `<span>${a.published_date}</span>` : ''}
+            <span>${a.read_time || '3 min read'}</span>
+            ${a.author_name ? `<span>${a.author_name}</span>` : ''}
+            ${a.is_locked ? '<span class="sri-premium">Premium</span>' : ''}
+          </div>
+        </div>`;
+        }).join('');
+        container.innerHTML = `
+        <div class="search-results-count">${totalArticles} result${totalArticles !== 1 ? 's' : ''} for &ldquo;${searchQuery}&rdquo;</div>
+        <div class="search-results-list">${items}</div>`;
+        renderPagination();
+        return;
+      }
+
+      // ── Default card grid ────────────────────────────────────────
       const rows = [];
       for (let i = 0; i < page.length; i += 3) {
         const chunk = page.slice(i, i + 3);
@@ -4581,7 +4733,7 @@
         <div style="text-align:center;padding:12px 0">
           <div style="font-size:28px;margin-bottom:8px">📬</div>
           <div style="font-family:'Playfair Display',serif;font-size:18px;color:#C9A84C;margin-bottom:6px">You're in!</div>
-          <div style="font-size:13px;color:#999;font-weight:300">Check your inbox every week for your Week in Review. For full deal intelligence and premium analysis, upgrade to AMI Premium.</div>
+          <div style="font-size:13px;color:#999;font-weight:300">${(window.amiIsSubscriber || localStorage.getItem('ami_subscriber') === 'true') ? 'Check your inbox every week for your Week in Review.' : 'Check your inbox every week for your Week in Review. For full deal intelligence and premium analysis, <a href="membership.html" style="color:#C9A84C;text-decoration:underline">upgrade to AMI Premium →</a>'}</div>
         </div>`;
         }
       } catch (e) {
