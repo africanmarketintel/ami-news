@@ -36,6 +36,72 @@
             --card-bg: #FAF7F0;
             --divider: #D4C4A0;
             --green: #2E9B5E;
+            --bg: #ffffff;
+        }
+
+        [data-theme="dark"] {
+            --bg: #060F09;
+            --surface: #0A1A10;
+            --card-bg: #0F2015;
+            /* ink variables are what deals.html actually uses for text */
+            --ink: #EDE5D5;
+            --ink-mid: #1A3020;
+            --ink-soft: #A89070;
+            --text: #EDE5D5;
+            --text-soft: #A89070;
+            --nav-bg: #060F09;
+            --nav-text: #EDE5D5;
+            --border: #1A3020;
+            --divider: #1A3020;
+            --cream: #0F2015;
+            --cream-dark: #0A1A10;
+            --gold-pale: #0D1F12;
+        }
+
+        [data-theme="dark"] body {
+            background-color: var(--bg);
+            color: var(--ink);
+        }
+
+        [data-theme="dark"] .hero {
+            background: linear-gradient(135deg, #030A06 0%, #060F09 100%);
+        }
+
+        [data-theme="dark"] .deal-card {
+            background-color: var(--card-bg);
+            border-left-color: #C9A84C;
+            border-bottom-color: var(--border);
+        }
+
+        [data-theme="dark"] .stats-bar,
+        [data-theme="dark"] .filter-bar {
+            background-color: var(--surface);
+            border-color: var(--border);
+        }
+
+        [data-theme="dark"] .stat-number {
+            color: var(--gold);
+        }
+
+        [data-theme="dark"] .filter-btn {
+            background-color: var(--card-bg);
+            border-color: var(--border);
+            color: var(--ink);
+        }
+
+        [data-theme="dark"] .filter-btn:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+            background-color: var(--gold-pale);
+        }
+
+        [data-theme="dark"] .filter-btn.active {
+            background-color: var(--gold);
+            color: #060F09;
+        }
+
+        [data-theme="dark"] .container {
+            background-color: var(--bg);
         }
 
         * {
@@ -50,7 +116,8 @@
 
         body {
             font-family: 'Spectral', serif;
-            background-color: #ffffff;
+            background-color: var(--bg, #ffffff);
+            transition: background .3s, color .3s;
             color: var(--ink);
             line-height: 1.6;
         }
@@ -999,7 +1066,7 @@
         </div>
         <div class="deal-header" style="padding:14px 16px 0;">
           <div style="font-family:'Playfair Display',serif;font-size:16px;line-height:1.35;color:var(--text);margin-bottom:10px">
-            ${deal.headline.trim().split(/\s+/).slice(0, 2).join(' ')}…
+            ${deal.headline}
           </div>
         </div>
         <div class="blur-content" style="padding:0 16px 8px;font-family:'Spectral',serif;font-size:13px;color:var(--text-soft);line-height:1.5">${deal.standfirst || ''}</div>
