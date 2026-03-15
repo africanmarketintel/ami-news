@@ -3901,6 +3901,11 @@
     </div>
   </div>
 
+  <div class="beta-banner">
+    <span class="beta-tag">Beta</span>
+    What do you think of this service? Your <a href="mailto:info@abta.africa?subject=AMI%20Feedback">feedback</a> will help us to improve it.
+  </div>
+
   <div class="main-wrapper">
     <main id="main-content">
       <!-- Hero -->
@@ -3927,7 +3932,6 @@
         </div>
       </div>
 
-      </div>
 
       <div class="section-header">
         <h2 class="section-title">Latest News</h2>
@@ -4219,7 +4223,6 @@
         applySettings(settings);
         renderBreaking(breaking);
         renderHero();
-        renderMarketsStrip();
         renderTicker();
         renderTopStories(); renderMostRead();
 
@@ -4315,7 +4318,12 @@
 
     function renderCards(articles) {
       // Update filtered set
-      filteredCards = (articles || allArticles).filter(a => window.ARCHIVE_MODE ? (a.placement !== 'hero' && a.placement !== 'side1' && a.placement !== 'side2') : a.placement === 'card');
+      filteredCards = (articles || allArticles).filter(a =>
+        searchQuery
+          ? true
+          : (window.ARCHIVE_MODE
+              ? (a.placement !== 'hero' && a.placement !== 'side1' && a.placement !== 'side2')
+              : a.placement === 'card'));
       totalArticles = filteredCards.length;
 
       // Paginate
@@ -5150,7 +5158,7 @@
         }));
         const updated = await db.query('markets', { select: '*' });
         allMarkets = updated;
-        renderMarketsStrip(); renderTicker();
+        renderTicker();
         showToast('✓ Market data saved to database');
       } catch (e) { showToast('✗ ' + e.message, 'error'); }
     }
