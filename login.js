@@ -772,6 +772,136 @@
   }
 
   // ═══════════════════════════════════════════════════════════════
+  // BETA FEEDBACK BANNER + MODAL
+  // Banner on every page. "feedback" link opens a modal that saves
+  // directly to the Supabase `feedback` table.
+  // Dismissed state persists in localStorage site-wide.
+  // ═══════════════════════════════════════════════════════════════
+
+  function injectBetaBanner() {
+    if (localStorage.getItem('ami_beta_dismissed') === '1') return;
+    if (document.getElementById('amiBetaBanner')) return;
+
+    var banner = document.createElement('div');
+    banner.id = 'amiBetaBanner';
+    banner.style.cssText = 'background:#F5F0E8;border-bottom:1px solid #D4C4A0;padding:8px 24px;display:flex;align-items:center;gap:10px;font-family:\'DM Mono\',monospace;font-size:11px;color:#6B5344;position:relative;z-index:999';
+    banner.innerHTML = [
+      '<span style="background:#C9A84C;color:#060F09;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:3px 8px;flex-shrink:0">BETA</span>',
+      '<span>This site is in beta. What do you think of this service? Your ',
+      '<button onclick="window.amiOpenFeedback()" style="background:none;border:none;padding:0;font-family:\'DM Mono\',monospace;font-size:11px;color:#B85C38;text-decoration:underline;cursor:pointer">feedback</button>',
+      ' will help us to improve it.</span>',
+      '<button onclick="window.amiDismissBeta()" aria-label="Dismiss beta banner" ',
+      'style="margin-left:auto;background:none;border:none;font-size:18px;color:#9A8070;cursor:pointer;line-height:1;flex-shrink:0;padding:0 4px" title="Dismiss">×</button>'
+    ].join('');
+
+    var nav = document.querySelector('nav.top-nav') || document.querySelector('nav');
+    if (nav && nav.nextSibling) {
+      nav.parentNode.insertBefore(banner, nav.nextSibling);
+    } else {
+      document.body.insertAdjacentElement('afterbegin', banner);
+    }
+
+    // Inject feedback modal (hidden until opened)
+    if (!document.getElementById('amiFeedbackOverlay')) {
+      document.body.insertAdjacentHTML('beforeend', [
+        '<div id="amiFeedbackOverlay" style="display:none;position:fixed;inset:0;background:rgba(6,15,9,.87);z-index:10001;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(5px)" onclick="if(event.target===this)window.amiCloseFeedback()">',
+          '<div style="background:#FAF7F0;max-width:420px;width:100%;border-top:4px solid #C9A84C;box-shadow:0 24px 80px rgba(0,0,0,.55);font-family:\'Spectral\',Georgia,serif;padding:32px;position:relative">',
+            '<button onclick="window.amiCloseFeedback()" style="position:absolute;top:12px;right:14px;background:none;border:none;font-size:22px;color:#9A8070;cursor:pointer;line-height:1">×</button>',
+            '<div style="font-family:\'Playfair Display\',serif;font-size:20px;font-weight:800;color:#1A1208;margin-bottom:6px">Share your feedback</div>',
+            '<p style="font-size:13px;color:#6B5344;line-height:1.6;margin-bottom:20px">Help us improve AMI. Tell us what\'s working, what isn\'t, or what you\'d like to see.</p>',
+            '<div style="margin-bottom:14px">',
+              '<label style="font-family:\'DM Mono\',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#6B5344;display:block;margin-bottom:6px">Your feedback</label>',
+              '<textarea id="amiFeedbackMsg" rows="4" placeholder="What do you think of this service?" style="width:100%;background:#fff;border:1px solid #D4C4A0;color:#1A1208;font-family:\'Spectral\',serif;font-size:13px;padding:12px 14px;outline:none;box-sizing:border-box;resize:vertical;transition:border-color .2s" onfocus="this.style.borderColor=\'#C9A84C\'" onblur="this.style.borderColor=\'#D4C4A0\'"></textarea>',
+            '</div>',
+            '<div style="margin-bottom:20px">',
+              '<label style="font-family:\'DM Mono\',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#6B5344;display:block;margin-bottom:6px">Email <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>',
+              '<input id="amiFeedbackEmail" type="email" placeholder="your@email.com" style="width:100%;background:#fff;border:1px solid #D4C4A0;color:#1A1208;font-family:\'DM Mono\',monospace;font-size:13px;padding:12px 14px;outline:none;box-sizing:border-box;transition:border-color .2s" onfocus="this.style.borderColor=\'#C9A84C\'" onblur="this.style.borderColor=\'#D4C4A0\'">',
+            '</div>',
+            '<button id="amiFeedbackBtn" onclick="window.amiSubmitFeedback()" style="width:100%;background:#C9A84C;color:#060F09;font-family:\'DM Mono\',monospace;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:13px;border:none;cursor:pointer;transition:background .2s" onmouseover="this.style.background=\'#D4B86A\'" onmouseout="this.style.background=\'#C9A84C\'">Send Feedback →</button>',
+            '<div id="amiFeedbackErr" style="display:none;background:#FFF0ED;border-left:3px solid #B85C38;padding:10px 14px;margin-top:12px;font-family:\'DM Mono\',monospace;font-size:11px;color:#8C3A1F;line-height:1.5"></div>',
+            '<div id="amiFeedbackOk"  style="display:none;background:#F0FFF5;border-left:3px solid #2E7D4F;padding:10px 14px;margin-top:12px;font-family:\'DM Mono\',monospace;font-size:11px;color:#1A4D2E;line-height:1.5"></div>',
+          '</div>',
+        '</div>'
+      ].join(''));
+    }
+  }
+
+  window.amiOpenFeedback = function () {
+    var o = document.getElementById('amiFeedbackOverlay');
+    if (o) {
+      o.style.display = 'flex';
+      var msg = document.getElementById('amiFeedbackMsg');
+      if (msg) msg.focus();
+    }
+  };
+
+  window.amiCloseFeedback = function () {
+    var o = document.getElementById('amiFeedbackOverlay');
+    if (o) o.style.display = 'none';
+  };
+
+  window.amiSubmitFeedback = async function () {
+    var msgEl   = document.getElementById('amiFeedbackMsg');
+    var emailEl = document.getElementById('amiFeedbackEmail');
+    var btn     = document.getElementById('amiFeedbackBtn');
+    var errEl   = document.getElementById('amiFeedbackErr');
+    var okEl    = document.getElementById('amiFeedbackOk');
+
+    var message = msgEl  ? msgEl.value.trim()  : '';
+    var email   = emailEl ? emailEl.value.trim() : '';
+
+    if (errEl) { errEl.style.display = 'none'; errEl.textContent = ''; }
+    if (okEl)  { okEl.style.display  = 'none'; okEl.textContent  = ''; }
+
+    if (!message) {
+      if (msgEl)  msgEl.style.borderColor = '#B85C38';
+      if (errEl) { errEl.textContent = 'Please enter your feedback before sending.'; errEl.style.display = 'block'; }
+      return;
+    }
+
+    if (btn) { btn.textContent = 'Sending…'; btn.disabled = true; }
+
+    try {
+      var r = await fetch(sbUrl() + '/rest/v1/feedback', {
+        method:  'POST',
+        headers: {
+          'Content-Type':  'application/json',
+          'apikey':        sbAnon(),
+          'Authorization': 'Bearer ' + sbAnon(),
+          'Prefer':        'return=minimal'
+        },
+        body: JSON.stringify({
+          message:    message,
+          email:      email || null,
+          page:       window.location.pathname
+        })
+      });
+
+      if (!r.ok) {
+        var d = await r.json().catch(function(){ return {}; });
+        throw new Error(d.message || d.error || ('HTTP ' + r.status));
+      }
+
+      if (okEl)  { okEl.textContent  = '✓ Thank you — your feedback has been received.'; okEl.style.display = 'block'; }
+      if (msgEl)   msgEl.value  = '';
+      if (emailEl) emailEl.value = '';
+      if (btn) { btn.textContent = 'Send Feedback →'; btn.disabled = false; }
+
+      setTimeout(function () { window.amiCloseFeedback(); }, 2000);
+
+    } catch (err) {
+      if (errEl) { errEl.textContent = 'Could not send feedback: ' + (err.message || 'please try again.'); errEl.style.display = 'block'; }
+      if (btn) { btn.textContent = 'Send Feedback →'; btn.disabled = false; }
+    }
+  };
+
+  window.amiDismissBeta = function () {
+    localStorage.setItem('ami_beta_dismissed', '1');
+    var b = document.getElementById('amiBetaBanner');
+    if (b) b.style.display = 'none';
+  };
+
+  // ═══════════════════════════════════════════════════════════════
   // INITIALISE
   // ═══════════════════════════════════════════════════════════════
 
@@ -800,6 +930,7 @@
       // users who haven't set a password yet — they can still email-verify
     }
 
+    injectBetaBanner();
     injectLoginModal();
     injectLoginButton();
     updateMobileNav();
