@@ -787,7 +787,7 @@
     banner.style.cssText = 'background:#F5F0E8;border-bottom:1px solid #D4C4A0;padding:8px 24px;display:flex;align-items:center;gap:10px;font-family:\'DM Mono\',monospace;font-size:11px;color:#6B5344;position:relative;z-index:999';
     banner.innerHTML = [
       '<span style="background:#C9A84C;color:#060F09;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:3px 8px;flex-shrink:0">BETA</span>',
-      '<span>This site is in beta. What do you think of this service? Your ',
+      '<span>What do you think of this service? Your ',
       '<button onclick="window.amiOpenFeedback()" style="background:none;border:none;padding:0;font-family:\'DM Mono\',monospace;font-size:11px;color:#B85C38;text-decoration:underline;cursor:pointer">feedback</button>',
       ' will help us to improve it.</span>',
       '<button onclick="window.amiDismissBeta()" aria-label="Dismiss beta banner" ',
