@@ -793,12 +793,17 @@
       '<button onclick="window.amiDismissBeta()" aria-label="Dismiss beta banner" ',
       'style="margin-left:auto;background:none;border:none;font-size:18px;color:#9A8070;cursor:pointer;line-height:1;flex-shrink:0;padding:0 4px" title="Dismiss">×</button>'
     ].join('');
-
-    var nav = document.querySelector('nav.top-nav') || document.querySelector('nav');
-    if (nav && nav.nextSibling) {
-      nav.parentNode.insertBefore(banner, nav.nextSibling);
+    
+    var mainWrapper = document.querySelector('.main-wrapper');
+    if (mainWrapper) {
+      mainWrapper.parentNode.insertBefore(banner, mainWrapper);
     } else {
-      document.body.insertAdjacentElement('afterbegin', banner);
+      var nav = document.querySelector('nav.top-nav') || document.querySelector('nav');
+      if (nav && nav.nextSibling) {
+        nav.parentNode.insertBefore(banner, nav.nextSibling);
+      } else {
+        document.body.insertAdjacentElement('afterbegin', banner);
+      }
     }
 
     // Inject feedback modal (hidden until opened)
