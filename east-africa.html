@@ -46,8 +46,21 @@ a{color:inherit;text-decoration:none}button{cursor:pointer;border:none;backgroun
 .masthead-meta{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:12px;border-top:1px solid var(--divider);font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);text-transform:uppercase;letter-spacing:.1em;position:relative}
 .edition-badge{background:var(--terra);color:white;padding:2px 10px;font-size:10px;letter-spacing:.15em}
 /* Section nav */
-.section-nav{border-bottom:2px solid var(--gold);background:var(--surface);overflow-x:auto;scrollbar-width:none}
-.section-nav-inner{display:flex;padding:0 24px}
+    .section-nav {
+      position: relative;      /* ← added */
+      z-index: 200;            /* ← added */
+      border-bottom: 2px solid var(--gold);
+      background: var(--surface);
+      overflow: visible;
+    }
+
+    .section-nav-inner {
+      overflow-x: clip;        /* ← moved from .section-nav */
+      scrollbar-width: none;   /* ← moved from .section-nav */
+      display: flex;
+      padding: 0 24px
+    }
+
 .section-tab{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-soft);padding:12px 18px;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;cursor:pointer;transition:color .2s,border-color .2s}
 .section-tab:hover,.section-tab.active{color:var(--terra);border-bottom-color:var(--terra)}
 /* Layout */
