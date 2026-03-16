@@ -4323,8 +4323,8 @@
     // ════════════════════════════════════════════════════════════
     // INIT
     // ════════════════════════════════════════════════════════════
-    document.getElementById('mastDate').textContent =
-      new Date().toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    const _mastDate=document.getElementById('mastDate'); if(_mastDate) _mastDate.textContent =
+  new Date().toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
     // section tabs handled by filterSection()
 
@@ -4604,7 +4604,7 @@
     }
 
     function renderMarketsStrip() {
-      document.getElementById('marketsDisplay').innerHTML = allMarkets.map(m => `
+      const _md2=document.getElementById('marketsDisplay'); if(_md2) _md2.innerHTML = allMarkets.map(m => `
     <div class="market-item">
       <div class="market-name">${m.name}</div>
       <div class="market-value">${m.value}</div>
@@ -4760,11 +4760,11 @@
       // Site identity
       document.getElementById('siteNameDisplay').innerHTML = name.replace(/(\S+)\s*$/, '<span>$1</span>');
       document.getElementById('siteTaglineDisplay').textContent = get('tagline');
-      document.getElementById('editionDisplay').textContent = get('edition');
+      const _ed=document.getElementById('editionDisplay'); if(_ed) _ed.textContent = get('edition');
       document.getElementById('footerBrand').textContent = name;
       document.title = name;
       if (get('location_line') && document.getElementById('locationDisplay'))
-        document.getElementById('locationDisplay').textContent = get('location_line');
+        const _loc=document.getElementById('locationDisplay'); if(_loc) _loc.textContent = get('location_line');
       // Newsletter
       if (get('newsletter_title') && document.getElementById('nwTitleDisplay'))
         document.getElementById('nwTitleDisplay').textContent = get('newsletter_title');
@@ -5353,7 +5353,7 @@
     function toggleDark() {
       const h = document.documentElement, dark = h.getAttribute('data-theme') === 'dark';
       h.setAttribute('data-theme', dark ? 'light' : 'dark');
-      document.getElementById('themeBtn').textContent = dark ? '🌙' : '☀️';
+      const _tb=document.getElementById('themeBtn'); if(_tb) _tb.textContent = dark ? '🌙' : '☀️';
     }
 
     function toggleMobileNav() {
