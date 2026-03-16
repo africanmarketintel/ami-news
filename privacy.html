@@ -3514,6 +3514,7 @@
   </div>
     <div class="masthead-tagline" id="siteTaglineDisplay" data-editable="text" data-cms-type="setting" data-cms-key="tagline">What Africa's deal makers read first</div>
   </header>
+<div class="ticker-bar"><div class="ticker-inner" id="tickerInner"><span class="ticker-item"><span class="sym">Loading markets…</span></span></div></div>
   <div class="static-page">
     <h1 id="page-title-display" data-editable="text" data-cms-type="page" data-page-name="privacy"
       data-page-field="title">Privacy Policy</h1>
@@ -3606,7 +3607,7 @@
     function toggleDark() {
       const h = document.documentElement, dark = h.getAttribute('data-theme') === 'dark';
       h.setAttribute('data-theme', dark ? 'light' : 'dark');
-      document.getElementById('themeBtn').textContent = dark ? '🌙' : '☀️';
+      const _tb=document.getElementById('themeBtn'); if(_tb) _tb.textContent = dark ? '🌙' : '☀️';
       localStorage.setItem('amiTheme', dark ? 'light' : 'dark');
     }
 
@@ -3653,7 +3654,7 @@
         if (options.select) params.set('select', options.select);
         if (options.eq) Object.entries(options.eq).forEach(([k, v]) => params.set(k, 'eq.' + v));
         const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${params}`, {
-          headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer ' + SUPABASE_ANON }
+          headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer '+SUPABASE_ANON }
         });
         if (!r.ok) throw new Error(await r.text());
         return r.json();
@@ -3712,7 +3713,7 @@
           'footer_col3_title', 'footer_col3_links',
           'footer_about', 'copyright'].forEach(k => params.append('key', 'eq.' + k));
         const r = await fetch(SUPABASE_URL + '/rest/v1/site_settings?select=key,value', {
-          headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer ' + SUPABASE_ANON }
+          headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer '+SUPABASE_ANON }
         });
         if (!r.ok) return;
         const rows = await r.json();

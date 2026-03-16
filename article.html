@@ -3265,13 +3265,12 @@
 
 <body>
 
-  <div class="ticker-bar">
-    <div class="ticker-inner" id="tickerInner">
-      <span class="ticker-item"><span class="sym">African Market Intelligence</span></span>
-    </div>
-  </div>
+  
 
-  <nav class="top-nav" aria-label="Main navigation">
+  <div class="ticker-bar"><div class="ticker-inner" id="tickerInner">
+  <span class="ticker-item"><span class="sym">Loading markets…</span></span>
+</div></div>
+<nav class="top-nav" aria-label="Main navigation">
     <button class="nav-hamburger" id="navHamburger" aria-expanded="false" aria-controls="navMobileDrawer"
       aria-label="Open navigation menu" onclick="toggleMobileNav()"><span></span><span></span><span></span></button>
     <div class="nav-left">
@@ -3385,7 +3384,7 @@
     function toggleDark() {
       const h = document.documentElement, dark = h.getAttribute('data-theme') === 'dark';
       h.setAttribute('data-theme', dark ? 'light' : 'dark');
-      document.getElementById('themeBtn').textContent = dark ? '🌙' : '☀️';
+      const _tb=document.getElementById('themeBtn'); if(_tb) _tb.textContent = dark ? '🌙' : '☀️';
       localStorage.setItem('amiTheme', dark ? 'light' : 'dark');
     }
 
@@ -3425,7 +3424,7 @@
         if (options.order) params.set('order', options.order);
         if (options.limit) params.set('limit', options.limit);
         const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${params}`, {
-          headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer ' + SUPABASE_ANON }
+          headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer '+SUPABASE_ANON }
         });
         if (!r.ok) throw new Error(await r.text());
         return r.json();
@@ -3475,7 +3474,7 @@
           try {
             const sr = await fetch(
               `${SUPABASE_URL}/rest/v1/site_settings?key=in.(plan1_link,plan2_link,plan1_name,plan2_name)&select=key,value`,
-              { headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer ' + SUPABASE_ANON } }
+              { headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer '+SUPABASE_ANON } }
             );
             if (sr.ok) {
               const ss = await sr.json();
@@ -3528,7 +3527,7 @@
           'footer_col3_title', 'footer_col3_links',
           'footer_about', 'copyright'].forEach(k => params.append('key', 'eq.' + k));
         const r = await fetch(SUPABASE_URL + '/rest/v1/site_settings?select=key,value', {
-          headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer ' + SUPABASE_ANON }
+          headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer '+SUPABASE_ANON }
         });
         if (!r.ok) return;
         const rows = await r.json();

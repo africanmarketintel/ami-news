@@ -1110,10 +1110,10 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
   <button class="breaking-close" onclick="this.parentElement.style.display='none'" aria-label="Dismiss breaking news">×</button>
 </div>
 
+
 <div class="ticker-bar"><div class="ticker-inner" id="tickerInner">
   <span class="ticker-item"><span class="sym">Loading markets…</span></span>
 </div></div>
-
 <nav class="top-nav" aria-label="Main navigation">
   <button class="nav-hamburger" id="navHamburger" aria-expanded="false" aria-controls="navMobileDrawer" aria-label="Open navigation menu" onclick="toggleMobileNav()"><span></span><span></span><span></span></button><div class="nav-left">
     </div>
@@ -1186,6 +1186,7 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
       </div>
     </div>
   </nav>
+
 <div class="main-wrapper">
   <main id="main-content">
     <!-- Hero -->
@@ -1360,7 +1361,7 @@ const db = {
   async insert(table, data) {
     const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
       method:'POST',
-      headers:{ apikey:SUPABASE_ANON, Authorization:'Bearer '+(AUTH_TOKEN||SUPABASE_ANON), 'Content-Type':'application/json', Prefer:'return=minimal' },
+      headers:{ apikey: SUPABASE_ANON, Authorization:'Bearer '+(AUTH_TOKEN||SUPABASE_ANON), 'Content-Type':'application/json', Prefer:'return=minimal' },
       body: JSON.stringify(data)
     });
     if(!r.ok) throw new Error(await r.text());
@@ -1370,7 +1371,7 @@ const db = {
     Object.entries(match).forEach(([k,v])=>params.set(k,'eq.'+v));
     const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${params}`, {
       method:'PATCH',
-      headers:{ apikey:SUPABASE_ANON, Authorization:'Bearer '+(AUTH_TOKEN||SUPABASE_ANON), 'Content-Type':'application/json', Prefer:'return=representation' },
+      headers:{ apikey: SUPABASE_ANON, Authorization:'Bearer '+(AUTH_TOKEN||SUPABASE_ANON), 'Content-Type':'application/json', Prefer:'return=representation' },
       body: JSON.stringify(data)
     });
     if(!r.ok) throw new Error(await r.text());
@@ -1381,7 +1382,7 @@ const db = {
     Object.entries(match).forEach(([k,v])=>params.set(k,'eq.'+v));
     const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${params}`, {
       method:'DELETE',
-      headers:{ apikey:SUPABASE_ANON, Authorization:'Bearer '+(AUTH_TOKEN||SUPABASE_ANON) }
+      headers:{ apikey: SUPABASE_ANON, Authorization:'Bearer '+(AUTH_TOKEN||SUPABASE_ANON) }
     });
     if(!r.ok) throw new Error(await r.text());
     return true;
@@ -1389,7 +1390,7 @@ const db = {
   async uploadImage(file, path) {
     const r = await fetch(`${SUPABASE_URL}/storage/v1/object/ami-images/${path}`, {
       method:'POST',
-      headers:{ apikey:SUPABASE_ANON, Authorization:'Bearer '+(AUTH_TOKEN||SUPABASE_ANON), 'Content-Type': file.type },
+      headers:{ apikey: SUPABASE_ANON, Authorization:'Bearer '+(AUTH_TOKEN||SUPABASE_ANON), 'Content-Type': file.type },
       body: file
     });
     if(!r.ok) throw new Error(await r.text());
@@ -1412,7 +1413,7 @@ let totalArticles  = 0;
 // ════════════════════════════════════════════════════════════
 // INIT
 // ════════════════════════════════════════════════════════════
-document.getElementById('mastDate').textContent =
+const _mastDate=document.getElementById('mastDate'); if(_mastDate) _mastDate.textContent =
   new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
 
 // section tabs handled by filterSection()
@@ -1616,7 +1617,7 @@ function goToPage(page) {
 }
 
 function renderMarketsStrip() {
-  document.getElementById('marketsDisplay').innerHTML = allMarkets.map(m=>`
+  const _md2=document.getElementById('marketsDisplay'); if(_md2) _md2.innerHTML = allMarkets.map(m=>`
     <div class="market-item">
       <div class="market-name">${m.name}</div>
       <div class="market-value">${m.value}</div>
@@ -1677,11 +1678,10 @@ function applySettings(settings) {
   // Site identity
   document.getElementById('siteNameDisplay').innerHTML = name.replace(/(\S+)\s*$/, '<span>$1</span>');
   document.getElementById('siteTaglineDisplay').textContent = get('tagline');
-  document.getElementById('editionDisplay').textContent     = get('edition');
+  const _ed=document.getElementById('editionDisplay'); if(_ed) _ed.textContent = get('edition');
   document.getElementById('footerBrand').textContent        = name;
   document.title = name;
-  if(get('location_line') && document.getElementById('locationDisplay'))
-    document.getElementById('locationDisplay').textContent = get('location_line');
+  { const _loc=document.getElementById('locationDisplay'); if(_loc) _loc.textContent = get('location_line'); }
   // Newsletter
   if(get('newsletter_title') && document.getElementById('nwTitleDisplay'))
     document.getElementById('nwTitleDisplay').textContent  = get('newsletter_title');
@@ -2264,7 +2264,7 @@ async function saveSettings() {
 function toggleDark(){
   const h=document.documentElement,dark=h.getAttribute('data-theme')==='dark';
   h.setAttribute('data-theme',dark?'light':'dark');
-  document.getElementById('themeBtn').textContent=dark?'🌙':'☀️';
+  const _tb=document.getElementById('themeBtn'); if(_tb) _tb.textContent=dark?'🌙':'☀️';
 }
 
 function toggleMobileNav(){
