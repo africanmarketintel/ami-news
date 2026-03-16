@@ -315,13 +315,16 @@
 
     /* Section nav */
     .section-nav {
+      position: relative;      /* ← added */
+      z-index: 200;            /* ← added */
       border-bottom: 2px solid var(--gold);
       background: var(--surface);
-      overflow-x: auto;
-      scrollbar-width: none
+      overflow: visible;
     }
 
     .section-nav-inner {
+      overflow-x: auto;        /* ← moved from .section-nav */
+      scrollbar-width: none;   /* ← moved from .section-nav */
       display: flex;
       padding: 0 24px
     }
