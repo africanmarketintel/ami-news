@@ -1431,7 +1431,7 @@ async function init() {
     renderHero();
     renderMarketsStrip();
     renderTicker();
-    renderCards();
+    applyFilters(true);
     renderTopStories(); renderMostRead();
     // Activate correct section tab if section param set
     if(filterActive !== 'all') {
