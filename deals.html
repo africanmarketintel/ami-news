@@ -1174,11 +1174,6 @@
                     : '';
                 if (deal.is_locked && !isSubscriber) {
                     return `
-      <a href="javascript:history.back()" class="back-link"
-        style="display:block;padding:20px 24px 0;max-width:760px;margin:0 auto">← Back</a>
-      <div class="article-full" id="articleFull">
-        <div class="loading-art">Loading article…</div>
-      </div>
       
       <div class="deal-card deal-card-locked" style="cursor:pointer;position:relative" onclick="window.location='article.html?id=${deal.id}'">
         ${img}
