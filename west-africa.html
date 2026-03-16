@@ -1335,14 +1335,15 @@ const db = {
     if(!r.ok) throw new Error(await r.text());
     return r.json();
   },
-  async insert(table, data) {
+  async insert(table, data, minimal = false) {
+    const prefer = minimal ? 'return=minimal' : 'return=representation';
     const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
       method:'POST',
-      headers:{ apikey: SUPABASE_ANON, Authorization:'Bearer '+(AUTH_TOKEN||SUPABASE_ANON), 'Content-Type':'application/json', Prefer:'return=representation' },
+      headers:{ apikey: SUPABASE_ANON, Authorization:'Bearer '+(AUTH_TOKEN||SUPABASE_ANON), 'Content-Type':'application/json', Prefer: prefer },
       body: JSON.stringify(data)
     });
     if(!r.ok) throw new Error(await r.text());
-    return r.json();
+    return minimal ? null : r.json();
   },
   async update(table, data, match) {
     const params = new URLSearchParams();
@@ -1827,32 +1828,30 @@ async function handleNewsletterSignup() {
   btn.textContent = 'Subscribing…';
   btn.disabled = true;
   try {
-    // Check if already subscribed
-    const existing = await db.query('subscribers', { select:'id', eq:{email} });
-    if(existing && existing.length > 0){
+    await db.insert('subscribers', {
+      email,
+      source: 'homepage_widget',
+      subscribed_at: new Date().toISOString()
+    }, true);
+    showToast('✓ Subscribed! Welcome to the AMI Morning Brief.');
+    input.value = '';
+    // Show thank you state
+    const widget = input.closest('.newsletter-widget');
+    if(widget){
+      widget.innerHTML = `
+        <div style="text-align:center;padding:12px 0">
+          <div style="font-size:28px;margin-bottom:8px">📬</div>
+          <div style="font-family:'Playfair Display',serif;font-size:18px;color:#C9A84C;margin-bottom:6px">You're in!</div>
+          <div style="font-size:13px;color:#999;font-weight:300">Check your inbox every week for your Week in Review. For full deal intelligence and premium analysis, upgrade to AMI Premium.</div>
+        </div>`;
+    }
+  } catch(e){
+    if(e.message && e.message.includes('23505')){
       showToast('✓ You are already subscribed!');
       input.value = '';
     } else {
-      await db.insert('subscribers', {
-        email,
-        source: 'homepage_widget',
-        subscribed_at: new Date().toISOString()
-      });
-      showToast('✓ Subscribed! Welcome to the AMI Morning Brief.');
-      input.value = '';
-      // Show thank you state
-      const widget = input.closest('.newsletter-widget');
-      if(widget){
-        widget.innerHTML = `
-          <div style="text-align:center;padding:12px 0">
-            <div style="font-size:28px;margin-bottom:8px">📬</div>
-            <div style="font-family:'Playfair Display',serif;font-size:18px;color:#C9A84C;margin-bottom:6px">You're in!</div>
-            <div style="font-size:13px;color:#999;font-weight:300">Check your inbox every week for your Week in Review. For full deal intelligence and premium analysis, upgrade to AMI Premium.</div>
-          </div>`;
-      }
+      showToast('✗ Could not subscribe: '+e.message,'error');
     }
-  } catch(e){
-    showToast('✗ Could not subscribe: '+e.message,'error');
   } finally {
     btn.disabled = false;
     btn.textContent = origText;
