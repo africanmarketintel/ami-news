@@ -46,20 +46,12 @@ a{color:inherit;text-decoration:none}button{cursor:pointer;border:none;backgroun
 .masthead-meta{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:12px;border-top:1px solid var(--divider);font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);text-transform:uppercase;letter-spacing:.1em;position:relative}
 .edition-badge{background:var(--terra);color:white;padding:2px 10px;font-size:10px;letter-spacing:.15em}
 /* Section nav */
-    .section-nav {
-      position: relative;      /* ← added */
-      z-index: 200;            /* ← added */
-      border-bottom: 2px solid var(--gold);
-      background: var(--surface);
-      overflow: visible;
-    }
-
-    .section-nav-inner {
-      overflow-x: clip;        /* ← moved from .section-nav */
-      scrollbar-width: none;   /* ← moved from .section-nav */
-      display: flex;
-      padding: 0 24px
-    }
+.section-nav{
+      position: relative;
+      z-index: 200;border-bottom:2px solid var(--gold);background:var(--surface);overflow: visible;}
+.section-nav-inner{
+      overflow-x: auto;
+      scrollbar-width: none;display:flex;padding:0 24px}
 .section-tab{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-soft);padding:12px 18px;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;cursor:pointer;transition:color .2s,border-color .2s}
 .section-tab:hover,.section-tab.active{color:var(--terra);border-bottom-color:var(--terra)}
 /* Layout */
@@ -658,7 +650,7 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
       background: var(--surface);
       border: 1px solid var(--divider);
       border-top: 2px solid var(--gold);
-      z-index: 500;
+      z-index: 1500;
       min-width: 170px;
       display: none;
       box-shadow: 0 6px 24px rgba(0,0,0,.15);
@@ -758,6 +750,8 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
     }
     /* Section nav inner already has padding; just cap its width */
     .section-nav-inner {
+      overflow-x: auto;
+      scrollbar-width: none;
       max-width: var(--box);
       margin-left: auto;
       margin-right: auto;
@@ -1150,8 +1144,15 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
 
 <nav class="section-nav" role="navigation" aria-label="Site sections">
     <div class="section-nav-inner">
-       <div class="section-tab-wrap">
-        <span class="section-tab section-tab-has-dropdown">All Africa <span class="drop-arrow">▾</span></span>
+      <a href="index.html" class="section-tab">Home</a>
+      <a href="markets.html" class="section-tab">Markets</a>
+      <a href="politics.html" class="section-tab">Politics</a>
+      <a href="economy.html" class="section-tab">Economy</a>
+      <a href="energy.html" class="section-tab">Energy</a>
+      <a href="technology.html" class="section-tab">Tech</a>
+      <a href="deals.html" class="section-tab">Deals</a>
+      <div class="section-tab-wrap">
+        <span class="section-tab section-tab-has-dropdown active">All Africa <span class="drop-arrow">▾</span></span>
         <div class="section-dropdown">
           <a href="west-africa.html">West Africa</a>
           <a href="east-africa.html">East Africa</a>
@@ -1160,13 +1161,7 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
           <a href="north-africa.html">North Africa</a>
         </div>
       </div>
-      <a href="index.html" class="section-tab active">Home</a>
-      <a href="markets.html" class="section-tab">Markets</a>
-      <a href="politics.html" class="section-tab">Politics</a>
-      <a href="economy.html" class="section-tab">Economy</a>
-      <a href="energy.html" class="section-tab">Energy</a>
-      <a href="technology.html" class="section-tab">Tech</a>
-      <a href="deals.html" class="section-tab">Deals</a>
+      
       <div class="section-nav-search">
         <label for="sectionSearchInput" class="sr-only">Search articles</label>
         <input class="section-search" type="search" id="sectionSearchInput"
@@ -1467,11 +1462,15 @@ function heroImgHtml(a, height='220px') {
   return `<div class="hero-img-placeholder" style="height:${height}">📰 ${a.section||''}</div>`;
 }
 
+function regionPool() {
+  if(filterActive === 'all') return allArticles;
+  return allArticles.filter(a=>(a.section||'').includes(filterActive)||(a.tags||'').includes(filterActive));
+}
 function renderHero() {
-    const pool  = regionPool();
-    const hero  = pool.find(a=>a.placement==='hero') || pool[0];
-    const side1 = pool.find(a=>a.placement==='side1') || pool[1];
-    const side2 = pool.find(a=>a.placement==='side2') || pool[2];
+  const pool  = regionPool();
+  const hero  = pool.find(a=>a.placement==='hero') || pool[0];
+  const side1 = pool.find(a=>a.placement==='side1') || pool[1];
+  const side2 = pool.find(a=>a.placement==='side2') || pool[2];
   if(!hero) return;
 
   document.getElementById('heroGrid').innerHTML = `
