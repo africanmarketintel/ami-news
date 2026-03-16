@@ -4763,8 +4763,7 @@
       const _ed=document.getElementById('editionDisplay'); if(_ed) _ed.textContent = get('edition');
       document.getElementById('footerBrand').textContent = name;
       document.title = name;
-      if (get('location_line') && document.getElementById('locationDisplay'))
-        const _loc=document.getElementById('locationDisplay'); if(_loc) _loc.textContent = get('location_line');
+      { const _loc=document.getElementById('locationDisplay'); if(_loc) _loc.textContent = get('location_line'); }
       // Newsletter
       if (get('newsletter_title') && document.getElementById('nwTitleDisplay'))
         document.getElementById('nwTitleDisplay').textContent = get('newsletter_title');
