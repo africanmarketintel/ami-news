@@ -1612,7 +1612,7 @@ function renderTicker() {
 }
 
 function renderTopStories() {
-  const top = allArticles.slice(0,5);
+  const top = regionPool().slice(0,5);
   document.getElementById('topStoriesList').innerHTML = top.map((a,i)=>`
     <div class="top-story" role="link" tabindex="0" onclick="window.location.href='${articleUrl(a)}'" onkeydown="if(event.key==='Enter')window.location.href='${articleUrl(a)}'">
       <div class="top-story-num">0${i+1}</div>
