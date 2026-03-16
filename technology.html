@@ -618,7 +618,181 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
 .mr-tag{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--green,#2E9B5E);margin-bottom:5px}
 .mr-headline{font-family:'Playfair Display',serif;font-size:14px;line-height:1.35;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .mr-date{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);margin-top:5px}
-</style>
+
+    /* ── Section nav dropdown ──────────────────────────────── */
+    .section-tab-wrap {
+      position: relative;
+      display: flex;
+      align-items: stretch;
+    }
+    .section-tab-has-dropdown {
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .section-tab-has-dropdown .drop-arrow {
+      font-size: 7px;
+      opacity: .7;
+      transition: transform .2s;
+    }
+    .section-tab-wrap:hover .drop-arrow {
+      transform: rotate(180deg);
+    }
+    .section-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: var(--surface);
+      border: 1px solid var(--divider);
+      border-top: 2px solid var(--gold);
+      z-index: 500;
+      min-width: 170px;
+      display: none;
+      box-shadow: 0 6px 24px rgba(0,0,0,.15);
+    }
+    .section-tab-wrap:hover .section-dropdown,
+    .section-tab-wrap:focus-within .section-dropdown {
+      display: block;
+    }
+    .section-dropdown a {
+      display: block;
+      padding: 11px 18px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      border-bottom: 1px solid var(--divider);
+      text-decoration: none;
+      white-space: nowrap;
+      transition: color .15s, background .15s;
+    }
+    .section-dropdown a:last-child { border-bottom: none; }
+    .section-dropdown a:hover {
+      color: var(--terra);
+      background: var(--gold-pale);
+    }
+    [data-theme="dark"] .section-dropdown a:hover { background: #0D1F12; }
+
+  
+    /* ── Masthead header row (name + cta on same line) ─────── */
+    .masthead-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      margin-bottom: 6px;
+    }
+    .masthead-name {
+      text-align: left !important;
+      margin-bottom: 0 !important;
+    }
+    .masthead-cta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    /* ── Search in section nav ──────────────────────────────── */
+    .section-nav-search {
+      display: flex;
+      align-items: center;
+      margin-left: auto;
+      padding: 0 16px 0 6px;
+    }
+    .section-search {
+      background: var(--gold-pale);
+      border: 1px solid var(--divider);
+      color: var(--text);
+      padding: 5px 11px;
+      border-radius: 2px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      width: 170px;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .section-search::placeholder { color: var(--text-soft); }
+    .section-search:focus { border-color: var(--gold); }
+    [data-theme="dark"] .section-search {
+      background: #0A1A10;
+    }
+    @media(max-width:767px) {
+      .section-nav-search { display: none; }
+      .masthead-header-row { flex-direction: column; gap: 12px; text-align: center; }
+      .masthead-name { text-align: center !important; }
+      .masthead-cta { justify-content: center; }
+    }
+
+  
+    /* ════════════════════════════════════════════════════════════
+       CONTENT WIDTH CONSTRAINT
+       Aligns all chrome (nav, masthead, section-nav, breaking,
+       ticker) to the same 1280px box as .main-wrapper so nothing
+       bleeds beyond the content column on wide screens.
+    ════════════════════════════════════════════════════════════ */
+    :root { --box: 1280px; --gutter: 24px; }
+
+    /* Horizontal padding formula:
+       - screens ≤ (1280+48)px  →  24px (normal gutter)
+       - screens  > 1280+48px   →  increases to keep content at 1280px wide */
+    .top-nav,
+    .masthead,
+    .breaking-banner {
+      padding-left:  max(var(--gutter), calc((100% - var(--box)) / 2 + var(--gutter)));
+      padding-right: max(var(--gutter), calc((100% - var(--box)) / 2 + var(--gutter)));
+      box-sizing: border-box;
+    }
+    /* Section nav inner already has padding; just cap its width */
+    .section-nav-inner {
+      max-width: var(--box);
+      margin-left: auto;
+      margin-right: auto;
+    }
+    /* Ticker inner: cap the scrolling track so it doesn't start far left */
+    .ticker-bar {
+      padding-left:  max(var(--gutter), calc((100% - var(--box)) / 2 + var(--gutter)));
+      padding-right: max(var(--gutter), calc((100% - var(--box)) / 2 + var(--gutter)));
+    }
+    /* Footer inner is already max-width: 1280px; margin: 0 auto — confirmed. */
+
+  
+    /* ── Masthead name centred with CTA on right ─────────────── */
+    .masthead-header-row {
+      display: grid !important;
+      grid-template-columns: 1fr auto 1fr !important;
+      align-items: center !important;
+      gap: 0 !important;
+      position: relative;
+    }
+    .masthead-name {
+      grid-column: 2 !important;
+      text-align: center !important;
+      margin-bottom: 0 !important;
+    }
+    .masthead-cta {
+      grid-column: 3 !important;
+      justify-self: end !important;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .masthead-tagline {
+      text-align: center;
+      position: relative;
+    }
+    @media(max-width:767px) {
+      .masthead-header-row {
+        grid-template-columns: 1fr !important;
+        text-align: center !important;
+      }
+      .masthead-name  { grid-column: 1 !important; }
+      .masthead-cta   { grid-column: 1 !important; justify-self: center !important; }
+    }
+
+  </style>
 </head>
 <body>
 
@@ -940,20 +1114,8 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
 
 <nav class="top-nav" aria-label="Main navigation">
   <button class="nav-hamburger" id="navHamburger" aria-expanded="false" aria-controls="navMobileDrawer" aria-label="Open navigation menu" onclick="toggleMobileNav()"><span></span><span></span><span></span></button><div class="nav-left">
-    <a href="index.html"      class="nav-link" id="nav-home">Home</a>
-    <a href="markets.html"    class="nav-link" id="nav-markets">Markets</a>
-    <a href="politics.html"   class="nav-link" id="nav-politics">Politics</a>
-    <a href="economy.html"    class="nav-link" id="nav-economy">Economy</a>
-    <a href="energy.html"     class="nav-link" id="nav-energy">Energy</a>
-    <a href="technology.html" class="nav-link" id="nav-technology" style="color:var(--gold);border-bottom:2px solid var(--gold)">Tech</a>
-    <a href="deals.html"    class="nav-link" id="nav-deals">Deals</a>
-  </div>
+    </div>
   <div class="nav-right">
-    <label for="navSearchInput" class="sr-only">Search articles</label><input class="nav-search" type="search" id="navSearchInput" placeholder="Search AMI…" aria-label="Search articles" oninput="searchArticles(this.value)">
-    <a href="about.html"      class="nav-link" id="nav-about">About</a>
-    <a href="membership.html" class="nav-link" id="nav-membership">Membership</a>
-    <a href="contact.html"    class="nav-link" id="nav-contact">Contact</a>
-    <button class="dark-toggle" onclick="toggleDark()" id="themeBtn" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
     <a href="deals.html"     id="navSubscribeBtn" class="btn-subscribe">Deal Tracker</a>
   </div>
 </nav>
@@ -967,38 +1129,61 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
            oninput="typeof searchArticles==='function'&&searchArticles(this.value)">
   </div>
   <a href="index.html">Home</a>
+    <a href="west-africa.html">West Africa</a>
+    <a href="east-africa.html">East Africa</a>
+    <a href="central-africa.html">Central Africa</a>
+    <a href="southern-africa.html">Southern Africa</a>
+    <a href="north-africa.html">North Africa</a>
   <a href="markets.html">Markets</a>
   <a href="politics.html">Politics</a>
   <a href="economy.html">Economy</a>
   <a href="energy.html">Energy</a>
   <a href="technology.html">Technology</a>
   <a href="deals.html">Deals</a>
-  <a href="about.html">About</a>
   <a href="membership.html">Membership</a>
-  <a href="contact.html">Contact</a>
   <a href="membership.html" class="mob-subscribe">Subscribe →</a>
 </div>
 
 
 <header class="masthead" role="banner">
-  <div class="masthead-name" id="siteNameDisplay" data-editable="text" data-cms-type="setting" data-cms-key="site_name" onclick="handleLogoClick()" style="cursor:default" title="">African Market <span>Intelligence</span></div>
-  <div class="masthead-tagline" id="siteTaglineDisplay" data-editable="text" data-cms-type="setting" data-cms-key="tagline">The Continent's Premium Financial & Business Publication</div>
-  <div class="masthead-meta">
-    <span id="mastDate"></span>
-    <span class="edition-badge" id="editionDisplay" data-editable="text" data-cms-type="setting" data-cms-key="edition">Pan-African Edition</span>
-    <span id="locationDisplay" data-editable="text" data-cms-type="setting" data-cms-key="location_line">Est. 2024 · Nairobi · Lagos · Cairo · Johannesburg</span>
+  <div class="masthead-header-row">
+    <div class="masthead-name" id="siteNameDisplay" data-editable="text" data-cms-type="setting" data-cms-key="site_name" onclick="handleLogoClick()" style="cursor:default" title="">African Market <span>Intelligence</span></div>
+    <div class="masthead-cta">
+      <a href="membership.html" class="btn-subscribe">Membership</a>
+      <a href="deals.html" id="navSubscribeBtn" class="btn-subscribe" style="display:none">Deal Tracker</a>
+    </div>
   </div>
+  <div class="masthead-tagline" id="siteTaglineDisplay" data-editable="text" data-cms-type="setting" data-cms-key="tagline">The Continent's Premium Financial & Business Publication</div>
 </header>
 
-<div class="section-nav" role="navigation" aria-label="Filter by region"><div class="section-nav-inner">
-  <span class="region-label">Region</span>
-  <button type="button" class="section-tab active" onclick="filterSection(event,'all')">All Africa</button>
-  <button type="button" class="section-tab" onclick="filterSection(event,'West Africa')">West Africa</button>
-  <button type="button" class="section-tab" onclick="filterSection(event,'East Africa')">East Africa</button>
-  <button type="button" class="section-tab" onclick="filterSection(event,'Central Africa')">Central Africa</button>
-  <button type="button" class="section-tab" onclick="filterSection(event,'Southern Africa')">Southern Africa</button>
-  <button type="button" class="section-tab" onclick="filterSection(event,'North Africa')">North Africa</button>
-</div></div>
+<nav class="section-nav" role="navigation" aria-label="Site sections">
+    <div class="section-nav-inner">
+      <a href="index.html" class="section-tab">Home</a>
+      <a href="markets.html" class="section-tab">Markets</a>
+      <a href="politics.html" class="section-tab">Politics</a>
+      <a href="economy.html" class="section-tab">Economy</a>
+      <a href="energy.html" class="section-tab">Energy</a>
+      <a href="technology.html" class="section-tab active">Tech</a>
+      <a href="deals.html" class="section-tab">Deals</a>
+      <div class="section-tab-wrap">
+        <span class="section-tab section-tab-has-dropdown">All Africa <span class="drop-arrow">▾</span></span>
+        <div class="section-dropdown">
+          <a href="west-africa.html">West Africa</a>
+          <a href="east-africa.html">East Africa</a>
+          <a href="central-africa.html">Central Africa</a>
+          <a href="southern-africa.html">Southern Africa</a>
+          <a href="north-africa.html">North Africa</a>
+        </div>
+      
+      <div class="section-nav-search">
+        <label for="sectionSearchInput" class="sr-only">Search articles</label>
+        <input class="section-search" type="search" id="sectionSearchInput"
+          placeholder="Search AMI…" aria-label="Search articles"
+          oninput="searchArticles(this.value)">
+      </div>
+    </div>
+  </nav>
+  </div>
 
 <div class="main-wrapper">
   <main id="main-content">
@@ -1173,7 +1358,7 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
           <li><a href="about.html">About AMI</a></li>
           <li><a href="membership.html">Membership</a></li>
           <li><a href="careers.html">Careers</a></li>
-          <li><a href="contact.html">Contact</a></li>
+          <li></li>
           <li><a href="privacy.html">Privacy Policy</a></li>
         </ul>
       </div>

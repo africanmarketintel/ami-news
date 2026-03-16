@@ -856,7 +856,131 @@
             filter: blur(5px) !important;
             user-select: none !important
         }
-    </style>
+    
+    /* ── Section nav dropdown ──────────────────────────────── */
+    .section-tab-wrap {
+      position: relative;
+      display: flex;
+      align-items: stretch;
+    }
+    .section-tab-has-dropdown {
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .section-tab-has-dropdown .drop-arrow {
+      font-size: 7px;
+      opacity: .7;
+      transition: transform .2s;
+    }
+    .section-tab-wrap:hover .drop-arrow {
+      transform: rotate(180deg);
+    }
+    .section-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: var(--surface);
+      border: 1px solid var(--divider);
+      border-top: 2px solid var(--gold);
+      z-index: 500;
+      min-width: 170px;
+      display: none;
+      box-shadow: 0 6px 24px rgba(0,0,0,.15);
+    }
+    .section-tab-wrap:hover .section-dropdown,
+    .section-tab-wrap:focus-within .section-dropdown {
+      display: block;
+    }
+    .section-dropdown a {
+      display: block;
+      padding: 11px 18px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      border-bottom: 1px solid var(--divider);
+      text-decoration: none;
+      white-space: nowrap;
+      transition: color .15s, background .15s;
+    }
+    .section-dropdown a:last-child { border-bottom: none; }
+    .section-dropdown a:hover {
+      color: var(--terra);
+      background: var(--gold-pale);
+    }
+    [data-theme="dark"] .section-dropdown a:hover { background: #0D1F12; }
+
+  
+    /* ════════════════════════════════════════════════════════════
+       CONTENT WIDTH CONSTRAINT
+       Aligns all chrome (nav, masthead, section-nav, breaking,
+       ticker) to the same 1280px box as .main-wrapper so nothing
+       bleeds beyond the content column on wide screens.
+    ════════════════════════════════════════════════════════════ */
+    :root { --box: 1280px; --gutter: 24px; }
+
+    /* Horizontal padding formula:
+       - screens ≤ (1280+48)px  →  24px (normal gutter)
+       - screens  > 1280+48px   →  increases to keep content at 1280px wide */
+    .top-nav,
+    .masthead,
+    .breaking-banner {
+      padding-left:  max(var(--gutter), calc((100% - var(--box)) / 2 + var(--gutter)));
+      padding-right: max(var(--gutter), calc((100% - var(--box)) / 2 + var(--gutter)));
+      box-sizing: border-box;
+    }
+    /* Section nav inner already has padding; just cap its width */
+    .section-nav-inner {
+      max-width: var(--box);
+      margin-left: auto;
+      margin-right: auto;
+    }
+    /* Ticker inner: cap the scrolling track so it doesn't start far left */
+    .ticker-bar {
+      padding-left:  max(var(--gutter), calc((100% - var(--box)) / 2 + var(--gutter)));
+      padding-right: max(var(--gutter), calc((100% - var(--box)) / 2 + var(--gutter)));
+    }
+    /* Footer inner is already max-width: 1280px; margin: 0 auto — confirmed. */
+
+  
+    /* ── Masthead name centred with CTA on right ─────────────── */
+    .masthead-header-row {
+      display: grid !important;
+      grid-template-columns: 1fr auto 1fr !important;
+      align-items: center !important;
+      gap: 0 !important;
+      position: relative;
+    }
+    .masthead-name {
+      grid-column: 2 !important;
+      text-align: center !important;
+      margin-bottom: 0 !important;
+    }
+    .masthead-cta {
+      grid-column: 3 !important;
+      justify-self: end !important;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .masthead-tagline {
+      text-align: center;
+      position: relative;
+    }
+    @media(max-width:767px) {
+      .masthead-header-row {
+        grid-template-columns: 1fr !important;
+        text-align: center !important;
+      }
+      .masthead-name  { grid-column: 1 !important; }
+      .masthead-cta   { grid-column: 1 !important; justify-self: center !important; }
+    }
+
+  </style>
 </head>
 
 <body>
@@ -865,20 +989,8 @@
             aria-label="Open navigation menu"
             onclick="toggleMobileNav()"><span></span><span></span><span></span></button>
         <div class="nav-left">
-            <a href="index.html" class="nav-link" id="nav-home">Home</a>
-            <a href="markets.html" class="nav-link" id="nav-markets">Markets</a>
-            <a href="economy.html" class="nav-link" id="nav-economy">Economy</a>
-            <a href="politics.html" class="nav-link" id="nav-politics">Politics</a>
-            <a href="energy.html" class="nav-link" id="nav-energy">Energy</a>
-            <a href="technology.html" class="nav-link" id="nav-technology">Tech</a>
-            <a href="deals.html" class="nav-link" id="nav-deals" aria-current="page"
-                style="color:var(--gold);border-bottom:2px solid var(--gold)">Deals</a>
-        </div>
+    </div>
         <div class="nav-right">
-            <a href="about.html" class="nav-link" id="nav-about">About</a>
-            <a href="membership.html" class="nav-link" id="nav-membership">Membership</a>
-            <button class="dark-toggle" onclick="toggleDark()" id="themeBtn" aria-label="Toggle dark mode"
-                title="Toggle dark mode">🌙</button>
             <a href="membership.html" id="navSubscribeBtn" class="btn-subscribe">Subscribe</a>
         </div>
     </nav>
@@ -890,13 +1002,17 @@
             <input type="search" placeholder="Search AMI…" aria-label="Search articles">
         </div>
         <a href="index.html">Home</a>
+    <a href="west-africa.html">West Africa</a>
+    <a href="east-africa.html">East Africa</a>
+    <a href="central-africa.html">Central Africa</a>
+    <a href="southern-africa.html">Southern Africa</a>
+    <a href="north-africa.html">North Africa</a>
         <a href="markets.html">Markets</a>
         <a href="economy.html">Economy</a>
         <a href="politics.html">Politics</a>
         <a href="energy.html">Energy</a>
         <a href="technology.html">Technology</a>
         <a href="deals.html" class="mob-active">Deals</a>
-        <a href="about.html">About</a>
         <a href="membership.html">Membership</a>
         <a href="membership.html" class="mob-subscribe">Subscribe →</a>
     </div>
@@ -919,7 +1035,7 @@
         </div>
         <div class="stat-item">
             <div class="stat-number">54</div>
-            <div class="stat-label">Markets Covered</div>
+            <div class="stat-label">Countries Covered</div>
         </div>
         <div class="stat-item">
             <div class="stat-number">Monthly</div>
@@ -1060,7 +1176,7 @@
         ${img}
         <div class="deal-type-badge ${badge.cls}">${badge.label}</div>
         <div style="position:absolute;inset:0;top:${deal.hero_image ? '160px' : '40px'};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;z-index:2;pointer-events:none">
-          <div style="font-size:22px"></div>
+          <div style="font-size:22px">🔒</div>
           <div style="background:var(--gold);color:#060F09;font-family:'DM Mono',monospace;font-size:9px;font-weight:600;letter-spacing:.1em;padding:4px 12px;text-transform:uppercase;border-radius:1px">Members Only</div>
           <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-soft);letter-spacing:.05em">Subscribe to read</div>
         </div>

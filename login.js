@@ -784,7 +784,7 @@
 
     var banner = document.createElement('div');
     banner.id = 'amiBetaBanner';
-    banner.style.cssText = 'background:#F5F0E8;border-bottom:1px solid #D4C4A0;padding:8px 24px;display:flex;align-items:center;gap:10px;font-family:\'DM Mono\',monospace;font-size:11px;color:#6B5344;position:relative;z-index:999';
+    banner.style.cssText = 'background:#F5F0E8;border-bottom:1px solid #D4C4A0;padding:8px max(24px,calc((100% - 1280px)/2 + 24px));display:flex;align-items:center;gap:10px;font-family:\'DM Mono\',monospace;font-size:11px;color:#6B5344;position:relative;z-index:999;box-sizing:border-box';
     banner.innerHTML = [
       '<span style="background:#C9A84C;color:#060F09;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:3px 8px;flex-shrink:0">BETA</span>',
       '<span>What do you think of this service? Your ',
@@ -793,17 +793,14 @@
       '<button onclick="window.amiDismissBeta()" aria-label="Dismiss beta banner" ',
       'style="margin-left:auto;background:none;border:none;font-size:18px;color:#9A8070;cursor:pointer;line-height:1;flex-shrink:0;padding:0 4px" title="Dismiss">×</button>'
     ].join('');
-    
-    var mainWrapper = document.querySelector('.main-wrapper');
-    if (mainWrapper) {
-      mainWrapper.parentNode.insertBefore(banner, mainWrapper);
+
+    // Insert after section-nav (the "Home | Markets | … | All Africa" bar)
+    var sectionNav = document.querySelector('nav[aria-label="Site sections"]');
+    var nav = sectionNav || document.querySelector('nav.top-nav') || document.querySelector('nav');
+    if (nav && nav.nextSibling) {
+      nav.parentNode.insertBefore(banner, nav.nextSibling);
     } else {
-      var nav = document.querySelector('nav.top-nav') || document.querySelector('nav');
-      if (nav && nav.nextSibling) {
-        nav.parentNode.insertBefore(banner, nav.nextSibling);
-      } else {
-        document.body.insertAdjacentElement('afterbegin', banner);
-      }
+      document.body.insertAdjacentElement('afterbegin', banner);
     }
 
     // Inject feedback modal (hidden until opened)
