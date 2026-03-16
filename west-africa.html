@@ -1625,7 +1625,7 @@ function renderMostRead() {
   const el = document.getElementById('mostReadContainer');
   if (!el) return;
   // Pick up to 6 published articles — skip hero/side placements already featured
-  const pool = allArticles.filter(a => a.is_most_read).slice(0, 6);
+  const pool = regionPool().filter(a => a.is_most_read).slice(0, 6);
   if (!pool.length) {
     el.style.display = 'none';
     const hdr = el.previousElementSibling;
