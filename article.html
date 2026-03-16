@@ -3319,8 +3319,8 @@
   </header>
 
 
-  <a href="javascript:history.back()" class="back-link"
-    style="display:block;padding:20px 24px 0;max-width:760px;margin:0 auto">← Back</a>
+  <a href="index.html" onclick="if(history.length > 1){ event.preventDefault(); history.back(); }" class="back-link"
+  style="display:block;padding:20px 24px 0;max-width:760px;margin:0 auto">← Back</a>
   <div class="article-full" id="articleFull">
     <div class="loading-art">Loading article…</div>
   </div>
