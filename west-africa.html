@@ -1468,9 +1468,10 @@ function heroImgHtml(a, height='220px') {
 }
 
 function renderHero() {
-  const hero  = allArticles.find(a=>a.placement==='hero') || allArticles[0];
-  const side1 = allArticles.find(a=>a.placement==='side1') || allArticles[1];
-  const side2 = allArticles.find(a=>a.placement==='side2') || allArticles[2];
+    const pool  = regionPool();
+    const hero  = pool.find(a=>a.placement==='hero') || pool[0];
+    const side1 = pool.find(a=>a.placement==='side1') || pool[1];
+    const side2 = pool.find(a=>a.placement==='side2') || pool[2];
   if(!hero) return;
 
   document.getElementById('heroGrid').innerHTML = `
