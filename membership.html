@@ -1087,14 +1087,14 @@ loadCMSContent('membership');
     const p1link  = get('plan1_link'),  p2link  = get('plan2_link');
     const p1name  = get('plan1_name'),  p2name  = get('plan2_name');
     const priceEls = document.querySelectorAll('.pprice');
-    if(p1price && priceEls[1]) priceEls[1].textContent = p1price;
-    if(p2price && priceEls[2]) priceEls[2].textContent = p2price;
+    if(p1price && priceEls[0]) priceEls[0].textContent = p1price;
+    if(p2price && priceEls[1]) priceEls[1].textContent = p2price;
     const ctaEls = document.querySelectorAll('.plan-cta');
-    if(p1link && ctaEls[1]) ctaEls[1].href = p1link;
-    if(p2link && ctaEls[2]) ctaEls[2].href = p2link;
+    if(p1link && ctaEls[0]) ctaEls[0].href = p1link;
+    if(p2link && ctaEls[1]) ctaEls[1].href = p2link;
     const nameEls = document.querySelectorAll('.pname');
-    if(p1name && nameEls[1]) nameEls[1].textContent = p1name;
-    if(p2name && nameEls[2]) nameEls[2].textContent = p2name;
+    if(p1name && nameEls[0]) nameEls[0].textContent = p1name;
+    if(p2name && nameEls[1]) nameEls[1].textContent = p2name;
   } catch(e){ /* use hardcoded defaults */ }
 })();
 </script>
