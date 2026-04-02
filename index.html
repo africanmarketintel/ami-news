@@ -4258,7 +4258,7 @@
         if (options.order) params.set('order', options.order);
         if (options.limit) params.set('limit', options.limit);
         const url = `${SUPABASE_URL}/rest/v1/${table}?${params}`;
-        const r = await fetch(url, { headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer '+SUPABASE_ANON, 'Range-Unit': 'items', Range: '0-9999' } });
+        const r = await fetch(url, { headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer '+SUPABASE_ANON } });
         if (!r.ok) throw new Error(await r.text());
         return r.json();
       },
