@@ -1,0 +1,35 @@
+name: Generate OG Article Pages
+
+on:
+  schedule:
+    - cron: '0 * * * *'   # runs every hour
+  workflow_dispatch:       # allows manual trigger from GitHub Actions tab
+  push:
+    branches: [main]       # also runs on every push to main
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Generate OG pages
+        run: node scripts/generate-og-pages.js
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON: ${{ secrets.SUPABASE_ANON }}
+
+      - name: Commit and push if changed
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'chore: regenerate article OG pages'
+          file_pattern: 'articles/*.html'
