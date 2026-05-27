@@ -3445,6 +3445,20 @@
         const rows = await db.query('articles', { select: '*', eq: { id } });
         if (!rows || !rows.length) { document.getElementById('articleFull').innerHTML = '<p style="color:var(--text-soft);padding:24px;font-family:DM Mono,monospace">Article not found.</p>'; return; }
         const a = rows[0];
+
+        // Populate OG / Twitter meta tags (for browser history previews and in-app cards)
+        // Note: social crawlers (WhatsApp, Slack, etc.) won't run this JS —
+        // they read the pre-baked /articles/<id>.html static pages instead.
+        const ogImg = a.hero_image || 'https://ami.abta.africa/og-default.jpg';
+        const ogUrl = `https://ami.abta.africa/articles/${a.id}.html`;
+        document.getElementById('ogTitle').setAttribute('content', a.headline || '');
+        document.getElementById('ogDescription').setAttribute('content', a.standfirst || '');
+        document.getElementById('ogImage').setAttribute('content', ogImg);
+        document.getElementById('ogUrl').setAttribute('content', ogUrl);
+        document.getElementById('twTitle').setAttribute('content', a.headline || '');
+        document.getElementById('twDescription').setAttribute('content', a.standfirst || '');
+        document.getElementById('twImage').setAttribute('content', ogImg);
+        
         document.title = a.headline + ' | African Market Intelligence';
         const avatar = a.author_photo
           ? `<img src="${a.author_photo}" class="af-avatar" onerror="this.style.display='none'">`
