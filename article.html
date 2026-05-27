@@ -3514,6 +3514,36 @@
     }
     loadArticle().then(function () { if (typeof amiShowEditFab === 'function' && window._amiAdminAuthed) amiShowEditFab(); });
 
+    function openShareModal() {
+      const id = new URLSearchParams(window.location.search).get('id') || window.location.pathname.split('/').pop().replace('.html','');
+      const url = window.location.origin + '/articles/' + id + '.html';
+      const titleEl = document.getElementById('articleHeadline');
+      document.getElementById('shareUrlInput').value = url;
+      document.getElementById('shareModalTitle').textContent = titleEl ? titleEl.textContent.trim() : '';
+      if (navigator.share) document.getElementById('shareNativeBtn').style.display = 'block';
+      document.getElementById('shareModalBackdrop').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeShareModal() {
+      document.getElementById('shareModalBackdrop').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    function copyShareLink() {
+      const input = document.getElementById('shareUrlInput');
+      const btn = document.getElementById('shareCopyBtn');
+      navigator.clipboard.writeText(input.value).then(function () {
+        btn.textContent = 'Copied!';
+        btn.style.background = '#1E6B3C';
+        setTimeout(function () { btn.textContent = 'Copy link'; btn.style.background = ''; }, 2000);
+      });
+    }
+    async function nativeShare() {
+      const title = document.getElementById('articleHeadline')?.textContent.trim() || document.title;
+      const url = document.getElementById('shareUrlInput').value;
+      try { await navigator.share({ title, url }); } catch(e) {}
+    }
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeShareModal(); });
+
   </script>
   <script>
     // Render footer columns from Supabase if configured
