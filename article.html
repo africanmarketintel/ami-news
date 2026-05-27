@@ -4052,6 +4052,21 @@
     })(); // end IIFE
   </script>
 
+  <!-- ═══ SHARE MODAL ════════════════════════════════════════ -->
+    <div id="shareModalBackdrop" style="display:none;position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.5);align-items:center;justify-content:center" onclick="if(event.target===this)closeShareModal()">
+      <div style="background:var(--surface);border:1px solid var(--divider);border-top:4px solid var(--gold);padding:28px;max-width:420px;width:90%;position:relative">
+        <button onclick="closeShareModal()" style="position:absolute;top:12px;right:12px;background:none;border:none;font-size:18px;color:var(--text-soft);cursor:pointer">✕</button>
+        <p style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-soft);margin-bottom:6px">Share this article</p>
+        <p id="shareModalTitle" style="font-family:'Playfair Display',serif;font-size:16px;font-weight:600;margin-bottom:16px;padding-right:24px"></p>
+        <div style="display:flex;border:1px solid var(--divider);margin-bottom:10px">
+          <input id="shareUrlInput" type="text" readonly style="flex:1;padding:9px 12px;background:var(--bg);border:none;font-family:'DM Mono',monospace;font-size:11px;color:var(--text);outline:none">
+          <button id="shareCopyBtn" onclick="copyShareLink()" style="padding:9px 16px;background:var(--ink-mid);color:#fff;border:none;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer">Copy link</button>
+        </div>
+        <button id="shareNativeBtn" onclick="nativeShare()" style="display:none;width:100%;padding:9px;border:1px solid var(--divider);background:none;font-family:'DM Mono',monospace;font-size:11px;color:var(--text-soft);cursor:pointer">Share via…</button>
+      </div>
+    </div>
+    <style>#shareModalBackdrop.open{display:flex!important}</style>
+  
   <!-- ═══ PAYWALL OVERLAY ══════════════════════════════════════ -->
   <div id="paywallBlur" class="paywall-blur"></div>
   <div id="paywallOverlay" class="paywall-overlay" role="dialog" aria-modal="true" aria-label="Subscribe to read">
