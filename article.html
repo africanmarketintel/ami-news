@@ -327,16 +327,16 @@
 
     /* Section nav */
     .section-nav {
-      position: relative;      /* ← added */
-      z-index: 200;            /* ← added */
+      position: relative;
+      z-index: 200;
       border-bottom: 2px solid var(--gold);
       background: var(--surface);
       overflow: visible;
     }
 
     .section-nav-inner {
-      overflow-x: clip;        /* ← moved from .section-nav */
-      scrollbar-width: none;   /* ← moved from .section-nav */
+      overflow-x: auto;
+      scrollbar-width: none;
       display: flex;
       padding: 0 24px
     }
@@ -982,6 +982,131 @@
     .skel-text-short {
       height: 14px;
       width: 60%
+    }
+
+    /* ── First-visit email gate ─────────────────────────── */
+    .fv-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(6, 15, 9, .82);
+      z-index: 9000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      backdrop-filter: blur(3px)
+    }
+    .fv-box {
+      background: var(--cream, #FAF7F0);
+      max-width: 520px;
+      width: 100%;
+      border-top: 4px solid var(--gold, #C9A84C);
+      box-shadow: 0 24px 80px rgba(0,0,0,.4);
+      animation: fvIn .4s ease;
+      position: relative;
+      overflow: hidden
+    }
+    .fv-box::before {
+      content: '◆';
+      position: absolute;
+      top: -30px;
+      right: -10px;
+      font-size: 160px;
+      color: rgba(201,168,76,.06);
+      line-height: 1;
+      pointer-events: none
+    }
+    @keyframes fvIn {
+      from { transform: translateY(24px); opacity: 0 }
+      to   { transform: translateY(0);    opacity: 1 }
+    }
+    .fv-header {
+      background: var(--nav-bg, #0A1A10);
+      padding: 28px 32px 22px;
+      text-align: center;
+      position: relative
+    }
+    .fv-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 800;
+      color: #EDE5D5;
+      letter-spacing: -.02em;
+      line-height: 1
+    }
+    .fv-logo span { color: var(--gold, #C9A84C) }
+    .fv-tagline {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: rgba(237,229,213,.5);
+      margin-top: 6px
+    }
+    .fv-body { padding: 28px 32px }
+    .fv-desc {
+      font-family: 'Spectral', Georgia, serif;
+      font-size: 15px;
+      line-height: 1.75;
+      color: #3D2B1F;
+      margin-bottom: 20px
+    }
+    .fv-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #0D3B1C;
+      color: #2E9B5E;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: .08em;
+      padding: 6px 14px;
+      margin-bottom: 24px
+    }
+    .fv-badge::before { content: '●'; font-size: 8px }
+    .fv-form { display: flex; gap: 8px; margin-bottom: 12px }
+    .fv-input {
+      flex: 1;
+      background: #fff;
+      border: 1px solid #D4C4A0;
+      color: #1A1208;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      padding: 11px 14px;
+      outline: none;
+      min-width: 0
+    }
+    .fv-input:focus { border-color: var(--gold, #C9A84C) }
+    .fv-input::placeholder { color: #999 }
+    .fv-btn {
+      background: var(--gold, #C9A84C);
+      color: #060F09;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 11px 20px;
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background .2s;
+      flex-shrink: 0
+    }
+    .fv-btn:hover { background: #D4B86A }
+    .fv-terms {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      color: #9A8070;
+      line-height: 1.6;
+      margin-bottom: 4px
+    }
+    .fv-terms a { color: #9A8070; text-decoration: underline }
+    @media(max-width:480px) {
+      .fv-form { flex-direction: column }
+      .fv-header { padding: 22px 20px 18px }
+      .fv-body { padding: 22px 20px }
+      .fv-logo { font-size: 22px }
     }
 
     /* Paywall */
@@ -2856,6 +2981,109 @@
 
     /* paywall active when is_locked — JS sets display:flex */
 
+    /* ── First-visit lead gen modal ──────────────────────────── */
+    .fv-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(6, 15, 9, .82);
+      z-index: 9000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      backdrop-filter: blur(3px)
+    }
+    .fv-box {
+      background: var(--cream, #FAF7F0);
+      max-width: 520px;
+      width: 100%;
+      border-top: 4px solid var(--gold, #C9A84C);
+      box-shadow: 0 24px 80px rgba(0, 0, 0, .4);
+      animation: fvIn .4s ease;
+      position: relative;
+      overflow: hidden
+    }
+    .fv-box::before {
+      content: '◆';
+      position: absolute;
+      top: -30px; right: -10px;
+      font-size: 160px;
+      color: rgba(201, 168, 76, .06);
+      line-height: 1;
+      pointer-events: none
+    }
+    @keyframes fvIn {
+      from { transform: translateY(24px); opacity: 0 }
+      to   { transform: translateY(0);    opacity: 1 }
+    }
+    .fv-header {
+      background: var(--nav-bg, #0A1A10);
+      padding: 28px 32px 22px;
+      text-align: center
+    }
+    .fv-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px; font-weight: 800;
+      color: #EDE5D5; letter-spacing: -.02em; line-height: 1
+    }
+    .fv-logo span { color: var(--gold, #C9A84C) }
+    .fv-tagline {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px; letter-spacing: .2em;
+      text-transform: uppercase;
+      color: rgba(237, 229, 213, .5); margin-top: 6px
+    }
+    .fv-body { padding: 28px 32px }
+    .fv-desc {
+      font-family: 'Spectral', Georgia, serif;
+      font-size: 15px; line-height: 1.75;
+      color: #3D2B1F; margin-bottom: 20px
+    }
+    .fv-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #0D3B1C; color: #2E9B5E;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px; letter-spacing: .08em;
+      padding: 6px 14px; margin-bottom: 24px
+    }
+    .fv-badge::before { content: '●'; font-size: 8px }
+    .fv-form { display: flex; gap: 8px; margin-bottom: 12px }
+    .fv-input {
+      flex: 1;
+      background: #fff; border: 1px solid #D4C4A0;
+      color: #1A1208; font-family: 'DM Mono', monospace;
+      font-size: 12px; padding: 11px 14px; outline: none; min-width: 0
+    }
+    .fv-input:focus { border-color: var(--gold, #C9A84C) }
+    .fv-input::placeholder { color: #999 }
+    .fv-btn {
+      background: var(--gold, #C9A84C); color: #060F09;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px; font-weight: 600; letter-spacing: .1em;
+      text-transform: uppercase; padding: 11px 20px;
+      border: none; cursor: pointer; white-space: nowrap;
+      transition: background .2s; flex-shrink: 0
+    }
+    .fv-btn:hover { background: #D4B86A }
+    .fv-terms {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px; color: #9A8070; line-height: 1.6; margin-bottom: 20px
+    }
+    .fv-terms a { color: #9A8070; text-decoration: underline }
+    .fv-skip {
+      display: block; text-align: center;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px; letter-spacing: .08em; text-transform: uppercase;
+      color: #9A8070; cursor: pointer; padding: 4px;
+      transition: color .2s; background: none; border: none; width: 100%
+    }
+    .fv-skip:hover { color: var(--gold, #C9A84C) }
+    @media(max-width:480px) {
+      .fv-form { flex-direction: column }
+      .fv-header { padding: 22px 20px 18px }
+      .fv-body { padding: 22px 20px }
+      .fv-logo { font-size: 22px }
+    }
     /* ── Inline fade paywall ─────────────────── */
     .af-body.paywall-locked {
       position: relative;
@@ -2872,6 +3100,225 @@
       height: 130px;
       background: linear-gradient(to bottom, transparent 0%, var(--bg) 100%);
       pointer-events: none;
+    }
+
+    /* ── Share button ── */
+    .share-btn-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0.75rem 0;
+    }
+
+    .share-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.4rem 0.85rem;
+      border: 1px solid var(--divider);
+      background: transparent;
+      color: var(--text-soft);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+
+    .share-btn:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: var(--gold-pale);
+    }
+
+    .share-btn svg {
+      width: 13px;
+      height: 13px;
+      flex-shrink: 0;
+    }
+
+    /* ── Share modal ── */
+    .share-modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 8, 4, 0.65);
+      z-index: 1100;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .share-modal-backdrop.open {
+      display: flex;
+    }
+
+    .share-modal {
+      background: var(--surface);
+      border: 1px solid var(--divider);
+      width: 100%;
+      max-width: 420px;
+      margin: 1rem;
+      padding: 2rem;
+      position: relative;
+    }
+
+    .share-modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      font-size: 1.1rem;
+      color: var(--text-soft);
+      cursor: pointer;
+      line-height: 1;
+      padding: 0.25rem;
+    }
+
+    .share-modal-close:hover {
+      color: var(--text);
+    }
+
+    .share-modal-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      margin-bottom: 0.3rem;
+    }
+
+    .share-modal-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 1.25rem;
+      line-height: 1.35;
+      padding-right: 1.5rem;
+    }
+
+    .share-url-row {
+      display: flex;
+      margin-bottom: 0.6rem;
+      border: 1px solid var(--divider);
+    }
+
+    .share-url-input {
+      flex: 1;
+      padding: 0.55rem 0.75rem;
+      background: var(--bg);
+      border: none;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--text-soft);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      outline: none;
+    }
+
+    .share-copy-btn {
+      padding: 0.55rem 1rem;
+      background: var(--ink-mid);
+      color: #fff;
+      border: none;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+
+    .share-copy-btn:hover {
+      background: var(--ink);
+    }
+
+    .share-copy-btn.copied {
+      background: var(--green);
+    }
+
+    .share-native-btn {
+      display: none;
+      width: 100%;
+      padding: 0.55rem 1rem;
+      background: transparent;
+      border: 1px solid var(--divider);
+      color: var(--text-soft);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      margin-bottom: 0.6rem;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .share-native-btn:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .share-divider {
+      border: none;
+      border-top: 1px solid var(--divider);
+      margin: 1.25rem 0;
+    }
+
+    .share-subscribe-note {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.67rem;
+      color: var(--text-soft);
+      margin-bottom: 1rem;
+      line-height: 1.55;
+    }
+
+    .share-cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+
+    .share-cta-subscribe {
+      flex: 1;
+      padding: 0.6rem 1rem;
+      background: var(--gold);
+      color: var(--ink);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-decoration: none;
+      text-align: center;
+      display: inline-block;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+
+    .share-cta-subscribe:hover {
+      background: var(--gold-light);
+    }
+
+    .share-cta-login {
+      flex: 1;
+      padding: 0.6rem 1rem;
+      background: transparent;
+      color: var(--text-soft);
+      border: 1px solid var(--divider);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.05em;
+      text-decoration: none;
+      text-align: center;
+      display: inline-block;
+      transition: border-color 0.2s, color 0.2s;
+      white-space: nowrap;
+    }
+
+    .share-cta-login:hover {
+      border-color: var(--gold);
+      color: var(--gold);
     }
   </style>
 
@@ -3118,7 +3565,7 @@
       background: var(--surface);
       border: 1px solid var(--divider);
       border-top: 2px solid var(--gold);
-      z-index: 500;
+      z-index: 1500;
       min-width: 170px;
       display: none;
       box-shadow: 0 6px 24px rgba(0,0,0,.15);
@@ -3218,6 +3665,8 @@
     }
     /* Section nav inner already has padding; just cap its width */
     .section-nav-inner {
+      overflow-x: auto;
+      scrollbar-width: none;
       max-width: var(--box);
       margin-left: auto;
       margin-right: auto;
@@ -3271,7 +3720,7 @@
   
 
   <div class="ticker-bar"><div class="ticker-inner" id="tickerInner">
-  <span class="ticker-item"><span class="sym"></span></span>
+  <span class="ticker-item"><span class="sym">Loading markets…</span></span>
 </div></div>
 <nav class="top-nav" aria-label="Main navigation">
     <button class="nav-hamburger" id="navHamburger" aria-expanded="false" aria-controls="navMobileDrawer"
@@ -3320,7 +3769,7 @@
 
 
   <a href="index.html" onclick="if(history.length > 1){ event.preventDefault(); history.back(); }" class="back-link"
-  style="display:block;padding:20px 24px 0;max-width:760px;margin:0 auto">← Back</a>
+    style="display:block;padding:20px 24px 0;max-width:760px;margin:0 auto">← Back</a>
   <div class="article-full" id="articleFull">
     <div class="loading-art">Loading article…</div>
   </div>
@@ -3382,6 +3831,43 @@
     window.amiPaywallSuppressed = window.amiIsSubscriber;
 
     // ════════════════════════════════════════════════════════════
+    // METERED PAYWALL — 5 free articles per calendar month
+    // ════════════════════════════════════════════════════════════
+    const AMI_METER_LIMIT = 5;
+
+    function _meterKey() {
+      const d = new Date();
+      return 'ami_reads_' + d.getFullYear() + '_' + (d.getMonth() + 1);
+    }
+
+    function getMonthlyReads() {
+      try { return JSON.parse(localStorage.getItem(_meterKey()) || '[]'); }
+      catch(e) { return []; }
+    }
+
+    function recordArticleRead(articleId) {
+      const reads = getMonthlyReads();
+      if (!reads.includes(String(articleId))) {
+        reads.push(String(articleId));
+        localStorage.setItem(_meterKey(), JSON.stringify(reads));
+      }
+      return reads;
+    }
+
+    // Returns true if this article would exceed the free limit
+    function meterExceeded(articleId) {
+      const reads = getMonthlyReads();
+      if (reads.includes(String(articleId))) return false; // already counted
+      return reads.length >= AMI_METER_LIMIT;
+    }
+
+    function readsRemaining(articleId) {
+      const reads = getMonthlyReads();
+      if (reads.includes(String(articleId))) return AMI_METER_LIMIT - reads.length;
+      return Math.max(0, AMI_METER_LIMIT - reads.length);
+    }
+
+    // ════════════════════════════════════════════════════════════
     // ARTICLE PAGE
     // ════════════════════════════════════════════════════════════
     function toggleDark() {
@@ -3431,9 +3917,33 @@
         });
         if (!r.ok) throw new Error(await r.text());
         return r.json();
+      },
+      async insert(table, data, minimal) {
+        const prefer = minimal ? 'return=minimal' : 'return=representation';
+        const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
+          method: 'POST',
+          headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer '+SUPABASE_ANON, 'Content-Type': 'application/json', Prefer: prefer },
+          body: JSON.stringify(data)
+        });
+        if (!r.ok) throw new Error(await r.text());
+        return minimal ? null : r.json();
       }
     };
 
+    function showToast(msg, type) {
+      var t = document.getElementById('toastArt');
+      if (!t) {
+        t = document.createElement('div');
+        t.id = 'toastArt';
+        t.style.cssText = 'position:fixed;bottom:28px;right:28px;z-index:9999;font-family:DM Mono,monospace;font-size:12px;letter-spacing:.08em;padding:12px 22px;border-radius:2px;opacity:0;transform:translateY(16px);transition:all .3s;pointer-events:none;border:1px solid';
+        document.body.appendChild(t);
+      }
+      if (type === 'error') { t.style.background = '#4D1B1B'; t.style.borderColor = '#F44336'; t.style.color = '#F44336'; }
+      else { t.style.background = '#0D3B1C'; t.style.borderColor = '#2E9B5E'; t.style.color = '#2E9B5E'; }
+      t.textContent = msg;
+      t.style.opacity = '1'; t.style.transform = 'translateY(0)';
+      setTimeout(function () { t.style.opacity = '0'; t.style.transform = 'translateY(16px)'; }, 3500);
+    }
     function searchArticles(q) { if (q) window.location.href = 'index.html?q=' + encodeURIComponent(q); }
 
     async function loadArticle() {
@@ -3445,6 +3955,7 @@
         const rows = await db.query('articles', { select: '*', eq: { id } });
         if (!rows || !rows.length) { document.getElementById('articleFull').innerHTML = '<p style="color:var(--text-soft);padding:24px;font-family:DM Mono,monospace">Article not found.</p>'; return; }
         const a = rows[0];
+        document.title = a.headline + ' | African Market Intelligence';
 
         // Populate OG / Twitter meta tags (for browser history previews and in-app cards)
         // Note: social crawlers (WhatsApp, Slack, etc.) won't run this JS —
@@ -3458,10 +3969,6 @@
         document.getElementById('twTitle').setAttribute('content', a.headline || '');
         document.getElementById('twDescription').setAttribute('content', a.standfirst || '');
         document.getElementById('twImage').setAttribute('content', ogImg);
-        
-        document.title = a.headline + ' | African Market Intelligence';
-        history.replaceState(null, '', '/articles/' + a.id + '.html');
-        
         const avatar = a.author_photo
           ? `<img src="${a.author_photo}" class="af-avatar" onerror="this.style.display='none'">`
           : `<div class="af-avatar">${(a.author_initials || '?')}</div>`;
@@ -3475,26 +3982,40 @@
         <span>${a.read_time || ''}</span>
         ${a.tags ? `<span>${a.tags}</span>` : ''}
       </div>
+      <div class="share-btn-row"><button class="share-btn" onclick="openShareModal()"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="13" cy="2.5" r="1.5"/><circle cx="13" cy="13.5" r="1.5"/><circle cx="2.5" cy="8" r="1.5"/><line x1="4" y1="8" x2="11.5" y2="3.2"/><line x1="4" y1="8" x2="11.5" y2="12.8"/></svg> Share</button></div>
+      <div class="af-body" id="articleBody" data-editable="richtext" data-cms-type="article" data-article-field="body" data-article-id="${a.id}">${a.body || '<p>Full article content coming soon.</p>'}</div>
+      <div class="share-btn-row" style="margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid var(--divider)"><button class="share-btn" onclick="openShareModal()"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="13" cy="2.5" r="1.5"/><circle cx="13" cy="13.5" r="1.5"/><circle cx="2.5" cy="8" r="1.5"/><line x1="4" y1="8" x2="11.5" y2="3.2"/><line x1="4" y1="8" x2="11.5" y2="12.8"/></svg> Share</button></div>`;
 
-      <div style="margin:0 0 1rem">
-              <button onclick="openShareModal()" style="display:inline-flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:7px 14px;border:1px solid var(--divider);color:var(--text-soft);background:var(--card-bg);cursor:pointer">
-                <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="13" cy="2.5" r="1.5"/><circle cx="13" cy="13.5" r="1.5"/><circle cx="2.5" cy="8" r="1.5"/><line x1="4" y1="8" x2="11.5" y2="3.2"/><line x1="4" y1="8" x2="11.5" y2="12.8"/></svg>
-                Share
-              </button>
-            </div>
-            
-      
-      <div class="af-body" id="articleBody" data-editable="richtext" data-cms-type="article" data-article-field="body" data-article-id="${a.id}">${a.body || '<p>Full article content coming soon.</p>'}</div>`;
+        // ── Paywall: locked articles always gate; metered gate after 5 free reads ──
+        const articleId = params.get('id');
+        const isMetered = !a.is_locked && meterExceeded(articleId);
+        const showPaywall = (a.is_locked || isMetered) && !window._amiAdminAuthed && !window.amiIsSubscriber;
 
-        // ── Paywall: trigger for locked articles (non-admin only) ──
-        if (a.is_locked && !window._amiAdminAuthed && !window.amiIsSubscriber) {
+        if (showPaywall) {
           const body = document.getElementById('articleBody');
-          if (body) {
-            body.classList.add('paywall-locked');
-          }
-          // Show original overlay + gradient fade
+          if (body) body.classList.add('paywall-locked');
+
           const ov = document.getElementById('paywallOverlay');
           const bl = document.getElementById('paywallBlur');
+
+          // Update paywall messaging for metered vs premium-locked
+          if (ov) {
+            const meterLabel = document.getElementById('paywallMeter');
+            if (isMetered) {
+              const h = ov.querySelector('.paywall-headline');
+              const sub = ov.querySelector('.paywall-sub');
+              if (h) h.textContent = "You've read your 5 free articles this month";
+              if (sub) sub.textContent = 'Subscribe for unlimited access to African market intelligence.';
+              if (meterLabel) meterLabel.textContent = '5 / 5 free articles read';
+            } else {
+              // Premium-locked article
+              if (meterLabel) {
+                const reads = getMonthlyReads();
+                meterLabel.textContent = reads.length + ' of 5 free articles used this month';
+              }
+            }
+          }
+
           if (ov) ov.style.display = 'flex';
           if (bl) bl.style.display = 'block';
 
@@ -3515,6 +4036,19 @@
               if (el2) { if (p2l) el2.href = p2l; if (p2n) el2.textContent = p2n; }
             }
           } catch (e) { /* fallback to static links in HTML */ }
+
+        } else if (!window._amiAdminAuthed && !window.amiIsSubscriber) {
+          // Free article — record the read and show remaining count
+          const reads = recordArticleRead(articleId);
+          const remaining = AMI_METER_LIMIT - reads.length;
+          if (remaining > 0 && remaining <= 2) {
+            // Subtle reminder when down to last 1–2 free articles
+            const meterBanner = document.createElement('div');
+            meterBanner.style.cssText = 'font-family:"DM Mono",monospace;font-size:11px;letter-spacing:.08em;text-align:center;padding:10px 16px;background:var(--gold-pale);border-top:1px solid var(--border);color:var(--ink-soft);margin-top:24px';
+            meterBanner.innerHTML = `You have <strong>${remaining} free article${remaining === 1 ? '' : 's'}</strong> remaining this month. <a href="membership.html" style="color:var(--terra);text-decoration:underline">Subscribe for unlimited access →</a>`;
+            const bodyEl = document.getElementById('articleBody');
+            if (bodyEl) bodyEl.after(meterBanner);
+          }
         }
 
       } catch (e) {
@@ -3523,35 +4057,98 @@
     }
     loadArticle().then(function () { if (typeof amiShowEditFab === 'function' && window._amiAdminAuthed) amiShowEditFab(); });
 
+    // ── Share modal ──────────────────────────────────────────────
     function openShareModal() {
-      const id = new URLSearchParams(window.location.search).get('id') || window.location.pathname.split('/').pop().replace('.html','');
-      const url = window.location.origin + '/articles/' + id + '.html';
+      // Use the static /articles/<id>.html URL so shared links carry OG preview tags
+      const params = new URLSearchParams(window.location.search);
+      const articleId = params.get('id');
+      const url = articleId
+        ? window.location.origin + '/articles/' + articleId + '.html'
+        : window.location.href;
       const titleEl = document.getElementById('articleHeadline');
+      const title = titleEl ? titleEl.textContent.trim() : document.title;
       document.getElementById('shareUrlInput').value = url;
-      document.getElementById('shareModalTitle').textContent = titleEl ? titleEl.textContent.trim() : '';
-      if (navigator.share) document.getElementById('shareNativeBtn').style.display = 'block';
+      document.getElementById('shareModalTitle').textContent = title || 'Share this article';
+      const nativeBtn = document.getElementById('shareNativeBtn');
+      if (navigator.share) nativeBtn.style.display = 'block';
       document.getElementById('shareModalBackdrop').classList.add('open');
       document.body.style.overflow = 'hidden';
     }
+
     function closeShareModal() {
       document.getElementById('shareModalBackdrop').classList.remove('open');
       document.body.style.overflow = '';
     }
+
     function copyShareLink() {
       const input = document.getElementById('shareUrlInput');
       const btn = document.getElementById('shareCopyBtn');
-      navigator.clipboard.writeText(input.value).then(function () {
+      function markCopied() {
         btn.textContent = 'Copied!';
-        btn.style.background = '#1E6B3C';
-        setTimeout(function () { btn.textContent = 'Copy link'; btn.style.background = ''; }, 2000);
-      });
+        btn.classList.add('copied');
+        setTimeout(function () { btn.textContent = 'Copy link'; btn.classList.remove('copied'); }, 2000);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(input.value).then(markCopied).catch(function () {
+          input.select(); document.execCommand('copy'); markCopied();
+        });
+      } else {
+        input.select(); document.execCommand('copy'); markCopied();
+      }
     }
+
     async function nativeShare() {
-      const title = document.getElementById('articleHeadline')?.textContent.trim() || document.title;
-      const url = document.getElementById('shareUrlInput').value;
-      try { await navigator.share({ title, url }); } catch(e) {}
+      const url = window.location.href;
+      const titleEl = document.getElementById('articleHeadline');
+      const title = titleEl ? titleEl.textContent.trim() : document.title;
+      try { await navigator.share({ title, url }); } catch (e) { /* cancelled or unsupported */ }
     }
-    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeShareModal(); });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeShareModal();
+    });
+
+    // ── Email gate — show on every visit until subscribed ────────
+    (function () {
+      if (!localStorage.getItem('amiVisited') && !localStorage.getItem('ami_subscriber')) {
+        setTimeout(function () {
+          var ov = document.getElementById('fvOverlay');
+          if (ov) ov.style.display = 'flex';
+        }, 800);
+      }
+      // Prevent backdrop click from closing
+      document.addEventListener('DOMContentLoaded', function () {
+        var ov = document.getElementById('fvOverlay');
+        if (ov) ov.addEventListener('click', function (e) { if (e.target === ov) e.stopPropagation(); });
+      });
+    })();
+
+    async function fvSubscribe() {
+      const input = document.getElementById('fvEmailInput');
+      const btn   = document.getElementById('fvBtn');
+      const email = input.value.trim();
+      if (!email) { input.focus(); return; }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { input.style.borderColor = '#B85C38'; input.focus(); return; }
+      btn.textContent = '…'; btn.disabled = true;
+      try {
+        const r = await fetch(`${SUPABASE_URL}/rest/v1/subscribers`, {
+          method: 'POST',
+          headers: {
+            apikey: SUPABASE_ANON,
+            Authorization: 'Bearer ' + SUPABASE_ANON,
+            'Content-Type': 'application/json',
+            Prefer: 'return=minimal'
+          },
+          body: JSON.stringify({ email, source: 'article_gate', subscribed_at: new Date().toISOString() })
+        });
+        // 409 / 23505 = duplicate email — treat as success
+        if (!r.ok && r.status !== 409) throw new Error(await r.text());
+        localStorage.setItem('amiVisited', '1');
+        document.getElementById('fvOverlay').style.display = 'none';
+      } catch (e) {
+        btn.textContent = 'Subscribe Free'; btn.disabled = false;
+      }
+    }
 
   </script>
   <script>
@@ -4061,33 +4658,113 @@
     })(); // end IIFE
   </script>
 
-  <!-- ═══ SHARE MODAL ════════════════════════════════════════ -->
-    <div id="shareModalBackdrop" style="display:none;position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.5);align-items:center;justify-content:center" onclick="if(event.target===this)closeShareModal()">
-      <div style="background:var(--surface);border:1px solid var(--divider);border-top:4px solid var(--gold);padding:28px;max-width:420px;width:90%;position:relative">
-        <button onclick="closeShareModal()" style="position:absolute;top:12px;right:12px;background:none;border:none;font-size:18px;color:var(--text-soft);cursor:pointer">✕</button>
-        <p style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-soft);margin-bottom:6px">Share this article</p>
-        <p id="shareModalTitle" style="font-family:'Playfair Display',serif;font-size:16px;font-weight:600;margin-bottom:16px;padding-right:24px"></p>
-        <div style="display:flex;border:1px solid var(--divider);margin-bottom:10px">
-          <input id="shareUrlInput" type="text" readonly style="flex:1;padding:9px 12px;background:var(--bg);border:none;font-family:'DM Mono',monospace;font-size:11px;color:var(--text);outline:none">
-          <button id="shareCopyBtn" onclick="copyShareLink()" style="padding:9px 16px;background:var(--ink-mid);color:#fff;border:none;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer">Copy link</button>
-        </div>
-        <button id="shareNativeBtn" onclick="nativeShare()" style="display:none;width:100%;padding:9px;border:1px solid var(--divider);background:none;font-family:'DM Mono',monospace;font-size:11px;color:var(--text-soft);cursor:pointer">Share via…</button>
+  <!-- ═══ SHARE MODAL ════════════════════════════════════════════ -->
+  <div id="shareModalBackdrop" class="share-modal-backdrop" role="dialog" aria-modal="true" aria-label="Share this article" onclick="if(event.target===this)closeShareModal()">
+    <div class="share-modal">
+      <button class="share-modal-close" onclick="closeShareModal()" aria-label="Close">✕</button>
+      <p class="share-modal-label">AMI Deal Tracker</p>
+      <p class="share-modal-title" id="shareModalTitle">Share this article</p>
+      <div class="share-url-row">
+        <input class="share-url-input" id="shareUrlInput" type="text" readonly>
+        <button class="share-copy-btn" id="shareCopyBtn" onclick="copyShareLink()">Copy link</button>
+      </div>
+      <button class="share-native-btn" id="shareNativeBtn" onclick="nativeShare()">↑ Share via…</button>
+      <hr class="share-divider">
+      <p class="share-subscribe-note">Recipients will need a subscription — first month just $1.99, then $39/month.</p>
+      <div class="share-cta-row">
+        <a href="membership.html" class="share-cta-subscribe">Subscribe for $1.99 →</a>
+        <a href="login.html" class="share-cta-login">Already a member? Log in</a>
       </div>
     </div>
-    <style>#shareModalBackdrop.open{display:flex!important}</style>
-  
+  </div>
+
+  <!-- ═══ EMAIL GATE MODAL ════════════════════════════════════ -->
+  <div id="fvOverlay" class="fv-overlay" role="dialog" aria-modal="true" aria-label="Subscribe to AMI" style="display:none">
+    <div class="fv-box">
+      <div class="fv-header">
+        <div class="fv-logo">African Market <span>Intelligence</span></div>
+        <div class="fv-tagline">Intelligence across African markets</div>
+      </div>
+      <div class="fv-body">
+        <p class="fv-desc">Markets move. Deals close. Governments shift. AMI tracks it all across Africa, delivered to your inbox every week.</p>
+        <div class="fv-badge">The deal you miss could be the one that mattered.</div>
+        <div class="fv-form">
+          <input class="fv-input" type="email" id="fvEmailInput" placeholder="your@email.com" autocomplete="email" aria-label="Your email address">
+          <button class="fv-btn" id="fvBtn" onclick="fvSubscribe()">Subscribe Free</button>
+        </div>
+        <p class="fv-terms">By subscribing you agree to AMI's <a href="privacy.html" target="_blank">Privacy Policy</a>. You can unsubscribe at any time.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ FIRST-VISIT LEAD GEN MODAL ══════════════════════════ -->
+  <div id="fvOverlay" class="fv-overlay" role="dialog" aria-modal="true" aria-label="Subscribe to AMI"
+    style="display:none">
+    <div class="fv-box">
+      <div class="fv-header">
+        <div class="fv-logo">African Market <span>Intelligence</span></div>
+        <div class="fv-tagline">Intelligence across African markets</div>
+      </div>
+      <div class="fv-body">
+        <p class="fv-desc">Markets move. Deals close. Governments shift. AMI tracks it all across Africa, delivered to
+          your inbox every week.</p>
+        <div class="fv-badge">The deal you miss could be the one that mattered.</div>
+        <div class="fv-form">
+          <input class="fv-input" type="email" id="fvEmailInput" placeholder="your@email.com" autocomplete="email"
+            aria-label="Your email address">
+          <button class="fv-btn" id="fvBtn" onclick="fvSubscribe()">Subscribe Free</button>
+        </div>
+        <p class="fv-terms">By subscribing you agree to AMI's <a href="privacy.html" target="_blank">Privacy Policy</a>.
+          You can unsubscribe at any time.</p>
+        <button class="fv-skip" onclick="fvDismiss()">No thanks, take me to the site →</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      // Show modal on first visit only — skip for paid subscribers
+      if (!localStorage.getItem('amiVisited') && !localStorage.getItem('ami_subscriber')) {
+        setTimeout(function () { document.getElementById('fvOverlay').style.display = 'flex'; }, 800);
+      }
+    })();
+    function fvDismiss() {
+      localStorage.setItem('amiVisited', '1');
+      document.getElementById('fvOverlay').style.display = 'none';
+    }
+    async function fvSubscribe() {
+      const input = document.getElementById('fvEmailInput');
+      const btn = document.getElementById('fvBtn');
+      const email = input.value.trim();
+      if (!email) { input.focus(); return; }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { input.style.borderColor = '#B85C38'; input.focus(); return; }
+      btn.textContent = '…'; btn.disabled = true;
+      try {
+        await db.insert('subscribers', { email, source: 'article_first_visit', subscribed_at: new Date().toISOString() }, true);
+        showToast('✓ Welcome to AMI! Check your inbox.');
+        fvDismiss();
+      } catch (e) {
+        btn.textContent = 'Subscribe Free'; btn.disabled = false;
+        if (e.message && e.message.includes('23505')) {
+          showToast('✓ You\'re already subscribed!'); fvDismiss();
+        } else {
+          showToast('✗ Could not subscribe: ' + e.message, 'error');
+        }
+      }
+    }
+  </script>
   <!-- ═══ PAYWALL OVERLAY ══════════════════════════════════════ -->
   <div id="paywallBlur" class="paywall-blur"></div>
   <div id="paywallOverlay" class="paywall-overlay" role="dialog" aria-modal="true" aria-label="Subscribe to read">
     <div class="paywall-box">
-      <h2 class="paywall-headline" style="font-weight: normal;">Try unlimited access</h2>
-      <h2 class="paywall-headline">Only $1.99 in your first month</h2>
-      <p class="paywall-sub">Then $39 per month. Full access to Africa's deal intelligence. Cancel anytime during your first month.</p>
+      <p id="paywallMeter" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-soft);margin-bottom:10px">5 free articles per month</p>
+      <h2 class="paywall-headline">Subscribe to read this article</h2>
+      <p class="paywall-sub">Join 48,000+ investors and executives across Africa who rely on AMI for premium financial intelligence.</p>
       <div class="paywall-cta" style="grid-template-columns:1fr">
-        <a <a href="https://buy.stripe.com/9B63co7hU1M69EN5D6aVa0i?prefilled_promo_code=FIRSTMONTH"
-          class="btn-stripe">Keep reading for $1.99</a>
+        <a href="https://buy.stripe.com/9B63co7hU1M69EN5D6aVa0i?prefilled_promo_code=FIRSTMONTH"
+          class="btn-stripe">Get unlimited access — $1.99 first month</a>
       </div>
-    <a href="index.html" style="text-decoration: none; color: #888; font-size: 1rem;">Return to homepage</a>
+      <button class="paywall-dismiss"
+        onclick="document.getElementById('paywallOverlay').style.display='none';document.getElementById('paywallBlur').style.display='none'">Maybe later</button>
     </div>
   </div>
 
