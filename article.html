@@ -3470,7 +3470,22 @@
       <div class="af-kicker">${a.section || ''} ${a.is_locked ? '<span class="af-tag">Premium</span>' : ''}</div>
       <h1 class="af-headline" id="articleHeadline" data-editable="text" data-cms-type="article" data-article-field="headline" data-article-id="${a.id}">${a.headline}</h1>
       ${a.standfirst ? `<p class="af-standfirst" id="articleStandfirst" data-editable="text" data-cms-type="article" data-article-field="standfirst" data-article-id="${a.id}">${a.standfirst}</p>` : ''}
+
       <div class="af-meta">
+        ${(a.author_name || a.author_photo) ? `
+          <div class="af-author">
+            ${a.author_photo
+              ? `<img src="${a.author_photo}" class="af-avatar" onerror="this.style.display='none'">`
+              : `<div class="af-avatar">${a.author_initials || '?'}</div>`
+            }
+            <div>
+              <div class="af-author-name">${a.author_name || ''}</div>
+              ${a.author_role
+                ? `<div style="font-size:10px;color:var(--text-soft);margin-top:2px">${a.author_role}</div>`
+                : ''
+              }
+            </div>
+          </div>` : ''}
         <span>${a.published_date || ''}</span>
         <span>${a.read_time || ''}</span>
         ${a.tags ? `<span>${a.tags}</span>` : ''}
