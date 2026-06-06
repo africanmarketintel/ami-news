@@ -3528,8 +3528,8 @@
         loadArticle().then(function () {
           // ... share bar code ...
           // CHANGE THIS:
-          var id = new URLSearchParams(window.location.search).get('id');
-          if (id) loadMoreArticles(id);
+          var artId = document.querySelector('[data-article-id]');
+          if (artId) loadMoreArticles(artId.getAttribute('data-article-id'));
         
         
         const avatar = a.author_photo
