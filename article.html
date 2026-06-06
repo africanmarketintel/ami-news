@@ -3486,9 +3486,10 @@
                 : ''
               }
             </div>
+            <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);margin-top:4px">${a.published_date || ''}${a.read_time ? ' · ' + a.read_time : ''}</div>  ← ADD
+
           </div>` : ''}
-        <span>${a.published_date || ''}</span>
-        <span>${a.read_time || ''}</span>
+      
         ${a.tags ? `<span>${a.tags}</span>` : ''}
       </div>
 
