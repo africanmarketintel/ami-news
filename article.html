@@ -3481,13 +3481,9 @@
             }
             <div>
               <div class="af-author-name">${a.author_name || ''}</div>
-              ${a.author_role
-                ? `<div style="font-size:10px;color:var(--text-soft);margin-top:2px">${a.author_role}</div>`
-                : ''
-              }
-            </div>
-            <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);margin-top:4px">${a.published_date || ''}${a.read_time ? ' · ' + a.read_time : ''}</div>  ← ADD
-
+              ${a.author_role ? `<div style="font-size:10px;color:var(--text-soft);margin-top:2px">${a.author_role}</div>` : ''}
+              <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);margin-top:4px">${a.published_date || ''}${a.read_time ? ' · ' + a.read_time : ''}</div>
+           </div>
           </div>` : ''}
       
         ${a.tags ? `<span>${a.tags}</span>` : ''}
