@@ -2,6 +2,9 @@ const { createClient } = require('@supabase/supabase-js')
 const fs = require('fs')
 const path = require('path')
 
+console.log('SUPABASE_URL:', process.env.SUPABASE_URL ? 'SET' : 'MISSING')
+console.log('SUPABASE_ANON:', process.env.SUPABASE_ANON ? 'SET' : 'MISSING')
+
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_ANON
