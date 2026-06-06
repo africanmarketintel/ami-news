@@ -40,7 +40,7 @@ function fetchJson(url, headers) {
 }
 
 async function fetchArticles() {
-  const url = `${SUPABASE_URL}/rest/v1/articles?select=id,headline,standfirst,hero_image,section,published_date,placement&order=published_date.desc&limit=1000`;
+  const url = `${SUPABASE_URL}/rest/v1/articles?select=id,slug,headline,standfirst,hero_image,section,published_date,placement&order=published_date.desc.nullslast`;
   const headers = {
     apikey: SUPABASE_ANON,
     Authorization: `Bearer ${SUPABASE_ANON}`,
