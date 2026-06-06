@@ -3654,7 +3654,7 @@
             <div style="flex:1;height:1px;background:var(--divider)"></div>
             <a href="index.html" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--terra);white-space:nowrap">View all →</a>
           </div>
-          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--divider);border:1px solid var(--divider)">
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--divider);border:1px solid var(--divider)">
             ${articles.map(a => `
               <div onclick="window.location.href='article.html?id=${a.id}'" style="background:var(--card-bg);cursor:pointer;overflow:hidden;transition:background .2s" onmouseover="this.style.background='var(--gold-pale)'" onmouseout="this.style.background='var(--card-bg)'">
                 ${a.hero_image ? `<img src="${a.hero_image}" alt="${a.headline}" style="width:100%;height:160px;object-fit:cover;display:block" onerror="this.style.display='none'">` : `<div style="width:100%;height:160px;background:linear-gradient(135deg,var(--ink-mid),var(--ink));opacity:.4"></div>`}
