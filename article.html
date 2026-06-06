@@ -3263,6 +3263,64 @@
       .masthead-cta   { grid-column: 1 !important; justify-self: center !important; }
     }
 
+        /* ── Floating share bar ──────────────────────────────── */
+    .ami-share-bar {
+      position: fixed;
+      left: calc((100vw - 760px) / 2 - 64px);
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 500;
+      display: none;
+      flex-direction: column;
+      border: 1px solid var(--divider);
+      border-top: 3px solid var(--gold);
+      background: var(--bg);
+    }
+    .ami-share-bar.visible { display: flex; }
+    .ami-share-bar-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 8px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      text-align: center;
+      padding: 7px 0 6px;
+      border-bottom: 1px solid var(--divider);
+    }
+    .ami-share-bar button, .ami-share-bar a {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      border-bottom: 1px solid var(--divider);
+      cursor: pointer;
+      color: var(--text);
+      text-decoration: none;
+      transition: background .15s, color .15s;
+    }
+    .ami-share-bar button:last-child { border-bottom: none; }
+    .ami-share-bar button:hover, .ami-share-bar a:hover {
+      background: var(--cream-dark);
+      color: var(--terra);
+    }
+    .ami-share-copy {
+      flex-direction: column;
+      height: 52px !important;
+      gap: 2px;
+    }
+    .ami-share-copy span {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+    @media(max-width: 1024px) { .ami-share-bar { display: none !important; } }
+
+    
+
   </style>
 </head>
 
