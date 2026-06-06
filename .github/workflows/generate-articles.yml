@@ -20,7 +20,7 @@ jobs:
       - run: node generate-articles.js
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_ANON: ${{ secrets.SUPABASE_ANON }}
 
       - name: Commit generated files
         run: |
