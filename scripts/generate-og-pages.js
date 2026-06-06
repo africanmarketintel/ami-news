@@ -6,6 +6,11 @@
  * meta tags so social media link previews work correctly, then immediately
  * redirects humans to the full article page at /article.html?id=<id>.
  *
+ * Also writes /articles/<slug>.html for each article — this is the URL that
+ * history.replaceState creates in article.html, and the URL users actually
+ * copy and share. Without this file WhatsApp's crawler fetches the slug URL
+ * and finds no pre-baked OG tags, so no image preview appears.
+ *
  * Run locally:
  *   SUPABASE_URL=https://xxx.supabase.co SUPABASE_ANON=your_key node scripts/generate-og-pages.js
  *
@@ -40,6 +45,7 @@ function fetchJson(url, headers) {
 }
 
 async function fetchArticles() {
+  // Added slug to the select list so we can write slug-based files
   const url = `${SUPABASE_URL}/rest/v1/articles?select=id,slug,headline,standfirst,hero_image,section,published_date,placement&order=published_date.desc.nullslast`;
   const headers = {
     apikey: SUPABASE_ANON,
@@ -134,12 +140,19 @@ async function main() {
   let updated = 0;
 
   for (const article of articles) {
-    const filePath = path.join(OUTPUT_DIR, `${article.id}.html`);
-    const html     = buildPage(article);
-    const existed  = fs.existsSync(filePath);
+    const html = buildPage(article);
 
-    fs.writeFileSync(filePath, html, 'utf8');
+    // Write ID-based file (canonical)
+    const idPath   = path.join(OUTPUT_DIR, `${article.id}.html`);
+    const existed  = fs.existsSync(idPath);
+    fs.writeFileSync(idPath, html, 'utf8');
     existed ? updated++ : created++;
+
+    // Write slug-based file — this is the URL history.replaceState sets in
+    // article.html, so it's what users copy and share. WhatsApp crawls it.
+    if (article.slug && article.slug !== String(article.id)) {
+      fs.writeFileSync(path.join(OUTPUT_DIR, `${article.slug}.html`), html, 'utf8');
+    }
   }
 
   console.log(`Done. Created: ${created}  Updated: ${updated}  Total: ${articles.length}`);
