@@ -3467,10 +3467,11 @@
           ? `<img src="${a.author_photo}" class="af-avatar" onerror="this.style.display='none'">`
           : `<div class="af-avatar">${(a.author_initials || '?')}</div>`;
         document.getElementById('articleFull').innerHTML = `
-      ${a.hero_image ? `<img src="${a.hero_image}" class="af-hero" alt="${a.headline}" id="articleHeroImg" data-editable="image" data-cms-type="article" data-article-field="hero_image" data-article-id="${a.id}" onerror="this.style.display='none'">` : ''}
       <div class="af-kicker">${a.section || ''} ${a.is_locked ? '<span class="af-tag">Premium</span>' : ''}</div>
       <h1 class="af-headline" id="articleHeadline" data-editable="text" data-cms-type="article" data-article-field="headline" data-article-id="${a.id}">${a.headline}</h1>
       ${a.standfirst ? `<p class="af-standfirst" id="articleStandfirst" data-editable="text" data-cms-type="article" data-article-field="standfirst" data-article-id="${a.id}">${a.standfirst}</p>` : ''}
+      ${a.hero_image ? `<img src="${a.hero_image}" class="af-hero" alt="${a.headline}" id="articleHeroImg" data-editable="image" data-cms-type="article" data-article-field="hero_image" data-article-id="${a.id}" onerror="this.style.display='none'">` : ''}
+      
 
       <div class="af-meta">
         ${(a.author_name || a.author_photo) ? `
