@@ -3,8 +3,8 @@ const fs = require('fs')
 const path = require('path')
 
 const supabase = createClient(
-  'YOUR_SUPABASE_URL',
-  'YOUR_SUPABASE_ANON_KEY'
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_ANON
 )
 
 async function generateArticlePages() {
