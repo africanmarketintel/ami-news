@@ -3496,11 +3496,17 @@
 
     async function loadArticle() {
       const params = new URLSearchParams(window.location.search);
-      const id = params.get('id');
-      if (!id) { document.getElementById('articleFull').innerHTML = '<p style="color:var(--text-soft);padding:24px;font-family:DM Mono,monospace">No article ID provided.</p>'; return; }
+      let id = params.get('id');
       if (SUPABASE_URL === 'YOUR_SUPABASE_URL') { document.getElementById('articleFull').innerHTML = '<p style="color:var(--text-soft);padding:24px;font-family:DM Mono,monospace">Configure Supabase credentials to view articles.</p>'; return; }
       try {
-        const rows = await db.query('articles', { select: '*', eq: { id } });
+        let rows;
+        if (id) {
+          rows = await db.query('articles', { select: '*', eq: { id } });
+        } else {
+          const urlSlug = window.location.pathname.split('/').pop().replace('.html', '');
+          rows = await db.query('articles', { select: '*', eq: { slug: urlSlug } });
+        }
+    
         if (!rows || !rows.length) { document.getElementById('articleFull').innerHTML = '<p style="color:var(--text-soft);padding:24px;font-family:DM Mono,monospace">Article not found.</p>'; return; }
         const a = rows[0];
 
@@ -3518,7 +3524,8 @@
         document.getElementById('twImage').setAttribute('content', ogImg);
         
         document.title = a.headline + ' | African Market Intelligence';
-        history.replaceState(null, '', '/articles/' + a.id + '.html');
+        const slug = a.headline.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        history.replaceState(null, '', '/articles/' + slug + '.html');
         
         const avatar = a.author_photo
           ? `<img src="${a.author_photo}" class="af-avatar" onerror="this.style.display='none'">`
