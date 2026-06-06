@@ -3525,7 +3525,12 @@
         
         document.title = a.headline + ' | African Market Intelligence';
         const slug = a.headline.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-        history.replaceState(null, '', '/articles/' + slug + '.html?id=' + a.id);
+        loadArticle().then(function () {
+          // ... share bar code ...
+          // CHANGE THIS:
+          var id = new URLSearchParams(window.location.search).get('id');
+          if (id) loadMoreArticles(id);
+        
         
         const avatar = a.author_photo
           ? `<img src="${a.author_photo}" class="af-avatar" onerror="this.style.display='none'">`
