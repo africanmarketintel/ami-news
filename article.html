@@ -4216,21 +4216,6 @@
         document.getElementById('sbTelegram').href = 'https://t.me/share/url?url=' + url + '&text=' + title;
         document.getElementById('sbX').href = 'https://x.com/intent/tweet?url=' + url + '&text=' + title;
       }
-  
-      // Show bar after user scrolls past the headline
-      window.addEventListener('scroll', function () {
-        if (!headline) headline = document.getElementById('articleHeadline');
-        if (!headline) return;
-        var rect = headline.getBoundingClientRect();
-        if (rect.bottom < 0) {
-          if (!bar.classList.contains('visible')) {
-            initShareBar();
-            bar.classList.add('visible');
-          }
-        } else {
-          bar.classList.remove('visible');
-        }
-      }, { passive: true });
     })();
   
     function amiShareCopy() {
