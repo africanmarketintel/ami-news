@@ -3648,30 +3648,26 @@
     }
     document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeShareModal(); });
 
-    async function loadMoreArticles(currentId) {       
+    async function loadMoreArticles(currentId) {
       try {
         const all = await db.query('articles', { select: '*', eq: { is_published: 'true' }, order: 'created_at.desc' });
-        const articles = all.filter(a => a.id !== currentId && a.placement !== 'archive').slice(0, 4);
+        const articles = all.filter(a => a.id !== currentId && a.placement !== 'archive').slice(0, 8);
         if (!articles.length) return;
         const section = document.createElement('div');
-        section.style.cssText = 'margin-top:56px;padding-top:32px;border-top:1px solid var(--divider)';
+        section.style.cssText = 'margin-top:56px;padding-top:32px;border-top:1px solid var(--divider);width:calc(100% + (100vw - 760px) * 0.25 + 24px);margin-right:calc(-1 * ((100vw - 760px) * 0.25 + 24px));';
         section.innerHTML = `
           <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px">
             <h2 style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;white-space:nowrap;color:var(--text)">More from AMI</h2>
             <div style="flex:1;height:1px;background:var(--divider)"></div>
             <a href="index.html" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--terra);white-space:nowrap">View all →</a>
           </div>
-          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--divider);border:1px solid var(--divider)">
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--divider);border:1px solid var(--divider)">
             ${articles.map(a => `
               <div onclick="window.location.href='article.html?id=${a.id}'" style="background:var(--card-bg);cursor:pointer;overflow:hidden;transition:background .2s" onmouseover="this.style.background='var(--gold-pale)'" onmouseout="this.style.background='var(--card-bg)'">
-                ${a.hero_image ? `<img src="${a.hero_image}" alt="${a.headline}" style="width:100%;height:160px;object-fit:cover;display:block" onerror="this.style.display='none'">` : `<div style="width:100%;height:160px;background:linear-gradient(135deg,var(--ink-mid),var(--ink));opacity:.4"></div>`}
-                <div style="padding:16px">
-                  <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:6px">${a.section || ''}</div>
-                  <h3 style="font-family:'Playfair Display',serif;font-size:16px;font-weight:600;line-height:1.35;color:var(--text);margin-bottom:8px">${a.headline}</h3>
-                  ${a.standfirst ? `<p style="font-size:13px;color:var(--text-soft);line-height:1.6;font-weight:300;margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${a.standfirst}</p>` : ''}
-                  <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);display:flex;justify-content:space-between">
-                    <span>${a.read_time || ''}</span><span>${a.published_date || ''}</span>
-                  </div>
+                ${a.hero_image ? `<img src="${a.hero_image}" alt="${a.headline}" style="width:100%;height:130px;object-fit:cover;display:block" onerror="this.style.display='none'">` : `<div style="width:100%;height:130px;background:linear-gradient(135deg,var(--ink-mid),var(--ink));opacity:.4"></div>`}
+                <div style="padding:12px 14px">
+                  <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--terra);margin-bottom:6px">${a.section || ''}</div>
+                  <h3 style="font-family:'Playfair Display',serif;font-size:14px;font-weight:600;line-height:1.3;color:var(--text)">${a.headline}</h3>
                 </div>
               </div>`).join('')}
           </div>`;
