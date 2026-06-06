@@ -3525,7 +3525,7 @@
         document.getElementById('twImage').setAttribute('content', ogImg);
         
         document.title = a.headline + ' | African Market Intelligence';
-        const slug = a.headline.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        const slug = a.slug || a.headline.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
         history.replaceState(null, '', '/articles/' + slug + '.html');
         
         const avatar = a.author_photo
