@@ -4267,6 +4267,26 @@
         setTimeout(function () { label.textContent = 'Copy'; btn.style.color = ''; }, 2000);
       });
     }
+
+    function positionShareBar() {
+      var bar = document.getElementById('amiShareBar');
+      var articleFull = document.getElementById('articleFull');
+      if (!bar || !articleFull) return;
+      var articleBottom = articleFull.getBoundingClientRect().bottom;
+      var barHeight = bar.offsetHeight;
+      var viewportHeight = window.innerHeight;
+      var idealTop = (viewportHeight - barHeight) / 2;
+      var maxTop = articleBottom - barHeight - 16;
+      if (idealTop > maxTop) {
+        bar.style.top = Math.max(maxTop, 0) + 'px';
+        bar.style.transform = 'none';
+      } else {
+        bar.style.top = '50%';
+        bar.style.transform = 'translateY(-50%)';
+      }
+    }
+    window.addEventListener('scroll', positionShareBar, { passive: true });
+    window.addEventListener('resize', positionShareBar, { passive: true });
   </script>
 
 </body>
