@@ -3592,7 +3592,21 @@
         document.getElementById('articleFull').innerHTML = `<p style="color:var(--text-soft);padding:24px;font-family:DM Mono,monospace">Error loading article: ${e.message}</p>`;
       }
     }
-    loadArticle().then(function () { if (typeof amiShowEditFab === 'function' && window._amiAdminAuthed) amiShowEditFab(); });
+        loadArticle().then(function () {
+      if (typeof amiShowEditFab === 'function' && window._amiAdminAuthed) amiShowEditFab();
+      var bar = document.getElementById('amiShareBar');
+      if (bar) {
+        var sbHeadline = document.getElementById('articleHeadline');
+        if (sbHeadline) {
+          document.getElementById('sbFacebook').href = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(window.location.origin + window.location.pathname);
+          document.getElementById('sbWhatsapp').href = 'https://wa.me/?text=' + encodeURIComponent(sbHeadline.textContent.trim()) + '%20' + encodeURIComponent(window.location.origin + window.location.pathname);
+          document.getElementById('sbLinkedin').href = 'https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(window.location.origin + window.location.pathname);
+          document.getElementById('sbTelegram').href = 'https://t.me/share/url?url=' + encodeURIComponent(window.location.origin + window.location.pathname) + '&text=' + encodeURIComponent(sbHeadline.textContent.trim());
+          document.getElementById('sbX').href = 'https://x.com/intent/tweet?url=' + encodeURIComponent(window.location.origin + window.location.pathname) + '&text=' + encodeURIComponent(sbHeadline.textContent.trim());
+        }
+        bar.classList.add('visible');
+      }
+    });
 
     function openShareModal() {
       const id = new URLSearchParams(window.location.search).get('id') || window.location.pathname.split('/').pop().replace('.html','');
