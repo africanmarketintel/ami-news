@@ -3613,8 +3613,8 @@
         }
         bar.classList.add('visible');
       }
-      var id = new URLSearchParams(window.location.search).get('id');
-      if (id) loadMoreArticles(id);
+      var artId = document.querySelector('[data-article-id]');
+      if (artId) loadMoreArticles(artId.getAttribute('data-article-id'));
     });
 
     function openShareModal() {
