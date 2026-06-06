@@ -3606,6 +3606,8 @@
         }
         bar.classList.add('visible');
       }
+      var id = new URLSearchParams(window.location.search).get('id');
+      if (id) loadMoreArticles(id);
     });
 
     function openShareModal() {
