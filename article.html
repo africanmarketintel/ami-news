@@ -4296,6 +4296,65 @@
     window.addEventListener('resize', positionShareBar, { passive: true });
   </script>
 
+    <!-- ═══ FIRST-VISIT LEAD GEN MODAL ══════════════════════════ -->
+  <div id="fvOverlay" class="fv-overlay" role="dialog" aria-modal="true" aria-label="Subscribe to AMI"
+    style="display:none">
+    <div class="fv-box">
+      <div class="fv-header">
+        <div class="fv-logo">African Market <span>Intelligence</span></div>
+        <div class="fv-tagline">Intelligence across African markets</div>
+      </div>
+      <div class="fv-body">
+        <p class="fv-desc">Markets move. Deals close. Governments shift. AMI tracks it all across Africa, delivered to
+          your inbox every week.</p>
+        <div class="fv-badge">The deal you miss could be the one that mattered.</div>
+        <div class="fv-form">
+          <input class="fv-input" type="email" id="fvEmailInput" placeholder="your@email.com" autocomplete="email"
+            aria-label="Your email address">
+          <button class="fv-btn" id="fvBtn" onclick="fvSubscribe()">Subscribe Free</button>
+        </div>
+        <p class="fv-terms">By subscribing you agree to AMI's Privacy Policy</a>.
+          You can unsubscribe at any time.</p>
+        
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      // Show modal on first visit only — skip for paid subscribers
+      if (!localStorage.getItem('amiVisited') && !localStorage.getItem('ami_subscriber')) {
+        setTimeout(function () { document.getElementById('fvOverlay').style.display = 'flex'; }, 800);
+      }
+    })();
+
+    function fvDismiss() {
+      localStorage.setItem('amiVisited', '1');
+      document.getElementById('fvOverlay').style.display = 'none';
+    }
+
+    async function fvSubscribe() {
+      const input = document.getElementById('fvEmailInput');
+      const btn = document.getElementById('fvBtn');
+      const email = input.value.trim();
+      if (!email) { input.focus(); return; }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { input.style.borderColor = '#B85C38'; input.focus(); return; }
+      btn.textContent = '…'; btn.disabled = true;
+      try {
+        await db.insert('subscribers', { email, source: 'first_visit_modal', subscribed_at: new Date().toISOString() }, true);
+        showToast('✓ Welcome to AMI! Check your inbox.');
+        fvDismiss();
+      } catch (e) {
+        btn.textContent = 'Subscribe Free'; btn.disabled = false;
+        if (e.message && e.message.includes('23505')) {
+          showToast('✓ You\'re already subscribed!'); fvDismiss();
+        } else {
+          showToast('✗ Could not subscribe: ' + e.message, 'error');
+        }
+      }
+    }
+  </script>
+
 </body>
 
 </html>
