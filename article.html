@@ -4569,6 +4569,16 @@
         }
       }
     }
+
+    function showToast(msg, type) {
+      var t = document.getElementById('toast');
+      t.textContent = msg;
+      t.style.background = type === 'error' ? '#3B0D0D' : '#0D3B1C';
+      t.style.borderColor = type === 'error' ? '#F44336' : '#2E9B5E';
+      t.style.color = type === 'error' ? '#F44336' : '#2E9B5E';
+      t.classList.add('show');
+      setTimeout(function () { t.classList.remove('show'); }, 3000);
+    }
   </script>
 
   <div class="toast" id="toast"></div>
