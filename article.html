@@ -3320,6 +3320,211 @@
     }
     @media(max-width: 1024px) { .ami-share-bar { display: none !important; } }
 
+
+      /* ── First-visit lead gen modal ──────────────────────────── */
+    .fv-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(6, 15, 9, .82);
+      z-index: 9000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      backdrop-filter: blur(3px)
+    }
+
+    .fv-box {
+      background: var(--cream, #FAF7F0);
+      max-width: 520px;
+      width: 100%;
+      border-top: 4px solid var(--gold, #C9A84C);
+      box-shadow: 0 24px 80px rgba(0, 0, 0, .4);
+      animation: fvIn .4s ease;
+      position: relative;
+      overflow: hidden
+    }
+
+    .fv-box::before {
+      content: '◆';
+      position: absolute;
+      top: -30px;
+      right: -10px;
+      font-size: 160px;
+      color: rgba(201, 168, 76, .06);
+      line-height: 1;
+      pointer-events: none
+    }
+
+    @keyframes fvIn {
+      from {
+        transform: translateY(24px);
+        opacity: 0
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1
+      }
+    }
+
+    .fv-header {
+      background: var(--nav-bg, #0A1A10);
+      padding: 28px 32px 22px;
+      text-align: center;
+      position: relative
+    }
+
+    .fv-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 800;
+      color: #EDE5D5;
+      letter-spacing: -.02em;
+      line-height: 1
+    }
+
+    .fv-logo span {
+      color: var(--gold, #C9A84C)
+    }
+
+    .fv-tagline {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: rgba(237, 229, 213, .5);
+      margin-top: 6px
+    }
+
+    .fv-body {
+      padding: 28px 32px
+    }
+
+    .fv-desc {
+      font-family: 'Spectral', Georgia, serif;
+      font-size: 15px;
+      line-height: 1.75;
+      color: #3D2B1F;
+      margin-bottom: 20px
+    }
+
+    .fv-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #0D3B1C;
+      color: #2E9B5E;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: .08em;
+      padding: 6px 14px;
+      margin-bottom: 24px
+    }
+
+    .fv-badge::before {
+      content: '●';
+      font-size: 8px
+    }
+
+    .fv-form {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px
+    }
+
+    .fv-input {
+      flex: 1;
+      background: #fff;
+      border: 1px solid #D4C4A0;
+      color: #1A1208;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      padding: 11px 14px;
+      outline: none;
+      min-width: 0
+    }
+
+    .fv-input:focus {
+      border-color: var(--gold, #C9A84C)
+    }
+
+    .fv-input::placeholder {
+      color: #999
+    }
+
+    .fv-btn {
+      background: var(--gold, #C9A84C);
+      color: #060F09;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 11px 20px;
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background .2s;
+      flex-shrink: 0
+    }
+
+    .fv-btn:hover {
+      background: #D4B86A
+    }
+
+    .fv-terms {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      color: #9A8070;
+      line-height: 1.6;
+      margin-bottom: 20px
+    }
+
+    .fv-terms a {
+      color: #9A8070;
+      text-decoration: underline
+    }
+
+    .fv-skip {
+      display: block;
+      text-align: center;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: #9A8070;
+      cursor: pointer;
+      padding: 4px;
+      transition: color .2s;
+      background: none;
+      border: none;
+      width: 100%
+    }
+
+    .fv-skip:hover {
+      color: var(--gold, #C9A84C)
+    }
+
+    @media(max-width:480px) {
+      .fv-form {
+        flex-direction: column
+      }
+
+      .fv-header {
+        padding: 22px 20px 18px
+      }
+
+      .fv-body {
+        padding: 22px 20px
+      }
+
+      .fv-logo {
+        font-size: 22px
+      }
+    }
+
+
     
 
   </style>
