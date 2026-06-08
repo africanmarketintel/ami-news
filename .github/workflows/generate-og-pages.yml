@@ -9,7 +9,7 @@ on:
 
 concurrency:
   group: generate-og-pages
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   generate:
@@ -33,7 +33,10 @@ jobs:
           SUPABASE_ANON: ${{ secrets.SUPABASE_ANON }}
 
       - name: Pull latest changes
-        run: git pull --rebase origin main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git pull origin main --rebase
 
       - name: Commit and push if changed
         uses: stefanzweifel/git-auto-commit-action@v5
