@@ -4570,7 +4570,7 @@
       }
     }
 
-    function showToast(msg, type) {
+    window.showToast = function(msg, type) {
       var t = document.getElementById('toast');
       t.textContent = msg;
       t.style.background = type === 'error' ? '#3B0D0D' : '#0D3B1C';
