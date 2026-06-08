@@ -7,6 +7,10 @@ on:
   push:
     branches: [main]       # also runs on every push to main
 
+concurrency:
+  group: generate-og-pages
+  cancel-in-progress: false
+
 jobs:
   generate:
     runs-on: ubuntu-latest
