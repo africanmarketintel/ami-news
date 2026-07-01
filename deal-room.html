@@ -365,7 +365,7 @@
     .btn-reg-back:hover{border-color:var(--gold);color:var(--gold)}
     .btn-reg-next{background:var(--gold);color:#060F09;font-family:'DM Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:10px 28px;border-radius:2px;border:none;cursor:pointer;transition:background .2s}
     .btn-reg-next:hover{background:var(--gold-light)}
-    .btn-reg-next:disabled{opacity:.4;cursor:not-allowed}
+    .btn-reg-next:disabled{opacity:1;cursor:pointer}
 
     /* ── FILE UPLOAD ─────────────────────────── */
     .file-drop{border:2px dashed var(--border);border-radius:2px;padding:32px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s}
@@ -1548,7 +1548,7 @@
     const footer=document.getElementById('regFooter');
     document.getElementById('regStepLabel').textContent='Step '+n+' of 4';
     backBtn.style.visibility=n>1&&n<4?'visible':'hidden';
-    if(n===3){ nextBtn.textContent='Pay £99 →'; nextBtn.disabled=false; }
+    if(n===3){ nextBtn.textContent='Pay £99 →'; nextBtn.disabled=false; nextBtn.onclick=function(){ regCurrentStep=3; regNext(); }; }
     else if(n===4){
       nextBtn.textContent='Download Certificate';
       nextBtn.disabled=false;
