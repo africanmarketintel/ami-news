@@ -1348,10 +1348,71 @@
   /* ════════════════════════════════════════════════
      DEAL SUBMISSION
   ════════════════════════════════════════════════ */
-  function submitDeal(e){
+  async function submitDeal(e){
     e.preventDefault();
-    document.getElementById('dealSubmitForm').style.display='none';
-    document.getElementById('submitSuccess').style.display='block';
+    const btn=e.target.querySelector('[type="submit"]');
+    btn.disabled=true;
+    btn.textContent='Submitting…';
+
+    try {
+      // 1 — Upload documents to Supabase Storage
+      const docPaths=[];
+      for(const file of uploadedFiles){
+        const safeName=Date.now()+'-'+file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+        const res=await fetch(SUPABASE_URL+'/storage/v1/object/deal-documents/'+safeName,{
+          method:'POST',
+          headers:{
+            'apikey':SUPABASE_ANON,
+            'Authorization':'Bearer '+SUPABASE_ANON,
+            'Content-Type':file.type||'application/octet-stream',
+            'x-upsert':'false'
+          },
+          body:file
+        });
+        if(res.ok){
+          docPaths.push('deal-documents/'+safeName);
+        } else {
+          console.warn('File upload failed:',file.name,await res.text());
+        }
+      }
+
+      // 2 — Submit form data to deal_submissions table
+      const data={
+        deal_type:     document.getElementById('dealType').value,
+        sector:        document.getElementById('dealSector').value,
+        region:        document.getElementById('dealRegion').value,
+        capital_range: document.getElementById('dealSize').value,
+        summary:       document.getElementById('dealSummary').value,
+        organisation:  document.getElementById('submitterOrg').value,
+        contact_name:  document.getElementById('submitterName').value,
+        contact_role:  document.getElementById('submitterRole').value,
+        contact_email: document.getElementById('submitterEmail').value,
+        document_paths: docPaths
+      };
+
+      const res=await fetch(SUPABASE_URL+'/rest/v1/deal_submissions',{
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json',
+          'apikey':SUPABASE_ANON,
+          'Authorization':'Bearer '+SUPABASE_ANON,
+          'Prefer':'return=minimal'
+        },
+        body:JSON.stringify(data)
+      });
+
+      if(!res.ok) throw new Error(await res.text());
+
+      // 3 — Show success
+      document.getElementById('dealSubmitForm').style.display='none';
+      document.getElementById('submitSuccess').style.display='block';
+
+    } catch(err){
+      console.error('Submission error:',err);
+      btn.disabled=false;
+      btn.textContent='Submit for Review →';
+      alert('There was a problem submitting your opportunity. Please try again or contact ABTA directly.');
+    }
   }
 
   /* ════════════════════════════════════════════════
