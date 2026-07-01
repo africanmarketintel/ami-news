@@ -1121,7 +1121,7 @@
       <p class="stripe-notice">Payment is processed securely via Stripe. ABTA does not store your card details. Your membership activates immediately on receipt of cleared payment.</p>
       <div class="form-group">
         <div class="checkbox-group">
-          <input type="checkbox" id="paymentConfirm" onchange="document.getElementById('btnPay').disabled=!this.checked">
+          <input type="checkbox" id="paymentConfirm">
           <label class="checkbox-label" for="paymentConfirm">I confirm that I have read and accepted the Non-Disclosure Agreement, Platform Membership Agreement and Fee Schedule, and I authorise the payment of £99 for annual Deal Room membership.</label>
         </div>
       </div>
@@ -1548,7 +1548,7 @@
     const footer=document.getElementById('regFooter');
     document.getElementById('regStepLabel').textContent='Step '+n+' of 4';
     backBtn.style.visibility=n>1&&n<4?'visible':'hidden';
-    if(n===3){ nextBtn.textContent='Pay £99 →'; nextBtn.disabled=true; }
+    if(n===3){ nextBtn.textContent='Pay £99 →'; nextBtn.disabled=false; }
     else if(n===4){
       nextBtn.textContent='Download Certificate';
       nextBtn.disabled=false;
@@ -1570,7 +1570,11 @@
       }
       regCurrentStep=3; showRegStep(3);
     } else if(regCurrentStep===3){
-      if(!document.getElementById('paymentConfirm').checked){ alert('Please confirm the payment authorisation to proceed.'); return; }
+      if(!document.getElementById('paymentConfirm').checked){
+        document.getElementById('paymentConfirm').focus();
+        alert('Please tick the confirmation checkbox to authorise payment.');
+        return;
+      }
       processPayment();
     }
   }
