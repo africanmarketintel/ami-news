@@ -428,16 +428,8 @@
   </div>
   <div class="nav-right">
     <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">◑</button>
-    <!-- Member nav — shown when logged in -->
-    <div id="navMemberArea" style="display:none;align-items:center;gap:10px">
-      <span id="navMemberName" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;color:var(--gold)"></span>
-      <button onclick="signOut()" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:6px 12px;border:1px solid rgba(255,255,255,.2);border-radius:2px;color:var(--nav-text);background:none;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='rgba(255,255,255,.2)';this.style.color='var(--nav-text)'">Sign out</button>
-    </div>
-    <!-- Non-member nav -->
-    <div id="navGuestArea" style="display:none;align-items:center;gap:10px">
-      <button onclick="openRegistration('signin')" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:6px 12px;border:1px solid rgba(255,255,255,.2);border-radius:2px;color:var(--nav-text);background:none;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='rgba(255,255,255,.2)';this.style.color='var(--nav-text)'">Sign in</button>
-      <a href="membership.html" id="navSubscribeBtn" class="btn-subscribe">Join Deal Room</a>
-    </div>
+    <!-- login.js injects the Login / Account button here via navSubscribeBtn -->
+    <a href="membership.html" id="navSubscribeBtn" class="btn-subscribe">Login</a>
   </div>
 </nav>
 
@@ -508,6 +500,12 @@
           <button class="btn-banner-join" onclick="openRegistration()">Join Deal Room — £99/yr</button>
           <button class="btn-banner-signin" onclick="openRegistration('signin')">Sign in</button>
         </div>
+      </div>
+
+      <!-- Deal Room member bar — shown when dr_member is active -->
+      <div id="drMemberBar" style="display:none;align-items:center;justify-content:space-between;padding:8px 16px;background:rgba(30,107,60,.08);border:1px solid rgba(30,107,60,.2);border-radius:3px;margin-bottom:16px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.07em;text-transform:uppercase">
+        <span style="color:var(--green,#1E6B3C)">&#10003; Deal Room member — <span id="drBarName"></span></span>
+        <button onclick="signOut()" style="background:none;border:none;cursor:pointer;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--text-muted,#888);text-decoration:underline;padding:0">Sign out</button>
       </div>
 
       <!-- Filter bar -->
@@ -1365,25 +1363,25 @@
     const banner=document.getElementById('memberBanner');
     const submitGate=document.getElementById('submitGate');
     const submitForm=document.getElementById('submitForm');
-    const memberArea=document.getElementById('navMemberArea');
-    const guestArea=document.getElementById('navGuestArea');
+    const drBar=document.getElementById('drMemberBar');
 
     if(isDrMember()){
       if(banner) banner.style.display='none';
       if(submitGate) submitGate.style.display='none';
       if(submitForm) submitForm.style.display='block';
-      if(memberArea){ memberArea.style.display='flex'; }
-      if(guestArea){ guestArea.style.display='none'; }
-      const nameEl=document.getElementById('navMemberName');
-      if(nameEl){ const n=localStorage.getItem('dr_name'); if(n) nameEl.textContent=n; }
+      if(drBar){
+        const n=localStorage.getItem('dr_name');
+        const barName=document.getElementById('drBarName');
+        if(barName && n) barName.textContent=n;
+        drBar.style.display='flex';
+      }
       injectCounterpartyData();
       restoreBookmarks();
     } else {
       if(banner) banner.style.display='flex';
       if(submitGate) submitGate.style.display='block';
       if(submitForm) submitForm.style.display='none';
-      if(memberArea){ memberArea.style.display='none'; }
-      if(guestArea){ guestArea.style.display='flex'; }
+      if(drBar) drBar.style.display='none';
     }
   }
 
@@ -1664,8 +1662,11 @@
       document.getElementById('regStepLabel').textContent = '';
       document.getElementById('signinError').style.display = 'none';
       document.getElementById('signinAmiPrompt').style.display = 'none';
-      // Pre-populate email if we have a stored Deal Room email
-      const storedDrEmail = localStorage.getItem('dr_email');
+      // Pre-populate email: Deal Room email > AMI session email > ami_email fallback
+      const storedDrEmail = localStorage.getItem('dr_email')
+        || localStorage.getItem('ami_user_email')
+        || localStorage.getItem('ami_email')
+        || '';
       if(storedDrEmail) document.getElementById('signinEmail').value = storedDrEmail;
       setTimeout(()=>document.getElementById('signinEmail').focus(), 100);
 
@@ -1674,8 +1675,8 @@
       document.getElementById('upgradeBanner').style.display = 'block';
       document.getElementById('regTitle').textContent = 'Create your Deal Room account';
       document.getElementById('regSubTitle').textContent = 'Complete your details below. ABTA will verify your AMI subscription status before activating Deal Room access.';
-      // Pre-fill email from AMI storage or sign-in field
-      const amiEmail = localStorage.getItem('ami_email') || document.getElementById('signinEmail').value || '';
+      // Pre-fill email: AMI session (login.js) > ami_email fallback > sign-in field
+      const amiEmail = localStorage.getItem('ami_user_email') || localStorage.getItem('ami_email') || document.getElementById('signinEmail').value || '';
       if(amiEmail) document.getElementById('regEmail').value = amiEmail;
       document.getElementById('regProgressTabs').style.display = 'flex';
       regCurrentStep = 1; showRegStep(1);
@@ -1724,8 +1725,20 @@
       return;
     }
 
-    // Check Supabase for paid AMI subscription
-    const isAmiSub = await checkAmiSubscriber(email);
+    // Check if AMI session already exists for this email (login.js token)
+    const amiSessionEmail = (localStorage.getItem('ami_user_email') || '').toLowerCase();
+    const amiToken = localStorage.getItem('ami_auth_token');
+    const amiExpiry = parseInt(localStorage.getItem('ami_token_expires') || '0');
+    const isAmiLoggedIn = !!(amiToken && amiSessionEmail && amiExpiry > Date.now());
+
+    let isAmiSub = false;
+    if(isAmiLoggedIn && amiSessionEmail === email){
+      // Already authenticated via AMI — skip Supabase check
+      isAmiSub = true;
+    } else {
+      // Check Supabase subscribers table
+      isAmiSub = await checkAmiSubscriber(email);
+    }
 
     nextBtn.textContent = 'Sign in →';
     nextBtn.disabled = false;
