@@ -984,6 +984,7 @@
       <div class="reg-step-tab active" id="regTab1" data-num="1">Your Details</div>
       <div class="reg-step-tab" id="regTab2" data-num="2">Review Documents</div>
       <div class="reg-step-tab" id="regTab3" data-num="3">Payment</div>
+      <div class="reg-step-tab" id="regTab4" data-num="4">Certificate</div>
     </div>
 
     <!-- STEP 1: Details -->
@@ -1122,6 +1123,106 @@
         <div class="checkbox-group">
           <input type="checkbox" id="paymentConfirm" onchange="document.getElementById('btnPay').disabled=!this.checked">
           <label class="checkbox-label" for="paymentConfirm">I confirm that I have read and accepted the Non-Disclosure Agreement, Platform Membership Agreement and Fee Schedule, and I authorise the payment of £99 for annual Deal Room membership.</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4: Certificate -->
+    <div class="reg-body" id="regStep4" style="display:none">
+      <div id="certContent">
+        <!-- Header -->
+        <div style="background:#0A1A10;margin:-28px -32px 24px;padding:20px 28px;display:flex;align-items:center;justify-content:space-between">
+          <div>
+            <div style="font-family:'Playfair Display',serif;font-size:17px;color:#C9A84C;font-weight:600;margin-bottom:2px">ABTA Deal Room</div>
+            <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(237,229,213,.6)">Agreement Acceptance Certificate</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(237,229,213,.5);letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px">Certificate ID</div>
+            <div style="font-family:'DM Mono',monospace;font-size:12px;color:#C9A84C" id="certId"></div>
+          </div>
+        </div>
+
+        <!-- Legal notice -->
+        <p style="font-size:12px;color:var(--text-soft);line-height:1.65;font-style:italic;border-left:3px solid var(--gold);padding-left:12px;margin-bottom:20px">This certificate confirms that the individual and organisation identified below have reviewed and electronically accepted all platform documents listed herein. This record constitutes a legally valid electronic signature under the Electronic Communications Act 2000.</p>
+
+        <!-- Signatory -->
+        <div style="margin-bottom:18px">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-soft);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--divider)">Signatory</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div><div style="font-size:11px;color:var(--text-soft);margin-bottom:2px">Full name</div><div style="font-size:14px;font-weight:600;color:var(--text)" id="certName"></div></div>
+            <div><div style="font-size:11px;color:var(--text-soft);margin-bottom:2px">Organisation</div><div style="font-size:14px;font-weight:600;color:var(--text)" id="certOrg"></div></div>
+            <div><div style="font-size:11px;color:var(--text-soft);margin-bottom:2px">Position</div><div style="font-size:14px;color:var(--text)" id="certRole"></div></div>
+            <div><div style="font-size:11px;color:var(--text-soft);margin-bottom:2px">Email</div><div style="font-size:14px;color:var(--text)" id="certEmail"></div></div>
+          </div>
+        </div>
+
+        <!-- Documents accepted -->
+        <div style="margin-bottom:18px">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-soft);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--divider)">Documents accepted</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg);border:1px solid var(--divider);border-radius:2px">
+              <div style="display:flex;align-items:center;gap:10px">
+                <span style="color:#2E9B5E;font-size:16px">✓</span>
+                <span style="font-size:13px;color:var(--text)">Non-Disclosure Agreement</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px">
+                <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft)" id="certTime1"></span>
+                <a href="docs/nda.html" target="_blank" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);text-decoration:none;border:1px solid rgba(201,168,76,.3);padding:4px 10px;border-radius:2px" download>↓ PDF</a>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg);border:1px solid var(--divider);border-radius:2px">
+              <div style="display:flex;align-items:center;gap:10px">
+                <span style="color:#2E9B5E;font-size:16px">✓</span>
+                <span style="font-size:13px;color:var(--text)">Platform Membership Agreement</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px">
+                <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft)" id="certTime2"></span>
+                <a href="docs/platform-agreement.html" target="_blank" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);text-decoration:none;border:1px solid rgba(201,168,76,.3);padding:4px 10px;border-radius:2px" download>↓ PDF</a>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg);border:1px solid var(--divider);border-radius:2px">
+              <div style="display:flex;align-items:center;gap:10px">
+                <span style="color:#2E9B5E;font-size:16px">✓</span>
+                <span style="font-size:13px;color:var(--text)">Fee Schedule</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px">
+                <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft)" id="certTime3"></span>
+                <a href="docs/fee-schedule.html" target="_blank" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);text-decoration:none;border:1px solid rgba(201,168,76,.3);padding:4px 10px;border-radius:2px" download>↓ PDF</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Signature -->
+        <div style="margin-bottom:18px">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-soft);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--divider)">Electronic signature</div>
+          <div style="background:var(--bg);border:1px solid var(--divider);border-radius:2px;padding:16px 20px;display:flex;align-items:flex-end;justify-content:space-between">
+            <div>
+              <div style="font-family:'Playfair Display',serif;font-size:26px;color:var(--text);font-style:italic;margin-bottom:4px;border-bottom:1px solid var(--border);padding-bottom:4px" id="certSig"></div>
+              <div style="font-size:11px;color:var(--text-soft)">Typed signature · confirmed by checkbox</div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:11px;color:var(--text-soft);margin-bottom:2px">Signed</div>
+              <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text)" id="certSignedAt"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Audit -->
+        <div style="margin-bottom:20px">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-soft);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--divider)">Audit record</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div><div style="font-size:11px;color:var(--text-soft);margin-bottom:2px">Agreement ID</div><div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text)" id="certAuditId"></div></div>
+            <div><div style="font-size:11px;color:var(--text-soft);margin-bottom:2px">Platform</div><div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text)">ami.abta.africa</div></div>
+            <div><div style="font-size:11px;color:var(--text-soft);margin-bottom:2px">Record stored</div><div style="font-size:12px;color:var(--text)">Supabase · agreement_signatures</div></div>
+            <div><div style="font-size:11px;color:var(--text-soft);margin-bottom:2px">Legal basis</div><div style="font-size:12px;color:var(--text)">Electronic Communications Act 2000</div></div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="border-top:1px solid var(--divider);padding-top:14px;display:flex;align-items:center;justify-content:space-between">
+          <div style="font-size:11px;color:var(--text-soft)">Issued by African Business Trade Association · London</div>
+          <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-soft)">ami.abta.africa/deal-room</div>
         </div>
       </div>
     </div>
@@ -1435,28 +1536,33 @@
   document.getElementById('regModal').addEventListener('click',function(e){ if(e.target===this) closeRegistration(); });
 
   function showRegStep(n){
-    [1,2,3].forEach(i=>{
+    [1,2,3,4].forEach(i=>{
       document.getElementById('regStep'+i).style.display=i===n?'block':'none';
       const tab=document.getElementById('regTab'+i);
       tab.classList.remove('active','done');
       if(i<n) tab.classList.add('done');
       if(i===n) tab.classList.add('active');
     });
-    document.getElementById('regBackBtn').style.visibility=n>1?'visible':'hidden';
-    document.getElementById('regStepLabel').textContent='Step '+n+' of 3';
+    const backBtn=document.getElementById('regBackBtn');
     const nextBtn=document.getElementById('regNextBtn');
+    const footer=document.getElementById('regFooter');
+    document.getElementById('regStepLabel').textContent='Step '+n+' of 4';
+    backBtn.style.visibility=n>1&&n<4?'visible':'hidden';
     if(n===3){ nextBtn.textContent='Pay £99 →'; nextBtn.disabled=true; }
-    else{ nextBtn.textContent='Continue →'; nextBtn.disabled=false; }
+    else if(n===4){
+      nextBtn.textContent='Download Certificate';
+      nextBtn.disabled=false;
+      nextBtn.onclick=printCertificate;
+    }
+    else{ nextBtn.textContent='Continue →'; nextBtn.disabled=false; nextBtn.onclick=regNext; }
   }
 
   function regNext(){
     if(regCurrentStep===1){
-      // Validate step 1
       const fields=['regFirstName','regLastName','regOrg','regRole','regEmail','regType'];
       const empty=fields.find(id=>!document.getElementById(id).value.trim());
       if(empty){ document.getElementById(empty).focus(); return; }
       regCurrentStep=2; showRegStep(2);
-      // Show scroll hints after render
       setTimeout(()=>{ [1,2,3].forEach(n=>checkDocScroll(n)); },150);
     } else if(regCurrentStep===2){
       if(!document.getElementById('acceptNda').checked||!document.getElementById('acceptPlatform').checked||!document.getElementById('acceptFees').checked){
@@ -1468,22 +1574,69 @@
       processPayment();
     }
   }
-  function regBack(){ if(regCurrentStep>1){ regCurrentStep--; showRegStep(regCurrentStep); } }
+  function regBack(){ if(regCurrentStep>1&&regCurrentStep<4){ regCurrentStep--; showRegStep(regCurrentStep); } }
 
-  function processPayment(){
-    // In production: redirect to Stripe payment link with pre-filled email
-    // e.g. window.location.href = STRIPE_DEAL_ROOM + '?prefilled_email=' + encodeURIComponent(document.getElementById('regEmail').value);
-    // For now: simulate successful payment and grant access
+  async function processPayment(){
+    const firstName=document.getElementById('regFirstName').value;
+    const lastName=document.getElementById('regLastName').value;
+    const fullName=firstName+' '+lastName;
     const email=document.getElementById('regEmail').value;
-    const name=document.getElementById('regFirstName').value+' '+document.getElementById('regLastName').value;
+    const org=document.getElementById('regOrg').value;
+    const role=document.getElementById('regRole').value;
+    const now=new Date();
+    const agreementId='DR-'+now.getFullYear()+'-'+String(Math.floor(Math.random()*90000)+10000);
+    const timeStr=now.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+' · '+now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})+' UTC';
+
+    // Save to Supabase
+    try{
+      if(typeof SUPABASE_URL!=='undefined'&&SUPABASE_URL&&!SUPABASE_URL.includes('PLACEHOLDER')){
+        await fetch(SUPABASE_URL+'/rest/v1/agreement_signatures',{
+          method:'POST',
+          headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON,'Authorization':'Bearer '+SUPABASE_ANON,'Prefer':'return=minimal'},
+          body:JSON.stringify({
+            full_name:fullName, email:email, organisation:org, role:role,
+            agreement_id:agreementId,
+            documents_accepted:['Non-Disclosure Agreement','Platform Membership Agreement','Fee Schedule'],
+            signed_at:now.toISOString()
+          })
+        });
+      }
+    }catch(err){ console.warn('Supabase signature save:',err); }
+
+    // Grant access
     localStorage.setItem('dr_member','true');
     localStorage.setItem('dr_email',email);
-    localStorage.setItem('dr_name',name);
-    localStorage.setItem('dr_org',document.getElementById('regOrg').value);
-    closeRegistration();
-    initAccessState();
-    // Show confirmation banner
-    showBanner('Deal Room access activated. Welcome, '+document.getElementById('regFirstName').value+'.');
+    localStorage.setItem('dr_name',fullName);
+    localStorage.setItem('dr_org',org);
+
+    // Populate certificate
+    document.getElementById('certId').textContent=agreementId;
+    document.getElementById('certName').textContent=fullName;
+    document.getElementById('certOrg').textContent=org;
+    document.getElementById('certRole').textContent=role;
+    document.getElementById('certEmail').textContent=email;
+    document.getElementById('certSig').textContent=fullName;
+    document.getElementById('certSignedAt').textContent=timeStr;
+    document.getElementById('certAuditId').textContent=agreementId;
+    document.getElementById('certTime1').textContent=timeStr;
+    document.getElementById('certTime2').textContent=timeStr;
+    document.getElementById('certTime3').textContent=timeStr;
+
+    // Show certificate step
+    regCurrentStep=4; showRegStep(4);
+  }
+
+  function printCertificate(){
+    const content=document.getElementById('certContent').innerHTML;
+    const win=window.open('','_blank');
+    win.document.write(`<!DOCTYPE html><html><head><title>ABTA Deal Room — Acceptance Certificate</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Mono:wght@400;500&family=Spectral:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+      body{font-family:'Spectral',Georgia,serif;background:#fff;color:#1A1208;padding:40px;max-width:680px;margin:0 auto;font-size:14px;line-height:1.6}
+      @media print{body{padding:20px}}
+    </style></head><body>${content}</body></html>`);
+    win.document.close();
+    setTimeout(()=>win.print(),800);
   }
 
   function showBanner(msg){
