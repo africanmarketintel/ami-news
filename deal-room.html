@@ -417,7 +417,16 @@
   </div>
   <div class="nav-right">
     <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">◑</button>
-    <a href="membership.html" id="navSubscribeBtn" class="btn-subscribe">Membership</a>
+    <!-- Member nav — shown when logged in -->
+    <div id="navMemberArea" style="display:none;align-items:center;gap:10px">
+      <span id="navMemberName" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;color:var(--gold)"></span>
+      <button onclick="signOut()" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:6px 12px;border:1px solid rgba(255,255,255,.2);border-radius:2px;color:var(--nav-text);background:none;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='rgba(255,255,255,.2)';this.style.color='var(--nav-text)'">Sign out</button>
+    </div>
+    <!-- Non-member nav -->
+    <div id="navGuestArea" style="display:none;align-items:center;gap:10px">
+      <button onclick="openRegistration('signin')" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:6px 12px;border:1px solid rgba(255,255,255,.2);border-radius:2px;color:var(--nav-text);background:none;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='rgba(255,255,255,.2)';this.style.color='var(--nav-text)'">Sign in</button>
+      <a href="membership.html" id="navSubscribeBtn" class="btn-subscribe">Join Deal Room</a>
+    </div>
   </div>
 </nav>
 
@@ -525,18 +534,8 @@
             <div class="attr-item"><div class="attr-label">Stage</div><div class="attr-value">Operational</div></div>
             <div class="attr-item"><div class="attr-label">Instrument</div><div class="attr-value">Equity</div></div>
           </div>
-          <!-- Revealed data (Deal Room members only) -->
-          <div class="revealed-data" id="revealed-001">
-            <div class="revealed-title">Counterparty information — Deal Room members only</div>
-            <div class="revealed-grid">
-              <div class="revealed-item"><div class="revealed-label">Company</div><div class="revealed-value">Meridian Power East Africa Ltd</div></div>
-              <div class="revealed-item"><div class="revealed-label">Jurisdiction</div><div class="revealed-value">Kenya / Tanzania</div></div>
-              <div class="revealed-item"><div class="revealed-label">Lead Contact</div><div class="revealed-value">James Ochieng, CEO</div></div>
-              <div class="revealed-item"><div class="revealed-label">Email</div><div class="revealed-value"><a href="mailto:j.ochieng@meridianpower.co.ke">j.ochieng@meridianpower.co.ke</a></div></div>
-              <div class="revealed-item"><div class="revealed-label">EBITDA (FY2025)</div><div class="revealed-value">USD 8.4m</div></div>
-              <div class="revealed-item"><div class="revealed-label">Adviser</div><div class="revealed-value">Standard Bank Advisory, Nairobi</div></div>
-            </div>
-          </div>
+          <!-- Revealed data (Deal Room members only — populated by JS) -->
+          <div class="revealed-data" id="revealed-001"></div>
           <div class="teaser-highlights">
             <div class="teaser-highlights-title">Investment Highlights</div>
             <ul class="highlight-list">
@@ -577,17 +576,8 @@
             <div class="attr-item"><div class="attr-label">Stage</div><div class="attr-value">Advanced</div></div>
             <div class="attr-item"><div class="attr-label">Licence Status</div><div class="attr-value">Licensed</div></div>
           </div>
-          <div class="revealed-data" id="revealed-002">
-            <div class="revealed-title">Counterparty information — Deal Room members only</div>
-            <div class="revealed-grid">
-              <div class="revealed-item"><div class="revealed-label">Vendor</div><div class="revealed-value">Hartwell Financial Group plc</div></div>
-              <div class="revealed-item"><div class="revealed-label">Asset</div><div class="revealed-value">Hartwell Crédit Côte d'Ivoire &amp; Sénégal</div></div>
-              <div class="revealed-item"><div class="revealed-label">Lead Contact</div><div class="revealed-value">Claire Beaumont, CFO</div></div>
-              <div class="revealed-item"><div class="revealed-label">Email</div><div class="revealed-value"><a href="mailto:c.beaumont@hartwellfinancial.com">c.beaumont@hartwellfinancial.com</a></div></div>
-              <div class="revealed-item"><div class="revealed-label">Loan Book (gross)</div><div class="revealed-value">USD 14.2m</div></div>
-              <div class="revealed-item"><div class="revealed-label">Adviser</div><div class="revealed-value">Rothschild &amp; Co, London</div></div>
-            </div>
-          </div>
+          <!-- Revealed data (Deal Room members only — populated by JS) -->
+          <div class="revealed-data" id="revealed-002"></div>
           <div class="teaser-highlights">
             <div class="teaser-highlights-title">Transaction Highlights</div>
             <ul class="highlight-list">
@@ -630,17 +620,8 @@
               <li>Experienced developer with completed assets in the region</li>
             </ul>
           </div>
-          <div class="revealed-data" id="revealed-003">
-            <div class="revealed-title">Counterparty information — Deal Room members only</div>
-            <div class="revealed-grid">
-              <div class="revealed-item"><div class="revealed-label">Developer</div><div class="revealed-value">Atlas Logistics Development SA</div></div>
-              <div class="revealed-item"><div class="revealed-label">Jurisdiction</div><div class="revealed-value">Morocco</div></div>
-              <div class="revealed-item"><div class="revealed-label">Lead Contact</div><div class="revealed-value">Karim Benali, CFO</div></div>
-              <div class="revealed-item"><div class="revealed-label">Email</div><div class="revealed-value"><a href="mailto:k.benali@atlaslogistics.ma">k.benali@atlaslogistics.ma</a></div></div>
-              <div class="revealed-item"><div class="revealed-label">Senior Debt (DFI)</div><div class="revealed-value">USD 80m (committed)</div></div>
-              <div class="revealed-item"><div class="revealed-label">Adviser</div><div class="revealed-value">Société Générale CIB, Casablanca</div></div>
-            </div>
-          </div>
+          <!-- Revealed data (Deal Room members only — populated by JS) -->
+          <div class="revealed-data" id="revealed-003"></div>
           <div class="teaser-footer">
             <span class="teaser-date">Published: 3 June 2026 · Ref: ABTA-2026-003</span>
             <div class="teaser-actions">
@@ -1167,7 +1148,7 @@
               </div>
               <div style="display:flex;align-items:center;gap:12px">
                 <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft)" id="certTime1"></span>
-                <a href="docs/nda.html" target="_blank" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);text-decoration:none;border:1px solid rgba(201,168,76,.3);padding:4px 10px;border-radius:2px" download>↓ PDF</a>
+                <a href="docs/nda.html" target="_blank" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);text-decoration:none;border:1px solid rgba(201,168,76,.3);padding:4px 10px;border-radius:2px">↓ Download PDF</a>
               </div>
             </div>
             <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg);border:1px solid var(--divider);border-radius:2px">
@@ -1177,7 +1158,7 @@
               </div>
               <div style="display:flex;align-items:center;gap:12px">
                 <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft)" id="certTime2"></span>
-                <a href="docs/platform-agreement.html" target="_blank" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);text-decoration:none;border:1px solid rgba(201,168,76,.3);padding:4px 10px;border-radius:2px" download>↓ PDF</a>
+                <a href="docs/platform-agreement.html" target="_blank" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);text-decoration:none;border:1px solid rgba(201,168,76,.3);padding:4px 10px;border-radius:2px">↓ Download PDF</a>
               </div>
             </div>
             <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg);border:1px solid var(--divider);border-radius:2px">
@@ -1187,7 +1168,7 @@
               </div>
               <div style="display:flex;align-items:center;gap:12px">
                 <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft)" id="certTime3"></span>
-                <a href="docs/fee-schedule.html" target="_blank" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);text-decoration:none;border:1px solid rgba(201,168,76,.3);padding:4px 10px;border-radius:2px" download>↓ PDF</a>
+                <a href="docs/fee-schedule.html" target="_blank" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);text-decoration:none;border:1px solid rgba(201,168,76,.3);padding:4px 10px;border-radius:2px">↓ Download PDF</a>
               </div>
             </div>
           </div>
@@ -1277,21 +1258,77 @@
   function isDrMember(){ return localStorage.getItem('dr_member')==='true'; }
   function isAmiOnly(){ return localStorage.getItem('ami_subscriber')==='true' && !isDrMember(); }
 
+  /* ════════════════════════════════════════════════
+     COUNTERPARTY DATA — only injected for members
+     Not present in HTML source for non-members
+  ════════════════════════════════════════════════ */
+  const COUNTERPARTY = {
+    '001': [
+      ['Company','Meridian Power East Africa Ltd'],
+      ['Jurisdiction','Kenya / Tanzania'],
+      ['Lead Contact','James Ochieng, CEO'],
+      ['Email','<a href="mailto:j.ochieng@meridianpower.co.ke">j.ochieng@meridianpower.co.ke</a>'],
+      ['EBITDA (FY2025)','USD 8.4m'],
+      ['Adviser','Standard Bank Advisory, Nairobi']
+    ],
+    '002': [
+      ['Vendor','Hartwell Financial Group plc'],
+      ['Asset','Hartwell Crédit Côte d\'Ivoire &amp; Sénégal'],
+      ['Lead Contact','Claire Beaumont, CFO'],
+      ['Email','<a href="mailto:c.beaumont@hartwellfinancial.com">c.beaumont@hartwellfinancial.com</a>'],
+      ['Loan Book (gross)','USD 14.2m'],
+      ['Adviser','Rothschild &amp; Co, London']
+    ],
+    '003': [
+      ['Developer','Atlas Logistics Development SA'],
+      ['Jurisdiction','Morocco'],
+      ['Lead Contact','Karim Benali, CFO'],
+      ['Email','<a href="mailto:k.benali@atlaslogistics.ma">k.benali@atlaslogistics.ma</a>'],
+      ['Senior Debt (DFI)','USD 80m (committed)'],
+      ['Adviser','Société Générale CIB, Casablanca']
+    ]
+  };
+
+  function injectCounterpartyData(){
+    Object.keys(COUNTERPARTY).forEach(function(id){
+      const el = document.getElementById('revealed-'+id);
+      if(!el) return;
+      const rows = COUNTERPARTY[id].map(function(r){
+        return '<div class="revealed-item"><div class="revealed-label">'+r[0]+'</div><div class="revealed-value">'+r[1]+'</div></div>';
+      }).join('');
+      el.innerHTML = '<div class="revealed-title">Counterparty information — Deal Room members only</div><div class="revealed-grid">'+rows+'</div>';
+    });
+  }
+
   function initAccessState(){
     const banner=document.getElementById('memberBanner');
     const submitGate=document.getElementById('submitGate');
     const submitForm=document.getElementById('submitForm');
+    const memberArea=document.getElementById('navMemberArea');
+    const guestArea=document.getElementById('navGuestArea');
 
     if(isDrMember()){
       if(banner) banner.style.display='none';
       if(submitGate) submitGate.style.display='none';
       if(submitForm) submitForm.style.display='block';
+      if(memberArea){ memberArea.style.display='flex'; }
+      if(guestArea){ guestArea.style.display='none'; }
+      const nameEl=document.getElementById('navMemberName');
+      if(nameEl){ const n=localStorage.getItem('dr_name'); if(n) nameEl.textContent=n; }
+      injectCounterpartyData();
       restoreBookmarks();
     } else {
       if(banner) banner.style.display='flex';
       if(submitGate) submitGate.style.display='block';
       if(submitForm) submitForm.style.display='none';
+      if(memberArea){ memberArea.style.display='none'; }
+      if(guestArea){ guestArea.style.display='flex'; }
     }
+  }
+
+  function signOut(){
+    ['dr_member','dr_email','dr_name','dr_org','dr_bookmarks'].forEach(k=>localStorage.removeItem(k));
+    location.reload();
   }
 
   /* ════════════════════════════════════════════════
@@ -1632,7 +1669,7 @@
   function printCertificate(){
     const content=document.getElementById('certContent').innerHTML;
     const win=window.open('','_blank');
-    win.document.write(`<!DOCTYPE html><html><head><title>ABTA Deal Room - Acceptance Certificate</title>
+    win.document.write(`<!DOCTYPE html><html><head><title>ABTA Deal Room — Acceptance Certificate</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Mono:wght@400;500&family=Spectral:wght@300;400&display=swap" rel="stylesheet">
     <style>
       body{font-family:'Spectral',Georgia,serif;background:#fff;color:#1A1208;padding:40px;max-width:680px;margin:0 auto;font-size:14px;line-height:1.6}
