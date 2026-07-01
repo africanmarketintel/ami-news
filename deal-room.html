@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AMI Deal Room — African Market Intelligence</title>
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="African Market Intelligence">
+  <meta property="og:title" content="AMI Deal Room">
+  <meta property="og:description" content="Confidential capital opportunities across African markets. ABTA's structured deal-matching platform for qualified principals.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400;1,600&family=Spectral:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="config.js"></script>
+  <script src="login.js"></script>
+  <style>
+    /* ═══════════════════════════════════════════
+       TOKENS
+    ═══════════════════════════════════════════ */
+    :root {
+      --gold:#C9A84C; --gold-light:#F9C53D; --gold-pale:#FDF6E3;
+      --terra:#B85C38; --terra-dark:#8C3A1F;
+      --green:#1E6B3C; --green-mid:#2E9B5E;
+      --ink:#1A1208; --ink-mid:#3D2B1F; --ink-soft:#6B5344;
+      --cream:#FAF7F0; --cream-dark:#F0EAD9; --border:#D4C4A0;
+      --bg:var(--cream); --surface:#fff; --text:var(--ink);
+      --text-soft:var(--ink-soft); --nav-bg:#0A1A10; --nav-text:var(--cream);
+      --divider:var(--border); --card-bg:#fff; --box:1280px; --gutter:24px;
+    }
+    [data-theme="dark"] {
+      --green:#2E9B5E; --green-mid:#4DBA7F; --bg:#060F09; --surface:#0A1A10;
+      --text:#EDE5D5; --text-soft:#A89070; --nav-bg:#060F09; --nav-text:#EDE5D5;
+      --divider:#1A3020; --card-bg:#0F2015; --border:#1A3020; --gold-pale:#0D1F12;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Spectral',Georgia,serif;background:var(--bg);color:var(--text);font-size:16px;line-height:1.6;transition:background .3s,color .3s;overflow-x:hidden}
+    a{color:inherit;text-decoration:none}
+    button{cursor:pointer;border:none;background:none}
+
+    /* ── NAV ─────────────────────────────────── */
+    .top-nav{background:var(--nav-bg);color:var(--nav-text);padding:0 max(var(--gutter),calc((100% - var(--box))/2 + var(--gutter)));display:flex;align-items:center;justify-content:space-between;height:48px;border-bottom:2px solid var(--gold);position:sticky;top:0;z-index:1000}
+    .nav-left{display:flex;align-items:center}
+    .nav-link{color:var(--nav-text);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:0 14px;height:48px;display:flex;align-items:center;border-right:1px solid rgba(255,255,255,.1);transition:color .2s}
+    .nav-link:hover{color:var(--gold)}
+    .nav-link.active{color:var(--gold);border-bottom:2px solid var(--gold)}
+    .nav-right{display:flex;align-items:center;gap:10px}
+    .btn-subscribe{background:var(--gold);color:#060F09;font-family:'DM Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:7px 16px;border-radius:2px;transition:background .2s;white-space:nowrap}
+    .btn-subscribe:hover{background:var(--gold-light)}
+    .nav-hamburger{display:none;flex-direction:column;gap:5px;padding:8px;cursor:pointer}
+    .nav-hamburger span{display:block;width:22px;height:2px;background:var(--nav-text);border-radius:1px}
+    .theme-toggle{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:var(--nav-text);font-family:'DM Mono',monospace;font-size:14px;padding:5px 10px;border-radius:2px;cursor:pointer}
+
+    /* ── MOBILE DRAWER ───────────────────────── */
+    .nav-mobile-drawer{display:none;position:fixed;top:48px;left:0;right:0;bottom:0;background:var(--nav-bg);z-index:950;padding:16px;overflow-y:auto;flex-direction:column}
+    .nav-mobile-drawer.open{display:flex}
+    .nav-mobile-drawer a{color:var(--nav-text);font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:14px 8px;border-bottom:1px solid rgba(255,255,255,.08)}
+    .nav-mobile-drawer a:hover{color:var(--gold)}
+    .nav-mobile-drawer a.mob-subscribe{margin-top:20px;text-align:center;background:var(--gold);color:#060F09;border-radius:2px;font-weight:600}
+
+    /* ── SECTION NAV ─────────────────────────── */
+    .section-nav{background:var(--surface);border-bottom:1px solid var(--divider);position:sticky;top:48px;z-index:900}
+    .section-nav-inner{max-width:var(--box);margin:0 auto;padding:0 var(--gutter);display:flex;overflow-x:auto;scrollbar-width:none}
+    .section-nav-inner::-webkit-scrollbar{display:none}
+    .section-tab{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-soft);padding:12px 18px;white-space:nowrap;border-bottom:2px solid transparent;transition:color .2s,border-color .2s;cursor:pointer;background:none;border-top:none;border-left:none;border-right:none}
+    .section-tab:hover{color:var(--terra)}
+    .section-tab.active{color:var(--terra);border-bottom-color:var(--terra)}
+
+    /* ── HERO ────────────────────────────────── */
+    .hero{background:linear-gradient(135deg,#0A1A10 0%,#0F2015 60%,#1A3020 100%);padding:64px max(var(--gutter),calc((100% - var(--box))/2 + var(--gutter)));position:relative;overflow:hidden}
+    .hero::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 40px,rgba(201,168,76,.03) 40px,rgba(201,168,76,.03) 41px)}
+    [data-theme="dark"] .hero{background:linear-gradient(135deg,#030A06 0%,#060F09 100%)}
+    .hero-inner{position:relative;max-width:780px}
+    .hero-eyebrow{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+    .hero-eyebrow::before{content:'';display:inline-block;width:24px;height:1px;background:var(--gold)}
+    .hero h1{font-family:'Playfair Display',Georgia,serif;font-size:clamp(32px,5vw,52px);font-weight:800;color:#EDE5D5;line-height:1.1;margin-bottom:16px}
+    .hero h1 em{font-style:italic;color:var(--gold)}
+    .hero-sub{font-size:18px;color:rgba(237,229,213,.75);max-width:600px;line-height:1.6;margin-bottom:32px}
+    .hero-badges{display:flex;flex-wrap:wrap;gap:10px}
+    .hero-badge{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(201,168,76,.8);border:1px solid rgba(201,168,76,.3);padding:5px 12px;border-radius:2px}
+
+    /* ── WORKFLOW TOGGLE + STRIP ─────────────── */
+    .workflow-toggle{display:none;width:100%;background:var(--surface);border:none;border-bottom:1px solid var(--divider);padding:11px max(var(--gutter),calc((100% - var(--box))/2 + var(--gutter)));font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-soft);text-align:left;cursor:pointer}
+    .workflow-toggle-arrow{float:right;transition:transform .2s}
+    .workflow-toggle.open .workflow-toggle-arrow{transform:rotate(180deg)}
+    .workflow-strip{background:var(--surface);border-bottom:1px solid var(--divider);padding:0 max(var(--gutter),calc((100% - var(--box))/2 + var(--gutter)));overflow-x:auto;scrollbar-width:none}
+    .workflow-strip::-webkit-scrollbar{display:none}
+    .workflow-inner{display:flex;align-items:stretch;min-width:max-content}
+    .workflow-step{display:flex;align-items:center;gap:12px;padding:18px 24px;border-right:1px solid var(--divider)}
+    .workflow-step:last-child{border-right:none}
+    .step-num{font-family:'DM Mono',monospace;font-size:18px;font-weight:500;color:var(--gold);line-height:1;min-width:28px}
+    .step-title{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text);white-space:nowrap}
+    .step-desc{font-size:11px;color:var(--text-soft);white-space:nowrap;margin-top:2px}
+
+    /* ── LAYOUT ──────────────────────────────── */
+    .page-body{max-width:var(--box);margin:0 auto;padding:40px var(--gutter) 80px;display:grid;grid-template-columns:1fr 300px;gap:40px;align-items:start}
+
+    /* ── MEMBER GATE BANNER ──────────────────── */
+    .access-gate {
+      background: var(--surface);
+      border: 1px solid var(--divider);
+      border-top: 3px solid var(--gold);
+      border-radius: 2px;
+      padding: 36px 40px;
+      margin-bottom: 32px;
+      display: flex;
+      align-items: flex-start;
+      gap: 32px;
+    }
+    .gate-icon { font-size: 36px; flex-shrink: 0; margin-top: 4px; }
+    .gate-body {}
+    .gate-title { font-family:'Playfair Display',serif; font-size:22px; font-weight:700; margin-bottom:10px }
+    .gate-text { font-size:15px; color:var(--text-soft); line-height:1.65; margin-bottom:20px; max-width:560px }
+    .gate-price {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 6px;
+      margin-bottom: 20px;
+    }
+    .gate-amount { font-family:'Playfair Display',serif; font-size:36px; font-weight:700; color:var(--gold) }
+    .gate-period { font-family:'DM Mono',monospace; font-size:12px; color:var(--text-soft); letter-spacing:.06em }
+    .gate-actions { display:flex; gap:10px; flex-wrap:wrap }
+    .btn-gate-primary { background:var(--gold);color:#060F09;font-family:'DM Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:12px 28px;border-radius:2px;border:none;cursor:pointer;transition:background .2s }
+    .btn-gate-primary:hover { background:var(--gold-light) }
+    .btn-gate-secondary { font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:12px 20px;border:1px solid var(--border);border-radius:2px;color:var(--text-soft);background:none;cursor:pointer;transition:all .2s }
+    .btn-gate-secondary:hover { border-color:var(--gold);color:var(--gold) }
+    .gate-ami-notice {
+      background: var(--gold-pale);
+      border-left: 3px solid var(--gold);
+      padding: 12px 16px;
+      font-size: 13px;
+      color: var(--text-soft);
+      border-radius: 2px;
+      margin-bottom: 20px;
+      font-style: italic;
+    }
+    [data-theme="dark"] .gate-ami-notice { background:rgba(201,168,76,.06) }
+
+    /* ── SOFT INFO BANNER (non-members) ─────── */
+    .member-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      background: var(--gold-pale);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--gold);
+      border-radius: 2px;
+      padding: 12px 18px;
+      margin-bottom: 20px;
+      font-size: 13px;
+      color: var(--text-soft);
+      line-height: 1.5;
+    }
+    [data-theme="dark"] .member-banner { background:rgba(201,168,76,.06) }
+    .member-banner strong { color:var(--text); font-weight:600 }
+    .member-banner-actions { display:flex; gap:8px; flex-shrink:0 }
+    .btn-banner-join { background:var(--gold);color:#060F09;font-family:'DM Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:7px 16px;border-radius:2px;border:none;cursor:pointer;white-space:nowrap;transition:background .2s }
+    .btn-banner-join:hover { background:var(--gold-light) }
+    .btn-banner-signin { font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:7px 14px;border:1px solid var(--border);border-radius:2px;color:var(--text-soft);background:none;cursor:pointer;white-space:nowrap;transition:all .2s }
+    .btn-banner-signin:hover { border-color:var(--gold);color:var(--gold) }
+
+    /* ── FILTER BAR ──────────────────────────── */
+    .filter-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+    .filter-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-soft);margin-right:4px}
+    .filter-btn{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:6px 14px;border:1px solid var(--border);border-radius:2px;color:var(--text-soft);background:var(--surface);transition:all .2s;cursor:pointer}
+    .filter-btn:hover{border-color:var(--gold);color:var(--gold)}
+    .filter-btn.active{background:var(--gold);color:#060F09;border-color:var(--gold)}
+
+    /* ── TEASER CARDS ────────────────────────── */
+    .teasers-grid{display:flex;flex-direction:column;gap:20px}
+    .teaser-card{background:var(--card-bg);border:1px solid var(--divider);border-left:4px solid var(--gold);border-radius:2px;padding:24px 28px;transition:box-shadow .2s,border-left-color .2s}
+    .teaser-card:hover{box-shadow:0 4px 24px rgba(0,0,0,.08);border-left-color:var(--terra)}
+    [data-theme="dark"] .teaser-card:hover{box-shadow:0 4px 24px rgba(0,0,0,.4)}
+
+    .teaser-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:14px;flex-wrap:wrap}
+    .teaser-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .teaser-id{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-soft);letter-spacing:.08em}
+    .teaser-type{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:2px;font-weight:500}
+    .type-equity{background:rgba(30,107,60,.12);color:#1E6B3C}
+    .type-debt{background:rgba(184,92,56,.12);color:#B85C38}
+    .type-ma{background:rgba(10,26,16,.1);color:#1A3020}
+    .type-jv{background:rgba(201,168,76,.15);color:#8A6A1A}
+    .type-commercial{background:rgba(100,80,200,.1);color:#4040A0}
+    [data-theme="dark"] .type-equity{background:rgba(46,155,94,.15);color:#4DBA7F}
+    [data-theme="dark"] .type-debt{background:rgba(184,92,56,.2);color:#D47050}
+    [data-theme="dark"] .type-ma{background:rgba(237,229,213,.08);color:#A89070}
+    [data-theme="dark"] .type-jv{background:rgba(201,168,76,.15);color:#C9A84C}
+    [data-theme="dark"] .type-commercial{background:rgba(130,110,220,.15);color:#9090D0}
+
+    .teaser-urgency{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;color:var(--text-soft);display:flex;align-items:center;gap:5px}
+    .urgency-dot{width:6px;height:6px;border-radius:50%;background:var(--green-mid);display:inline-block}
+    .urgency-dot.amber{background:#C9A84C}
+    .urgency-dot.red{background:#B85C38}
+
+    .teaser-location{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+    .teaser-region{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-soft)}
+    .teaser-sector{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--terra)}
+    .meta-divider{color:var(--border);font-size:10px}
+    .teaser-summary{font-size:15px;color:var(--text);line-height:1.65;margin-bottom:18px}
+
+    .teaser-attrs{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:16px;background:var(--gold-pale);border:1px solid var(--divider);border-radius:2px;margin-bottom:18px}
+    [data-theme="dark"] .teaser-attrs{background:rgba(201,168,76,.04)}
+    .attr-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-soft);margin-bottom:3px}
+    .attr-value{font-size:13px;font-weight:600;color:var(--text)}
+
+    /* Revealed data block (Deal Room members only) */
+    .revealed-data{background:linear-gradient(135deg,#0A1A10,#0F2015);border:1px solid rgba(201,168,76,.3);border-radius:2px;padding:20px 24px;margin-bottom:18px;display:none}
+    .revealed-data.visible{display:block}
+    .revealed-title{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid rgba(201,168,76,.2)}
+    .revealed-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .revealed-item {}
+    .revealed-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(237,229,213,.5);margin-bottom:3px}
+    .revealed-value{font-size:14px;color:#EDE5D5;font-weight:600}
+    .revealed-value a{color:var(--gold);text-decoration:underline;text-underline-offset:2px}
+
+    .teaser-highlights{margin-bottom:18px}
+    .teaser-highlights-title{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-soft);margin-bottom:8px}
+    .highlight-list{list-style:none;display:flex;flex-direction:column;gap:5px}
+    .highlight-list li{font-size:14px;color:var(--text);padding-left:18px;position:relative}
+    .highlight-list li::before{content:'→';position:absolute;left:0;color:var(--gold);font-size:12px}
+
+    .teaser-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding-top:16px;border-top:1px solid var(--divider)}
+    .teaser-date{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);letter-spacing:.06em}
+    .teaser-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+    .btn-interest{background:var(--gold);color:#060F09;font-family:'DM Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:9px 20px;border-radius:2px;border:none;cursor:pointer;transition:background .2s}
+    .btn-interest:hover{background:var(--gold-light)}
+    .btn-reveal{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:9px 18px;border-radius:2px;border:1px solid rgba(201,168,76,.4);color:var(--gold);background:none;cursor:pointer;transition:all .2s}
+    .btn-reveal:hover{background:rgba(201,168,76,.1)}
+    .btn-bookmark{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:9px 16px;border-radius:2px;border:1px solid var(--border);color:var(--text-soft);background:var(--surface);cursor:pointer;transition:all .2s}
+    .btn-bookmark:hover{border-color:var(--gold);color:var(--gold)}
+
+    /* ── SUBMIT A DEAL SECTION ───────────────── */
+    #submitSection{display:none}
+    #submitSection.visible{display:block}
+    .submit-header{margin-bottom:28px}
+    .submit-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;margin-bottom:10px}
+    .submit-sub{font-size:15px;color:var(--text-soft);line-height:1.65;max-width:600px}
+    .submit-process{display:flex;gap:0;margin:28px 0;border:1px solid var(--divider);border-radius:2px;overflow:hidden}
+    .submit-step{flex:1;padding:16px 18px;background:var(--surface);border-right:1px solid var(--divider);text-align:center}
+    .submit-step:last-child{border-right:none}
+    .submit-step-num{font-family:'DM Mono',monospace;font-size:18px;font-weight:500;color:var(--gold);margin-bottom:6px}
+    .submit-step-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-soft)}
+
+    .submit-form-card{background:var(--card-bg);border:1px solid var(--divider);border-radius:2px;padding:32px}
+    .form-section-title{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-soft);margin-bottom:20px;padding-bottom:10px;border-bottom:1px solid var(--divider)}
+
+    /* ── SIDEBAR ─────────────────────────────── */
+    .sidebar{display:flex;flex-direction:column;gap:24px}
+    .sidebar-card{background:var(--card-bg);border:1px solid var(--divider);border-radius:2px;padding:20px}
+    .sidebar-title{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-soft);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--divider)}
+    .stat-row{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--divider)}
+    .stat-row:last-child{border-bottom:none}
+    .stat-name{font-size:13px;color:var(--text-soft)}
+    .stat-val{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:var(--gold)}
+    .criteria-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+    .criteria-list li{font-size:13px;color:var(--text);padding-left:16px;position:relative}
+    .criteria-list li::before{content:'✓';position:absolute;left:0;color:var(--green-mid);font-size:11px}
+    .conf-notice{font-size:12px;color:var(--text-soft);line-height:1.5;font-style:italic}
+    .cta-card{background:linear-gradient(135deg,#0A1A10,#1A3020);border:1px solid rgba(201,168,76,.3);border-radius:2px;padding:24px 20px}
+    .cta-card-title{font-family:'Playfair Display',serif;font-size:17px;color:#EDE5D5;margin-bottom:10px;line-height:1.3}
+    .cta-card-body{font-size:13px;color:rgba(237,229,213,.7);line-height:1.6;margin-bottom:18px}
+    .btn-cta-full{display:block;width:100%;background:var(--gold);color:#060F09;font-family:'DM Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:11px 16px;border-radius:2px;text-align:center;border:none;cursor:pointer;transition:background .2s}
+    .btn-cta-full:hover{background:var(--gold-light)}
+
+    /* modal form section title */
+    .modal .form-section-title{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-soft);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--divider)}
+
+    /* ── EMPTY STATE ─────────────────────────── */
+    .empty-state{text-align:center;padding:60px 24px;color:var(--text-soft)}
+    .empty-icon{font-size:32px;margin-bottom:14px;opacity:.4}
+    .empty-title{font-family:'Playfair Display',serif;font-size:18px;margin-bottom:8px;color:var(--text)}
+    .empty-body{font-size:14px;line-height:1.6}
+
+    /* ── INTEREST MODAL ──────────────────────── */
+    .modal-backdrop{display:none;position:fixed;inset:0;background:rgba(10,26,16,.7);backdrop-filter:blur(4px);z-index:2000;align-items:center;justify-content:center;padding:24px}
+    .modal-backdrop.open{display:flex}
+    .modal{background:var(--surface);border:1px solid var(--divider);border-top:3px solid var(--gold);border-radius:2px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.25)}
+    .modal-header{padding:24px 28px 16px;border-bottom:1px solid var(--divider);display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+    .modal-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;line-height:1.2}
+    .modal-ref{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-soft);margin-top:4px}
+    .modal-close{font-size:20px;color:var(--text-soft);cursor:pointer;padding:4px;background:none;border:none;line-height:1;flex-shrink:0}
+    .modal-close:hover{color:var(--text)}
+    .modal-body{padding:24px 28px}
+    .modal-notice{background:var(--gold-pale);border:1px solid var(--border);border-left:3px solid var(--gold);padding:12px 16px;border-radius:2px;font-size:13px;color:var(--text-soft);line-height:1.55;margin-bottom:24px;font-style:italic}
+    [data-theme="dark"] .modal-notice{background:rgba(201,168,76,.06)}
+    .form-group{margin-bottom:18px}
+    .form-label{display:block;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-soft);margin-bottom:7px}
+    .form-label span{color:var(--terra)}
+    .form-input,.form-select,.form-textarea{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:2px;padding:10px 14px;font-family:'Spectral',serif;font-size:14px;color:var(--text);outline:none;transition:border-color .2s}
+    .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--gold)}
+    .form-textarea{resize:vertical;min-height:100px}
+    .form-char-count{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);text-align:right;margin-top:4px}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .checkbox-group{display:flex;align-items:flex-start;gap:10px}
+    .checkbox-group input[type="checkbox"]{margin-top:2px;accent-color:var(--gold);flex-shrink:0}
+    .checkbox-label{font-size:13px;color:var(--text);line-height:1.5}
+    .modal-footer{padding:16px 28px 24px;border-top:1px solid var(--divider);display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+    .btn-modal-cancel{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:10px 20px;border:1px solid var(--border);border-radius:2px;color:var(--text-soft);background:none;cursor:pointer}
+    .btn-modal-submit{background:var(--gold);color:#060F09;font-family:'DM Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:10px 24px;border-radius:2px;border:none;cursor:pointer;transition:background .2s}
+    .btn-modal-submit:hover{background:var(--gold-light)}
+    .btn-modal-submit:disabled{opacity:.4;cursor:not-allowed}
+    .success-state{text-align:center;padding:20px 0}
+    .success-icon{font-size:40px;margin-bottom:16px}
+    .success-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;margin-bottom:10px}
+    .success-body{font-size:14px;color:var(--text-soft);line-height:1.6}
+
+    /* ════════════════════════════════════════════
+       REGISTRATION MODAL — VANGUARD-STYLE FLOW
+    ════════════════════════════════════════════ */
+    .reg-modal-backdrop{display:none;position:fixed;inset:0;background:rgba(6,15,9,.85);backdrop-filter:blur(6px);z-index:3000;align-items:center;justify-content:center;padding:24px}
+    .reg-modal-backdrop.open{display:flex}
+    .reg-modal{background:var(--surface);border:1px solid var(--divider);border-radius:2px;width:100%;max-width:640px;max-height:92vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 32px 80px rgba(0,0,0,.4)}
+
+    /* Progress bar */
+    .reg-progress{display:flex;border-bottom:1px solid var(--divider)}
+    .reg-step-tab{flex:1;padding:14px 8px;text-align:center;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-soft);border-bottom:2px solid transparent;transition:all .2s;position:relative}
+    .reg-step-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+    .reg-step-tab.done{color:var(--green-mid);border-bottom-color:var(--green-mid)}
+    .reg-step-tab::before{content:attr(data-num);display:block;font-size:16px;font-weight:500;margin-bottom:2px}
+
+    .reg-body{padding:28px 32px;overflow-y:auto;flex:1}
+    .reg-section-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:8px}
+    .reg-section-sub{font-size:14px;color:var(--text-soft);line-height:1.6;margin-bottom:24px}
+
+    /* Document scroll-to-accept block */
+    .doc-block{border:1px solid var(--divider);border-radius:2px;margin-bottom:20px;overflow:hidden}
+    .doc-block-header{background:var(--gold-pale);padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+    [data-theme="dark"] .doc-block-header{background:rgba(201,168,76,.06)}
+    .doc-block-title{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text)}
+    .doc-status{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em}
+    .doc-status.pending{color:var(--text-soft)}
+    .doc-status.ready{color:var(--gold)}
+    .doc-status.accepted{color:var(--green-mid)}
+
+    /* Scrollable document body */
+    .doc-scroll{height:180px;overflow-y:auto;padding:16px 20px;font-size:13px;line-height:1.7;color:var(--text);border-bottom:1px solid var(--divider);background:var(--surface)}
+    .doc-scroll p{margin-bottom:12px}
+    .doc-scroll p:last-child{margin-bottom:0}
+    .doc-scroll h4{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-soft);margin:16px 0 6px;border-bottom:1px solid var(--divider);padding-bottom:4px}
+
+    .doc-accept{padding:12px 16px;display:flex;align-items:center;gap:10px;background:var(--bg)}
+    .doc-accept input[type="checkbox"]{accent-color:var(--gold);width:16px;height:16px;flex-shrink:0}
+    .doc-accept label{font-size:13px;color:var(--text-soft);cursor:pointer;line-height:1.4}
+    .doc-accept input:disabled+label{opacity:.45;cursor:not-allowed}
+
+    /* Scroll hint */
+    .scroll-hint{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;color:var(--text-soft);text-align:center;padding:6px;background:var(--gold-pale);border-top:1px solid var(--divider);display:none}
+    [data-theme="dark"] .scroll-hint{background:rgba(201,168,76,.04)}
+    .scroll-hint.visible{display:block}
+
+    /* Payment step */
+    .payment-summary{background:var(--gold-pale);border:1px solid var(--border);border-radius:2px;padding:20px 24px;margin-bottom:24px}
+    [data-theme="dark"] .payment-summary{background:rgba(201,168,76,.06)}
+    .payment-summary-title{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-soft);margin-bottom:12px}
+    .payment-line{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--divider)}
+    .payment-line:last-child{border-bottom:none;font-weight:600}
+    .payment-line-label{font-size:14px;color:var(--text)}
+    .payment-line-val{font-family:'DM Mono',monospace;font-size:15px;color:var(--text)}
+    .payment-line-val.total{color:var(--gold);font-size:20px}
+    .stripe-notice{font-size:12px;color:var(--text-soft);line-height:1.5;margin-bottom:20px;font-style:italic}
+
+    .reg-footer{padding:16px 32px 24px;border-top:1px solid var(--divider);display:flex;gap:10px;justify-content:space-between;align-items:center;flex-shrink:0}
+    .btn-reg-back{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:10px 20px;border:1px solid var(--border);border-radius:2px;color:var(--text-soft);background:none;cursor:pointer;transition:all .2s}
+    .btn-reg-back:hover{border-color:var(--gold);color:var(--gold)}
+    .btn-reg-next{background:var(--gold);color:#060F09;font-family:'DM Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:10px 28px;border-radius:2px;border:none;cursor:pointer;transition:background .2s}
+    .btn-reg-next:hover{background:var(--gold-light)}
+    .btn-reg-next:disabled{opacity:.4;cursor:not-allowed}
+
+    /* ── FILE UPLOAD ─────────────────────────── */
+    .file-drop{border:2px dashed var(--border);border-radius:2px;padding:32px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s}
+    .file-drop:hover,.file-drop.dragover{border-color:var(--gold);background:var(--gold-pale)}
+    [data-theme="dark"] .file-drop:hover,[data-theme="dark"] .file-drop.dragover{background:rgba(201,168,76,.06)}
+    .file-drop-icon{font-size:28px;margin-bottom:10px;opacity:.5}
+    .file-drop-text{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-soft);margin-bottom:6px}
+    .file-drop-sub{font-size:12px;color:var(--text-soft)}
+    .file-list{margin-top:12px;display:flex;flex-direction:column;gap:6px}
+    .file-item{display:flex;align-items:center;justify-content:space-between;background:var(--bg);border:1px solid var(--divider);border-radius:2px;padding:8px 12px;font-size:13px}
+    .file-item-name{font-family:'DM Mono',monospace;font-size:11px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .file-item-size{font-size:11px;color:var(--text-soft);flex-shrink:0;margin-left:8px}
+    .file-item-remove{font-size:14px;color:var(--text-soft);cursor:pointer;flex-shrink:0;margin-left:8px;background:none;border:none}
+    .file-item-remove:hover{color:var(--terra)}
+
+    /* ── RESPONSIVE ──────────────────────────── */
+    @media(max-width:900px){.page-body{grid-template-columns:1fr}.sidebar{order:-1;display:grid;grid-template-columns:1fr 1fr}.cta-card{grid-column:1/-1}}
+    @media(max-width:640px){
+      .nav-hamburger{display:flex}.nav-left{display:none}
+      .hero{padding:40px 20px}
+      .sidebar{grid-template-columns:1fr}
+      .form-row{grid-template-columns:1fr}
+      .teaser-attrs{grid-template-columns:1fr 1fr}
+      .modal{margin:0;max-height:100vh;border-radius:0}
+      .reg-modal{margin:0;max-height:100vh;border-radius:0}
+      .workflow-toggle{display:block}
+      .workflow-strip{display:none}
+      .workflow-strip.expanded{display:block}
+      .access-gate{flex-direction:column;gap:16px;padding:24px}
+      .submit-process{flex-direction:column}
+      .submit-step{border-right:none;border-bottom:1px solid var(--divider)}
+      .submit-step:last-child{border-bottom:none}
+      .revealed-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══ NAV ═══════════════════════════════════════ -->
+<nav class="top-nav" aria-label="Main navigation">
+  <button class="nav-hamburger" aria-label="Open menu" onclick="toggleMobileNav()"><span></span><span></span><span></span></button>
+  <div class="nav-left">
+    <a href="index.html" class="nav-link">AMI</a>
+    <a href="markets.html" class="nav-link">Markets</a>
+    <a href="economy.html" class="nav-link">Economy</a>
+    <a href="energy.html" class="nav-link">Energy</a>
+    <a href="deals.html" class="nav-link">Deal Tracker</a>
+    <a href="deal-room.html" class="nav-link active">Deal Room</a>
+  </div>
+  <div class="nav-right">
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">◑</button>
+    <a href="membership.html" id="navSubscribeBtn" class="btn-subscribe">Membership</a>
+  </div>
+</nav>
+
+<!-- ═══ MOBILE DRAWER ═══════════════════════════════ -->
+<div class="nav-mobile-drawer" id="navMobileDrawer">
+  <a href="index.html">Home</a>
+  <a href="markets.html">Markets</a>
+  <a href="economy.html">Economy</a>
+  <a href="energy.html">Energy</a>
+  <a href="deals.html">Deal Tracker</a>
+  <a href="deal-room.html">Deal Room</a>
+  <a href="membership.html" class="mob-subscribe">Membership →</a>
+</div>
+
+<!-- ═══ SECTION NAV ════════════════════════════════ -->
+<div class="section-nav" role="navigation" aria-label="Deal Room sections">
+  <div class="section-nav-inner">
+    <button class="section-tab active" id="tabOpportunities" onclick="switchTab('opportunities')">Active Opportunities</button>
+    <button class="section-tab" id="tabSubmit" onclick="switchTab('submit')">Submit a Deal</button>
+    <button class="section-tab" id="tabProcess" onclick="switchTab('process')">How It Works</button>
+  </div>
+</div>
+
+<!-- ═══ HERO ════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">ABTA Deal Room — Confidential</div>
+    <h1>Capital meets <em>continent</em></h1>
+    <p class="hero-sub">Structured, anonymised capital opportunities across African markets. Reviewed and facilitated by ABTA for qualified principals only.</p>
+    <div class="hero-badges">
+      <span class="hero-badge">£99 / year</span>
+      <span class="hero-badge">Blind teasers</span>
+      <span class="hero-badge">ABTA-screened</span>
+      <span class="hero-badge">Controlled disclosure</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ WORKFLOW TOGGLE (mobile) ═══════════════════ -->
+<button class="workflow-toggle" id="workflowToggle" aria-expanded="false" onclick="toggleWorkflow(this)">
+  How it works — 7 stages <span class="workflow-toggle-arrow">▾</span>
+</button>
+
+<!-- ═══ WORKFLOW STRIP ══════════════════════════════ -->
+<div class="workflow-strip" id="workflowStrip" role="region" aria-label="Deal process stages">
+  <div class="workflow-inner">
+    <div class="workflow-step"><div class="step-num">01</div><div><div class="step-title">Registration</div><div class="step-desc">Create Deal Room account (£99/yr)</div></div></div>
+    <div class="workflow-step"><div class="step-num">02</div><div><div class="step-title">Document Acceptance</div><div class="step-desc">Review and sign NDA + Platform Agreement</div></div></div>
+    <div class="workflow-step"><div class="step-num">03</div><div><div class="step-title">Blind Teaser</div><div class="step-desc">Browse anonymised opportunities</div></div></div>
+    <div class="workflow-step"><div class="step-num">04</div><div><div class="step-title">Interest Confirmation</div><div class="step-desc">Submit rationale and mandate</div></div></div>
+    <div class="workflow-step"><div class="step-num">05</div><div><div class="step-title">ABTA Screening</div><div class="step-desc">Suitability, credibility, fit</div></div></div>
+    <div class="workflow-step"><div class="step-num">06</div><div><div class="step-title">Introduction</div><div class="step-desc">Identities disclosed; NDA optional</div></div></div>
+    <div class="workflow-step"><div class="step-num">07</div><div><div class="step-title">Transaction</div><div class="step-desc">Direct negotiation under ABTA framework</div></div></div>
+  </div>
+</div>
+
+<!-- ═══ MAIN ════════════════════════════════════════ -->
+<div class="page-body">
+  <main>
+
+    <!-- ── OPPORTUNITIES TAB ───────────────────── -->
+    <div id="opportunitiesSection">
+
+      <!-- Soft informational banner — shown when NOT a Deal Room member -->
+      <div class="member-banner" id="memberBanner" style="display:none">
+        <span>You are viewing <strong>anonymised teasers</strong>. Join Deal Room to reveal counterparty data, submit interest confirmations and access ABTA's introduction process.</span>
+        <div class="member-banner-actions">
+          <button class="btn-banner-join" onclick="openRegistration()">Join Deal Room — £99/yr</button>
+          <button class="btn-banner-signin" onclick="openRegistration('signin')">Sign in</button>
+        </div>
+      </div>
+
+      <!-- Filter bar -->
+      <div class="filter-bar" role="group" aria-label="Filter by deal type">
+        <span class="filter-label">Type:</span>
+        <button class="filter-btn active" onclick="filterTeasers('all',this)">All</button>
+        <button class="filter-btn" onclick="filterTeasers('equity',this)">Equity</button>
+        <button class="filter-btn" onclick="filterTeasers('debt',this)">Debt</button>
+        <button class="filter-btn" onclick="filterTeasers('ma',this)">M&amp;A</button>
+        <button class="filter-btn" onclick="filterTeasers('jv',this)">Joint Venture</button>
+        <button class="filter-btn" onclick="filterTeasers('commercial',this)">Commercial</button>
+      </div>
+
+      <!-- Teasers -->
+      <div class="teasers-grid" id="teasersGrid">
+
+        <!-- TEASER 1 -->
+        <article class="teaser-card" data-type="equity" data-region="east-africa">
+          <div class="teaser-header">
+            <div class="teaser-meta">
+              <span class="teaser-id">ABTA-2026-001</span>
+              <span class="teaser-type type-equity">Equity Investment</span>
+            </div>
+            <div class="teaser-urgency"><span class="urgency-dot"></span> 1–3 months</div>
+          </div>
+          <div class="teaser-location">
+            <span class="teaser-region">East Africa</span>
+            <span class="meta-divider">·</span>
+            <span class="teaser-sector">Clean Energy</span>
+          </div>
+          <p class="teaser-summary">An operational independent power producer seeks a strategic equity partner for a portfolio expansion across two East African markets. The business holds long-term power purchase agreements with sovereign offtakers and is targeting 120MW of additional capacity. The founding shareholder is offering a minority stake to a financially and operationally credible co-investor ahead of a structured refinancing process.</p>
+          <div class="teaser-attrs">
+            <div class="attr-item"><div class="attr-label">Stake on Offer</div><div class="attr-value">25–40%</div></div>
+            <div class="attr-item"><div class="attr-label">Target Raise</div><div class="attr-value">USD 45–65m</div></div>
+            <div class="attr-item"><div class="attr-label">Stage</div><div class="attr-value">Operational</div></div>
+            <div class="attr-item"><div class="attr-label">Instrument</div><div class="attr-value">Equity</div></div>
+          </div>
+          <!-- Revealed data (Deal Room members only) -->
+          <div class="revealed-data" id="revealed-001">
+            <div class="revealed-title">Counterparty information — Deal Room members only</div>
+            <div class="revealed-grid">
+              <div class="revealed-item"><div class="revealed-label">Company</div><div class="revealed-value">Meridian Power East Africa Ltd</div></div>
+              <div class="revealed-item"><div class="revealed-label">Jurisdiction</div><div class="revealed-value">Kenya / Tanzania</div></div>
+              <div class="revealed-item"><div class="revealed-label">Lead Contact</div><div class="revealed-value">James Ochieng, CEO</div></div>
+              <div class="revealed-item"><div class="revealed-label">Email</div><div class="revealed-value"><a href="mailto:j.ochieng@meridianpower.co.ke">j.ochieng@meridianpower.co.ke</a></div></div>
+              <div class="revealed-item"><div class="revealed-label">EBITDA (FY2025)</div><div class="revealed-value">USD 8.4m</div></div>
+              <div class="revealed-item"><div class="revealed-label">Adviser</div><div class="revealed-value">Standard Bank Advisory, Nairobi</div></div>
+            </div>
+          </div>
+          <div class="teaser-highlights">
+            <div class="teaser-highlights-title">Investment Highlights</div>
+            <ul class="highlight-list">
+              <li>Sovereign-backed offtake agreements in place; bankable revenue stream</li>
+              <li>First-mover position in two underserved capacity markets</li>
+              <li>Experienced management team with regional IPP track record</li>
+              <li>DFI co-financing available; structure is investor-friendly</li>
+            </ul>
+          </div>
+          <div class="teaser-footer">
+            <span class="teaser-date">Published: 18 June 2026 · Ref: ABTA-2026-001</span>
+            <div class="teaser-actions">
+              <button class="btn-bookmark" onclick="bookmarkTeaser('ABTA-2026-001',this)">Bookmark for review</button>
+              <button class="btn-reveal" id="reveal-btn-001" onclick="handleReveal('001')">Reveal counterparty →</button>
+              <button class="btn-interest" onclick="handleInterest('ABTA-2026-001','Equity Investment — Clean Energy, East Africa')">Confirm Interest →</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- TEASER 2 -->
+        <article class="teaser-card" data-type="ma" data-region="west-africa">
+          <div class="teaser-header">
+            <div class="teaser-meta">
+              <span class="teaser-id">ABTA-2026-002</span>
+              <span class="teaser-type type-ma">Acquisition</span>
+            </div>
+            <div class="teaser-urgency"><span class="urgency-dot amber"></span> Immediate</div>
+          </div>
+          <div class="teaser-location">
+            <span class="teaser-region">West Africa</span>
+            <span class="meta-divider">·</span>
+            <span class="teaser-sector">Financial Services</span>
+          </div>
+          <p class="teaser-summary">A UK-listed financial holding group is seeking a buyer for its West African consumer lending subsidiary, comprising operations in two Francophone markets. The business holds a valid microfinance licence, a performing loan book and an established agent-banking network. The vendor requires a clean full exit within 90 days of heads of terms.</p>
+          <div class="teaser-attrs">
+            <div class="attr-item"><div class="attr-label">Asset Type</div><div class="attr-value">Full Sale</div></div>
+            <div class="attr-item"><div class="attr-label">Indicative Value</div><div class="attr-value">USD 18–25m</div></div>
+            <div class="attr-item"><div class="attr-label">Stage</div><div class="attr-value">Advanced</div></div>
+            <div class="attr-item"><div class="attr-label">Licence Status</div><div class="attr-value">Licensed</div></div>
+          </div>
+          <div class="revealed-data" id="revealed-002">
+            <div class="revealed-title">Counterparty information — Deal Room members only</div>
+            <div class="revealed-grid">
+              <div class="revealed-item"><div class="revealed-label">Vendor</div><div class="revealed-value">Hartwell Financial Group plc</div></div>
+              <div class="revealed-item"><div class="revealed-label">Asset</div><div class="revealed-value">Hartwell Crédit Côte d'Ivoire &amp; Sénégal</div></div>
+              <div class="revealed-item"><div class="revealed-label">Lead Contact</div><div class="revealed-value">Claire Beaumont, CFO</div></div>
+              <div class="revealed-item"><div class="revealed-label">Email</div><div class="revealed-value"><a href="mailto:c.beaumont@hartwellfinancial.com">c.beaumont@hartwellfinancial.com</a></div></div>
+              <div class="revealed-item"><div class="revealed-label">Loan Book (gross)</div><div class="revealed-value">USD 14.2m</div></div>
+              <div class="revealed-item"><div class="revealed-label">Adviser</div><div class="revealed-value">Rothschild &amp; Co, London</div></div>
+            </div>
+          </div>
+          <div class="teaser-highlights">
+            <div class="teaser-highlights-title">Transaction Highlights</div>
+            <ul class="highlight-list">
+              <li>Regulated, licensed entity — no greenfield licence risk</li>
+              <li>Performing loan book with established risk controls</li>
+              <li>Vendor motivated for clean exit; timeline is firm</li>
+              <li>Ideal for a strategic acquirer seeking instant market presence</li>
+            </ul>
+          </div>
+          <div class="teaser-footer">
+            <span class="teaser-date">Published: 10 June 2026 · Ref: ABTA-2026-002</span>
+            <div class="teaser-actions">
+              <button class="btn-bookmark" onclick="bookmarkTeaser('ABTA-2026-002',this)">Bookmark for review</button>
+              <button class="btn-reveal" id="reveal-btn-002" onclick="handleReveal('002')">Reveal counterparty →</button>
+              <button class="btn-interest" onclick="handleInterest('ABTA-2026-002','Acquisition — Financial Services, West Africa')">Confirm Interest →</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- TEASER 3 -->
+        <article class="teaser-card" data-type="debt" data-region="north-africa">
+          <div class="teaser-header">
+            <div class="teaser-meta"><span class="teaser-id">ABTA-2026-003</span><span class="teaser-type type-debt">Debt Financing</span></div>
+            <div class="teaser-urgency"><span class="urgency-dot"></span> 3–6 months</div>
+          </div>
+          <div class="teaser-location"><span class="teaser-region">North Africa</span><span class="meta-divider">·</span><span class="teaser-sector">Infrastructure</span></div>
+          <p class="teaser-summary">A regional infrastructure developer is seeking mezzanine debt to bridge construction of a logistics hub in a high-growth North African gateway city. The facility will sit behind senior DFI debt and ahead of sponsor equity. The developer holds a confirmed anchor tenant on a 10-year lease.</p>
+          <div class="teaser-attrs">
+            <div class="attr-item"><div class="attr-label">Instrument</div><div class="attr-value">Mezzanine</div></div>
+            <div class="attr-item"><div class="attr-label">Target</div><div class="attr-value">USD 30m</div></div>
+            <div class="attr-item"><div class="attr-label">Tenor</div><div class="attr-value">5 years</div></div>
+            <div class="attr-item"><div class="attr-label">Security</div><div class="attr-value">Asset-backed</div></div>
+          </div>
+          <div class="teaser-highlights">
+            <div class="teaser-highlights-title">Investment Highlights</div>
+            <ul class="highlight-list">
+              <li>Senior DFI debt already committed; mezzanine completes the capital structure</li>
+              <li>Anchor tenant signed on a 10-year lease, providing stable revenue visibility</li>
+              <li>Gateway logistics market with high barriers to entry</li>
+              <li>Experienced developer with completed assets in the region</li>
+            </ul>
+          </div>
+          <div class="revealed-data" id="revealed-003">
+            <div class="revealed-title">Counterparty information — Deal Room members only</div>
+            <div class="revealed-grid">
+              <div class="revealed-item"><div class="revealed-label">Developer</div><div class="revealed-value">Atlas Logistics Development SA</div></div>
+              <div class="revealed-item"><div class="revealed-label">Jurisdiction</div><div class="revealed-value">Morocco</div></div>
+              <div class="revealed-item"><div class="revealed-label">Lead Contact</div><div class="revealed-value">Karim Benali, CFO</div></div>
+              <div class="revealed-item"><div class="revealed-label">Email</div><div class="revealed-value"><a href="mailto:k.benali@atlaslogistics.ma">k.benali@atlaslogistics.ma</a></div></div>
+              <div class="revealed-item"><div class="revealed-label">Senior Debt (DFI)</div><div class="revealed-value">USD 80m (committed)</div></div>
+              <div class="revealed-item"><div class="revealed-label">Adviser</div><div class="revealed-value">Société Générale CIB, Casablanca</div></div>
+            </div>
+          </div>
+          <div class="teaser-footer">
+            <span class="teaser-date">Published: 3 June 2026 · Ref: ABTA-2026-003</span>
+            <div class="teaser-actions">
+              <button class="btn-bookmark" onclick="bookmarkTeaser('ABTA-2026-003',this)">Bookmark for review</button>
+              <button class="btn-reveal" id="reveal-btn-003" onclick="handleReveal('003')">Reveal counterparty →</button>
+              <button class="btn-interest" onclick="handleInterest('ABTA-2026-003','Debt Financing — Infrastructure, North Africa')">Confirm Interest →</button>
+            </div>
+          </div>
+        </article>
+
+      </div><!-- /teasers-grid -->
+    </div><!-- /opportunitiesSection -->
+
+    <!-- ── SUBMIT A DEAL TAB ─────────────────────── -->
+    <div id="submitSection">
+      <div class="submit-header">
+        <div class="submit-title">Submit a capital opportunity</div>
+        <p class="submit-sub">Businesses and advisers can submit opportunities for ABTA review. Qualifying deals are anonymised and circulated to the relevant segment of the principal network. ABTA will respond within five business days.</p>
+      </div>
+      <div class="submit-process">
+        <div class="submit-step"><div class="submit-step-num">01</div><div class="submit-step-label">Submit</div></div>
+        <div class="submit-step"><div class="submit-step-num">02</div><div class="submit-step-label">AMI Review</div></div>
+        <div class="submit-step"><div class="submit-step-num">03</div><div class="submit-step-label">Anonymised</div></div>
+        <div class="submit-step"><div class="submit-step-num">04</div><div class="submit-step-label">Published</div></div>
+      </div>
+
+      <div id="submitGate" style="display:none">
+        <div class="access-gate">
+          <div class="gate-icon">📤</div>
+          <div class="gate-body">
+            <div class="gate-title">Deal Room membership required to submit</div>
+            <p class="gate-text">Submitting a deal requires Deal Room membership so that ABTA can verify your identity and organisation before circulating any opportunity.</p>
+            <div class="gate-price"><span class="gate-amount">£99</span><span class="gate-period">per year</span></div>
+            <div class="gate-actions">
+              <button class="btn-gate-primary" onclick="openRegistration()">Join Deal Room →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="submitForm" class="submit-form-card" style="display:none">
+        <form id="dealSubmitForm" onsubmit="submitDeal(event)">
+
+          <div class="form-section-title">01 — Opportunity overview</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="dealType">Deal Type <span>*</span></label>
+              <select id="dealType" class="form-select" required>
+                <option value="" disabled selected>Select type</option>
+                <option>Equity Investment</option>
+                <option>Debt Financing</option>
+                <option>Acquisition / Sale</option>
+                <option>Joint Venture</option>
+                <option>Commercial Contract</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="dealSector">Sector <span>*</span></label>
+              <select id="dealSector" class="form-select" required>
+                <option value="" disabled selected>Select sector</option>
+                <option>Clean Energy</option>
+                <option>Infrastructure</option>
+                <option>Financial Services</option>
+                <option>Agriculture &amp; Food</option>
+                <option>Technology &amp; Digital</option>
+                <option>Healthcare</option>
+                <option>Mining &amp; Resources</option>
+                <option>Real Estate</option>
+                <option>Manufacturing</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="dealRegion">Geography <span>*</span></label>
+              <select id="dealRegion" class="form-select" required>
+                <option value="" disabled selected>Select region</option>
+                <option>West Africa</option>
+                <option>East Africa</option>
+                <option>North Africa</option>
+                <option>Southern Africa</option>
+                <option>Central Africa</option>
+                <option>Pan-African</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="dealSize">Capital Range</label>
+              <select id="dealSize" class="form-select">
+                <option value="" disabled selected>Select range (optional)</option>
+                <option>Under USD 5m</option>
+                <option>USD 5m – 15m</option>
+                <option>USD 15m – 50m</option>
+                <option>USD 50m – 150m</option>
+                <option>USD 150m+</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="dealSummary">Executive Summary <span>*</span> <span style="font-weight:400;text-transform:none;letter-spacing:0">— max 300 words. Do not include identifying names at this stage.</span></label>
+            <textarea id="dealSummary" class="form-textarea" style="min-height:130px" placeholder="Describe the opportunity, what is being sought, and the key value proposition. ABTA will anonymise this before publication." required oninput="updateWordCount(this,'dealSummaryCount',300)"></textarea>
+            <div class="form-char-count" id="dealSummaryCount">0 / 300 words</div>
+          </div>
+
+          <div class="form-section-title" style="margin-top:8px">02 — Your details (confidential — not published)</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="submitterOrg">Organisation <span>*</span></label>
+              <input type="text" id="submitterOrg" class="form-input" placeholder="Your organisation's name" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="submitterName">Contact Name <span>*</span></label>
+              <input type="text" id="submitterName" class="form-input" placeholder="Full name" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="submitterRole">Role <span>*</span></label>
+              <input type="text" id="submitterRole" class="form-input" placeholder="e.g. Managing Director" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="submitterEmail">Email <span>*</span></label>
+              <input type="email" id="submitterEmail" class="form-input" placeholder="your@organisation.com" required>
+            </div>
+          </div>
+
+          <div class="form-section-title" style="margin-top:8px">03 — Supporting documents</div>
+          <p style="font-size:13px;color:var(--text-soft);margin-bottom:16px;line-height:1.6">Upload any supporting materials for ABTA's internal review — CIM, teaser, financial model, legal structure overview. These are not published and remain confidential to the ABTA team.</p>
+          <div class="file-drop" id="fileDrop" onclick="document.getElementById('fileInput').click()" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+            <div class="file-drop-icon">📎</div>
+            <div class="file-drop-text">Drag files here or click to upload</div>
+            <div class="file-drop-sub">PDF, DOCX, XLSX, PPTX — max 25MB per file</div>
+          </div>
+          <input type="file" id="fileInput" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx" style="display:none" onchange="handleFileSelect(this)">
+          <div class="file-list" id="fileList"></div>
+
+          <div class="form-group" style="margin-top:20px">
+            <div class="checkbox-group">
+              <input type="checkbox" id="submitAgree" required>
+              <label class="checkbox-label" for="submitAgree">I confirm that I am authorised to submit this opportunity and that the information provided is accurate to the best of my knowledge. I acknowledge that ABTA will review and, if approved, anonymise this opportunity before circulation.</label>
+            </div>
+          </div>
+
+          <div style="display:flex;justify-content:flex-end;margin-top:8px">
+            <button type="submit" class="btn-modal-submit">Submit for Review →</button>
+          </div>
+        </form>
+
+        <div id="submitSuccess" style="display:none">
+          <div class="success-state" style="padding:40px 0">
+            <div class="success-icon">✓</div>
+            <div class="success-title">Submission received</div>
+            <p class="success-body">ABTA will review your opportunity within five business days. If it meets our criteria, we will contact you to proceed with anonymisation and publication. Your contact details and documents remain confidential to the ABTA team.</p>
+          </div>
+        </div>
+      </div>
+    </div><!-- /submitSection -->
+
+    <!-- ── HOW IT WORKS TAB ──────────────────────── -->
+    <div id="processSection" style="display:none">
+      <div class="submit-form-card">
+        <div class="submit-title" style="margin-bottom:10px">How the Deal Room works</div>
+        <p style="font-size:15px;color:var(--text-soft);line-height:1.65;margin-bottom:28px">ABTA Deal Room is a private, structured platform for qualified principals. It operates on a controlled disclosure model — identities are never revealed until ABTA has screened both parties and issued an Introduction Notice.</p>
+        <div style="display:flex;flex-direction:column;gap:0;border:1px solid var(--divider);border-radius:2px;overflow:hidden">
+          <div style="display:flex;gap:20px;padding:20px 24px;border-bottom:1px solid var(--divider);align-items:flex-start">
+            <div style="font-family:'DM Mono',monospace;font-size:20px;font-weight:500;color:var(--gold);min-width:32px">01</div>
+            <div><div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text);margin-bottom:5px">Registration &amp; Document Acceptance</div><p style="font-size:14px;color:var(--text-soft);line-height:1.65">Create your Deal Room account (£99/year, separate from AMI subscription). Before access is granted, you review and accept the Platform Membership Agreement and Non-Disclosure Agreement using our document acceptance flow.</p></div>
+          </div>
+          <div style="display:flex;gap:20px;padding:20px 24px;border-bottom:1px solid var(--divider);align-items:flex-start">
+            <div style="font-family:'DM Mono',monospace;font-size:20px;font-weight:500;color:var(--gold);min-width:32px">02</div>
+            <div><div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text);margin-bottom:5px">Browse Blind Teasers</div><p style="font-size:14px;color:var(--text-soft);line-height:1.65">All opportunities are anonymised. Sector, geography and financial attributes are visible. Counterparty names, contacts and identifying details are revealed only to Deal Room members who have completed the document acceptance process.</p></div>
+          </div>
+          <div style="display:flex;gap:20px;padding:20px 24px;border-bottom:1px solid var(--divider);align-items:flex-start">
+            <div style="font-family:'DM Mono',monospace;font-size:20px;font-weight:500;color:var(--gold);min-width:32px">03</div>
+            <div><div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text);margin-bottom:5px">Confirm Interest</div><p style="font-size:14px;color:var(--text-soft);line-height:1.65">Submit a rationale (max 250 words) and your mandate details. ABTA reviews suitability, credibility and transaction fit before proceeding.</p></div>
+          </div>
+          <div style="display:flex;gap:20px;padding:20px 24px;border-bottom:1px solid var(--divider);align-items:flex-start">
+            <div style="font-family:'DM Mono',monospace;font-size:20px;font-weight:500;color:var(--gold);min-width:32px">04</div>
+            <div><div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text);margin-bottom:5px">ABTA Screening &amp; Introduction</div><p style="font-size:14px;color:var(--text-soft);line-height:1.65">If qualified, ABTA issues an Introduction Notice and discloses identities to both parties. An NDA between the parties is optional at this stage but recommended for deeper information sharing.</p></div>
+          </div>
+          <div style="display:flex;gap:20px;padding:20px 24px;align-items:flex-start">
+            <div style="font-family:'DM Mono',monospace;font-size:20px;font-weight:500;color:var(--gold);min-width:32px">05</div>
+            <div><div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text);margin-bottom:5px">Direct Negotiation</div><p style="font-size:14px;color:var(--text-soft);line-height:1.65">Parties negotiate directly. All introductions remain subject to the ABTA Platform Membership Agreement. ABTA does not act as adviser or broker in the resulting transaction.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-card">
+      <div class="sidebar-title">Current Pipeline</div>
+      <div class="stat-row"><span class="stat-name">Deal types in circulation</span><span class="stat-val" style="font-size:11px;letter-spacing:.03em">Equity · Debt · M&amp;A · JV</span></div>
+      <div class="stat-row"><span class="stat-name">Typical capital range</span><span class="stat-val">USD 5m–150m</span></div>
+      <div class="stat-row"><span class="stat-name">Minimum ticket</span><span class="stat-val">USD 5m</span></div>
+      <div class="stat-row"><span class="stat-name">Screening to introduction</span><span class="stat-val">5 business days</span></div>
+      <div class="stat-row"><span class="stat-name">New teasers</span><span class="stat-val">Rolling basis</span></div>
+    </div>
+    <div class="sidebar-card">
+      <div class="sidebar-title">Eligible Counterparties</div>
+      <ul class="criteria-list">
+        <li>Strategic investors and corporate buyers</li>
+        <li>Private equity and family offices</li>
+        <li>Development finance institutions</li>
+        <li>Banks and alternative lenders</li>
+        <li>Commercial trade partners</li>
+      </ul>
+    </div>
+    <div class="sidebar-card">
+      <div class="sidebar-title">Confidentiality</div>
+      <p class="conf-notice">All teasers are anonymised. No identity is disclosed without ABTA screening and an Introduction Notice. By registering, members acknowledge that any introduction is governed by the ABTA Platform Membership Agreement.</p>
+    </div>
+    <div class="cta-card">
+      <div class="cta-card-title">Submit a capital opportunity</div>
+      <p class="cta-card-body">Businesses and advisers can submit opportunities for ABTA review. Qualifying deals are anonymised and circulated to the relevant segment of the principal network.</p>
+      <button class="btn-cta-full" onclick="switchTab('submit')">Submit a Deal →</button>
+    </div>
+  </aside>
+</div>
+
+<!-- ═══ INTEREST MODAL ════════════════════════════ -->
+<div class="modal-backdrop" id="interestModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal">
+    <div class="modal-header">
+      <div><div class="modal-title" id="modalTitle">Interest Confirmation</div><div class="modal-ref" id="modalRef"></div></div>
+      <button class="modal-close" onclick="closeInterestModal()" aria-label="Close">✕</button>
+    </div>
+    <div id="modalFormState">
+      <div class="modal-body">
+        <div class="modal-notice">This form confirms your interest in the referenced opportunity. ABTA will review your submission for suitability, credibility and transaction fit. Identity disclosure occurs only after qualification and issuance of an Introduction Notice.</div>
+        <form id="interestForm" onsubmit="submitInterestForm(event)">
+          <input type="hidden" id="hiddenTeaserRef" name="teaserRef">
+
+          <!-- Opportunity type -->
+          <div class="form-group">
+            <div class="form-label">Opportunity Type <span style="color:var(--terra)">*</span></div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px" id="oppTypeGroup">
+              <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="radio" name="oppType" value="Equity Investment" required> Equity Investment</label>
+              <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="radio" name="oppType" value="Debt Financing"> Debt Financing</label>
+              <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="radio" name="oppType" value="Acquisition"> Acquisition</label>
+              <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="radio" name="oppType" value="Joint Venture"> Joint Venture</label>
+              <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="radio" name="oppType" value="Strategic Partnership"> Strategic Partnership</label>
+              <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="radio" name="oppType" value="Commercial Contract"> Commercial Contract</label>
+            </div>
+          </div>
+
+          <!-- Interested party details -->
+          <div class="form-section-title" style="margin-top:6px">Interested party details</div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label" for="orgName">Organisation <span style="color:var(--terra)">*</span></label><input type="text" id="orgName" class="form-input" placeholder="Organisation name" required></div>
+            <div class="form-group"><label class="form-label" for="contactName">Contact Person <span style="color:var(--terra)">*</span></label><input type="text" id="contactName" class="form-input" placeholder="Full name" required></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label" for="contactRole">Position <span style="color:var(--terra)">*</span></label><input type="text" id="contactRole" class="form-input" placeholder="e.g. Managing Partner" required></div>
+            <div class="form-group"><label class="form-label" for="contactEmail">Email <span style="color:var(--terra)">*</span></label><input type="email" id="contactEmail" class="form-input" placeholder="contact@organisation.com" required></div>
+          </div>
+          <div class="form-group"><label class="form-label" for="contactPhone">Telephone</label><input type="tel" id="contactPhone" class="form-input" placeholder="Including international dialling code"></div>
+
+          <!-- Eligibility confirmation -->
+          <div class="form-section-title" style="margin-top:6px">Eligibility confirmation <span style="color:var(--terra)">*</span></div>
+          <p style="font-size:12px;color:var(--text-soft);margin-bottom:12px;font-style:italic">Please confirm each of the following before submitting.</p>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:6px">
+            <div class="checkbox-group"><input type="checkbox" id="elig1" required><label class="checkbox-label" for="elig1">I have reviewed the teaser information.</label></div>
+            <div class="checkbox-group"><input type="checkbox" id="elig2" required><label class="checkbox-label" for="elig2">I have a genuine interest in exploring this opportunity.</label></div>
+            <div class="checkbox-group"><input type="checkbox" id="elig3" required><label class="checkbox-label" for="elig3">My organisation possesses the financial, commercial, operational, or strategic capacity relevant to this opportunity.</label></div>
+            <div class="checkbox-group"><input type="checkbox" id="elig4" required><label class="checkbox-label" for="elig4">I am acting on my own behalf or have authority to act on behalf of the entity identified above.</label></div>
+            <div class="checkbox-group"><input type="checkbox" id="elig5" required><label class="checkbox-label" for="elig5">My organisation is not subject to sanctions, regulatory restrictions, or legal impediments that would prevent it from pursuing this opportunity.</label></div>
+          </div>
+
+          <!-- Counterparty profile -->
+          <div class="form-section-title" style="margin-top:6px">Counterparty profile</div>
+
+          <!-- Investor section -->
+          <div id="investorSection">
+            <div class="form-group">
+              <label class="form-label" for="investorType">Type of investor <span style="color:var(--terra)">*</span></label>
+              <select id="investorType" class="form-select">
+                <option value="" disabled selected>Select investor type</option>
+                <option>Family Office</option><option>Private Equity</option><option>Venture Capital</option>
+                <option>Corporate Investor</option><option>Development Finance Institution</option>
+                <option>Bank / Lender</option><option>Sovereign Fund</option><option>Other</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label" for="investRange">Typical investment range</label><input type="text" id="investRange" class="form-input" placeholder="e.g. USD 10m – 50m"></div>
+              <div class="form-group"><label class="form-label" for="prefSectors">Preferred sectors</label><input type="text" id="prefSectors" class="form-input" placeholder="e.g. Energy, Infrastructure"></div>
+            </div>
+            <div class="form-group"><label class="form-label" for="prefGeo">Preferred geographies</label><input type="text" id="prefGeo" class="form-input" placeholder="e.g. East Africa, Pan-African"></div>
+          </div>
+
+          <!-- Interest rationale -->
+          <div class="form-group" style="margin-top:6px">
+            <label class="form-label" for="interestRationale">Interest rationale <span style="color:var(--terra)">*</span> <span style="font-weight:400;text-transform:none;letter-spacing:0">— max 250 words</span></label>
+            <textarea id="interestRationale" class="form-textarea" placeholder="Please explain in no more than 250 words why your organisation is interested in this opportunity and what value it can bring to a potential transaction." required oninput="updateWordCount(this,'rationaleCount',250)"></textarea>
+            <div class="form-char-count" id="rationaleCount">0 / 250 words</div>
+          </div>
+
+          <!-- Acknowledgements -->
+          <div class="form-section-title" style="margin-top:6px">Acknowledgements</div>
+          <div style="background:var(--gold-pale);border:1px solid var(--border);border-radius:2px;padding:14px 16px;margin-bottom:16px;font-size:13px;color:var(--text-soft);line-height:1.65">
+            <p style="margin-bottom:8px">By submitting this Interest Confirmation Form, the Member acknowledges that:</p>
+            <ol style="padding-left:18px;display:flex;flex-direction:column;gap:5px">
+              <li>This opportunity has been sourced through the ABTA Platform.</li>
+              <li>Any subsequent introduction is subject to the ABTA Platform Membership Agreement.</li>
+              <li>Any identity disclosed by ABTA constitutes an Introduction under the Platform Membership Agreement.</li>
+              <li>Any transaction arising directly or indirectly from this opportunity may be subject to ABTA's fee protection and non-circumvention provisions.</li>
+              <li>The Member shall not attempt to identify, contact, or approach the counterparty outside ABTA's process.</li>
+              <li>Submission of this form does not guarantee an introduction or a transaction.</li>
+            </ol>
+          </div>
+          <div class="checkbox-group">
+            <input type="checkbox" id="agreeTerms" required>
+            <label class="checkbox-label" for="agreeTerms">I confirm the above information is accurate and I accept the acknowledgements set out above.</label>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-modal-cancel" onclick="closeInterestModal()">Cancel</button>
+        <button class="btn-modal-submit" onclick="document.getElementById('interestForm').requestSubmit()">Submit Confirmation →</button>
+      </div>
+    </div>
+    <div id="modalSuccessState" style="display:none;padding:40px 28px">
+      <div class="success-state">
+        <div class="success-icon">✓</div>
+        <div class="success-title">Confirmation received</div>
+        <p class="success-body">ABTA will review your submission and contact you within five business days. If you qualify, you will receive an Introduction Notice disclosing the counterparty's identity.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ REGISTRATION MODAL — VANGUARD-STYLE FLOW ═══ -->
+<div class="reg-modal-backdrop" id="regModal" role="dialog" aria-modal="true" aria-labelledby="regTitle">
+  <div class="reg-modal">
+
+    <!-- Progress tabs -->
+    <div class="reg-progress">
+      <div class="reg-step-tab active" id="regTab1" data-num="1">Your Details</div>
+      <div class="reg-step-tab" id="regTab2" data-num="2">Review Documents</div>
+      <div class="reg-step-tab" id="regTab3" data-num="3">Payment</div>
+    </div>
+
+    <!-- STEP 1: Details -->
+    <div class="reg-body" id="regStep1">
+      <div class="reg-section-title" id="regTitle">Create your Deal Room account</div>
+      <p class="reg-section-sub">Deal Room is a separate service from your AMI subscription. Your account gives you access to anonymised teasers, revealed counterparty data, interest submission and ABTA's structured introduction process.</p>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label" for="regFirstName">First Name <span>*</span></label><input type="text" id="regFirstName" class="form-input" placeholder="First name" required></div>
+        <div class="form-group"><label class="form-label" for="regLastName">Last Name <span>*</span></label><input type="text" id="regLastName" class="form-input" placeholder="Last name" required></div>
+      </div>
+      <div class="form-group"><label class="form-label" for="regOrg">Organisation <span>*</span></label><input type="text" id="regOrg" class="form-input" placeholder="Your organisation's name" required></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label" for="regRole">Role / Title <span>*</span></label><input type="text" id="regRole" class="form-input" placeholder="e.g. Managing Partner" required></div>
+        <div class="form-group"><label class="form-label" for="regEmail">Email <span>*</span></label><input type="email" id="regEmail" class="form-input" placeholder="you@organisation.com" required></div>
+      </div>
+      <div class="form-group"><label class="form-label" for="regType">Organisation Type <span>*</span></label>
+        <select id="regType" class="form-select" required>
+          <option value="" disabled selected>Select type</option>
+          <option>Strategic investor</option><option>Financial investor</option><option>Private equity</option>
+          <option>Family office</option><option>Development finance institution</option>
+          <option>Bank / lender</option><option>Corporate</option><option>Advisory firm</option><option>Other</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- STEP 2: Document Acceptance -->
+    <div class="reg-body" id="regStep2" style="display:none">
+      <div class="reg-section-title">Review and accept platform documents</div>
+      <p class="reg-section-sub">Please read each document in full. Scroll to the bottom of each document before the acceptance checkbox activates. You must accept all documents to proceed.</p>
+
+      <!-- Document 1: NDA -->
+      <div class="doc-block">
+        <div class="doc-block-header">
+          <span class="doc-block-title">Non-Disclosure Agreement</span>
+          <span class="doc-status pending" id="docStatus1">Scroll to read</span>
+        </div>
+        <div class="doc-scroll" id="docScroll1" onscroll="checkDocScroll(1)">
+          <h4>Non-Disclosure Agreement</h4>
+          <p>This Non-Disclosure Agreement ("Agreement") is entered into between the African Business Trade Association ("ABTA") and the registering member ("Member").</p>
+          <h4>1. Confidential Information</h4>
+          <p>For the purposes of this Agreement, "Confidential Information" means any information disclosed through the ABTA Deal Room platform, including but not limited to deal teasers, counterparty identities, financial data, business descriptions, transaction structures and any related materials.</p>
+          <h4>2. Obligations</h4>
+          <p>The Member agrees to: (a) hold all Confidential Information in strict confidence; (b) not disclose Confidential Information to any third party without prior written consent from ABTA; (c) use Confidential Information solely for the purpose of evaluating potential transactions facilitated through the Deal Room; (d) notify ABTA immediately upon becoming aware of any unauthorised use or disclosure of Confidential Information.</p>
+          <h4>3. Permitted Disclosures</h4>
+          <p>The Member may disclose Confidential Information to its professional advisers, employees and agents who have a need to know for the purpose of evaluating a potential transaction, provided that such persons are bound by equivalent confidentiality obligations.</p>
+          <h4>4. Exclusions</h4>
+          <p>This Agreement does not apply to information that: (a) is or becomes publicly known through no breach of this Agreement; (b) was rightfully known to the Member before disclosure; (c) is independently developed by the Member without reference to the Confidential Information; or (d) is required to be disclosed by law or regulatory order.</p>
+          <h4>5. Term</h4>
+          <p>This Agreement remains in force for the duration of the Member's Deal Room membership and for a period of three (3) years thereafter.</p>
+          <h4>6. Governing Law</h4>
+          <p>This Agreement is governed by the laws of England and Wales. Any disputes shall be subject to the exclusive jurisdiction of the courts of England and Wales.</p>
+          <p>By accepting this document, the Member confirms that they have read, understood and agree to be bound by the terms of this Non-Disclosure Agreement.</p>
+        </div>
+        <div class="scroll-hint" id="scrollHint1">↓ Please scroll to the bottom of this document</div>
+        <div class="doc-accept">
+          <input type="checkbox" id="acceptNda" disabled onchange="checkAllDocs()">
+          <label for="acceptNda">I have read and accept the Non-Disclosure Agreement</label>
+        </div>
+      </div>
+
+      <!-- Document 2: Platform Membership Agreement -->
+      <div class="doc-block">
+        <div class="doc-block-header">
+          <span class="doc-block-title">Platform Membership Agreement</span>
+          <span class="doc-status pending" id="docStatus2">Scroll to read</span>
+        </div>
+        <div class="doc-scroll" id="docScroll2" onscroll="checkDocScroll(2)">
+          <h4>ABTA Deal Room Platform Membership Agreement</h4>
+          <p>This Platform Membership Agreement ("Agreement") governs the Member's access to and use of the ABTA Deal Room platform ("Platform"), operated by the African Business Trade Association ("ABTA").</p>
+          <h4>1. Membership</h4>
+          <p>Membership of the Deal Room is separate from any AMI editorial subscription. The annual membership fee is £99 (ninety-nine pounds sterling), payable in advance. Membership grants access to the Platform for a period of twelve (12) months from the date of payment.</p>
+          <h4>2. Platform Use</h4>
+          <p>The Member may: (a) browse all active deal teasers, including revealed counterparty data; (b) submit interest confirmations for any opportunity; (c) submit capital opportunities for ABTA review; (d) access ABTA's structured introduction process subject to screening.</p>
+          <h4>3. Screening and Introductions</h4>
+          <p>ABTA reserves the right to decline any interest confirmation at its sole discretion. An introduction does not constitute a recommendation or endorsement by ABTA of either party or of the transaction. ABTA is not a financial adviser, broker or intermediary in any resulting transaction.</p>
+          <h4>4. Submitted Opportunities</h4>
+          <p>By submitting a capital opportunity, the Member grants ABTA a non-exclusive right to anonymise and publish the opportunity on the Platform. ABTA reserves the right to decline, edit or remove any submission at its sole discretion.</p>
+          <h4>5. Fees and Refunds</h4>
+          <p>The annual membership fee is non-refundable once access has been granted. ABTA reserves the right to vary the membership fee on renewal with 30 days' notice.</p>
+          <h4>6. Termination</h4>
+          <p>ABTA may terminate membership immediately and without refund if the Member breaches any term of this Agreement or the Non-Disclosure Agreement, or if ABTA reasonably determines that the Member is acting in bad faith.</p>
+          <h4>7. Limitation of Liability</h4>
+          <p>ABTA's liability to the Member in respect of any claim arising from use of the Platform shall not exceed the annual membership fee paid by the Member. ABTA shall not be liable for any indirect, consequential or economic loss.</p>
+          <h4>8. Governing Law</h4>
+          <p>This Agreement is governed by the laws of England and Wales.</p>
+          <p>By accepting this document, the Member confirms that they have read, understood and agree to be bound by the terms of this Platform Membership Agreement.</p>
+        </div>
+        <div class="scroll-hint" id="scrollHint2">↓ Please scroll to the bottom of this document</div>
+        <div class="doc-accept">
+          <input type="checkbox" id="acceptPlatform" disabled onchange="checkAllDocs()">
+          <label for="acceptPlatform">I have read and accept the Platform Membership Agreement</label>
+        </div>
+      </div>
+
+      <!-- Document 3: Fee Schedule -->
+      <div class="doc-block">
+        <div class="doc-block-header">
+          <span class="doc-block-title">Fee Schedule</span>
+          <span class="doc-status pending" id="docStatus3">Scroll to read</span>
+        </div>
+        <div class="doc-scroll" id="docScroll3" onscroll="checkDocScroll(3)">
+          <h4>Deal Room Fee Schedule</h4>
+          <p>This Fee Schedule sets out the charges applicable to Deal Room membership as at 1 July 2026.</p>
+          <h4>Annual Membership Fee</h4>
+          <p><strong>£99 per year</strong> (inclusive of VAT where applicable). Payable in advance by credit or debit card via Stripe. Membership is activated on receipt of cleared payment.</p>
+          <h4>Introductions</h4>
+          <p>There is no separate fee for interest confirmations or introductions facilitated through the Platform. ABTA does not charge a success fee or transaction fee on any deal resulting from a Deal Room introduction.</p>
+          <h4>Deal Submission</h4>
+          <p>Submitting a capital opportunity for ABTA review is included within the annual membership fee. There is no additional charge for submission, review or publication.</p>
+          <h4>Renewal</h4>
+          <p>Membership renews annually. ABTA will notify members by email at least 30 days before renewal. The renewal fee will be the then-current annual membership fee.</p>
+          <h4>Refund Policy</h4>
+          <p>The annual membership fee is non-refundable once access to the Platform has been granted, except where required by applicable consumer protection law.</p>
+          <p>By accepting this document, the Member confirms that they have read and understood the applicable fee schedule.</p>
+        </div>
+        <div class="scroll-hint" id="scrollHint3">↓ Please scroll to the bottom of this document</div>
+        <div class="doc-accept">
+          <input type="checkbox" id="acceptFees" disabled onchange="checkAllDocs()">
+          <label for="acceptFees">I have read and acknowledge the Fee Schedule</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3: Payment -->
+    <div class="reg-body" id="regStep3" style="display:none">
+      <div class="reg-section-title">Complete your membership</div>
+      <p class="reg-section-sub">You have reviewed and accepted all platform documents. Complete payment to activate your Deal Room account.</p>
+      <div class="payment-summary">
+        <div class="payment-summary-title">Order summary</div>
+        <div class="payment-line"><span class="payment-line-label">ABTA Deal Room — Annual Membership</span><span class="payment-line-val">£99.00</span></div>
+        <div class="payment-line"><span class="payment-line-label">VAT (where applicable)</span><span class="payment-line-val">Included</span></div>
+        <div class="payment-line"><span class="payment-line-label" style="font-weight:600">Total due today</span><span class="payment-line-val total">£99</span></div>
+      </div>
+      <p class="stripe-notice">Payment is processed securely via Stripe. ABTA does not store your card details. Your membership activates immediately on receipt of cleared payment.</p>
+      <div class="form-group">
+        <div class="checkbox-group">
+          <input type="checkbox" id="paymentConfirm" onchange="document.getElementById('btnPay').disabled=!this.checked">
+          <label class="checkbox-label" for="paymentConfirm">I confirm that I have read and accepted the Non-Disclosure Agreement, Platform Membership Agreement and Fee Schedule, and I authorise the payment of £99 for annual Deal Room membership.</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="reg-footer">
+      <button class="btn-reg-back" id="regBackBtn" onclick="regBack()" style="visibility:hidden">← Back</button>
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);letter-spacing:.06em" id="regStepLabel">Step 1 of 3</div>
+      <button class="btn-reg-next" id="regNextBtn" onclick="regNext()">Continue →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ════════════════════════════════════════════════
+     BETA ACCESS GATE — remove this block when live
+  ════════════════════════════════════════════════ */
+  (function(){
+    const ACCESS_CODE = 'ABTA2026'; // change this before sharing with testers
+    const SESSION_KEY = 'dr_beta_access';
+    if(sessionStorage.getItem(SESSION_KEY) === 'true') return;
+    document.body.style.display = 'none';
+    const code = prompt('ABTA Deal Room — Beta Access\n\nEnter your access code:');
+    if(code && code.trim() === ACCESS_CODE){
+      sessionStorage.setItem(SESSION_KEY, 'true');
+      document.body.style.display = '';
+    } else {
+      document.body.innerHTML = '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;background:#FAF7F0;color:#1A1208"><div style="text-align:center;padding:40px"><div style="font-size:28px;margin-bottom:12px">🔒</div><h2 style="font-size:20px;font-weight:700;margin-bottom:8px">Access restricted</h2><p style="font-size:14px;color:#6B5344">This page is not publicly available. Contact ABTA for access.</p></div></div>';
+    }
+  })();
+
+  /* ════════════════════════════════════════════════
+     THEME
+  ════════════════════════════════════════════════ */
+  (function(){
+    const s=localStorage.getItem('ami_theme')||'light';
+    document.documentElement.setAttribute('data-theme',s);
+    const b=document.querySelector('.theme-toggle');
+    if(b) b.textContent=s==='dark'?'☀':'◑';
+  })();
+  function toggleTheme(){
+    const h=document.documentElement;
+    const t=h.getAttribute('data-theme')==='dark'?'light':'dark';
+    h.setAttribute('data-theme',t);
+    localStorage.setItem('ami_theme',t);
+    document.querySelector('.theme-toggle').textContent=t==='dark'?'☀':'◑';
+  }
+
+  /* ════════════════════════════════════════════════
+     MEMBERSHIP STATE
+     dr_member = 'true' → full Deal Room access
+     ami_subscriber = 'true' → AMI only (not deal room)
+  ════════════════════════════════════════════════ */
+  function isDrMember(){ return localStorage.getItem('dr_member')==='true'; }
+  function isAmiOnly(){ return localStorage.getItem('ami_subscriber')==='true' && !isDrMember(); }
+
+  function initAccessState(){
+    const banner=document.getElementById('memberBanner');
+    const submitGate=document.getElementById('submitGate');
+    const submitForm=document.getElementById('submitForm');
+
+    if(isDrMember()){
+      if(banner) banner.style.display='none';
+      if(submitGate) submitGate.style.display='none';
+      if(submitForm) submitForm.style.display='block';
+      restoreBookmarks();
+    } else {
+      if(banner) banner.style.display='flex';
+      if(submitGate) submitGate.style.display='block';
+      if(submitForm) submitForm.style.display='none';
+    }
+  }
+
+  /* ════════════════════════════════════════════════
+     MOBILE NAV
+  ════════════════════════════════════════════════ */
+  function toggleMobileNav(){ document.getElementById('navMobileDrawer').classList.toggle('open'); }
+
+  /* ════════════════════════════════════════════════
+     WORKFLOW TOGGLE
+  ════════════════════════════════════════════════ */
+  function toggleWorkflow(btn){
+    const s=document.getElementById('workflowStrip');
+    const open=s.classList.toggle('expanded');
+    btn.classList.toggle('open',open);
+    btn.setAttribute('aria-expanded',open);
+  }
+
+  /* ════════════════════════════════════════════════
+     SECTION TABS
+  ════════════════════════════════════════════════ */
+  function switchTab(tab){
+    document.querySelectorAll('.section-tab').forEach(t=>t.classList.remove('active'));
+    document.getElementById('opportunitiesSection').style.display='none';
+    document.getElementById('submitSection').style.display='none';
+    document.getElementById('processSection').style.display='none';
+    if(tab==='opportunities'){ document.getElementById('tabOpportunities').classList.add('active'); document.getElementById('opportunitiesSection').style.display='block'; }
+    if(tab==='submit'){ document.getElementById('tabSubmit').classList.add('active'); document.getElementById('submitSection').style.display='block'; }
+    if(tab==='process'){ document.getElementById('tabProcess').classList.add('active'); document.getElementById('processSection').style.display='block'; }
+  }
+
+  /* ════════════════════════════════════════════════
+     FILTER + EMPTY STATE
+  ════════════════════════════════════════════════ */
+  function filterTeasers(type,btn){
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    let visible=0;
+    document.querySelectorAll('.teasers-grid .teaser-card').forEach(card=>{
+      const wrapper=card.closest('.paywall-overlay')||card;
+      if(type==='all'||card.dataset.type===type){ wrapper.style.display=''; visible++; }
+      else wrapper.style.display='none';
+    });
+    const prev=document.getElementById('filterEmptyState');
+    if(prev) prev.remove();
+    if(visible===0){
+      const label=btn.textContent.trim();
+      const el=document.createElement('div');
+      el.id='filterEmptyState'; el.className='empty-state';
+      el.innerHTML=`<div class="empty-icon">◈</div><div class="empty-title">No active ${label.toLowerCase()} opportunities at present</div><p class="empty-body">New teasers are circulated on a rolling basis as qualifying opportunities are received and reviewed by ABTA.</p>`;
+      document.getElementById('teasersGrid').appendChild(el);
+    }
+  }
+
+  /* ════════════════════════════════════════════════
+     REVEAL COUNTERPARTY
+  ════════════════════════════════════════════════ */
+  function handleReveal(id){
+    if(!isDrMember()){ openRegistration(); return; }
+    const block=document.getElementById('revealed-'+id);
+    const btn=document.getElementById('reveal-btn-'+id);
+    if(block && btn){
+      block.classList.toggle('visible');
+      btn.textContent=block.classList.contains('visible')?'Hide counterparty':'Reveal counterparty →';
+    }
+  }
+
+  /* ════════════════════════════════════════════════
+     INTEREST FORM
+  ════════════════════════════════════════════════ */
+  function handleInterest(ref,label){
+    if(!isDrMember()){ openRegistration(); return; }
+    document.getElementById('hiddenTeaserRef').value=ref;
+    document.getElementById('modalRef').textContent=ref+' — '+label;
+    document.getElementById('interestModal').classList.add('open');
+    document.getElementById('modalFormState').style.display='';
+    document.getElementById('modalSuccessState').style.display='none';
+    document.body.style.overflow='hidden';
+  }
+  function closeInterestModal(){ document.getElementById('interestModal').classList.remove('open'); document.body.style.overflow=''; }
+  document.getElementById('interestModal').addEventListener('click',function(e){ if(e.target===this) closeInterestModal(); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape'){ closeInterestModal(); closeRegistration(); } });
+
+  function submitInterestForm(e){
+    e.preventDefault();
+    const form=e.target;
+    const data={ teaserRef:form.teaserRef.value, organisation:form.orgName.value, contactName:form.contactName.value, contactRole:form.contactRole.value, contactEmail:form.contactEmail.value, counterpartyType:form.counterpartyType.value, ticketSize:form.ticketSize.value, rationale:form.interestRationale.value, submittedAt:new Date().toISOString() };
+    (async()=>{ try{ if(typeof SUPABASE_URL!=='undefined'&&SUPABASE_URL){ const t=localStorage.getItem('ami_auth_token')||''; const h={'Content-Type':'application/json','apikey':SUPABASE_ANON,'Prefer':'return=minimal'}; if(t) h['Authorization']='Bearer '+t; await fetch(SUPABASE_URL+'/rest/v1/deal_room_interest',{method:'POST',headers:h,body:JSON.stringify(data)}); } }catch(err){ console.warn('Supabase:',err); } })();
+    document.getElementById('modalFormState').style.display='none';
+    document.getElementById('modalSuccessState').style.display='';
+  }
+
+  /* ════════════════════════════════════════════════
+     BOOKMARK
+  ════════════════════════════════════════════════ */
+  function bookmarkTeaser(ref,btn){
+    const saved=JSON.parse(localStorage.getItem('dr_bookmarks')||'[]');
+    if(!saved.includes(ref)){ saved.push(ref); localStorage.setItem('dr_bookmarks',JSON.stringify(saved)); btn.textContent='Bookmarked ✓'; btn.style.color='var(--green-mid)'; btn.style.borderColor='var(--green-mid)'; }
+    else{ const i=saved.indexOf(ref); saved.splice(i,1); localStorage.setItem('dr_bookmarks',JSON.stringify(saved)); btn.textContent='Bookmark for review'; btn.style.color=''; btn.style.borderColor=''; }
+  }
+  function restoreBookmarks(){
+    const saved=JSON.parse(localStorage.getItem('dr_bookmarks')||'[]');
+    document.querySelectorAll('[onclick^="bookmarkTeaser"]').forEach(btn=>{
+      const ref=btn.getAttribute('onclick').match(/'([^']+)'/)[1];
+      if(saved.includes(ref)){ btn.textContent='Bookmarked ✓'; btn.style.color='var(--green-mid)'; btn.style.borderColor='var(--green-mid)'; }
+    });
+  }
+
+  /* ════════════════════════════════════════════════
+     WORD COUNT
+  ════════════════════════════════════════════════ */
+  function updateWordCount(el,countId,max){
+    const w=el.value.trim()===''?0:el.value.trim().split(/\s+/).length;
+    const c=document.getElementById(countId);
+    c.textContent=w+' / '+max+' words';
+    c.style.color=w>max?'var(--terra)':'var(--text-soft)';
+  }
+
+  /* ════════════════════════════════════════════════
+     FILE UPLOAD
+  ════════════════════════════════════════════════ */
+  const uploadedFiles=[];
+  function handleFileSelect(input){ Array.from(input.files).forEach(addFile); input.value=''; }
+  function handleDragOver(e){ e.preventDefault(); document.getElementById('fileDrop').classList.add('dragover'); }
+  function handleDragLeave(){ document.getElementById('fileDrop').classList.remove('dragover'); }
+  function handleDrop(e){ e.preventDefault(); document.getElementById('fileDrop').classList.remove('dragover'); Array.from(e.dataTransfer.files).forEach(addFile); }
+  function addFile(file){
+    if(file.size>25*1024*1024){ alert(file.name+' exceeds the 25MB limit.'); return; }
+    uploadedFiles.push(file); renderFileList();
+  }
+  function removeFile(i){ uploadedFiles.splice(i,1); renderFileList(); }
+  function renderFileList(){
+    const list=document.getElementById('fileList');
+    list.innerHTML='';
+    uploadedFiles.forEach((f,i)=>{
+      const el=document.createElement('div'); el.className='file-item';
+      el.innerHTML=`<span class="file-item-name">📎 ${f.name}</span><span class="file-item-size">${(f.size/1024/1024).toFixed(1)}MB</span><button class="file-item-remove" onclick="removeFile(${i})" title="Remove">✕</button>`;
+      list.appendChild(el);
+    });
+  }
+
+  /* ════════════════════════════════════════════════
+     DEAL SUBMISSION
+  ════════════════════════════════════════════════ */
+  function submitDeal(e){
+    e.preventDefault();
+    document.getElementById('dealSubmitForm').style.display='none';
+    document.getElementById('submitSuccess').style.display='block';
+  }
+
+  /* ════════════════════════════════════════════════
+     REGISTRATION MODAL — VANGUARD-STYLE FLOW
+  ════════════════════════════════════════════════ */
+  let regCurrentStep=1;
+
+  function openRegistration(mode){
+    regCurrentStep=1;
+    showRegStep(1);
+    document.getElementById('regModal').classList.add('open');
+    document.body.style.overflow='hidden';
+    // Init doc scroll hints
+    [1,2,3].forEach(n=>{ setTimeout(()=>checkDocScroll(n),100); });
+  }
+  function closeRegistration(){
+    document.getElementById('regModal').classList.remove('open');
+    document.body.style.overflow='';
+  }
+  document.getElementById('regModal').addEventListener('click',function(e){ if(e.target===this) closeRegistration(); });
+
+  function showRegStep(n){
+    [1,2,3].forEach(i=>{
+      document.getElementById('regStep'+i).style.display=i===n?'block':'none';
+      const tab=document.getElementById('regTab'+i);
+      tab.classList.remove('active','done');
+      if(i<n) tab.classList.add('done');
+      if(i===n) tab.classList.add('active');
+    });
+    document.getElementById('regBackBtn').style.visibility=n>1?'visible':'hidden';
+    document.getElementById('regStepLabel').textContent='Step '+n+' of 3';
+    const nextBtn=document.getElementById('regNextBtn');
+    if(n===3){ nextBtn.textContent='Pay £99 →'; nextBtn.disabled=true; }
+    else{ nextBtn.textContent='Continue →'; nextBtn.disabled=false; }
+  }
+
+  function regNext(){
+    if(regCurrentStep===1){
+      // Validate step 1
+      const fields=['regFirstName','regLastName','regOrg','regRole','regEmail','regType'];
+      const empty=fields.find(id=>!document.getElementById(id).value.trim());
+      if(empty){ document.getElementById(empty).focus(); return; }
+      regCurrentStep=2; showRegStep(2);
+      // Show scroll hints after render
+      setTimeout(()=>{ [1,2,3].forEach(n=>checkDocScroll(n)); },150);
+    } else if(regCurrentStep===2){
+      if(!document.getElementById('acceptNda').checked||!document.getElementById('acceptPlatform').checked||!document.getElementById('acceptFees').checked){
+        alert('Please scroll through and accept all three documents before proceeding.'); return;
+      }
+      regCurrentStep=3; showRegStep(3);
+    } else if(regCurrentStep===3){
+      if(!document.getElementById('paymentConfirm').checked){ alert('Please confirm the payment authorisation to proceed.'); return; }
+      processPayment();
+    }
+  }
+  function regBack(){ if(regCurrentStep>1){ regCurrentStep--; showRegStep(regCurrentStep); } }
+
+  function processPayment(){
+    // In production: redirect to Stripe payment link with pre-filled email
+    // e.g. window.location.href = STRIPE_DEAL_ROOM + '?prefilled_email=' + encodeURIComponent(document.getElementById('regEmail').value);
+    // For now: simulate successful payment and grant access
+    const email=document.getElementById('regEmail').value;
+    const name=document.getElementById('regFirstName').value+' '+document.getElementById('regLastName').value;
+    localStorage.setItem('dr_member','true');
+    localStorage.setItem('dr_email',email);
+    localStorage.setItem('dr_name',name);
+    localStorage.setItem('dr_org',document.getElementById('regOrg').value);
+    closeRegistration();
+    initAccessState();
+    // Show confirmation banner
+    showBanner('Deal Room access activated. Welcome, '+document.getElementById('regFirstName').value+'.');
+  }
+
+  function showBanner(msg){
+    const b=document.createElement('div');
+    b.style.cssText='position:fixed;top:56px;left:50%;transform:translateX(-50%);background:#1E6B3C;color:#fff;font-family:"DM Mono",monospace;font-size:12px;letter-spacing:.06em;padding:12px 24px;border-radius:2px;z-index:5000;box-shadow:0 4px 16px rgba(0,0,0,.2)';
+    b.textContent=msg;
+    document.body.appendChild(b);
+    setTimeout(()=>b.remove(),5000);
+  }
+
+  /* ════════════════════════════════════════════════
+     DOCUMENT SCROLL-TO-ACCEPT (Vanguard pattern)
+     Checkbox activates once user scrolls to ≥85%
+  ════════════════════════════════════════════════ */
+  const docScrolled=[false,false,false];
+
+  function checkDocScroll(n){
+    const el=document.getElementById('docScroll'+n);
+    if(!el) return;
+    const pct=el.scrollTop/(el.scrollHeight-el.clientHeight);
+    const hint=document.getElementById('scrollHint'+n);
+    const status=document.getElementById('docStatus'+n);
+    const cb=document.getElementById(['acceptNda','acceptPlatform','acceptFees'][n-1]);
+
+    if(pct>=0.85 || el.scrollHeight<=el.clientHeight){
+      docScrolled[n-1]=true;
+      if(hint) hint.classList.remove('visible');
+      cb.disabled=false;
+      if(!cb.checked) status.textContent='Ready to accept'; status.className='doc-status ready';
+    } else {
+      if(hint && !docScrolled[n-1]) hint.classList.add('visible');
+    }
+    if(cb.checked){ status.textContent='✓ Accepted'; status.className='doc-status accepted'; }
+  }
+
+  function checkAllDocs(){
+    [1,2,3].forEach(n=>checkDocScroll(n));
+    const allAccepted=document.getElementById('acceptNda').checked&&document.getElementById('acceptPlatform').checked&&document.getElementById('acceptFees').checked;
+    // Update visual status for accepted docs
+    [['acceptNda',1],['acceptPlatform',2],['acceptFees',3]].forEach(([id,n])=>{
+      const cb=document.getElementById(id);
+      const status=document.getElementById('docStatus'+n);
+      if(cb.checked){ status.textContent='✓ Accepted'; status.className='doc-status accepted'; }
+    });
+  }
+
+  /* ════════════════════════════════════════════════
+     INIT
+  ════════════════════════════════════════════════ */
+  initAccessState();
+</script>
+</body>
+</html>
