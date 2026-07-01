@@ -381,6 +381,17 @@
     .file-item-remove{font-size:14px;color:var(--text-soft);cursor:pointer;flex-shrink:0;margin-left:8px;background:none;border:none}
     .file-item-remove:hover{color:var(--terra)}
 
+    /* ── GATEWAY OPTIONS ─────────────────────── */
+    .gateway-opt{display:flex;align-items:center;gap:16px;width:100%;background:var(--surface);border:1px solid var(--divider);border-radius:2px;padding:16px 20px;text-align:left;cursor:pointer;transition:border-color .2s,background .2s;margin-bottom:10px}
+    .gateway-opt:last-child{margin-bottom:0}
+    .gateway-opt:hover{border-color:var(--gold);background:var(--gold-pale)}
+    [data-theme="dark"] .gateway-opt:hover{background:rgba(201,168,76,.06)}
+    .gateway-opt-icon{font-family:'DM Mono',monospace;font-size:18px;font-weight:500;color:var(--gold);min-width:28px;text-align:center;flex-shrink:0}
+    .gateway-opt-title{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text);margin-bottom:4px}
+    .gateway-opt-desc{font-size:13px;color:var(--text-soft);line-height:1.5}
+    .upgrade-banner{background:var(--gold-pale);border:1px solid var(--border);border-left:3px solid var(--gold);padding:12px 16px;border-radius:2px;margin-bottom:20px;font-size:13px;color:var(--text-soft);line-height:1.55;display:none}
+    [data-theme="dark"] .upgrade-banner{background:rgba(201,168,76,.06)}
+    .signin-error{background:rgba(184,92,56,.1);border:1px solid rgba(184,92,56,.3);border-left:3px solid var(--terra);padding:10px 14px;border-radius:2px;font-size:13px;color:var(--terra);margin-top:14px;display:none}
     /* ── RESPONSIVE ──────────────────────────── */
     @media(max-width:900px){.page-body{grid-template-columns:1fr}.sidebar{order:-1;display:grid;grid-template-columns:1fr 1fr}.cta-card{grid-column:1/-1}}
     @media(max-width:640px){
@@ -960,29 +971,79 @@
 <div class="reg-modal-backdrop" id="regModal" role="dialog" aria-modal="true" aria-labelledby="regTitle">
   <div class="reg-modal">
 
-    <!-- Progress tabs -->
-    <div class="reg-progress">
+    <!-- Progress tabs (hidden on gateway/signin steps) -->
+    <div class="reg-progress" id="regProgressTabs" style="display:none">
       <div class="reg-step-tab active" id="regTab1" data-num="1">Your Details</div>
       <div class="reg-step-tab" id="regTab2" data-num="2">Review Documents</div>
       <div class="reg-step-tab" id="regTab3" data-num="3">Payment</div>
       <div class="reg-step-tab" id="regTab4" data-num="4">Certificate</div>
     </div>
 
+    <!-- GATEWAY STEP (step 0) — choose your path -->
+    <div class="reg-body" id="regStep0">
+      <div class="reg-section-title">Access ABTA Deal Room</div>
+      <p class="reg-section-sub">Select how you'd like to continue. Deal Room is a separate service from your AMI subscription.</p>
+      <button class="gateway-opt" onclick="selectGateway('signin')">
+        <div class="gateway-opt-icon">→</div>
+        <div class="gateway-opt-body">
+          <div class="gateway-opt-title">Returning member — sign in</div>
+          <div class="gateway-opt-desc">Already registered? Restore access to your Deal Room account on this device.</div>
+        </div>
+      </button>
+      <button class="gateway-opt" onclick="selectGateway('upgrade')">
+        <div class="gateway-opt-icon">★</div>
+        <div class="gateway-opt-body">
+          <div class="gateway-opt-title">AMI subscriber — upgrade to Deal Room</div>
+          <div class="gateway-opt-desc">Already subscribed to AMI? Add Deal Room access for £99/yr. No need to re-enter your account details.</div>
+        </div>
+      </button>
+      <button class="gateway-opt" onclick="selectGateway('new')">
+        <div class="gateway-opt-icon">+</div>
+        <div class="gateway-opt-body">
+          <div class="gateway-opt-title">New to ABTA — join Deal Room</div>
+          <div class="gateway-opt-desc">Create a new Deal Room account. Full registration takes under three minutes — £99/yr.</div>
+        </div>
+      </button>
+    </div>
+
+    <!-- SIGN-IN STEP -->
+    <div class="reg-body" id="regStepSignin" style="display:none">
+      <div class="reg-section-title">Sign in to Deal Room</div>
+      <p class="reg-section-sub">Enter the email address you registered with to restore your Deal Room access on this device.</p>
+      <div class="form-group" style="margin-top:8px">
+        <label class="form-label" for="signinEmail">Email address <span>*</span></label>
+        <input type="email" id="signinEmail" class="form-input" placeholder="you@organisation.com" onkeydown="if(event.key==='Enter')signinMember()">
+      </div>
+      <div class="signin-error" id="signinError">
+        We could not find a Deal Room account for that email address on this device. If you registered on another device, please complete the registration flow again. For help, contact <a href="mailto:dealroom@abta.africa" style="color:var(--terra)">dealroom@abta.africa</a>.
+      </div>
+      <div id="signinAmiPrompt" style="display:none;margin-top:14px;background:var(--gold-pale);border:1px solid var(--border);border-left:3px solid var(--gold);padding:12px 16px;border-radius:2px;font-size:13px;color:var(--text-soft)">
+        We found an AMI subscription for this email. <strong style="color:var(--text)">Would you like to upgrade to Deal Room?</strong>
+        <button onclick="selectGateway('upgrade')" style="display:block;margin-top:10px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;background:var(--gold);color:#060F09;border:none;padding:8px 16px;border-radius:2px;cursor:pointer">Upgrade for £99/yr →</button>
+      </div>
+    </div>
+
     <!-- STEP 1: Details -->
     <div class="reg-body" id="regStep1">
-      <div class="reg-section-title" id="regTitle">Create your Deal Room account</div>
-      <p class="reg-section-sub">Deal Room is a separate service from your AMI subscription. Your account gives you access to anonymised teasers, revealed counterparty data, interest submission and ABTA's structured introduction process.</p>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label" for="regFirstName">First Name <span>*</span></label><input type="text" id="regFirstName" class="form-input" placeholder="First name" required></div>
-        <div class="form-group"><label class="form-label" for="regLastName">Last Name <span>*</span></label><input type="text" id="regLastName" class="form-input" placeholder="Last name" required></div>
+      <!-- Upgrade banner — shown for AMI subscriber upgrade path -->
+      <div class="upgrade-banner" id="upgradeBanner">
+        <strong style="color:var(--text)">Upgrading from AMI subscription</strong> — Confirm your details below. ABTA will verify your AMI account status before activating Deal Room access.
       </div>
-      <div class="form-group"><label class="form-label" for="regOrg">Organisation <span>*</span></label><input type="text" id="regOrg" class="form-input" placeholder="Your organisation's name" required></div>
+      <div class="reg-section-title" id="regTitle">Create your Deal Room account</div>
+      <p class="reg-section-sub" id="regSubTitle">Deal Room is a separate service from your AMI subscription. Your account gives you access to anonymised teasers, revealed counterparty data, interest submission and ABTA's structured introduction process.</p>
+
+      <!-- Registration form — used by all paths (new and AMI upgrade) -->
       <div class="form-row">
-        <div class="form-group"><label class="form-label" for="regRole">Role / Title <span>*</span></label><input type="text" id="regRole" class="form-input" placeholder="e.g. Managing Partner" required></div>
-        <div class="form-group"><label class="form-label" for="regEmail">Email <span>*</span></label><input type="email" id="regEmail" class="form-input" placeholder="you@organisation.com" required></div>
+        <div class="form-group"><label class="form-label" for="regFirstName">First Name <span>*</span></label><input type="text" id="regFirstName" class="form-input" placeholder="First name"></div>
+        <div class="form-group"><label class="form-label" for="regLastName">Last Name <span>*</span></label><input type="text" id="regLastName" class="form-input" placeholder="Last name"></div>
+      </div>
+      <div class="form-group"><label class="form-label" for="regOrg">Organisation <span>*</span></label><input type="text" id="regOrg" class="form-input" placeholder="Your organisation's name"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label" for="regRole">Role / Title <span>*</span></label><input type="text" id="regRole" class="form-input" placeholder="e.g. Managing Partner"></div>
+        <div class="form-group"><label class="form-label" for="regEmail">Email <span>*</span></label><input type="email" id="regEmail" class="form-input" placeholder="you@organisation.com"></div>
       </div>
       <div class="form-group"><label class="form-label" for="regType">Organisation Type <span>*</span></label>
-        <select id="regType" class="form-select" required>
+        <select id="regType" class="form-select">
           <option value="" disabled selected>Select type</option>
           <option>Strategic investor</option><option>Financial investor</option><option>Private equity</option>
           <option>Family office</option><option>Development finance institution</option>
@@ -1553,59 +1614,150 @@
   }
 
   /* ════════════════════════════════════════════════
-     REGISTRATION MODAL — VANGUARD-STYLE FLOW
+     REGISTRATION MODAL — THREE-PATH FLOW
+     Paths: 'new' | 'upgrade' | 'signin'
+     Steps: 0=gateway  S=signin  1-4=registration
   ════════════════════════════════════════════════ */
-  let regCurrentStep=1;
+  let regCurrentStep = 0;
+  let regFlow = 'new'; // 'new' | 'upgrade' | 'signin'
 
+  /* Open modal — always start at gateway */
   function openRegistration(mode){
-    regCurrentStep=1;
-    showRegStep(1);
     document.getElementById('regModal').classList.add('open');
     document.body.style.overflow='hidden';
-    // Init doc scroll hints
-    [1,2,3].forEach(n=>{ setTimeout(()=>checkDocScroll(n),100); });
+    showGateway(mode === 'signin' ? 'signin' : null);
   }
+
   function closeRegistration(){
     document.getElementById('regModal').classList.remove('open');
     document.body.style.overflow='';
   }
   document.getElementById('regModal').addEventListener('click',function(e){ if(e.target===this) closeRegistration(); });
 
+  /* Show the gateway (step 0) */
+  function showGateway(preSelect){
+    regCurrentStep = 0;
+    document.getElementById('regStep0').style.display = 'block';
+    document.getElementById('regStepSignin').style.display = 'none';
+    [1,2,3,4].forEach(i => document.getElementById('regStep'+i).style.display='none');
+    document.getElementById('regProgressTabs').style.display = 'none';
+    document.getElementById('regBackBtn').style.visibility = 'hidden';
+    document.getElementById('regNextBtn').style.display = 'none';
+    document.getElementById('regStepLabel').textContent = '';
+    if(preSelect) selectGateway(preSelect);
+  }
+
+  /* Route to a path from the gateway */
+  function selectGateway(path){
+    regFlow = path;
+    document.getElementById('regStep0').style.display = 'none';
+
+    if(path === 'signin'){
+      regCurrentStep = 'S';
+      document.getElementById('regStepSignin').style.display = 'block';
+      document.getElementById('regProgressTabs').style.display = 'none';
+      document.getElementById('regBackBtn').style.visibility = 'visible';
+      document.getElementById('regNextBtn').style.display = 'block';
+      document.getElementById('regNextBtn').textContent = 'Sign in →';
+      document.getElementById('regNextBtn').disabled = false;
+      document.getElementById('regNextBtn').onclick = signinMember;
+      document.getElementById('regStepLabel').textContent = '';
+      document.getElementById('signinError').style.display = 'none';
+      document.getElementById('signinAmiPrompt').style.display = 'none';
+      // Pre-populate email if we have a stored Deal Room email
+      const storedDrEmail = localStorage.getItem('dr_email');
+      if(storedDrEmail) document.getElementById('signinEmail').value = storedDrEmail;
+      setTimeout(()=>document.getElementById('signinEmail').focus(), 100);
+
+    } else if(path === 'upgrade'){
+      // AMI subscriber — same full form, but with upgrade banner and email pre-filled
+      document.getElementById('upgradeBanner').style.display = 'block';
+      document.getElementById('regTitle').textContent = 'Create your Deal Room account';
+      document.getElementById('regSubTitle').textContent = 'Complete your details below. ABTA will verify your AMI subscription status before activating Deal Room access.';
+      // Pre-fill email from AMI storage or sign-in field
+      const amiEmail = localStorage.getItem('ami_email') || document.getElementById('signinEmail').value || '';
+      if(amiEmail) document.getElementById('regEmail').value = amiEmail;
+      document.getElementById('regProgressTabs').style.display = 'flex';
+      regCurrentStep = 1; showRegStep(1);
+
+    } else { // 'new'
+      document.getElementById('upgradeBanner').style.display = 'none';
+      document.getElementById('regTitle').textContent = 'Create your Deal Room account';
+      document.getElementById('regSubTitle').textContent = 'Deal Room is a separate service from your AMI subscription. Your account gives you access to anonymised teasers, revealed counterparty data, interest submission and ABTA\'s structured introduction process.';
+      document.getElementById('regProgressTabs').style.display = 'flex';
+      regCurrentStep = 1; showRegStep(1);
+    }
+  }
+
+  /* Sign-in: restore Deal Room access by email */
+  function signinMember(){
+    const email = document.getElementById('signinEmail').value.trim().toLowerCase();
+    if(!email){ document.getElementById('signinEmail').focus(); return; }
+
+    const drEmail = (localStorage.getItem('dr_email') || '').toLowerCase();
+    const isMember = localStorage.getItem('dr_member') === 'true';
+    const amiEmail = (localStorage.getItem('ami_email') || '').toLowerCase();
+
+    if(isMember && drEmail && email === drEmail){
+      // Returning Deal Room member — restore session
+      closeRegistration();
+      showBanner('Welcome back — Deal Room access restored.');
+      initAccessState();
+    } else if(amiEmail && email === amiEmail){
+      // AMI subscriber not yet on Deal Room — show upgrade prompt
+      document.getElementById('signinError').style.display = 'none';
+      document.getElementById('signinAmiPrompt').style.display = 'block';
+    } else {
+      // Not found
+      document.getElementById('signinAmiPrompt').style.display = 'none';
+      document.getElementById('signinError').style.display = 'block';
+    }
+  }
+
   function showRegStep(n){
     [1,2,3,4].forEach(i=>{
-      document.getElementById('regStep'+i).style.display=i===n?'block':'none';
-      const tab=document.getElementById('regTab'+i);
+      document.getElementById('regStep'+i).style.display = i===n ? 'block' : 'none';
+      const tab = document.getElementById('regTab'+i);
       tab.classList.remove('active','done');
-      if(i<n) tab.classList.add('done');
-      if(i===n) tab.classList.add('active');
+      if(i < n) tab.classList.add('done');
+      if(i === n) tab.classList.add('active');
     });
-    const backBtn=document.getElementById('regBackBtn');
-    const nextBtn=document.getElementById('regNextBtn');
-    const footer=document.getElementById('regFooter');
-    document.getElementById('regStepLabel').textContent='Step '+n+' of 4';
-    backBtn.style.visibility=n>1&&n<4?'visible':'hidden';
-    if(n===3){ nextBtn.textContent='Pay £99 →'; nextBtn.disabled=false; nextBtn.onclick=function(){ regCurrentStep=3; regNext(); }; }
-    else if(n===4){
-      nextBtn.textContent='Download Certificate';
-      nextBtn.disabled=false;
-      nextBtn.onclick=printCertificate;
+    document.getElementById('regStepSignin').style.display = 'none';
+    document.getElementById('regStep0').style.display = 'none';
+    const backBtn = document.getElementById('regBackBtn');
+    const nextBtn = document.getElementById('regNextBtn');
+    nextBtn.style.display = 'block';
+    document.getElementById('regStepLabel').textContent = 'Step '+n+' of 4';
+    // Back: on step 1 go to gateway; on steps 2-3 go to previous step
+    backBtn.style.visibility = n >= 1 && n < 4 ? 'visible' : 'hidden';
+    if(n === 3){
+      nextBtn.textContent = 'Pay £99 →';
+      nextBtn.disabled = false;
+      nextBtn.onclick = function(){ regCurrentStep = 3; regNext(); };
+    } else if(n === 4){
+      nextBtn.textContent = 'Download Certificate';
+      nextBtn.disabled = false;
+      nextBtn.onclick = printCertificate;
+    } else {
+      nextBtn.textContent = 'Continue →';
+      nextBtn.disabled = false;
+      nextBtn.onclick = regNext;
     }
-    else{ nextBtn.textContent='Continue →'; nextBtn.disabled=false; nextBtn.onclick=regNext; }
   }
 
   function regNext(){
-    if(regCurrentStep===1){
-      const fields=['regFirstName','regLastName','regOrg','regRole','regEmail','regType'];
-      const empty=fields.find(id=>!document.getElementById(id).value.trim());
+    if(regCurrentStep === 1){
+      const fields = ['regFirstName','regLastName','regOrg','regRole','regEmail','regType'];
+      const empty = fields.find(id => !document.getElementById(id).value.trim());
       if(empty){ document.getElementById(empty).focus(); return; }
-      regCurrentStep=2; showRegStep(2);
-      setTimeout(()=>{ [1,2,3].forEach(n=>checkDocScroll(n)); },150);
-    } else if(regCurrentStep===2){
-      if(!document.getElementById('acceptNda').checked||!document.getElementById('acceptPlatform').checked||!document.getElementById('acceptFees').checked){
+      regCurrentStep = 2; showRegStep(2);
+      setTimeout(()=>{ [1,2,3].forEach(n=>checkDocScroll(n)); }, 150);
+    } else if(regCurrentStep === 2){
+      if(!document.getElementById('acceptNda').checked || !document.getElementById('acceptPlatform').checked || !document.getElementById('acceptFees').checked){
         alert('Please scroll through and accept all three documents before proceeding.'); return;
       }
-      regCurrentStep=3; showRegStep(3);
-    } else if(regCurrentStep===3){
+      regCurrentStep = 3; showRegStep(3);
+    } else if(regCurrentStep === 3){
       if(!document.getElementById('paymentConfirm').checked){
         document.getElementById('paymentConfirm').focus();
         alert('Please tick the confirmation checkbox to authorise payment.');
@@ -1614,15 +1766,23 @@
       processPayment();
     }
   }
-  function regBack(){ if(regCurrentStep>1&&regCurrentStep<4){ regCurrentStep--; showRegStep(regCurrentStep); } }
+
+  function regBack(){
+    if(regCurrentStep === 'S' || regCurrentStep === 1){
+      showGateway();
+    } else if(regCurrentStep > 1 && regCurrentStep < 4){
+      regCurrentStep--;
+      showRegStep(regCurrentStep);
+    }
+  }
 
   async function processPayment(){
-    const firstName=document.getElementById('regFirstName').value;
-    const lastName=document.getElementById('regLastName').value;
-    const fullName=firstName+' '+lastName;
-    const email=document.getElementById('regEmail').value;
-    const org=document.getElementById('regOrg').value;
-    const role=document.getElementById('regRole').value;
+    const firstName = document.getElementById('regFirstName').value;
+    const lastName  = document.getElementById('regLastName').value;
+    const fullName  = firstName + ' ' + lastName;
+    const email     = document.getElementById('regEmail').value;
+    const org       = document.getElementById('regOrg').value;
+    const role      = document.getElementById('regRole').value;
     const now=new Date();
     const agreementId='DR-'+now.getFullYear()+'-'+String(Math.floor(Math.random()*90000)+10000);
     const timeStr=now.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+' · '+now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})+' UTC';
