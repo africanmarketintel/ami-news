@@ -1018,7 +1018,7 @@
         We could not find a Deal Room account for that email address on this device. If you registered on another device, please complete the registration flow again. For help, contact <a href="mailto:dealroom@abta.africa" style="color:var(--terra)">dealroom@abta.africa</a>.
       </div>
       <div id="signinAmiPrompt" style="display:none;margin-top:14px;background:var(--gold-pale);border:1px solid var(--border);border-left:3px solid var(--gold);padding:12px 16px;border-radius:2px;font-size:13px;color:var(--text-soft)">
-        We found an AMI subscription for this email. <strong style="color:var(--text)">Would you like to upgrade to Deal Room?</strong>
+        We found an active AMI subscription for this email. <strong style="color:var(--text)">Add Deal Room access for £99/yr.</strong>
         <button onclick="selectGateway('upgrade')" style="display:block;margin-top:10px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;background:var(--gold);color:#060F09;border:none;padding:8px 16px;border-radius:2px;cursor:pointer">Upgrade for £99/yr →</button>
       </div>
     </div>
@@ -1689,26 +1689,53 @@
     }
   }
 
+  /* Check Supabase subscribers table for a paid AMI subscriber */
+  async function checkAmiSubscriber(email){
+    try{
+      const res = await fetch(
+        SUPABASE_URL + '/rest/v1/subscribers?email=eq.' + encodeURIComponent(email) + '&select=id&limit=1',
+        { headers: { 'apikey': SUPABASE_ANON } }
+      );
+      const data = await res.json();
+      return Array.isArray(data) && data.length > 0;
+    } catch(err){
+      console.warn('AMI subscriber check:', err);
+      return false;
+    }
+  }
+
   /* Sign-in: restore Deal Room access by email */
-  function signinMember(){
+  async function signinMember(){
     const email = document.getElementById('signinEmail').value.trim().toLowerCase();
     if(!email){ document.getElementById('signinEmail').focus(); return; }
 
-    const drEmail = (localStorage.getItem('dr_email') || '').toLowerCase();
+    const nextBtn = document.getElementById('regNextBtn');
+    nextBtn.textContent = 'Checking…';
+    nextBtn.disabled = true;
+
+    const drEmail  = (localStorage.getItem('dr_email') || '').toLowerCase();
     const isMember = localStorage.getItem('dr_member') === 'true';
-    const amiEmail = (localStorage.getItem('ami_email') || '').toLowerCase();
 
     if(isMember && drEmail && email === drEmail){
       // Returning Deal Room member — restore session
       closeRegistration();
       showBanner('Welcome back — Deal Room access restored.');
       initAccessState();
-    } else if(amiEmail && email === amiEmail){
-      // AMI subscriber not yet on Deal Room — show upgrade prompt
+      return;
+    }
+
+    // Check Supabase for paid AMI subscription
+    const isAmiSub = await checkAmiSubscriber(email);
+
+    nextBtn.textContent = 'Sign in →';
+    nextBtn.disabled = false;
+
+    if(isAmiSub){
+      // Valid AMI subscriber — route to upgrade flow
       document.getElementById('signinError').style.display = 'none';
       document.getElementById('signinAmiPrompt').style.display = 'block';
     } else {
-      // Not found
+      // Not found in either
       document.getElementById('signinAmiPrompt').style.display = 'none';
       document.getElementById('signinError').style.display = 'block';
     }
