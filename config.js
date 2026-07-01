@@ -17,7 +17,7 @@
 //
 // ═══════════════════════════════════════════════════════════════════
 
-const SUPABASE_URL = 'SUPABASE_URL_PLACEHOLDER';
-const SUPABASE_ANON = 'SUPABASE_ANON_PLACEHOLDER';
+const SUPABASE_URL = 'https://ucpjwyghwxjalkfvmbro.supabase.co';
+const SUPABASE_ANON = 'sb_publishable_7cI4RoxyLr88DhwDWRC1vg_DSpczsHt';
 const STRIPE_DIGITAL = '';
 const STRIPE_PREMIUM = '';
