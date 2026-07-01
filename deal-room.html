@@ -1277,7 +1277,20 @@
   function submitInterestForm(e){
     e.preventDefault();
     const form=e.target;
-    const data={ teaserRef:form.teaserRef.value, organisation:form.orgName.value, contactName:form.contactName.value, contactRole:form.contactRole.value, contactEmail:form.contactEmail.value, counterpartyType:form.counterpartyType.value, ticketSize:form.ticketSize.value, rationale:form.interestRationale.value, submittedAt:new Date().toISOString() };
+    const data={
+      teaser_ref:    form.teaserRef.value,
+      opp_type:      document.querySelector('input[name="oppType"]:checked')?.value || '',
+      organisation:  document.getElementById('orgName').value,
+      contact_name:  document.getElementById('contactName').value,
+      contact_role:  document.getElementById('contactRole').value,
+      contact_email: document.getElementById('contactEmail').value,
+      contact_phone: document.getElementById('contactPhone').value,
+      investor_type: document.getElementById('investorType').value,
+      invest_range:  document.getElementById('investRange').value,
+      pref_sectors:  document.getElementById('prefSectors').value,
+      pref_geo:      document.getElementById('prefGeo').value,
+      rationale:     document.getElementById('interestRationale').value
+    };
     (async()=>{ try{ if(typeof SUPABASE_URL!=='undefined'&&SUPABASE_URL){ const t=localStorage.getItem('ami_auth_token')||''; const h={'Content-Type':'application/json','apikey':SUPABASE_ANON,'Prefer':'return=minimal'}; if(t) h['Authorization']='Bearer '+t; await fetch(SUPABASE_URL+'/rest/v1/deal_room_interest',{method:'POST',headers:h,body:JSON.stringify(data)}); } }catch(err){ console.warn('Supabase:',err); } })();
     document.getElementById('modalFormState').style.display='none';
     document.getElementById('modalSuccessState').style.display='';
