@@ -17,7 +17,7 @@
 //
 // ═══════════════════════════════════════════════════════════════════
 
-const SUPABASE_URL = 'https://ucpjwyghwxjalkfvmbro.supabase.co';   // paste your Project URL here  e.g. https://xxxx.supabase.co
-const SUPABASE_ANON = 'sb_publishable_7cI4RoxyLr88DhwDWRC1vg_DSpczsHt';   // paste your anon/public key here
+const SUPABASE_URL = 'SUPABASE_URL_PLACEHOLDER';
+const SUPABASE_ANON = 'SUPABASE_ANON_PLACEHOLDER';
 const STRIPE_DIGITAL = '';
 const STRIPE_PREMIUM = '';
