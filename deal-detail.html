@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deal Detail — AMI Deal Room</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400;1,600&family=Spectral:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="config.js"></script>
+  <script src="login.js"></script>
+  <style>
+    :root {
+      --gold:#C9A84C; --gold-light:#F9C53D; --gold-pale:#FDF6E3;
+      --terra:#B85C38; --terra-dark:#8C3A1F;
+      --green:#1E6B3C; --green-mid:#2E9B5E;
+      --ink:#1A1208; --ink-mid:#3D2B1F; --ink-soft:#6B5344;
+      --cream:#FAF7F0; --cream-dark:#F0EAD9; --border:#D4C4A0;
+      --bg:var(--cream); --surface:#fff; --text:var(--ink);
+      --text-soft:var(--ink-soft); --nav-bg:#0A1A10; --nav-text:var(--cream);
+      --divider:var(--border); --card-bg:#fff; --box:1280px; --gutter:24px;
+    }
+    [data-theme="dark"] {
+      --green:#2E9B5E; --green-mid:#4DBA7F; --bg:#060F09; --surface:#0A1A10;
+      --text:#EDE5D5; --text-soft:#A89070; --nav-bg:#060F09; --nav-text:#EDE5D5;
+      --divider:#1A3020; --card-bg:#0F2015; --border:#1A3020; --gold-pale:#0D1F12;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Spectral',Georgia,serif;background:var(--bg);color:var(--text);font-size:16px;line-height:1.6;transition:background .3s,color .3s;overflow-x:hidden}
+    a{color:inherit;text-decoration:none}
+    button{cursor:pointer;border:none;background:none}
+
+    /* ── NAV ─────────────────────────────────── */
+    .top-nav{background:var(--nav-bg);color:var(--nav-text);padding:0 max(var(--gutter),calc((100% - var(--box))/2 + var(--gutter)));display:flex;align-items:center;justify-content:space-between;height:48px;border-bottom:2px solid var(--gold);position:sticky;top:0;z-index:1000}
+    .nav-left{display:flex;align-items:center}
+    .nav-link{color:var(--nav-text);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:0 14px;height:48px;display:flex;align-items:center;border-right:1px solid rgba(255,255,255,.1);transition:color .2s}
+    .nav-link:hover{color:var(--gold)}
+    .nav-link.active{color:var(--gold);border-bottom:2px solid var(--gold)}
+    .nav-right{display:flex;align-items:center;gap:12px}
+    .theme-toggle{color:var(--nav-text);font-size:16px;padding:4px 8px;border-radius:2px;transition:color .2s}
+    .theme-toggle:hover{color:var(--gold)}
+    .btn-subscribe{background:var(--gold);color:#060F09;font-family:'DM Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:7px 16px;border-radius:2px;transition:background .2s;white-space:nowrap}
+    .btn-subscribe:hover{background:var(--gold-light)}
+    .nav-hamburger{display:none;flex-direction:column;gap:5px;padding:8px;background:none;border:none;cursor:pointer}
+    .nav-hamburger span{display:block;width:22px;height:2px;background:var(--nav-text);border-radius:1px}
+    .nav-mobile-drawer{display:none;position:fixed;inset:48px 0 0 0;background:var(--nav-bg);z-index:999;padding:24px max(var(--gutter),calc((100% - var(--box))/2 + var(--gutter)));flex-direction:column;gap:0;overflow-y:auto}
+    .nav-mobile-drawer.open{display:flex}
+    .nav-mobile-drawer a{color:var(--nav-text);font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+    .nav-mobile-drawer a:hover{color:var(--gold)}
+    .nav-mobile-drawer a.mob-subscribe{margin-top:20px;text-align:center;background:var(--gold);color:#060F09;border-radius:2px;font-weight:600}
+    @media(max-width:640px){.nav-hamburger{display:flex}.nav-left{display:none}}
+
+    /* ── ACCESS GATE ─────────────────────────── */
+    .access-gate-page{min-height:60vh;display:flex;align-items:center;justify-content:center;padding:60px var(--gutter)}
+    .access-gate-card{background:var(--surface);border:1px solid var(--divider);border-top:3px solid var(--gold);padding:48px;max-width:500px;text-align:center}
+    .access-gate-icon{font-size:36px;margin-bottom:16px;color:var(--gold)}
+    .access-gate-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:800;color:var(--text);margin-bottom:12px}
+    .access-gate-body{font-size:14px;color:var(--text-soft);line-height:1.7;margin-bottom:28px}
+    .btn-gate{display:inline-block;background:var(--gold);color:#060F09;font-family:'DM Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:12px 28px;border-radius:2px;border:none;cursor:pointer;transition:background .2s;text-decoration:none}
+    .btn-gate:hover{background:var(--gold-light)}
+    .btn-gate-outline{display:inline-block;background:none;color:var(--text-soft);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:12px 20px;border:1px solid var(--divider);border-radius:2px;cursor:pointer;transition:border-color .2s,color .2s;text-decoration:none;margin-left:10px}
+    .btn-gate-outline:hover{border-color:var(--gold);color:var(--gold)}
+
+    /* ── LOADING ─────────────────────────────── */
+    .loading-state{min-height:40vh;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-soft)}
+
+    /* ── DEAL HEADER ─────────────────────────── */
+    .deal-header{background:var(--nav-bg);padding:40px max(var(--gutter),calc((100% - var(--box))/2 + var(--gutter)));border-bottom:1px solid rgba(201,168,76,.2)}
+    .deal-back{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(237,229,213,.5);display:inline-flex;align-items:center;gap:6px;margin-bottom:20px;transition:color .2s}
+    .deal-back:hover{color:var(--gold)}
+    .deal-ref-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+    .deal-ref{font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(201,168,76,.4);padding:4px 10px;border-radius:2px}
+    .deal-type-badge{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:2px;font-weight:600}
+    .type-equity{background:rgba(30,107,60,.25);color:#6FCF97}
+    .type-debt{background:rgba(201,168,76,.2);color:#F2C94C}
+    .type-ma{background:rgba(184,92,56,.2);color:#E88A6A}
+    .type-jv{background:rgba(90,60,180,.2);color:#A78BFA}
+    .type-commercial{background:rgba(56,130,184,.2);color:#60A5FA}
+    .deal-headline{font-family:'Playfair Display',serif;font-size:28px;font-weight:800;color:#EDE5D5;line-height:1.25;margin-bottom:10px}
+    .deal-meta-row{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.06em;color:rgba(237,229,213,.5);display:flex;gap:16px;flex-wrap:wrap}
+    @media(max-width:640px){.deal-headline{font-size:22px}}
+
+    /* ── DEAL BODY ───────────────────────────── */
+    .deal-body{max-width:var(--box);margin:0 auto;padding:40px max(var(--gutter),calc((100% - var(--box))/2 + var(--gutter)));display:grid;grid-template-columns:1fr 380px;gap:40px;align-items:start}
+    @media(max-width:900px){.deal-body{grid-template-columns:1fr;gap:28px}}
+
+    /* ── SECTIONS ────────────────────────────── */
+    .deal-section{margin-bottom:32px}
+    .deal-section:last-child{margin-bottom:0}
+    .section-title{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--divider)}
+    .deal-summary-text{font-size:15px;color:var(--text);line-height:1.75}
+
+    /* ── ATTR GRID ───────────────────────────── */
+    .attr-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .attr-cell{background:var(--card-bg);border:1px solid var(--divider);padding:14px 16px;border-radius:2px}
+    .attr-cell-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-soft);margin-bottom:4px}
+    .attr-cell-value{font-size:15px;font-weight:600;color:var(--text)}
+    @media(max-width:480px){.attr-grid{grid-template-columns:1fr}}
+
+    /* ── DOCUMENTS ───────────────────────────── */
+    .doc-list{display:flex;flex-direction:column;gap:8px}
+    .doc-link{display:flex;align-items:center;gap:12px;background:var(--card-bg);border:1px solid var(--divider);padding:12px 16px;border-radius:2px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--text);transition:border-color .2s,color .2s}
+    .doc-link:hover{border-color:var(--gold);color:var(--gold)}
+    .doc-link-icon{font-size:16px;flex-shrink:0;color:var(--gold)}
+    .doc-link-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .doc-link-type{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-soft);flex-shrink:0}
+    .doc-empty{font-size:13px;color:var(--text-soft);line-height:1.6;font-style:italic}
+
+    /* ── SIDEBAR ─────────────────────────────── */
+    .deal-sidebar{position:sticky;top:72px}
+
+    /* ── COUNTERPARTY CARD ───────────────────── */
+    .cp-card{background:linear-gradient(135deg,#0A1A10,#0F2015);border:1px solid rgba(201,168,76,.3);padding:24px;border-radius:2px;margin-bottom:20px}
+    .cp-card-title{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid rgba(201,168,76,.2)}
+    .cp-row{margin-bottom:14px}
+    .cp-row:last-child{margin-bottom:0}
+    .cp-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(237,229,213,.5);margin-bottom:3px}
+    .cp-value{font-size:14px;color:#EDE5D5;font-weight:600;line-height:1.4}
+    .cp-value a{color:var(--gold);text-decoration:underline;text-underline-offset:2px}
+    .cp-empty{font-size:13px;color:rgba(237,229,213,.5);font-style:italic;line-height:1.6}
+
+    /* ── NDA NOTICE ──────────────────────────── */
+    .nda-notice{background:var(--gold-pale);border:1px solid var(--border);border-left:3px solid var(--gold);padding:12px 14px;border-radius:2px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.04em;color:var(--text-soft);line-height:1.6;margin-bottom:20px}
+    [data-theme="dark"] .nda-notice{background:rgba(201,168,76,.06)}
+
+    /* ── ACTION BUTTONS ──────────────────────── */
+    .deal-actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+    .btn-interest-lg{background:var(--gold);color:#060F09;font-family:'DM Mono',monospace;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:13px 28px;border:none;border-radius:2px;cursor:pointer;transition:background .2s}
+    .btn-interest-lg:hover{background:var(--gold-light)}
+    .btn-back{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.07em;color:var(--text-soft);text-decoration:underline;text-underline-offset:3px}
+    .btn-back:hover{color:var(--text)}
+
+    /* ── INTEREST MODAL ──────────────────────── */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(6,15,9,.87);z-index:5000;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(4px)}
+    .modal-overlay.open{display:flex}
+    .modal{background:var(--surface);max-width:560px;width:100%;border-top:3px solid var(--gold);max-height:90vh;overflow-y:auto}
+    .modal-header{padding:28px 32px 20px;border-bottom:1px solid var(--divider)}
+    .modal-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:800;color:var(--text);margin-bottom:6px}
+    .modal-sub{font-size:13px;color:var(--text-soft);line-height:1.6}
+    .modal-body{padding:24px 32px 32px}
+    .form-group{margin-bottom:16px}
+    .form-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-soft);display:block;margin-bottom:6px}
+    .form-input,.form-textarea,.form-select{width:100%;background:var(--surface);border:1px solid var(--divider);color:var(--text);font-family:'Spectral',serif;font-size:14px;padding:10px 12px;outline:none;transition:border-color .2s;border-radius:2px}
+    .form-input:focus,.form-textarea:focus,.form-select:focus{border-color:var(--gold)}
+    .form-textarea{resize:vertical;min-height:90px}
+    .form-select{font-family:'DM Mono',monospace;font-size:12px}
+    .btn-modal-submit{background:var(--gold);color:#060F09;font-family:'DM Mono',monospace;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:13px 28px;border:none;border-radius:2px;cursor:pointer;transition:background .2s}
+    .btn-modal-submit:hover{background:var(--gold-light)}
+    .success-state{text-align:center;padding:32px 0}
+    .success-icon{font-size:40px;color:var(--green);margin-bottom:16px}
+    .success-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:800;color:var(--text);margin-bottom:10px}
+    .success-body{font-size:14px;color:var(--text-soft);line-height:1.7}
+  </style>
+</head>
+<body>
+
+<!-- ═══ NAV ════════════════════════════════════════ -->
+<nav class="top-nav" aria-label="Main navigation">
+  <button class="nav-hamburger" aria-label="Open menu" onclick="toggleMobileNav()"><span></span><span></span><span></span></button>
+  <div class="nav-left">
+    <a href="index.html" class="nav-link">AMI</a>
+    <a href="markets.html" class="nav-link">Markets</a>
+    <a href="economy.html" class="nav-link">Economy</a>
+    <a href="energy.html" class="nav-link">Energy</a>
+    <a href="deals.html" class="nav-link">Deal Tracker</a>
+    <a href="deal-room.html" class="nav-link active">Deal Room</a>
+  </div>
+  <div class="nav-right">
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">◑</button>
+    <a href="membership.html" id="navSubscribeBtn" class="btn-subscribe">Login</a>
+  </div>
+</nav>
+
+<!-- ═══ MOBILE DRAWER ══════════════════════════════ -->
+<div class="nav-mobile-drawer" id="navMobileDrawer">
+  <a href="index.html">Home</a>
+  <a href="markets.html">Markets</a>
+  <a href="economy.html">Economy</a>
+  <a href="energy.html">Energy</a>
+  <a href="deals.html">Deal Tracker</a>
+  <a href="deal-room.html">Deal Room</a>
+  <a href="membership.html" class="mob-subscribe">Join AMI →</a>
+</div>
+
+<!-- ═══ ACCESS GATE (non-members) ══════════════════ -->
+<div class="access-gate-page" id="accessGate" style="display:none">
+  <div class="access-gate-card">
+    <div class="access-gate-icon">◈</div>
+    <div class="access-gate-title">Deal Room Access Required</div>
+    <p class="access-gate-body">Full deal information — including counterparty details and supporting documents — is available to Deal Room members only. Members must have accepted the NDA and Platform Membership Agreement.</p>
+    <a href="deal-room.html" class="btn-gate" onclick="openDealRoomRegistration()">Join Deal Room →</a>
+    <a href="deal-room.html" class="btn-gate-outline">← Back to Deal Room</a>
+  </div>
+</div>
+
+<!-- ═══ LOADING ══════════════════════════════════ -->
+<div class="loading-state" id="loadingState">Loading deal information…</div>
+
+<!-- ═══ DEAL CONTENT ══════════════════════════════ -->
+<div id="dealContent" style="display:none">
+
+  <!-- Header -->
+  <div class="deal-header">
+    <a href="deal-room.html" class="deal-back">← Back to Deal Room</a>
+    <div class="deal-ref-row">
+      <span class="deal-ref" id="dealRef">—</span>
+      <span class="deal-type-badge" id="dealTypeBadge"></span>
+    </div>
+    <h1 class="deal-headline" id="dealHeadline"></h1>
+    <div class="deal-meta-row">
+      <span id="dealMetaRegion"></span>
+      <span id="dealMetaSector"></span>
+      <span id="dealMetaCapital"></span>
+      <span id="dealMetaDate"></span>
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div class="deal-body">
+
+    <!-- Main column -->
+    <div class="deal-main">
+
+      <div class="deal-section">
+        <div class="section-title">Opportunity Overview</div>
+        <p class="deal-summary-text" id="dealSummary"></p>
+      </div>
+
+      <div class="deal-section">
+        <div class="section-title">Key Attributes</div>
+        <div class="attr-grid">
+          <div class="attr-cell"><div class="attr-cell-label">Deal Type</div><div class="attr-cell-value" id="attrType">—</div></div>
+          <div class="attr-cell"><div class="attr-cell-label">Sector</div><div class="attr-cell-value" id="attrSector">—</div></div>
+          <div class="attr-cell"><div class="attr-cell-label">Geography</div><div class="attr-cell-value" id="attrRegion">—</div></div>
+          <div class="attr-cell"><div class="attr-cell-label">Capital Range</div><div class="attr-cell-value" id="attrCapital">—</div></div>
+        </div>
+      </div>
+
+      <div class="deal-section">
+        <div class="section-title">Supporting Documents</div>
+        <div class="doc-list" id="docsList">
+          <p class="doc-empty">No documents attached to this deal.</p>
+        </div>
+        <p style="margin-top:12px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;color:var(--text-soft);line-height:1.6">Documents are shared under NDA. Do not distribute outside your organisation without ABTA's written consent.</p>
+      </div>
+
+      <div class="deal-actions" style="margin-top:8px">
+        <button class="btn-interest-lg" onclick="openInterest()">Confirm Interest →</button>
+        <a href="deal-room.html" class="btn-back">← All deals</a>
+      </div>
+
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="deal-sidebar">
+
+      <div class="cp-card">
+        <div class="cp-card-title">Counterparty Information</div>
+        <div id="cpGrid"><p class="cp-empty">Counterparty details are being prepared by ABTA.</p></div>
+      </div>
+
+      <div class="nda-notice">
+        ⚠ Counterparty information is shared under NDA. Do not make direct contact without receiving an ABTA Introduction Notice.
+      </div>
+
+      <div style="background:var(--card-bg);border:1px solid var(--divider);padding:16px;border-radius:2px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.04em;color:var(--text-soft);line-height:1.7">
+        <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text);margin-bottom:8px">ABTA Introduction Process</div>
+        Confirm your interest below. ABTA will screen both parties and, where appropriate, issue a formal Introduction Notice with next steps.
+      </div>
+
+    </aside>
+  </div>
+</div>
+
+<!-- ═══ INTEREST MODAL ══════════════════════════════ -->
+<div class="modal-overlay" id="interestModal" onclick="if(event.target===this)closeInterest()">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Confirm Interest</div>
+      <p class="modal-sub" id="interestModalRef"></p>
+    </div>
+    <div class="modal-body">
+      <div id="interestFormState">
+        <form onsubmit="submitInterest(event)">
+          <div class="form-group">
+            <label class="form-label">Your Role in this Transaction *</label>
+            <select class="form-select" id="intRole" required>
+              <option value="" disabled selected>Select role</option>
+              <option>Principal Investor</option>
+              <option>Fund Manager</option>
+              <option>Corporate Acquirer</option>
+              <option>Adviser / Intermediary</option>
+              <option>Lender / DFI</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Capital Available / Mandate Size</label>
+            <input type="text" class="form-input" id="intCapital" placeholder="e.g. USD 20–50m available for this type of deal">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Message to ABTA</label>
+            <textarea class="form-textarea" id="intMessage" placeholder="Why are you a credible counterparty for this deal? Any specific questions or conditions?"></textarea>
+          </div>
+          <div style="display:flex;justify-content:flex-end;margin-top:8px">
+            <button type="submit" class="btn-modal-submit">Submit Interest →</button>
+          </div>
+        </form>
+      </div>
+      <div id="interestSuccessState" style="display:none">
+        <div class="success-state">
+          <div class="success-icon">✓</div>
+          <div class="success-title">Interest confirmed</div>
+          <p class="success-body">ABTA has received your expression of interest. We will review your submission and, where appropriate, reach out within five business days with next steps.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ═══════════════════════════════════════════════
+     HELPERS
+  ═══════════════════════════════════════════════ */
+  function isDrMember(){ return localStorage.getItem('dr_member')==='true'; }
+
+  function toggleTheme(){
+    const t=document.documentElement.dataset.theme==='dark'?'light':'dark';
+    document.documentElement.dataset.theme=t;
+    localStorage.setItem('ami_theme',t);
+  }
+  (function(){
+    const t=localStorage.getItem('ami_theme');
+    if(t) document.documentElement.dataset.theme=t;
+  })();
+
+  function toggleMobileNav(){ document.getElementById('navMobileDrawer').classList.toggle('open'); }
+
+  const TYPE_CSS = {
+    'Equity Investment':'type-equity','Debt Financing':'type-debt',
+    'Acquisition / Sale':'type-ma','Joint Venture':'type-jv',
+    'Commercial Contract':'type-commercial'
+  };
+
+  function fileExt(name){
+    const m = (name||'').match(/\.([a-zA-Z0-9]+)$/);
+    return m ? m[1].toUpperCase() : 'FILE';
+  }
+
+  /* Call the Edge Function — returns array of { path, name, url } */
+  async function loadSignedDocUrls(dealId, memberEmail){
+    try {
+      // Prefer the AMI JWT (login.js) — cryptographically verified server-side
+      // so the email cannot be spoofed. Fall back to self-reported email for
+      // DR-only members who haven't set up an AMI account.
+      const amiToken  = localStorage.getItem('ami_auth_token') || '';
+      const amiExpiry = parseInt(localStorage.getItem('ami_token_expires') || '0');
+      const hasToken  = !!(amiToken && amiExpiry > Date.now());
+
+      const headers = { 'Content-Type':'application/json', 'apikey': SUPABASE_ANON };
+      if(hasToken) headers['Authorization'] = 'Bearer '+amiToken;
+
+      const body = { deal_id: dealId };
+      // Always include member_email as fallback for DR-only members
+      if(memberEmail) body.member_email = memberEmail;
+
+      const res = await fetch(SUPABASE_URL+'/functions/v1/get-deal-docs', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(body)
+      });
+      if(!res.ok){
+        console.warn('get-deal-docs:', res.status, await res.text());
+        return [];
+      }
+      const { urls } = await res.json();
+      return Array.isArray(urls) ? urls.filter(function(u){ return !!u.url; }) : [];
+    } catch(err){
+      console.warn('loadSignedDocUrls:', err);
+      return [];
+    }
+  }
+
+  /* ═══════════════════════════════════════════════
+     GATE CHECK
+  ═══════════════════════════════════════════════ */
+  const params  = new URLSearchParams(location.search);
+  const dealId  = params.get('id');
+
+  if(!dealId){
+    location.href = 'deal-room.html';
+  } else if(!isDrMember()){
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('accessGate').style.display   = 'flex';
+  } else {
+    loadDeal(dealId);
+  }
+
+  /* ═══════════════════════════════════════════════
+     LOAD DEAL
+  ═══════════════════════════════════════════════ */
+  async function loadDeal(id){
+    try {
+      const res = await fetch(
+        SUPABASE_URL+'/rest/v1/deal_submissions?id=eq.'+encodeURIComponent(id)+'&status=eq.approved&select=*&limit=1',
+        { headers: { 'apikey': SUPABASE_ANON } }
+      );
+      if(!res.ok) throw new Error('fetch failed');
+      const data = await res.json();
+      if(!Array.isArray(data)||!data.length){
+        location.href = 'deal-room.html';
+        return;
+      }
+      const deal = data[0];
+      renderDeal(deal);
+      // Load signed document URLs separately — Edge Function call
+      const memberEmail = (
+        localStorage.getItem('dr_email') ||
+        localStorage.getItem('ami_user_email') ||
+        localStorage.getItem('ami_email') || ''
+      ).toLowerCase();
+      renderDocs(await loadSignedDocUrls(deal.id, memberEmail));
+    } catch(err){
+      console.error('loadDeal:', err);
+      document.getElementById('loadingState').textContent = 'Unable to load deal. Please try again.';
+    }
+  }
+
+  /* ═══════════════════════════════════════════════
+     RENDER
+  ═══════════════════════════════════════════════ */
+  function renderDeal(deal){
+    const ref = deal.published_ref || ('ABTA-DR-'+deal.id.slice(0,8).toUpperCase());
+    document.title = ref+' | AMI Deal Room';
+
+    // Header
+    document.getElementById('dealRef').textContent = ref;
+    const badge = document.getElementById('dealTypeBadge');
+    badge.textContent = deal.deal_type;
+    badge.className = 'deal-type-badge '+(TYPE_CSS[deal.deal_type]||'');
+
+    document.getElementById('dealHeadline').textContent =
+      deal.teaser_headline || (deal.deal_type+' — '+deal.sector+', '+deal.region);
+
+    document.getElementById('dealMetaRegion').textContent  = deal.region;
+    document.getElementById('dealMetaSector').textContent  = deal.sector;
+    document.getElementById('dealMetaCapital').textContent = deal.capital_range || '';
+    if(deal.published_at){
+      document.getElementById('dealMetaDate').textContent =
+        'Published '+new Date(deal.published_at).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+    }
+
+    // Key attrs
+    document.getElementById('attrType').textContent    = deal.deal_type;
+    document.getElementById('attrSector').textContent  = deal.sector;
+    document.getElementById('attrRegion').textContent  = deal.region;
+    document.getElementById('attrCapital').textContent = deal.capital_range || '—';
+
+    // Summary
+    document.getElementById('dealSummary').textContent = deal.summary;
+
+    // Counterparty
+    const cpGrid = document.getElementById('cpGrid');
+    const cpData = Array.isArray(deal.counterparty_data) ? deal.counterparty_data : [];
+    if(cpData.length){
+      cpGrid.innerHTML = cpData.map(function(r){
+        return '<div class="cp-row">'
+          +'<div class="cp-label">'+r[0]+'</div>'
+          +'<div class="cp-value">'+r[1]+'</div>'
+          +'</div>';
+      }).join('');
+    }
+
+    // Documents placeholder — filled by renderDocs() once Edge Function responds
+    document.getElementById('docsList').innerHTML =
+      '<p class="doc-empty" style="font-style:normal">Retrieving documents…</p>';
+
+    // Store ref for interest modal
+    window._currentDealRef   = ref;
+    window._currentDealLabel = deal.teaser_headline || deal.deal_type+' — '+deal.sector;
+
+    // Show content
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('dealContent').style.display  = 'block';
+  }
+
+  /* ═══════════════════════════════════════════════
+     RENDER DOCUMENTS (signed URLs from Edge Function)
+  ═══════════════════════════════════════════════ */
+  function renderDocs(signedDocs){
+    const docsList = document.getElementById('docsList');
+    if(!signedDocs || !signedDocs.length){
+      docsList.innerHTML = '<p class="doc-empty">No documents are attached to this deal. Contact ABTA for supporting materials.</p>';
+      return;
+    }
+    docsList.innerHTML = signedDocs.map(function(doc){
+      const name = doc.name || doc.path.split('/').pop();
+      const ext  = fileExt(name);
+      return '<a href="'+doc.url+'" target="_blank" rel="noopener" class="doc-link">'
+        +'<span class="doc-link-icon">↓</span>'
+        +'<span class="doc-link-name">'+name+'</span>'
+        +'<span class="doc-link-type">'+ext+'</span>'
+        +'</a>';
+    }).join('');
+  }
+
+  /* ═══════════════════════════════════════════════
+     INTEREST MODAL
+  ═══════════════════════════════════════════════ */
+  function openInterest(){
+    document.getElementById('interestModalRef').textContent =
+      (window._currentDealRef||'')+' — '+(window._currentDealLabel||'');
+    document.getElementById('interestModal').classList.add('open');
+    document.getElementById('interestFormState').style.display  = '';
+    document.getElementById('interestSuccessState').style.display = 'none';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeInterest(){
+    document.getElementById('interestModal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape') closeInterest();
+  });
+
+  async function submitInterest(e){
+    e.preventDefault();
+    const btn = e.target.querySelector('[type="submit"]');
+    btn.disabled = true; btn.textContent = 'Submitting…';
+    const data = {
+      deal_ref:      window._currentDealRef || '',
+      deal_label:    window._currentDealLabel || '',
+      member_name:   localStorage.getItem('dr_name')  || '',
+      member_org:    localStorage.getItem('dr_org')   || '',
+      member_email:  localStorage.getItem('dr_email') || '',
+      investor_role: document.getElementById('intRole').value,
+      capital_note:  document.getElementById('intCapital').value,
+      message:       document.getElementById('intMessage').value,
+      source:        'deal-detail'
+    };
+    try {
+      if(typeof SUPABASE_URL !== 'undefined' && SUPABASE_URL){
+        const token = localStorage.getItem('ami_auth_token')||'';
+        const h = { 'Content-Type':'application/json','apikey':SUPABASE_ANON,'Prefer':'return=minimal' };
+        if(token) h['Authorization']='Bearer '+token;
+        await fetch(SUPABASE_URL+'/rest/v1/deal_room_interest',{ method:'POST',headers:h,body:JSON.stringify(data) });
+      }
+    } catch(err){ console.warn('interest submit:',err); }
+    document.getElementById('interestFormState').style.display  = 'none';
+    document.getElementById('interestSuccessState').style.display = '';
+    btn.disabled = false; btn.textContent = 'Submit Interest →';
+  }
+</script>
+</body>
+</html>
