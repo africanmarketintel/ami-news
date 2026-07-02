@@ -1264,6 +1264,10 @@
           <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-soft)">ami.abta.africa/deal-room</div>
         </div>
       </div>
+
+      <!-- AMI account setup notice — shown after processPayment() -->
+      <div id="certAmiNotice" style="display:none;align-items:flex-start;gap:10px;background:var(--gold-pale);border:1px solid var(--border);border-left:3px solid var(--gold);padding:14px 16px;border-radius:2px;margin-top:16px;font-size:13px;color:var(--text-soft);line-height:1.6">
+      </div>
     </div>
 
     <div class="reg-footer">
@@ -1449,6 +1453,8 @@
     const block=document.getElementById('revealed-'+id);
     const btn=document.getElementById('reveal-btn-'+id);
     if(block && btn){
+      // Inject data now if it wasn't injected at page load (e.g. member state set post-load)
+      if(!block.innerHTML.trim()) injectCounterpartyData();
       block.classList.toggle('visible');
       btn.textContent=block.classList.contains('visible')?'Hide counterparty':'Reveal counterparty →';
     }
@@ -1816,6 +1822,42 @@
     }
   }
 
+  /* ════════════════════════════════════════════════
+     AUTO-CREATE AMI ACCOUNT FOR DR MEMBERS
+     Creates a Supabase Auth account (if one doesn't exist)
+     and sends a password-setup email so the member can
+     use the AMI JWT for secure document access.
+  ════════════════════════════════════════════════ */
+  async function createAmiAccount(email){
+    // Already logged in via AMI — nothing to do
+    const existingToken  = localStorage.getItem('ami_auth_token') || '';
+    const existingExpiry = parseInt(localStorage.getItem('ami_token_expires') || '0');
+    if(existingToken && existingExpiry > Date.now()) return { skipped: true };
+
+    try {
+      // 1 — Create Supabase Auth account (safe to call even if account already exists)
+      const tempPass = 'DR-'+Math.random().toString(36).slice(2,10)+String(Date.now()).slice(-4)+'!';
+      await fetch(SUPABASE_URL+'/auth/v1/signup', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json', 'apikey': SUPABASE_ANON },
+        body: JSON.stringify({ email: email, password: tempPass })
+      });
+      // (We don't check the response — 422 means account already exists, which is fine)
+
+      // 2 — Send password-setup email via the recover (reset) endpoint
+      const recoverRes = await fetch(SUPABASE_URL+'/auth/v1/recover', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json', 'apikey': SUPABASE_ANON },
+        body: JSON.stringify({ email: email })
+      });
+
+      return { emailed: recoverRes.ok };
+    } catch(err){
+      console.warn('createAmiAccount:', err);
+      return { error: true };
+    }
+  }
+
   async function processPayment(){
     const firstName = document.getElementById('regFirstName').value;
     const lastName  = document.getElementById('regLastName').value;
@@ -1864,6 +1906,22 @@
 
     // Show certificate step
     regCurrentStep=4; showRegStep(4);
+
+    // Auto-create AMI account for this member so they can use
+    // their AMI login for secure document access going forward
+    const amiNotice = document.getElementById('certAmiNotice');
+    createAmiAccount(email).then(function(result){
+      if(!amiNotice) return;
+      if(result.skipped){
+        amiNotice.style.display = 'none'; // already logged in
+      } else if(result.emailed){
+        amiNotice.innerHTML =
+          '<span style="font-size:15px;margin-right:8px">✉</span>'
+          +'<span>Check your inbox — we\'ve sent you a link to set up your <strong>AMI login</strong>. '
+          +'Use it to access deal documents securely on future visits.</span>';
+        amiNotice.style.display = 'flex';
+      }
+    });
   }
 
   function printCertificate(){
@@ -1924,9 +1982,97 @@
   }
 
   /* ════════════════════════════════════════════════
+     DYNAMIC DEALS — fetch approved submissions
+  ════════════════════════════════════════════════ */
+
+  const DEAL_TYPE_KEY = {
+    'Equity Investment':'equity','Debt Financing':'debt',
+    'Acquisition / Sale':'ma','Joint Venture':'jv',
+    'Commercial Contract':'commercial'
+  };
+  const REGION_KEY = {
+    'West Africa':'west-africa','East Africa':'east-africa',
+    'North Africa':'north-africa','Southern Africa':'southern-africa',
+    'Central Africa':'central-africa','Pan-African':'pan-african'
+  };
+  const TYPE_CSS = {
+    equity:'type-equity',debt:'type-debt',ma:'type-ma',
+    jv:'type-jv',commercial:'type-commercial'
+  };
+
+  function buildDynamicCard(deal, isMember){
+    const typeKey = DEAL_TYPE_KEY[deal.deal_type] || 'other';
+    const regionKey = REGION_KEY[deal.region] || deal.region.toLowerCase().replace(/\s+/g,'-');
+    const ref = deal.published_ref || ('ABTA-DR-'+deal.id.slice(0,8).toUpperCase());
+    const pubDate = deal.published_at
+      ? new Date(deal.published_at).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})
+      : '';
+    const typeCSS = TYPE_CSS[typeKey] || '';
+
+    const actionBtn = isMember
+      ? `<a href="deal-detail.html?id=${deal.id}" class="btn-interest" style="text-decoration:none">View full deal →</a>`
+      : `<button class="btn-interest" onclick="openRegistration()">View full deal →</button>`;
+
+    const article = document.createElement('article');
+    article.className = 'teaser-card';
+    article.dataset.type = typeKey;
+    article.dataset.region = regionKey;
+    article.innerHTML = `
+      <div class="teaser-header">
+        <div class="teaser-meta">
+          <span class="teaser-id">${ref}</span>
+          <span class="teaser-type ${typeCSS}">${deal.deal_type}</span>
+        </div>
+      </div>
+      <div class="teaser-location">
+        <span class="teaser-region">${deal.region}</span>
+        <span class="meta-divider">·</span>
+        <span class="teaser-sector">${deal.sector}</span>
+      </div>
+      ${deal.teaser_headline
+        ? `<div style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);margin-bottom:10px">${deal.teaser_headline}</div>`
+        : ''}
+      <p class="teaser-summary">${deal.summary}</p>
+      <div class="teaser-attrs">
+        <div class="attr-item"><div class="attr-label">Capital Range</div><div class="attr-value">${deal.capital_range||'—'}</div></div>
+        <div class="attr-item"><div class="attr-label">Sector</div><div class="attr-value">${deal.sector}</div></div>
+        <div class="attr-item"><div class="attr-label">Geography</div><div class="attr-value">${deal.region}</div></div>
+        <div class="attr-item"><div class="attr-label">Type</div><div class="attr-value">${deal.deal_type}</div></div>
+      </div>
+      <div class="teaser-footer">
+        <span class="teaser-date">${pubDate?'Published: '+pubDate+' · ':''}Ref: ${ref}</span>
+        <div class="teaser-actions">
+          <button class="btn-bookmark" onclick="bookmarkTeaser('${ref}',this)">Bookmark for review</button>
+          ${actionBtn}
+        </div>
+      </div>`;
+    return article;
+  }
+
+  async function loadApprovedDeals(){
+    try {
+      const res = await fetch(
+        SUPABASE_URL+'/rest/v1/deal_submissions?status=eq.approved'
+        +'&select=id,published_ref,deal_type,sector,region,capital_range,summary,teaser_headline,published_at'
+        +'&order=published_at.desc',
+        { headers: { 'apikey': SUPABASE_ANON } }
+      );
+      if(!res.ok) return;
+      const deals = await res.json();
+      if(!Array.isArray(deals)||!deals.length) return;
+      const grid = document.getElementById('teasersGrid');
+      const isMember = isDrMember();
+      deals.forEach(function(deal){
+        grid.appendChild(buildDynamicCard(deal, isMember));
+      });
+    } catch(err){ console.warn('loadApprovedDeals:', err); }
+  }
+
+  /* ════════════════════════════════════════════════
      INIT
   ════════════════════════════════════════════════ */
   initAccessState();
+  loadApprovedDeals();
 </script>
 </body>
 </html>
