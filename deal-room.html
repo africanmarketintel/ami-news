@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AMI Deal Room — African Market Intelligence</title>
+  <meta name="description" content="Confidential capital opportunities across African markets. ABTA's structured deal-matching platform for qualified principals.">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="African Market Intelligence">
   <meta property="og:title" content="AMI Deal Room">
@@ -35,6 +36,10 @@
     body{font-family:'Spectral',Georgia,serif;background:var(--bg);color:var(--text);font-size:16px;line-height:1.6;transition:background .3s,color .3s;overflow-x:hidden}
     a{color:inherit;text-decoration:none}
     button{cursor:pointer;border:none;background:none}
+
+    /* ── SKIP LINK ───────────────────────────── */
+    .skip-link{position:absolute;left:-9999px;top:0;background:var(--gold);color:#060F09;font-family:'DM Mono',monospace;font-size:12px;padding:10px 18px;z-index:2000;border-radius:2px}
+    .skip-link:focus{left:8px;top:8px}
 
     /* ── NAV ─────────────────────────────────── */
     .top-nav{background:var(--nav-bg);color:var(--nav-text);padding:0 max(var(--gutter),calc((100% - var(--box))/2 + var(--gutter)));display:flex;align-items:center;justify-content:space-between;height:48px;border-bottom:2px solid var(--gold);position:sticky;top:0;z-index:1000}
@@ -74,8 +79,22 @@
     .hero h1{font-family:'Playfair Display',Georgia,serif;font-size:clamp(32px,5vw,52px);font-weight:800;color:#EDE5D5;line-height:1.1;margin-bottom:16px}
     .hero h1 em{font-style:italic;color:var(--gold)}
     .hero-sub{font-size:18px;color:rgba(237,229,213,.75);max-width:600px;line-height:1.6;margin-bottom:32px}
-    .hero-badges{display:flex;flex-wrap:wrap;gap:10px}
+    .hero-badges{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:28px}
     .hero-badge{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(201,168,76,.8);border:1px solid rgba(201,168,76,.3);padding:5px 12px;border-radius:2px}
+    .hero-actions{display:flex;flex-wrap:wrap;gap:12px}
+    .btn-hero-primary{background:var(--gold);color:#060F09;font-family:'DM Mono',monospace;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:13px 28px;border-radius:2px;border:none;cursor:pointer;transition:background .2s}
+    .btn-hero-primary:hover{background:var(--gold-light)}
+    .btn-hero-secondary{display:inline-flex;align-items:center;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:13px 22px;border:1px solid rgba(201,168,76,.4);border-radius:2px;color:var(--gold);background:none;cursor:pointer;transition:background .2s}
+    .btn-hero-secondary:hover{background:rgba(201,168,76,.1)}
+
+    /* ── INLINE FORM ERRORS ──────────────────── */
+    .inline-error{display:none;background:rgba(184,92,56,.1);border:1px solid rgba(184,92,56,.3);border-left:3px solid var(--terra);padding:10px 14px;border-radius:2px;font-size:13px;color:var(--terra);margin-bottom:16px}
+    .inline-error.visible{display:block}
+
+    /* ── FOOTER ──────────────────────────────── */
+    .dr-footer{background:var(--nav-bg);color:rgba(237,229,213,.65);padding:32px max(var(--gutter),calc((100% - var(--box))/2 + var(--gutter)));border-top:2px solid var(--gold);display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;font-size:13px;line-height:1.7}
+    .dr-footer a{color:var(--gold);text-decoration:underline;text-underline-offset:2px}
+    .dr-footer-title{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#EDE5D5;margin-bottom:8px}
 
     /* ── WORKFLOW TOGGLE + STRIP ─────────────── */
     .workflow-toggle{display:none;width:100%;background:var(--surface);border:none;border-bottom:1px solid var(--divider);padding:11px max(var(--gutter),calc((100% - var(--box))/2 + var(--gutter)));font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-soft);text-align:left;cursor:pointer}
@@ -415,6 +434,8 @@
 </head>
 <body>
 
+<a href="#mainContent" class="skip-link">Skip to main content</a>
+
 <!-- ═══ NAV ═══════════════════════════════════════ -->
 <nav class="top-nav" aria-label="Main navigation">
   <button class="nav-hamburger" aria-label="Open menu" onclick="toggleMobileNav()"><span></span><span></span><span></span></button>
@@ -446,10 +467,10 @@
 
 <!-- ═══ SECTION NAV ════════════════════════════════ -->
 <div class="section-nav" role="navigation" aria-label="Deal Room sections">
-  <div class="section-nav-inner">
-    <button class="section-tab active" id="tabOpportunities" onclick="switchTab('opportunities')">Active Opportunities</button>
-    <button class="section-tab" id="tabSubmit" onclick="switchTab('submit')">Submit a Deal</button>
-    <button class="section-tab" id="tabProcess" onclick="switchTab('process')">How It Works</button>
+  <div class="section-nav-inner" role="tablist" aria-label="Deal Room sections">
+    <button class="section-tab active" id="tabOpportunities" role="tab" aria-selected="true" aria-controls="opportunitiesSection" onclick="switchTab('opportunities')">Active Opportunities</button>
+    <button class="section-tab" id="tabSubmit" role="tab" aria-selected="false" aria-controls="submitSection" onclick="switchTab('submit')">Submit a Deal</button>
+    <button class="section-tab" id="tabProcess" role="tab" aria-selected="false" aria-controls="processSection" onclick="switchTab('process')">How It Works</button>
   </div>
 </div>
 
@@ -460,10 +481,14 @@
     <h1>Capital meets <em>continent</em></h1>
     <p class="hero-sub">Structured, anonymised capital opportunities across African markets. Reviewed and facilitated by ABTA for qualified principals only.</p>
     <div class="hero-badges">
-      <span class="hero-badge">£99 / year</span>
       <span class="hero-badge">Blind teasers</span>
       <span class="hero-badge">ABTA-screened</span>
       <span class="hero-badge">Controlled disclosure</span>
+      <span class="hero-badge">£99 / year</span>
+    </div>
+    <div class="hero-actions">
+      <button class="btn-hero-primary" onclick="openRegistration()">Join Deal Room — £99/yr</button>
+      <a href="#teasersGrid" class="btn-hero-secondary">Browse opportunities ↓</a>
     </div>
   </div>
 </section>
@@ -488,7 +513,7 @@
 
 <!-- ═══ MAIN ════════════════════════════════════════ -->
 <div class="page-body">
-  <main>
+  <main id="mainContent">
 
     <!-- ── OPPORTUNITIES TAB ───────────────────── -->
     <div id="opportunitiesSection">
@@ -511,12 +536,12 @@
       <!-- Filter bar -->
       <div class="filter-bar" role="group" aria-label="Filter by deal type">
         <span class="filter-label">Type:</span>
-        <button class="filter-btn active" onclick="filterTeasers('all',this)">All</button>
-        <button class="filter-btn" onclick="filterTeasers('equity',this)">Equity</button>
-        <button class="filter-btn" onclick="filterTeasers('debt',this)">Debt</button>
-        <button class="filter-btn" onclick="filterTeasers('ma',this)">M&amp;A</button>
-        <button class="filter-btn" onclick="filterTeasers('jv',this)">Joint Venture</button>
-        <button class="filter-btn" onclick="filterTeasers('commercial',this)">Commercial</button>
+        <button class="filter-btn active" aria-pressed="true" onclick="filterTeasers('all',this)">All</button>
+        <button class="filter-btn" aria-pressed="false" onclick="filterTeasers('equity',this)">Equity</button>
+        <button class="filter-btn" aria-pressed="false" onclick="filterTeasers('debt',this)">Debt</button>
+        <button class="filter-btn" aria-pressed="false" onclick="filterTeasers('ma',this)">M&amp;A</button>
+        <button class="filter-btn" aria-pressed="false" onclick="filterTeasers('jv',this)">Joint Venture</button>
+        <button class="filter-btn" aria-pressed="false" onclick="filterTeasers('commercial',this)">Commercial</button>
       </div>
 
       <!-- Teasers -->
@@ -733,28 +758,28 @@
           <div class="form-group">
             <label class="form-label" for="dealSummary">Executive Summary <span>*</span> <span style="font-weight:400;text-transform:none;letter-spacing:0">— max 300 words. Do not include identifying names at this stage.</span></label>
             <textarea id="dealSummary" class="form-textarea" style="min-height:130px" placeholder="Describe the opportunity, what is being sought, and the key value proposition. ABTA will anonymise this before publication." required oninput="updateWordCount(this,'dealSummaryCount',300)"></textarea>
-            <div class="form-char-count" id="dealSummaryCount">0 / 300 words</div>
+            <div class="form-char-count" id="dealSummaryCount" aria-live="polite">0 / 300 words</div>
           </div>
 
           <div class="form-section-title" style="margin-top:8px">02 — Your details (confidential — not published)</div>
           <div class="form-row">
             <div class="form-group">
               <label class="form-label" for="submitterOrg">Organisation <span>*</span></label>
-              <input type="text" id="submitterOrg" class="form-input" placeholder="Your organisation's name" required>
+              <input type="text" id="submitterOrg" class="form-input" placeholder="Your organisation's name" autocomplete="organization" required>
             </div>
             <div class="form-group">
               <label class="form-label" for="submitterName">Contact Name <span>*</span></label>
-              <input type="text" id="submitterName" class="form-input" placeholder="Full name" required>
+              <input type="text" id="submitterName" class="form-input" placeholder="Full name" autocomplete="name" required>
             </div>
           </div>
           <div class="form-row">
             <div class="form-group">
               <label class="form-label" for="submitterRole">Role <span>*</span></label>
-              <input type="text" id="submitterRole" class="form-input" placeholder="e.g. Managing Director" required>
+              <input type="text" id="submitterRole" class="form-input" placeholder="e.g. Managing Director" autocomplete="organization-title" required>
             </div>
             <div class="form-group">
               <label class="form-label" for="submitterEmail">Email <span>*</span></label>
-              <input type="email" id="submitterEmail" class="form-input" placeholder="your@organisation.com" required>
+              <input type="email" id="submitterEmail" class="form-input" placeholder="your@organisation.com" autocomplete="email" required>
             </div>
           </div>
 
@@ -794,27 +819,35 @@
     <div id="processSection" style="display:none">
       <div class="submit-form-card">
         <div class="submit-title" style="margin-bottom:10px">How the Deal Room works</div>
-        <p style="font-size:15px;color:var(--text-soft);line-height:1.65;margin-bottom:28px">ABTA Deal Room is a private, structured platform for qualified principals. It operates on a controlled disclosure model — identities are never revealed until ABTA has screened both parties and issued an Introduction Notice.</p>
+        <p style="font-size:15px;color:var(--text-soft);line-height:1.65;margin-bottom:28px">ABTA Deal Room is a private, structured platform for qualified principals. It operates on a controlled disclosure model — identities are never revealed until ABTA has screened both parties and issued an Introduction Notice. The process moves through seven stages.</p>
         <div style="display:flex;flex-direction:column;gap:0;border:1px solid var(--divider);border-radius:2px;overflow:hidden">
           <div style="display:flex;gap:20px;padding:20px 24px;border-bottom:1px solid var(--divider);align-items:flex-start">
             <div style="font-family:'DM Mono',monospace;font-size:20px;font-weight:500;color:var(--gold);min-width:32px">01</div>
-            <div><div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text);margin-bottom:5px">Registration &amp; Document Acceptance</div><p style="font-size:14px;color:var(--text-soft);line-height:1.65">Create your Deal Room account (£99/year, separate from AMI subscription). Before access is granted, you review and accept the Platform Membership Agreement and Non-Disclosure Agreement using our document acceptance flow.</p></div>
+            <div><div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text);margin-bottom:5px">Registration</div><p style="font-size:14px;color:var(--text-soft);line-height:1.65">Create your Deal Room account (£99/year, separate from AMI subscription). Registration takes under three minutes.</p></div>
           </div>
           <div style="display:flex;gap:20px;padding:20px 24px;border-bottom:1px solid var(--divider);align-items:flex-start">
             <div style="font-family:'DM Mono',monospace;font-size:20px;font-weight:500;color:var(--gold);min-width:32px">02</div>
-            <div><div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text);margin-bottom:5px">Browse Blind Teasers</div><p style="font-size:14px;color:var(--text-soft);line-height:1.65">All opportunities are anonymised. Sector, geography and financial attributes are visible. Counterparty names, contacts and identifying details are revealed only to Deal Room members who have completed the document acceptance process.</p></div>
+            <div><div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text);margin-bottom:5px">Document Acceptance</div><p style="font-size:14px;color:var(--text-soft);line-height:1.65">Before access is granted, you review and accept the Non-Disclosure Agreement, Platform Membership Agreement and Fee Schedule using our document acceptance flow.</p></div>
           </div>
           <div style="display:flex;gap:20px;padding:20px 24px;border-bottom:1px solid var(--divider);align-items:flex-start">
             <div style="font-family:'DM Mono',monospace;font-size:20px;font-weight:500;color:var(--gold);min-width:32px">03</div>
-            <div><div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text);margin-bottom:5px">Confirm Interest</div><p style="font-size:14px;color:var(--text-soft);line-height:1.65">Submit a rationale (max 250 words) and your mandate details. ABTA reviews suitability, credibility and transaction fit before proceeding.</p></div>
+            <div><div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text);margin-bottom:5px">Browse Blind Teasers</div><p style="font-size:14px;color:var(--text-soft);line-height:1.65">All opportunities are anonymised. Sector, geography and financial attributes are visible. Counterparty names, contacts and identifying details are revealed only to Deal Room members who have completed the document acceptance process.</p></div>
           </div>
           <div style="display:flex;gap:20px;padding:20px 24px;border-bottom:1px solid var(--divider);align-items:flex-start">
             <div style="font-family:'DM Mono',monospace;font-size:20px;font-weight:500;color:var(--gold);min-width:32px">04</div>
-            <div><div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text);margin-bottom:5px">ABTA Screening &amp; Introduction</div><p style="font-size:14px;color:var(--text-soft);line-height:1.65">If qualified, ABTA issues an Introduction Notice and discloses identities to both parties. An NDA between the parties is optional at this stage but recommended for deeper information sharing.</p></div>
+            <div><div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text);margin-bottom:5px">Interest Confirmation</div><p style="font-size:14px;color:var(--text-soft);line-height:1.65">Submit a rationale (max 250 words) and your mandate details for the opportunity you wish to pursue.</p></div>
+          </div>
+          <div style="display:flex;gap:20px;padding:20px 24px;border-bottom:1px solid var(--divider);align-items:flex-start">
+            <div style="font-family:'DM Mono',monospace;font-size:20px;font-weight:500;color:var(--gold);min-width:32px">05</div>
+            <div><div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text);margin-bottom:5px">ABTA Screening</div><p style="font-size:14px;color:var(--text-soft);line-height:1.65">ABTA reviews your submission for suitability, credibility and transaction fit before proceeding. Screening typically completes within five business days.</p></div>
+          </div>
+          <div style="display:flex;gap:20px;padding:20px 24px;border-bottom:1px solid var(--divider);align-items:flex-start">
+            <div style="font-family:'DM Mono',monospace;font-size:20px;font-weight:500;color:var(--gold);min-width:32px">06</div>
+            <div><div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text);margin-bottom:5px">Introduction</div><p style="font-size:14px;color:var(--text-soft);line-height:1.65">If qualified, ABTA issues an Introduction Notice and discloses identities to both parties. An NDA between the parties is optional at this stage but recommended for deeper information sharing.</p></div>
           </div>
           <div style="display:flex;gap:20px;padding:20px 24px;align-items:flex-start">
-            <div style="font-family:'DM Mono',monospace;font-size:20px;font-weight:500;color:var(--gold);min-width:32px">05</div>
-            <div><div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text);margin-bottom:5px">Direct Negotiation</div><p style="font-size:14px;color:var(--text-soft);line-height:1.65">Parties negotiate directly. All introductions remain subject to the ABTA Platform Membership Agreement. ABTA does not act as adviser or broker in the resulting transaction.</p></div>
+            <div style="font-family:'DM Mono',monospace;font-size:20px;font-weight:500;color:var(--gold);min-width:32px">07</div>
+            <div><div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text);margin-bottom:5px">Transaction</div><p style="font-size:14px;color:var(--text-soft);line-height:1.65">Parties negotiate directly. All introductions remain subject to the ABTA Platform Membership Agreement. ABTA does not act as adviser or broker in the resulting transaction.</p></div>
           </div>
         </div>
       </div>
@@ -854,6 +887,27 @@
   </aside>
 </div>
 
+<!-- ═══ FOOTER ═════════════════════════════════════ -->
+<footer class="dr-footer">
+  <div>
+    <div class="dr-footer-title">ABTA Deal Room</div>
+    Operated by the African Business Trade Association, London.<br>
+    Questions or help with your account: <a href="mailto:dealroom@abta.africa">dealroom@abta.africa</a>
+  </div>
+  <div>
+    <div class="dr-footer-title">Platform documents</div>
+    <a href="docs/nda.html" target="_blank" rel="noopener">Non-Disclosure Agreement</a><br>
+    <a href="docs/platform-agreement.html" target="_blank" rel="noopener">Platform Membership Agreement</a><br>
+    <a href="docs/fee-schedule.html" target="_blank" rel="noopener">Fee Schedule</a>
+  </div>
+  <div>
+    <div class="dr-footer-title">African Market Intelligence</div>
+    <a href="index.html">AMI home</a><br>
+    <a href="deals.html">Deal Tracker</a><br>
+    <a href="privacy.html">Privacy</a> · <a href="contact.html">Contact</a>
+  </div>
+</footer>
+
 <!-- ═══ INTEREST MODAL ════════════════════════════ -->
 <div class="modal-backdrop" id="interestModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
   <div class="modal">
@@ -883,14 +937,14 @@
           <!-- Interested party details -->
           <div class="form-section-title" style="margin-top:6px">Interested party details</div>
           <div class="form-row">
-            <div class="form-group"><label class="form-label" for="orgName">Organisation <span style="color:var(--terra)">*</span></label><input type="text" id="orgName" class="form-input" placeholder="Organisation name" required></div>
-            <div class="form-group"><label class="form-label" for="contactName">Contact Person <span style="color:var(--terra)">*</span></label><input type="text" id="contactName" class="form-input" placeholder="Full name" required></div>
+            <div class="form-group"><label class="form-label" for="orgName">Organisation <span style="color:var(--terra)">*</span></label><input type="text" id="orgName" class="form-input" placeholder="Organisation name" autocomplete="organization" required></div>
+            <div class="form-group"><label class="form-label" for="contactName">Contact Person <span style="color:var(--terra)">*</span></label><input type="text" id="contactName" class="form-input" placeholder="Full name" autocomplete="name" required></div>
           </div>
           <div class="form-row">
-            <div class="form-group"><label class="form-label" for="contactRole">Position <span style="color:var(--terra)">*</span></label><input type="text" id="contactRole" class="form-input" placeholder="e.g. Managing Partner" required></div>
-            <div class="form-group"><label class="form-label" for="contactEmail">Email <span style="color:var(--terra)">*</span></label><input type="email" id="contactEmail" class="form-input" placeholder="contact@organisation.com" required></div>
+            <div class="form-group"><label class="form-label" for="contactRole">Position <span style="color:var(--terra)">*</span></label><input type="text" id="contactRole" class="form-input" placeholder="e.g. Managing Partner" autocomplete="organization-title" required></div>
+            <div class="form-group"><label class="form-label" for="contactEmail">Email <span style="color:var(--terra)">*</span></label><input type="email" id="contactEmail" class="form-input" placeholder="contact@organisation.com" autocomplete="email" required></div>
           </div>
-          <div class="form-group"><label class="form-label" for="contactPhone">Telephone</label><input type="tel" id="contactPhone" class="form-input" placeholder="Including international dialling code"></div>
+          <div class="form-group"><label class="form-label" for="contactPhone">Telephone</label><input type="tel" id="contactPhone" class="form-input" placeholder="Including international dialling code" autocomplete="tel"></div>
 
           <!-- Eligibility confirmation -->
           <div class="form-section-title" style="margin-top:6px">Eligibility confirmation <span style="color:var(--terra)">*</span></div>
@@ -928,7 +982,7 @@
           <div class="form-group" style="margin-top:6px">
             <label class="form-label" for="interestRationale">Interest rationale <span style="color:var(--terra)">*</span> <span style="font-weight:400;text-transform:none;letter-spacing:0">— max 250 words</span></label>
             <textarea id="interestRationale" class="form-textarea" placeholder="Please explain in no more than 250 words why your organisation is interested in this opportunity and what value it can bring to a potential transaction." required oninput="updateWordCount(this,'rationaleCount',250)"></textarea>
-            <div class="form-char-count" id="rationaleCount">0 / 250 words</div>
+            <div class="form-char-count" id="rationaleCount" aria-live="polite">0 / 250 words</div>
           </div>
 
           <!-- Acknowledgements -->
@@ -1010,7 +1064,7 @@
       <p class="reg-section-sub">Enter the email address you registered with to restore your Deal Room access on this device.</p>
       <div class="form-group" style="margin-top:8px">
         <label class="form-label" for="signinEmail">Email address <span>*</span></label>
-        <input type="email" id="signinEmail" class="form-input" placeholder="you@organisation.com" onkeydown="if(event.key==='Enter')signinMember()">
+        <input type="email" id="signinEmail" class="form-input" placeholder="you@organisation.com" autocomplete="email" onkeydown="if(event.key==='Enter')signinMember()">
       </div>
       <div class="signin-error" id="signinError">
         We could not find a Deal Room account for that email address on this device. If you registered on another device, please complete the registration flow again. For help, contact <a href="mailto:dealroom@abta.africa" style="color:var(--terra)">dealroom@abta.africa</a>.
@@ -1031,14 +1085,15 @@
       <p class="reg-section-sub" id="regSubTitle">Deal Room is a separate service from your AMI subscription. Your account gives you access to anonymised teasers, revealed counterparty data, interest submission and ABTA's structured introduction process.</p>
 
       <!-- Registration form — used by all paths (new and AMI upgrade) -->
+      <div class="inline-error" id="regStep1Error" role="alert">Please complete all required fields before continuing.</div>
       <div class="form-row">
-        <div class="form-group"><label class="form-label" for="regFirstName">First Name <span>*</span></label><input type="text" id="regFirstName" class="form-input" placeholder="First name"></div>
-        <div class="form-group"><label class="form-label" for="regLastName">Last Name <span>*</span></label><input type="text" id="regLastName" class="form-input" placeholder="Last name"></div>
+        <div class="form-group"><label class="form-label" for="regFirstName">First Name <span>*</span></label><input type="text" id="regFirstName" class="form-input" placeholder="First name" autocomplete="given-name" required></div>
+        <div class="form-group"><label class="form-label" for="regLastName">Last Name <span>*</span></label><input type="text" id="regLastName" class="form-input" placeholder="Last name" autocomplete="family-name" required></div>
       </div>
-      <div class="form-group"><label class="form-label" for="regOrg">Organisation <span>*</span></label><input type="text" id="regOrg" class="form-input" placeholder="Your organisation's name"></div>
+      <div class="form-group"><label class="form-label" for="regOrg">Organisation <span>*</span></label><input type="text" id="regOrg" class="form-input" placeholder="Your organisation's name" autocomplete="organization" required></div>
       <div class="form-row">
-        <div class="form-group"><label class="form-label" for="regRole">Role / Title <span>*</span></label><input type="text" id="regRole" class="form-input" placeholder="e.g. Managing Partner"></div>
-        <div class="form-group"><label class="form-label" for="regEmail">Email <span>*</span></label><input type="email" id="regEmail" class="form-input" placeholder="you@organisation.com"></div>
+        <div class="form-group"><label class="form-label" for="regRole">Role / Title <span>*</span></label><input type="text" id="regRole" class="form-input" placeholder="e.g. Managing Partner" autocomplete="organization-title" required></div>
+        <div class="form-group"><label class="form-label" for="regEmail">Email <span>*</span></label><input type="email" id="regEmail" class="form-input" placeholder="you@organisation.com" autocomplete="email" required></div>
       </div>
       <div class="form-group"><label class="form-label" for="regType">Organisation Type <span>*</span></label>
         <select id="regType" class="form-select">
@@ -1054,6 +1109,7 @@
     <div class="reg-body" id="regStep2" style="display:none">
       <div class="reg-section-title">Review and accept platform documents</div>
       <p class="reg-section-sub">Please read each document in full. Scroll to the bottom of each document before the acceptance checkbox activates. You must accept all documents to proceed.</p>
+      <div class="inline-error" id="regStep2Error" role="alert">Please scroll through and accept all three documents before proceeding.</div>
 
       <!-- Document 1: NDA -->
       <div class="doc-block">
@@ -1159,6 +1215,7 @@
         <div class="payment-line"><span class="payment-line-label" style="font-weight:600">Total due today</span><span class="payment-line-val total">£99</span></div>
       </div>
       <p class="stripe-notice">Payment is processed securely via Stripe. ABTA does not store your card details. Your membership activates immediately on receipt of cleared payment.</p>
+      <div class="inline-error" id="regStep3Error" role="alert">Please tick the confirmation checkbox to authorise payment.</div>
       <div class="form-group">
         <div class="checkbox-group">
           <input type="checkbox" id="paymentConfirm">
@@ -1207,7 +1264,7 @@
               </div>
               <div style="display:flex;align-items:center;gap:12px">
                 <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft)" id="certTime1"></span>
-                <a href="docs/nda.html" target="_blank" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);text-decoration:none;border:1px solid rgba(201,168,76,.3);padding:4px 10px;border-radius:2px">↓ Download PDF</a>
+                <a href="docs/nda.html" target="_blank" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);text-decoration:none;border:1px solid rgba(201,168,76,.3);padding:4px 10px;border-radius:2px">View document ↗</a>
               </div>
             </div>
             <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg);border:1px solid var(--divider);border-radius:2px">
@@ -1217,7 +1274,7 @@
               </div>
               <div style="display:flex;align-items:center;gap:12px">
                 <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft)" id="certTime2"></span>
-                <a href="docs/platform-agreement.html" target="_blank" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);text-decoration:none;border:1px solid rgba(201,168,76,.3);padding:4px 10px;border-radius:2px">↓ Download PDF</a>
+                <a href="docs/platform-agreement.html" target="_blank" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);text-decoration:none;border:1px solid rgba(201,168,76,.3);padding:4px 10px;border-radius:2px">View document ↗</a>
               </div>
             </div>
             <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg);border:1px solid var(--divider);border-radius:2px">
@@ -1227,7 +1284,7 @@
               </div>
               <div style="display:flex;align-items:center;gap:12px">
                 <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft)" id="certTime3"></span>
-                <a href="docs/fee-schedule.html" target="_blank" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);text-decoration:none;border:1px solid rgba(201,168,76,.3);padding:4px 10px;border-radius:2px">↓ Download PDF</a>
+                <a href="docs/fee-schedule.html" target="_blank" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);text-decoration:none;border:1px solid rgba(201,168,76,.3);padding:4px 10px;border-radius:2px">View document ↗</a>
               </div>
             </div>
           </div>
@@ -1322,8 +1379,12 @@
   function isAmiOnly(){ return localStorage.getItem('ami_subscriber')==='true' && !isDrMember(); }
 
   /* ════════════════════════════════════════════════
-     COUNTERPARTY DATA — only injected for members
-     Not present in HTML source for non-members
+     COUNTERPARTY DATA — demo only
+     NOTE: this object ships in the public page source,
+     so it is visible to anyone who views source. Before
+     live launch, move counterparty data server-side
+     (Supabase, behind a membership check) as is already
+     done for dynamic deals on deal-detail.html.
   ════════════════════════════════════════════════ */
   const COUNTERPARTY = {
     '001': [
@@ -1381,11 +1442,14 @@
       }
       injectCounterpartyData();
       restoreBookmarks();
+      document.querySelectorAll('.btn-reveal').forEach(b=>{ if(b.textContent.indexOf('Hide')===-1) b.textContent='Reveal counterparty →'; });
     } else {
       if(banner) banner.style.display='flex';
       if(submitGate) submitGate.style.display='block';
       if(submitForm) submitForm.style.display='none';
       if(drBar) drBar.style.display='none';
+      // Honest affordance for non-members — the action requires membership
+      document.querySelectorAll('.btn-reveal').forEach(b=>{ b.textContent='Join to reveal counterparty'; });
     }
   }
 
@@ -1413,21 +1477,22 @@
      SECTION TABS
   ════════════════════════════════════════════════ */
   function switchTab(tab){
-    document.querySelectorAll('.section-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.section-tab').forEach(t=>{t.classList.remove('active');t.setAttribute('aria-selected','false');});
     document.getElementById('opportunitiesSection').style.display='none';
     document.getElementById('submitSection').style.display='none';
     document.getElementById('processSection').style.display='none';
-    if(tab==='opportunities'){ document.getElementById('tabOpportunities').classList.add('active'); document.getElementById('opportunitiesSection').style.display='block'; }
-    if(tab==='submit'){ document.getElementById('tabSubmit').classList.add('active'); document.getElementById('submitSection').style.display='block'; }
-    if(tab==='process'){ document.getElementById('tabProcess').classList.add('active'); document.getElementById('processSection').style.display='block'; }
+    if(tab==='opportunities'){ const t=document.getElementById('tabOpportunities'); t.classList.add('active'); t.setAttribute('aria-selected','true'); document.getElementById('opportunitiesSection').style.display='block'; }
+    if(tab==='submit'){ const t=document.getElementById('tabSubmit'); t.classList.add('active'); t.setAttribute('aria-selected','true'); document.getElementById('submitSection').style.display='block'; }
+    if(tab==='process'){ const t=document.getElementById('tabProcess'); t.classList.add('active'); t.setAttribute('aria-selected','true'); document.getElementById('processSection').style.display='block'; }
   }
 
   /* ════════════════════════════════════════════════
      FILTER + EMPTY STATE
   ════════════════════════════════════════════════ */
   function filterTeasers(type,btn){
-    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.filter-btn').forEach(b=>{b.classList.remove('active');b.setAttribute('aria-pressed','false');});
     btn.classList.add('active');
+    btn.setAttribute('aria-pressed','true');
     let visible=0;
     document.querySelectorAll('.teasers-grid .teaser-card').forEach(card=>{
       const wrapper=card.closest('.paywall-overlay')||card;
@@ -1465,19 +1530,26 @@
   ════════════════════════════════════════════════ */
   function handleInterest(ref,label){
     if(!isDrMember()){ openRegistration(); return; }
+    interestModalTrigger=document.activeElement;
     document.getElementById('hiddenTeaserRef').value=ref;
     document.getElementById('modalRef').textContent=ref+' — '+label;
     document.getElementById('interestModal').classList.add('open');
     document.getElementById('modalFormState').style.display='';
     document.getElementById('modalSuccessState').style.display='none';
     document.body.style.overflow='hidden';
+    setTimeout(()=>{ const f=document.querySelector('#interestModal input[name="oppType"]'); if(f) f.focus(); },100);
   }
-  function closeInterestModal(){ document.getElementById('interestModal').classList.remove('open'); document.body.style.overflow=''; }
+  function closeInterestModal(){
+    document.getElementById('interestModal').classList.remove('open');
+    document.body.style.overflow='';
+    if(interestModalTrigger && interestModalTrigger.focus){ interestModalTrigger.focus(); interestModalTrigger=null; }
+  }
   document.getElementById('interestModal').addEventListener('click',function(e){ if(e.target===this) closeInterestModal(); });
   document.addEventListener('keydown',function(e){ if(e.key==='Escape'){ closeInterestModal(); closeRegistration(); } });
 
   function submitInterestForm(e){
     e.preventDefault();
+    if(!enforceWordLimit(document.getElementById('interestRationale'),'rationaleCount',250)) return;
     const form=e.target;
     const data={
       teaser_ref:    form.teaserRef.value,
@@ -1517,11 +1589,20 @@
   /* ════════════════════════════════════════════════
      WORD COUNT
   ════════════════════════════════════════════════ */
+  function wordCount(el){ return el.value.trim()===''?0:el.value.trim().split(/\s+/).length; }
   function updateWordCount(el,countId,max){
-    const w=el.value.trim()===''?0:el.value.trim().split(/\s+/).length;
+    const w=wordCount(el);
     const c=document.getElementById(countId);
-    c.textContent=w+' / '+max+' words';
+    c.textContent=w+' / '+max+' words'+(w>max?' — over the limit':'');
     c.style.color=w>max?'var(--terra)':'var(--text-soft)';
+  }
+  function enforceWordLimit(el,countId,max){
+    if(wordCount(el)>max){
+      updateWordCount(el,countId,max);
+      el.focus();
+      return false;
+    }
+    return true;
   }
 
   /* ════════════════════════════════════════════════
@@ -1552,6 +1633,7 @@
   ════════════════════════════════════════════════ */
   async function submitDeal(e){
     e.preventDefault();
+    if(!enforceWordLimit(document.getElementById('dealSummary'),'dealSummaryCount',300)) return;
     const btn=e.target.querySelector('[type="submit"]');
     btn.disabled=true;
     btn.textContent='Submitting…';
@@ -1625,16 +1707,23 @@
   let regCurrentStep = 0;
   let regFlow = 'new'; // 'new' | 'upgrade' | 'signin'
 
+  /* Focus management — return focus to the trigger on close (WCAG 2.4.3) */
+  let regModalTrigger=null;
+  let interestModalTrigger=null;
+
   /* Open modal — always start at gateway */
   function openRegistration(mode){
+    regModalTrigger=document.activeElement;
     document.getElementById('regModal').classList.add('open');
     document.body.style.overflow='hidden';
     showGateway(mode === 'signin' ? 'signin' : null);
+    setTimeout(()=>{ const f=document.querySelector('#regModal .gateway-opt, #regModal input:not([type=hidden])'); if(f) f.focus(); },100);
   }
 
   function closeRegistration(){
     document.getElementById('regModal').classList.remove('open');
     document.body.style.overflow='';
+    if(regModalTrigger && regModalTrigger.focus){ regModalTrigger.focus(); regModalTrigger=null; }
   }
   document.getElementById('regModal').addEventListener('click',function(e){ if(e.target===this) closeRegistration(); });
 
@@ -1791,24 +1880,32 @@
     }
   }
 
+  function showInlineError(id,show){
+    const el=document.getElementById(id);
+    if(el) el.classList.toggle('visible',!!show);
+  }
+
   function regNext(){
     if(regCurrentStep === 1){
       const fields = ['regFirstName','regLastName','regOrg','regRole','regEmail','regType'];
       const empty = fields.find(id => !document.getElementById(id).value.trim());
-      if(empty){ document.getElementById(empty).focus(); return; }
+      if(empty){ showInlineError('regStep1Error',true); document.getElementById(empty).focus(); return; }
+      showInlineError('regStep1Error',false);
       regCurrentStep = 2; showRegStep(2);
       setTimeout(()=>{ [1,2,3].forEach(n=>checkDocScroll(n)); }, 150);
     } else if(regCurrentStep === 2){
       if(!document.getElementById('acceptNda').checked || !document.getElementById('acceptPlatform').checked || !document.getElementById('acceptFees').checked){
-        alert('Please scroll through and accept all three documents before proceeding.'); return;
+        showInlineError('regStep2Error',true); return;
       }
+      showInlineError('regStep2Error',false);
       regCurrentStep = 3; showRegStep(3);
     } else if(regCurrentStep === 3){
       if(!document.getElementById('paymentConfirm').checked){
+        showInlineError('regStep3Error',true);
         document.getElementById('paymentConfirm').focus();
-        alert('Please tick the confirmation checkbox to authorise payment.');
         return;
       }
+      showInlineError('regStep3Error',false);
       processPayment();
     }
   }
@@ -1963,7 +2060,7 @@
       docScrolled[n-1]=true;
       if(hint) hint.classList.remove('visible');
       cb.disabled=false;
-      if(!cb.checked) status.textContent='Ready to accept'; status.className='doc-status ready';
+      if(!cb.checked){ status.textContent='Ready to accept'; status.className='doc-status ready'; }
     } else {
       if(hint && !docScrolled[n-1]) hint.classList.add('visible');
     }
@@ -2000,6 +2097,13 @@
     jv:'type-jv',commercial:'type-commercial'
   };
 
+  /* Escape user-submitted content before injecting into HTML */
+  function esc(s){
+    return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+
   function buildDynamicCard(deal, isMember){
     const typeKey = DEAL_TYPE_KEY[deal.deal_type] || 'other';
     const regionKey = REGION_KEY[deal.region] || deal.region.toLowerCase().replace(/\s+/g,'-');
@@ -2020,29 +2124,29 @@
     article.innerHTML = `
       <div class="teaser-header">
         <div class="teaser-meta">
-          <span class="teaser-id">${ref}</span>
-          <span class="teaser-type ${typeCSS}">${deal.deal_type}</span>
+          <span class="teaser-id">${esc(ref)}</span>
+          <span class="teaser-type ${typeCSS}">${esc(deal.deal_type)}</span>
         </div>
       </div>
       <div class="teaser-location">
-        <span class="teaser-region">${deal.region}</span>
+        <span class="teaser-region">${esc(deal.region)}</span>
         <span class="meta-divider">·</span>
-        <span class="teaser-sector">${deal.sector}</span>
+        <span class="teaser-sector">${esc(deal.sector)}</span>
       </div>
       ${deal.teaser_headline
-        ? `<div style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);margin-bottom:10px">${deal.teaser_headline}</div>`
+        ? `<div style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);margin-bottom:10px">${esc(deal.teaser_headline)}</div>`
         : ''}
-      <p class="teaser-summary">${deal.summary}</p>
+      <p class="teaser-summary">${esc(deal.summary)}</p>
       <div class="teaser-attrs">
-        <div class="attr-item"><div class="attr-label">Capital Range</div><div class="attr-value">${deal.capital_range||'—'}</div></div>
-        <div class="attr-item"><div class="attr-label">Sector</div><div class="attr-value">${deal.sector}</div></div>
-        <div class="attr-item"><div class="attr-label">Geography</div><div class="attr-value">${deal.region}</div></div>
-        <div class="attr-item"><div class="attr-label">Type</div><div class="attr-value">${deal.deal_type}</div></div>
+        <div class="attr-item"><div class="attr-label">Capital Range</div><div class="attr-value">${esc(deal.capital_range||'—')}</div></div>
+        <div class="attr-item"><div class="attr-label">Sector</div><div class="attr-value">${esc(deal.sector)}</div></div>
+        <div class="attr-item"><div class="attr-label">Geography</div><div class="attr-value">${esc(deal.region)}</div></div>
+        <div class="attr-item"><div class="attr-label">Type</div><div class="attr-value">${esc(deal.deal_type)}</div></div>
       </div>
       <div class="teaser-footer">
-        <span class="teaser-date">${pubDate?'Published: '+pubDate+' · ':''}Ref: ${ref}</span>
+        <span class="teaser-date">${pubDate?'Published: '+pubDate+' · ':''}Ref: ${esc(ref)}</span>
         <div class="teaser-actions">
-          <button class="btn-bookmark" onclick="bookmarkTeaser('${ref}',this)">Bookmark for review</button>
+          <button class="btn-bookmark" onclick="bookmarkTeaser('${esc(ref)}',this)">Bookmark for review</button>
           ${actionBtn}
         </div>
       </div>`;
@@ -2073,6 +2177,12 @@
   ════════════════════════════════════════════════ */
   initAccessState();
   loadApprovedDeals();
+
+  // Deep link: deal-room.html?join=1 or #join opens the registration flow
+  // (used by the deal-detail access gate and external campaigns)
+  if(new URLSearchParams(location.search).get('join')==='1' || location.hash==='#join'){
+    if(!isDrMember()) openRegistration();
+  }
 </script>
 </body>
 </html>

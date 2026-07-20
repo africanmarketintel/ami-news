@@ -4,6 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Deal Detail — AMI Deal Room</title>
+  <meta name="description" content="Full deal information for ABTA Deal Room members, including counterparty details and supporting documents.">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="African Market Intelligence">
+  <meta property="og:title" content="AMI Deal Room — Deal Detail">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400;1,600&family=Spectral:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <script src="config.js"></script>
@@ -178,7 +182,7 @@
   <a href="energy.html">Energy</a>
   <a href="deals.html">Deal Tracker</a>
   <a href="deal-room.html">Deal Room</a>
-  <a href="membership.html" class="mob-subscribe">Join AMI →</a>
+  <a href="membership.html" class="mob-subscribe">Membership →</a>
 </div>
 
 <!-- ═══ ACCESS GATE (non-members) ══════════════════ -->
@@ -187,7 +191,7 @@
     <div class="access-gate-icon">◈</div>
     <div class="access-gate-title">Deal Room Access Required</div>
     <p class="access-gate-body">Full deal information — including counterparty details and supporting documents — is available to Deal Room members only. Members must have accepted the NDA and Platform Membership Agreement.</p>
-    <a href="deal-room.html" class="btn-gate" onclick="openDealRoomRegistration()">Join Deal Room →</a>
+    <a href="deal-room.html?join=1" class="btn-gate">Join Deal Room →</a>
     <a href="deal-room.html" class="btn-gate-outline">← Back to Deal Room</a>
   </div>
 </div>
@@ -346,6 +350,13 @@
     return m ? m[1].toUpperCase() : 'FILE';
   }
 
+  /* Escape submitted content before injecting into HTML */
+  function esc(s){
+    return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+
   /* Call the Edge Function — returns array of { path, name, url } */
   async function loadSignedDocUrls(dealId, memberEmail){
     try {
@@ -495,10 +506,10 @@
     docsList.innerHTML = signedDocs.map(function(doc){
       const name = doc.name || doc.path.split('/').pop();
       const ext  = fileExt(name);
-      return '<a href="'+doc.url+'" target="_blank" rel="noopener" class="doc-link">'
+      return '<a href="'+esc(doc.url)+'" target="_blank" rel="noopener" class="doc-link">'
         +'<span class="doc-link-icon">↓</span>'
-        +'<span class="doc-link-name">'+name+'</span>'
-        +'<span class="doc-link-type">'+ext+'</span>'
+        +'<span class="doc-link-name">'+esc(name)+'</span>'
+        +'<span class="doc-link-type">'+esc(ext)+'</span>'
         +'</a>';
     }).join('');
   }
