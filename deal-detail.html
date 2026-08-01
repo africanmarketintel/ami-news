@@ -302,8 +302,8 @@
             <input type="text" class="form-input" id="intCapital" placeholder="e.g. USD 20–50m available for this type of deal">
           </div>
           <div class="form-group">
-            <label class="form-label">Message to ABTA</label>
-            <textarea class="form-textarea" id="intMessage" placeholder="Why are you a credible counterparty for this deal? Any specific questions or conditions?"></textarea>
+            <label class="form-label">Message to ABTA *</label>
+            <textarea class="form-textarea" id="intMessage" placeholder="Why are you a credible counterparty for this deal? Any specific questions or conditions?" required></textarea>
           </div>
           <div style="display:flex;justify-content:flex-end;margin-top:8px">
             <button type="submit" class="btn-modal-submit">Submit Interest →</button>
@@ -409,10 +409,17 @@
   /* ═══════════════════════════════════════════════
      LOAD DEAL
   ═══════════════════════════════════════════════ */
+  // Safe fields (headline, sector, summary etc.) come from the
+  // public deal_submissions_public view — same view deal-room.html
+  // reads for its live opportunity cards, so this is not a new
+  // exposure. Counterparty data is sensitive and is fetched
+  // separately via deal-room-reveal (loadCounterparty below), which
+  // checks server-side that the caller is an active Deal Room member
+  // before returning anything.
   async function loadDeal(id){
     try {
       const res = await fetch(
-        SUPABASE_URL+'/rest/v1/deal_submissions?id=eq.'+encodeURIComponent(id)+'&status=eq.approved&select=*&limit=1',
+        SUPABASE_URL+'/rest/v1/deal_submissions_public?id=eq.'+encodeURIComponent(id)+'&select=*&limit=1',
         { headers: { 'apikey': SUPABASE_ANON } }
       );
       if(!res.ok) throw new Error('fetch failed');
@@ -423,6 +430,7 @@
       }
       const deal = data[0];
       renderDeal(deal);
+      loadCounterparty(deal.id);
       // Load signed document URLs separately — Edge Function call
       const memberEmail = (
         localStorage.getItem('dr_email') ||
@@ -433,6 +441,31 @@
     } catch(err){
       console.error('loadDeal:', err);
       document.getElementById('loadingState').textContent = 'Unable to load deal. Please try again.';
+    }
+  }
+
+  /* ═══════════════════════════════════════════════
+     LOAD COUNTERPARTY (membership-checked, server-side)
+  ═══════════════════════════════════════════════ */
+  async function loadCounterparty(dealId){
+    try {
+      const token = localStorage.getItem('ami_auth_token') || '';
+      const res = await fetch(SUPABASE_URL+'/functions/v1/deal-room-reveal', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json', 'apikey': SUPABASE_ANON, 'Authorization': 'Bearer '+token },
+        body: JSON.stringify({ deal_id: dealId })
+      });
+      if(!res.ok) return; // not_authenticated / not_a_member / not_found — leave the placeholder in place
+      const { fields } = await res.json();
+      if(!Array.isArray(fields) || !fields.length) return;
+      document.getElementById('cpGrid').innerHTML = fields.map(function(r){
+        return '<div class="cp-row">'
+          +'<div class="cp-label">'+esc(r[0])+'</div>'
+          +'<div class="cp-value">'+esc(r[1])+'</div>'
+          +'</div>';
+      }).join('');
+    } catch(err){
+      console.warn('loadCounterparty:', err);
     }
   }
 
@@ -469,17 +502,10 @@
     // Summary
     document.getElementById('dealSummary').textContent = deal.summary;
 
-    // Counterparty
-    const cpGrid = document.getElementById('cpGrid');
-    const cpData = Array.isArray(deal.counterparty_data) ? deal.counterparty_data : [];
-    if(cpData.length){
-      cpGrid.innerHTML = cpData.map(function(r){
-        return '<div class="cp-row">'
-          +'<div class="cp-label">'+r[0]+'</div>'
-          +'<div class="cp-value">'+r[1]+'</div>'
-          +'</div>';
-      }).join('');
-    }
+    // Counterparty — populated separately by loadCounterparty(), which
+    // only returns data once the caller's membership is verified server-side.
+    // The placeholder already in the markup ("being prepared by ABTA")
+    // stays in place until then, or if the caller isn't an active member.
 
     // Documents placeholder — filled by renderDocs() once Edge Function responds
     document.getElementById('docsList').innerHTML =
@@ -535,29 +561,55 @@
     if(e.key==='Escape') closeInterest();
   });
 
+  // Routed through deal-room-interest-gateway (server-side membership
+  // check, matches deal_room_interest's real columns) instead of a
+  // direct anon insert — the old direct-insert policy no longer
+  // exists on that table once the Phase 1 security SQL has run.
   async function submitInterest(e){
     e.preventDefault();
     const btn = e.target.querySelector('[type="submit"]');
+    const rationale = document.getElementById('intMessage').value.trim();
+    const contactEmail = (
+      localStorage.getItem('dr_email') ||
+      localStorage.getItem('ami_user_email') ||
+      localStorage.getItem('ami_email') || ''
+    );
+    if(!contactEmail){
+      alert('We could not find your member email. Please sign in again and retry.');
+      return;
+    }
     btn.disabled = true; btn.textContent = 'Submitting…';
     const data = {
-      deal_ref:      window._currentDealRef || '',
-      deal_label:    window._currentDealLabel || '',
-      member_name:   localStorage.getItem('dr_name')  || '',
-      member_org:    localStorage.getItem('dr_org')   || '',
-      member_email:  localStorage.getItem('dr_email') || '',
-      investor_role: document.getElementById('intRole').value,
-      capital_note:  document.getElementById('intCapital').value,
-      message:       document.getElementById('intMessage').value,
-      source:        'deal-detail'
+      teaser_ref:    window._currentDealRef || '',
+      opp_type:      document.getElementById('intRole').value,
+      organisation:  localStorage.getItem('dr_org')  || '',
+      contact_name:  localStorage.getItem('dr_name') || '',
+      contact_email: contactEmail,
+      investor_type: document.getElementById('intRole').value,
+      invest_range:  document.getElementById('intCapital').value,
+      rationale:     rationale
     };
     try {
-      if(typeof SUPABASE_URL !== 'undefined' && SUPABASE_URL){
-        const token = localStorage.getItem('ami_auth_token')||'';
-        const h = { 'Content-Type':'application/json','apikey':SUPABASE_ANON,'Prefer':'return=minimal' };
-        if(token) h['Authorization']='Bearer '+token;
-        await fetch(SUPABASE_URL+'/rest/v1/deal_room_interest',{ method:'POST',headers:h,body:JSON.stringify(data) });
+      const token = localStorage.getItem('ami_auth_token') || '';
+      const res = await fetch(SUPABASE_URL+'/functions/v1/deal-room-interest-gateway', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json', 'apikey': SUPABASE_ANON, 'Authorization': 'Bearer '+token },
+        body: JSON.stringify(data)
+      });
+      if(!res.ok){
+        const result = await res.json().catch(function(){ return {}; });
+        alert(result.error === 'not_a_member'
+          ? 'Your Deal Room membership could not be verified. Please sign in again.'
+          : 'Could not submit your interest. Please try again.');
+        btn.disabled = false; btn.textContent = 'Submit Interest →';
+        return;
       }
-    } catch(err){ console.warn('interest submit:',err); }
+    } catch(err){
+      console.warn('interest submit:', err);
+      alert('Network error — please try again.');
+      btn.disabled = false; btn.textContent = 'Submit Interest →';
+      return;
+    }
     document.getElementById('interestFormState').style.display  = 'none';
     document.getElementById('interestSuccessState').style.display = '';
     btn.disabled = false; btn.textContent = 'Submit Interest →';

@@ -486,6 +486,11 @@
       <span class="hero-badge">Controlled disclosure</span>
       <span class="hero-badge">£99 / year</span>
     </div>
+    <div class="hero-badges" aria-label="Platform security" style="opacity:.85;margin-top:-14px">
+      <span class="hero-badge">🔒 Encrypted document storage</span>
+      <span class="hero-badge">📋 Full audit trail</span>
+      <span class="hero-badge">✓ Membership verified server-side</span>
+    </div>
     <div class="hero-actions">
       <button class="btn-hero-primary" onclick="openRegistration()">Join Deal Room — £99/yr</button>
       <a href="#teasersGrid" class="btn-hero-secondary">Browse opportunities ↓</a>
@@ -544,6 +549,16 @@
         <button class="filter-btn" aria-pressed="false" onclick="filterTeasers('commercial',this)">Commercial</button>
       </div>
 
+      <div class="filter-bar" role="search" aria-label="Search and sort opportunities" style="margin-top:-8px">
+        <input type="search" id="teaserSearch" class="form-input" placeholder="Search by sector, region or keyword…"
+          style="max-width:280px;margin-bottom:0;padding:7px 12px;font-size:13px" oninput="renderDeals(allDynamicDeals)" aria-label="Search opportunities">
+        <label class="filter-label" for="teaserSort" style="margin-left:10px">Sort:</label>
+        <select id="teaserSort" class="filter-btn" style="padding:6px 10px" onchange="renderDeals(allDynamicDeals)" aria-label="Sort opportunities">
+          <option value="date_desc">Newest first</option>
+          <option value="date_asc">Oldest first</option>
+        </select>
+      </div>
+
       <!-- Teasers -->
       <div class="teasers-grid" id="teasersGrid">
 
@@ -585,8 +600,10 @@
               <button class="btn-bookmark" onclick="bookmarkTeaser('ABTA-2026-001',this)">Bookmark for review</button>
               <button class="btn-reveal" id="reveal-btn-001" onclick="handleReveal('001')">Reveal counterparty →</button>
               <button class="btn-interest" onclick="handleInterest('ABTA-2026-001','Equity Investment — Clean Energy, East Africa')">Confirm Interest →</button>
+              <button class="btn-bookmark" onclick="toggleQA('ABTA-2026-001','qa-001')">Questions</button>
             </div>
           </div>
+          <div class="qa-panel" id="qa-001" style="display:none"></div>
         </article>
 
         <!-- TEASER 2 -->
@@ -627,8 +644,10 @@
               <button class="btn-bookmark" onclick="bookmarkTeaser('ABTA-2026-002',this)">Bookmark for review</button>
               <button class="btn-reveal" id="reveal-btn-002" onclick="handleReveal('002')">Reveal counterparty →</button>
               <button class="btn-interest" onclick="handleInterest('ABTA-2026-002','Acquisition — Financial Services, West Africa')">Confirm Interest →</button>
+              <button class="btn-bookmark" onclick="toggleQA('ABTA-2026-002','qa-002')">Questions</button>
             </div>
           </div>
+          <div class="qa-panel" id="qa-002" style="display:none"></div>
         </article>
 
         <!-- TEASER 3 -->
@@ -662,8 +681,10 @@
               <button class="btn-bookmark" onclick="bookmarkTeaser('ABTA-2026-003',this)">Bookmark for review</button>
               <button class="btn-reveal" id="reveal-btn-003" onclick="handleReveal('003')">Reveal counterparty →</button>
               <button class="btn-interest" onclick="handleInterest('ABTA-2026-003','Debt Financing — Infrastructure, North Africa')">Confirm Interest →</button>
+              <button class="btn-bookmark" onclick="toggleQA('ABTA-2026-003','qa-003')">Questions</button>
             </div>
           </div>
+          <div class="qa-panel" id="qa-003" style="display:none"></div>
         </article>
 
       </div><!-- /teasers-grid -->
@@ -799,6 +820,16 @@
               <label class="checkbox-label" for="submitAgree">I confirm that I am authorised to submit this opportunity and that the information provided is accurate to the best of my knowledge. I acknowledge that ABTA will review and, if approved, anonymise this opportunity before circulation.</label>
             </div>
           </div>
+
+          <!-- Spam guard: invisible to people, catches bots that fill in
+               every field. Server-side check in deal-room-submit-gateway
+               (see supabase/functions/_shared/spam-guard.ts). No external
+               CAPTCHA service — Namecheap/Resend/Supabase/GitHub only. -->
+          <div aria-hidden="true" style="position:absolute;left:-9999px;top:-9999px">
+            <label for="dealSubmitHoneypot">Leave this field blank</label>
+            <input type="text" id="dealSubmitHoneypot" name="website" tabindex="-1" autocomplete="off">
+          </div>
+          <input type="hidden" id="dealSubmitRenderedAt" value="">
 
           <div style="display:flex;justify-content:flex-end;margin-top:8px">
             <button type="submit" class="btn-modal-submit">Submit for Review →</button>
@@ -1002,11 +1033,12 @@
             <input type="checkbox" id="agreeTerms" required>
             <label class="checkbox-label" for="agreeTerms">I confirm the above information is accurate and I accept the acknowledgements set out above.</label>
           </div>
+          <div class="inline-error" id="interestFormError" role="alert"></div>
         </form>
       </div>
       <div class="modal-footer">
         <button class="btn-modal-cancel" onclick="closeInterestModal()">Cancel</button>
-        <button class="btn-modal-submit" onclick="document.getElementById('interestForm').requestSubmit()">Submit Confirmation →</button>
+        <button class="btn-modal-submit" id="interestSubmitBtn" onclick="document.getElementById('interestForm').requestSubmit()">Submit Confirmation →</button>
       </div>
     </div>
     <div id="modalSuccessState" style="display:none;padding:40px 28px">
@@ -1208,6 +1240,31 @@
     <div class="reg-body" id="regStep3" style="display:none">
       <div class="reg-section-title">Complete your membership</div>
       <p class="reg-section-sub">You have reviewed and accepted all platform documents. Complete payment to activate your Deal Room account.</p>
+
+      <!-- Email verification — required before the signature on the
+           acceptance certificate is recorded. A typed name alone is a
+           weak "simple" electronic signature; confirming the signer
+           controls the email address they registered with is a
+           low-friction way to strengthen it. -->
+      <div class="doc-block" id="otpBlock" style="margin-bottom:20px">
+        <div class="doc-block-header">
+          <span class="doc-block-title">Verify your email address</span>
+          <span class="doc-status" id="otpStatus">pending</span>
+        </div>
+        <div style="padding:14px 16px">
+          <p style="font-size:13px;color:var(--text-soft);margin-bottom:12px">We'll send a 6-digit code to the email address you registered with, to confirm it's you before recording your signature.</p>
+          <div id="otpSendRow" style="display:flex;gap:10px;align-items:center">
+            <button type="button" class="btn-reg-back" onclick="sendRegOtp()" id="otpSendBtn">Send code</button>
+            <span id="otpSendMsg" style="font-size:12px;color:var(--text-soft)"></span>
+          </div>
+          <div id="otpVerifyRow" style="display:none;gap:10px;align-items:center;margin-top:10px">
+            <input type="text" id="otpCode" class="form-input" placeholder="6-digit code" style="max-width:140px;margin-bottom:0" inputmode="numeric" maxlength="6">
+            <button type="button" class="btn-reg-next" style="padding:10px 18px" onclick="verifyRegOtp()">Verify</button>
+          </div>
+          <div class="inline-error" id="otpError" role="alert" style="margin-top:10px"></div>
+        </div>
+      </div>
+
       <div class="payment-summary">
         <div class="payment-summary-title">Order summary</div>
         <div class="payment-line"><span class="payment-line-label">ABTA Deal Room — Annual Membership</span><span class="payment-line-val">£99.00</span></div>
@@ -1222,6 +1279,12 @@
           <label class="checkbox-label" for="paymentConfirm">I confirm that I have read and accepted the Non-Disclosure Agreement, Platform Membership Agreement and Fee Schedule, and I authorise the payment of £99 for annual Deal Room membership.</label>
         </div>
       </div>
+      <!-- Spam guard (see note on the deal submission form above) -->
+      <div aria-hidden="true" style="position:absolute;left:-9999px;top:-9999px">
+        <label for="regHoneypot">Leave this field blank</label>
+        <input type="text" id="regHoneypot" name="website" tabindex="-1" autocomplete="off">
+      </div>
+      <input type="hidden" id="regRenderedAt" value="">
     </div>
 
     <!-- STEP 4: Certificate -->
@@ -1379,49 +1442,53 @@
   function isAmiOnly(){ return localStorage.getItem('ami_subscriber')==='true' && !isDrMember(); }
 
   /* ════════════════════════════════════════════════
-     COUNTERPARTY DATA — demo only
-     NOTE: this object ships in the public page source,
-     so it is visible to anyone who views source. Before
-     live launch, move counterparty data server-side
-     (Supabase, behind a membership check) as is already
-     done for dynamic deals on deal-detail.html.
+     COUNTERPARTY DATA — fetched server-side, per reveal
+     Counterparty data no longer ships in the page source. It is
+     requested from the deal-room-reveal Edge Function only when a
+     signed-in member clicks "Reveal", which checks deal_room_members
+     server-side and logs the reveal to deal_room_audit_log. See
+     supabase/functions/deal-room-reveal/index.ts.
   ════════════════════════════════════════════════ */
-  const COUNTERPARTY = {
-    '001': [
-      ['Company','Meridian Power East Africa Ltd'],
-      ['Jurisdiction','Kenya / Tanzania'],
-      ['Lead Contact','James Ochieng, CEO'],
-      ['Email','<a href="mailto:j.ochieng@meridianpower.co.ke">j.ochieng@meridianpower.co.ke</a>'],
-      ['EBITDA (FY2025)','USD 8.4m'],
-      ['Adviser','Standard Bank Advisory, Nairobi']
-    ],
-    '002': [
-      ['Vendor','Hartwell Financial Group plc'],
-      ['Asset','Hartwell Crédit Côte d\'Ivoire &amp; Sénégal'],
-      ['Lead Contact','Claire Beaumont, CFO'],
-      ['Email','<a href="mailto:c.beaumont@hartwellfinancial.com">c.beaumont@hartwellfinancial.com</a>'],
-      ['Loan Book (gross)','USD 14.2m'],
-      ['Adviser','Rothschild &amp; Co, London']
-    ],
-    '003': [
-      ['Developer','Atlas Logistics Development SA'],
-      ['Jurisdiction','Morocco'],
-      ['Lead Contact','Karim Benali, CFO'],
-      ['Email','<a href="mailto:k.benali@atlaslogistics.ma">k.benali@atlaslogistics.ma</a>'],
-      ['Senior Debt (DFI)','USD 80m (committed)'],
-      ['Adviser','Société Générale CIB, Casablanca']
-    ]
-  };
+  const revealCache = {};
 
-  function injectCounterpartyData(){
-    Object.keys(COUNTERPARTY).forEach(function(id){
-      const el = document.getElementById('revealed-'+id);
-      if(!el) return;
-      const rows = COUNTERPARTY[id].map(function(r){
-        return '<div class="revealed-item"><div class="revealed-label">'+r[0]+'</div><div class="revealed-value">'+r[1]+'</div></div>';
-      }).join('');
-      el.innerHTML = '<div class="revealed-title">Counterparty information — Deal Room members only</div><div class="revealed-grid">'+rows+'</div>';
-    });
+  async function fetchCounterparty(teaserRef){
+    if(revealCache[teaserRef]) return revealCache[teaserRef];
+    const token = localStorage.getItem('ami_auth_token') || '';
+    if(!token){
+      return { error: 'sign_in_required' };
+    }
+    try{
+      const r = await fetch(SUPABASE_URL + '/functions/v1/deal-room-reveal', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json', 'apikey': SUPABASE_ANON, 'Authorization':'Bearer '+token },
+        body: JSON.stringify({ teaser_ref: teaserRef })
+      });
+      const data = await r.json();
+      if(!r.ok) return { error: data.error || 'reveal_failed' };
+      revealCache[teaserRef] = data.fields;
+      return data.fields;
+    }catch(err){
+      console.warn('fetchCounterparty:', err);
+      return { error: 'network_error' };
+    }
+  }
+
+  function renderCounterparty(id, fields){
+    const el = document.getElementById('revealed-'+id);
+    if(!el) return;
+    if(fields && fields.error){
+      const msg = fields.error === 'sign_in_required'
+        ? 'Please sign in to your Deal Room account to reveal counterparty details.'
+        : 'Could not load counterparty details. Please try again shortly.';
+      el.innerHTML = '<div class="revealed-title">Counterparty information</div><p style="color:#EDE5D5;font-size:13px">'+msg+'</p>';
+      return;
+    }
+    const rows = fields.map(function(r){
+      const isEmail = /@/.test(r[1]) && r[1].indexOf('<a') === -1;
+      const val = isEmail ? '<a href="mailto:'+r[1]+'">'+r[1]+'</a>' : r[1];
+      return '<div class="revealed-item"><div class="revealed-label">'+r[0]+'</div><div class="revealed-value">'+val+'</div></div>';
+    }).join('');
+    el.innerHTML = '<div class="revealed-title">Counterparty information — Deal Room members only</div><div class="revealed-grid">'+rows+'</div>';
   }
 
   function initAccessState(){
@@ -1440,7 +1507,6 @@
         if(barName && n) barName.textContent=n;
         drBar.style.display='flex';
       }
-      injectCounterpartyData();
       restoreBookmarks();
       document.querySelectorAll('.btn-reveal').forEach(b=>{ if(b.textContent.indexOf('Hide')===-1) b.textContent='Reveal counterparty →'; });
     } else {
@@ -1513,15 +1579,81 @@
   /* ════════════════════════════════════════════════
      REVEAL COUNTERPARTY
   ════════════════════════════════════════════════ */
-  function handleReveal(id){
+  async function handleReveal(id){
     if(!isDrMember()){ openRegistration(); return; }
     const block=document.getElementById('revealed-'+id);
     const btn=document.getElementById('reveal-btn-'+id);
-    if(block && btn){
-      // Inject data now if it wasn't injected at page load (e.g. member state set post-load)
-      if(!block.innerHTML.trim()) injectCounterpartyData();
-      block.classList.toggle('visible');
-      btn.textContent=block.classList.contains('visible')?'Hide counterparty':'Reveal counterparty →';
+    if(!block || !btn) return;
+
+    const opening = !block.classList.contains('visible');
+    if(opening && !block.innerHTML.trim()){
+      btn.disabled = true; btn.textContent = 'Loading…';
+      const fields = await fetchCounterparty('ABTA-2026-'+id);
+      renderCounterparty(id, fields);
+      btn.disabled = false;
+    }
+    block.classList.toggle('visible');
+    btn.textContent=block.classList.contains('visible')?'Hide counterparty':'Reveal counterparty →';
+  }
+
+  /* ════════════════════════════════════════════════
+     Q&A — structured diligence questions to ABTA
+     Backed by supabase/functions/deal-room-qa. Members-only.
+  ════════════════════════════════════════════════ */
+  async function toggleQA(teaserRef, panelId){
+    if(!isDrMember()){ openRegistration(); return; }
+    const panel = document.getElementById(panelId);
+    if(!panel) return;
+    if(panel.style.display==='block'){ panel.style.display='none'; return; }
+    panel.style.display='block';
+    panel.innerHTML = '<div style="padding:14px;font-size:12px;color:var(--text-soft)">Loading questions…</div>';
+    await loadQA(teaserRef, panelId);
+  }
+
+  async function loadQA(teaserRef, panelId){
+    const panel = document.getElementById(panelId);
+    const token = localStorage.getItem('ami_auth_token') || '';
+    try{
+      const r = await fetch(SUPABASE_URL+'/functions/v1/deal-room-qa?teaser_ref='+encodeURIComponent(teaserRef), {
+        headers:{ 'apikey':SUPABASE_ANON, 'Authorization':'Bearer '+token }
+      });
+      const data = await r.json();
+      const list = (data.questions||[]).map(function(q){
+        const answers = (q.deal_answers||[]).map(function(a){
+          return '<div style="padding:6px 0 0 14px;font-size:12px;color:var(--text-soft)"><strong>'+a.answered_by+':</strong> '+a.answer+'</div>';
+        }).join('');
+        return '<div style="padding:8px 0;border-bottom:1px solid var(--divider);font-size:12px">'
+          + '<div><strong>Q:</strong> '+q.question+'</div>'
+          + (answers || '<div style="padding:6px 0 0 14px;font-size:12px;color:var(--text-soft);font-style:italic">Awaiting ABTA response</div>')
+          + '</div>';
+      }).join('') || '<div style="padding:10px 0;font-size:12px;color:var(--text-soft)">No questions yet on this opportunity.</div>';
+
+      panel.innerHTML = '<div style="padding:14px;background:var(--surface);border:1px solid var(--divider);border-radius:2px;margin-top:8px">'
+        + list
+        + '<div style="display:flex;gap:8px;margin-top:10px">'
+        + '<input type="text" id="qaInput-'+panelId+'" class="form-input" placeholder="Ask ABTA a question about this opportunity" style="margin-bottom:0;flex:1">'
+        + '<button class="btn-modal-submit" onclick="askQA(\''+teaserRef+'\',\''+panelId+'\')">Ask</button>'
+        + '</div></div>';
+    }catch(err){
+      panel.innerHTML = '<div style="padding:14px;font-size:12px;color:var(--terra)">Could not load questions. Please try again.</div>';
+    }
+  }
+
+  async function askQA(teaserRef, panelId){
+    const input = document.getElementById('qaInput-'+panelId);
+    const question = input ? input.value.trim() : '';
+    if(!question) return;
+    const token = localStorage.getItem('ami_auth_token') || '';
+    try{
+      const r = await fetch(SUPABASE_URL+'/functions/v1/deal-room-qa', {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json', 'apikey':SUPABASE_ANON, 'Authorization':'Bearer '+token },
+        body: JSON.stringify({ action:'ask', teaser_ref: teaserRef, question })
+      });
+      if(!r.ok) throw new Error('failed');
+      await loadQA(teaserRef, panelId);
+    }catch(err){
+      console.warn('askQA:', err);
     }
   }
 
@@ -1547,10 +1679,12 @@
   document.getElementById('interestModal').addEventListener('click',function(e){ if(e.target===this) closeInterestModal(); });
   document.addEventListener('keydown',function(e){ if(e.key==='Escape'){ closeInterestModal(); closeRegistration(); } });
 
-  function submitInterestForm(e){
+  async function submitInterestForm(e){
     e.preventDefault();
     if(!enforceWordLimit(document.getElementById('interestRationale'),'rationaleCount',250)) return;
     const form=e.target;
+    const submitBtn=document.getElementById('interestSubmitBtn');
+    const errEl=document.getElementById('interestFormError');
     const data={
       teaser_ref:    form.teaserRef.value,
       opp_type:      document.querySelector('input[name="oppType"]:checked')?.value || '',
@@ -1565,24 +1699,74 @@
       pref_geo:      document.getElementById('prefGeo').value,
       rationale:     document.getElementById('interestRationale').value
     };
-    (async()=>{ try{ if(typeof SUPABASE_URL!=='undefined'&&SUPABASE_URL){ const t=localStorage.getItem('ami_auth_token')||''; const h={'Content-Type':'application/json','apikey':SUPABASE_ANON,'Prefer':'return=minimal'}; if(t) h['Authorization']='Bearer '+t; await fetch(SUPABASE_URL+'/rest/v1/deal_room_interest',{method:'POST',headers:h,body:JSON.stringify(data)}); } }catch(err){ console.warn('Supabase:',err); } })();
-    document.getElementById('modalFormState').style.display='none';
-    document.getElementById('modalSuccessState').style.display='';
+    const token = localStorage.getItem('ami_auth_token') || '';
+    if(errEl) errEl.classList.remove('visible');
+    if(submitBtn){ submitBtn.disabled=true; submitBtn.textContent='Submitting…'; }
+    try{
+      const r = await fetch(SUPABASE_URL+'/functions/v1/deal-room-interest-gateway', {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json', 'apikey':SUPABASE_ANON, 'Authorization':'Bearer '+token },
+        body: JSON.stringify(data)
+      });
+      const res = await r.json();
+      if(!r.ok){
+        if(errEl){ errEl.textContent = res.error==='not_a_member' ? 'Your Deal Room membership could not be verified. Please sign in again.' : 'Could not submit your interest confirmation. Please try again.'; errEl.classList.add('visible'); }
+        return;
+      }
+      document.getElementById('modalFormState').style.display='none';
+      document.getElementById('modalSuccessState').style.display='';
+    }catch(err){
+      console.warn('submitInterestForm:',err);
+      if(errEl){ errEl.textContent='Network error — please try again.'; errEl.classList.add('visible'); }
+    }finally{
+      if(submitBtn){ submitBtn.disabled=false; submitBtn.textContent='Submit Confirmation →'; }
+    }
   }
 
   /* ════════════════════════════════════════════════
      BOOKMARK
   ════════════════════════════════════════════════ */
-  function bookmarkTeaser(ref,btn){
-    const saved=JSON.parse(localStorage.getItem('dr_bookmarks')||'[]');
-    if(!saved.includes(ref)){ saved.push(ref); localStorage.setItem('dr_bookmarks',JSON.stringify(saved)); btn.textContent='Bookmarked ✓'; btn.style.color='var(--green-mid)'; btn.style.borderColor='var(--green-mid)'; }
-    else{ const i=saved.indexOf(ref); saved.splice(i,1); localStorage.setItem('dr_bookmarks',JSON.stringify(saved)); btn.textContent='Bookmark for review'; btn.style.color=''; btn.style.borderColor=''; }
+  // Bookmarks persist to the member's account (deal_room_bookmarks)
+  // so they carry over between devices, with a localStorage mirror
+  // used only while signed out or offline.
+  function markBookmarkBtn(btn,on){
+    btn.textContent = on ? 'Bookmarked ✓' : 'Bookmark for review';
+    btn.style.color = on ? 'var(--green-mid)' : '';
+    btn.style.borderColor = on ? 'var(--green-mid)' : '';
   }
-  function restoreBookmarks(){
+
+  async function bookmarkTeaser(ref,btn){
     const saved=JSON.parse(localStorage.getItem('dr_bookmarks')||'[]');
+    const willBookmark = !saved.includes(ref);
+    if(willBookmark) saved.push(ref); else saved.splice(saved.indexOf(ref),1);
+    localStorage.setItem('dr_bookmarks',JSON.stringify(saved));
+    markBookmarkBtn(btn, willBookmark);
+
+    const token = localStorage.getItem('ami_auth_token') || '';
+    if(!token) return; // not signed in yet — localStorage only, synced on next sign-in
+    try{
+      await fetch(SUPABASE_URL+'/functions/v1/deal-room-bookmarks', {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json', 'apikey':SUPABASE_ANON, 'Authorization':'Bearer '+token },
+        body: JSON.stringify({ teaser_ref: ref })
+      });
+    }catch(err){ console.warn('bookmarkTeaser sync:', err); }
+  }
+
+  async function restoreBookmarks(){
+    let refs = JSON.parse(localStorage.getItem('dr_bookmarks')||'[]');
+    const token = localStorage.getItem('ami_auth_token') || '';
+    if(token){
+      try{
+        const r = await fetch(SUPABASE_URL+'/functions/v1/deal-room-bookmarks', {
+          headers:{ 'apikey':SUPABASE_ANON, 'Authorization':'Bearer '+token }
+        });
+        if(r.ok){ const data = await r.json(); refs = data.bookmarks || []; localStorage.setItem('dr_bookmarks', JSON.stringify(refs)); }
+      }catch(err){ console.warn('restoreBookmarks:', err); }
+    }
     document.querySelectorAll('[onclick^="bookmarkTeaser"]').forEach(btn=>{
       const ref=btn.getAttribute('onclick').match(/'([^']+)'/)[1];
-      if(saved.includes(ref)){ btn.textContent='Bookmarked ✓'; btn.style.color='var(--green-mid)'; btn.style.borderColor='var(--green-mid)'; }
+      if(refs.includes(ref)) markBookmarkBtn(btn, true);
     });
   }
 
@@ -1629,6 +1813,85 @@
   }
 
   /* ════════════════════════════════════════════════
+     SPAM GUARD — honeypot + timing, no external CAPTCHA
+     service. The gateway functions check these two signals
+     server-side (see supabase/functions/_shared/spam-guard.ts):
+     a filled honeypot or an implausibly fast submit both fail.
+  ════════════════════════════════════════════════ */
+  function getSpamGuardFields(honeypotId, renderedAtId){
+    const hp = document.getElementById(honeypotId);
+    const ra = document.getElementById(renderedAtId);
+    return {
+      honeypot: hp ? hp.value : '',
+      form_rendered_at: ra ? Number(ra.value) : 0
+    };
+  }
+
+  /* ════════════════════════════════════════════════
+     EMAIL OTP — identity check before signing
+     Requires "Email OTP" enabled in Supabase Auth settings.
+     regVerifiedToken holds the short-lived session returned by
+     /auth/v1/verify, sent as the Authorization header on the
+     deal-room-agreement-gateway call so the signature can't be
+     recorded for an email the caller hasn't proven they control.
+  ════════════════════════════════════════════════ */
+  let regVerifiedToken = '';
+  let regVerifiedEmail = '';
+
+  async function sendRegOtp(){
+    const email = document.getElementById('regEmail').value;
+    const btn = document.getElementById('otpSendBtn');
+    const msg = document.getElementById('otpSendMsg');
+    const errEl = document.getElementById('otpError');
+    errEl.classList.remove('visible');
+    if(!email){ errEl.textContent='Enter your email on Step 1 first.'; errEl.classList.add('visible'); return; }
+    btn.disabled = true; btn.textContent = 'Sending…';
+    try{
+      const r = await fetch(SUPABASE_URL+'/auth/v1/otp', {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json', apikey: SUPABASE_ANON },
+        body: JSON.stringify({ email, create_user: true })
+      });
+      if(!r.ok){ const d=await r.json().catch(()=>({})); throw new Error(d.error_description||d.msg||'Could not send code'); }
+      document.getElementById('otpSendRow').style.display='none';
+      document.getElementById('otpVerifyRow').style.display='flex';
+      msg.textContent = 'Code sent to '+email;
+      document.getElementById('otpStatus').textContent='code sent';
+    }catch(err){
+      errEl.textContent = err.message || 'Could not send verification code.';
+      errEl.classList.add('visible');
+    }finally{
+      btn.disabled=false; btn.textContent='Send code';
+    }
+  }
+
+  async function verifyRegOtp(){
+    const email = document.getElementById('regEmail').value;
+    const code = document.getElementById('otpCode').value.trim();
+    const errEl = document.getElementById('otpError');
+    errEl.classList.remove('visible');
+    if(!code){ errEl.textContent='Enter the 6-digit code.'; errEl.classList.add('visible'); return; }
+    try{
+      const r = await fetch(SUPABASE_URL+'/auth/v1/verify', {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json', apikey: SUPABASE_ANON },
+        body: JSON.stringify({ email, token: code, type: 'email' })
+      });
+      const data = await r.json();
+      if(!r.ok){ throw new Error(data.error_description || data.msg || 'Incorrect or expired code'); }
+      regVerifiedToken = data.access_token;
+      regVerifiedEmail = email;
+      document.getElementById('otpStatus').textContent='verified ✓';
+      document.getElementById('otpStatus').style.color='var(--green-mid)';
+      document.getElementById('otpVerifyRow').style.display='none';
+      document.getElementById('otpSendMsg').textContent='Email verified.';
+    }catch(err){
+      errEl.textContent = err.message || 'Verification failed.';
+      errEl.classList.add('visible');
+    }
+  }
+
+  /* ════════════════════════════════════════════════
      DEAL SUBMISSION
   ════════════════════════════════════════════════ */
   async function submitDeal(e){
@@ -1638,30 +1901,37 @@
     btn.disabled=true;
     btn.textContent='Submitting…';
 
+    const memberToken = localStorage.getItem('ami_auth_token') || '';
+
     try {
-      // 1 — Upload documents to Supabase Storage
+      // 1 — Upload documents via a per-file signed URL (deal-documents
+      // is a private bucket; deal-room-upload-url checks membership
+      // before issuing each URL — see supabase/functions/deal-room-upload-url)
       const docPaths=[];
       for(const file of uploadedFiles){
-        const safeName=Date.now()+'-'+file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
-        const res=await fetch(SUPABASE_URL+'/storage/v1/object/deal-documents/'+safeName,{
+        const urlRes = await fetch(SUPABASE_URL+'/functions/v1/deal-room-upload-url', {
           method:'POST',
-          headers:{
-            'apikey':SUPABASE_ANON,
-            'Authorization':'Bearer '+SUPABASE_ANON,
-            'Content-Type':file.type||'application/octet-stream',
-            'x-upsert':'false'
-          },
+          headers:{ 'Content-Type':'application/json', 'apikey':SUPABASE_ANON, 'Authorization':'Bearer '+memberToken },
+          body: JSON.stringify({ file_name: file.name })
+        });
+        if(!urlRes.ok){ console.warn('Could not get upload URL for', file.name); continue; }
+        const { path, signedUrl } = await urlRes.json();
+        const putRes = await fetch(signedUrl, {
+          method:'PUT',
+          headers:{ 'Content-Type': file.type || 'application/octet-stream' },
           body:file
         });
-        if(res.ok){
-          docPaths.push('deal-documents/'+safeName);
-        } else {
-          console.warn('File upload failed:',file.name,await res.text());
-        }
+        if(putRes.ok){ docPaths.push('deal-documents/'+path); }
+        else { console.warn('File upload failed:',file.name,await putRes.text()); }
       }
 
-      // 2 — Submit form data to deal_submissions table
+      // 2 — Submit form data via deal-room-submit-gateway (requires
+      // membership + a Turnstile token; deal_submissions no longer
+      // accepts direct anon inserts)
+      const guard = getSpamGuardFields('dealSubmitHoneypot','dealSubmitRenderedAt');
       const data={
+        honeypot: guard.honeypot,
+        form_rendered_at: guard.form_rendered_at,
         deal_type:     document.getElementById('dealType').value,
         sector:        document.getElementById('dealSector').value,
         region:        document.getElementById('dealRegion').value,
@@ -1674,18 +1944,20 @@
         document_paths: docPaths
       };
 
-      const res=await fetch(SUPABASE_URL+'/rest/v1/deal_submissions',{
+      const res=await fetch(SUPABASE_URL+'/functions/v1/deal-room-submit-gateway',{
         method:'POST',
         headers:{
           'Content-Type':'application/json',
           'apikey':SUPABASE_ANON,
-          'Authorization':'Bearer '+SUPABASE_ANON,
-          'Prefer':'return=minimal'
+          'Authorization':'Bearer '+memberToken
         },
         body:JSON.stringify(data)
       });
 
-      if(!res.ok) throw new Error(await res.text());
+      if(!res.ok){
+        const errBody = await res.json().catch(()=>({}));
+        throw new Error(errBody.error || ('HTTP '+res.status));
+      }
 
       // 3 — Show success
       document.getElementById('dealSubmitForm').style.display='none';
@@ -1880,9 +2152,11 @@
     }
   }
 
-  function showInlineError(id,show){
+  function showInlineError(id,show,message){
     const el=document.getElementById(id);
-    if(el) el.classList.toggle('visible',!!show);
+    if(!el) return;
+    if(message) el.textContent = message;
+    el.classList.toggle('visible',!!show);
   }
 
   function regNext(){
@@ -1900,6 +2174,13 @@
       showInlineError('regStep2Error',false);
       regCurrentStep = 3; showRegStep(3);
     } else if(regCurrentStep === 3){
+      if(regVerifiedToken !== '' && regVerifiedEmail !== document.getElementById('regEmail').value){
+        regVerifiedToken=''; regVerifiedEmail=''; // email changed since verifying — require re-verification
+      }
+      if(!regVerifiedToken){
+        showInlineError('regStep3Error',true,'Please verify your email address above before continuing.');
+        return;
+      }
       if(!document.getElementById('paymentConfirm').checked){
         showInlineError('regStep3Error',true);
         document.getElementById('paymentConfirm').focus();
@@ -1962,27 +2243,55 @@
     const email     = document.getElementById('regEmail').value;
     const org       = document.getElementById('regOrg').value;
     const role      = document.getElementById('regRole').value;
-    const now=new Date();
-    const agreementId='DR-'+now.getFullYear()+'-'+String(Math.floor(Math.random()*90000)+10000);
-    const timeStr=now.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+' · '+now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})+' UTC';
+    const agreementId='DR-'+new Date().getFullYear()+'-'+String(Math.floor(Math.random()*90000)+10000);
 
-    // Save to Supabase
+    const nextBtn = document.getElementById('regNextBtn');
+    if(nextBtn){ nextBtn.disabled=true; nextBtn.textContent='Processing…'; }
+    showInlineError('regStep3Error', false);
+
+    // Record the signature server-side — deal-room-agreement-gateway
+    // adds the authoritative timestamp and IP, verifies the Turnstile
+    // token, provisions the member's Supabase Auth account and creates
+    // their deal_room_members row. See supabase/functions/
+    // deal-room-agreement-gateway/index.ts. (Payment verification is
+    // not yet wired into this call — see the PAYMENT CHECK comment in
+    // that function.)
+    let result;
     try{
-      if(typeof SUPABASE_URL!=='undefined'&&SUPABASE_URL&&!SUPABASE_URL.includes('PLACEHOLDER')){
-        await fetch(SUPABASE_URL+'/rest/v1/agreement_signatures',{
-          method:'POST',
-          headers:{'Content-Type':'application/json','apikey':SUPABASE_ANON,'Authorization':'Bearer '+SUPABASE_ANON,'Prefer':'return=minimal'},
-          body:JSON.stringify({
-            full_name:fullName, email:email, organisation:org, role:role,
-            agreement_id:agreementId,
-            documents_accepted:['Non-Disclosure Agreement','Platform Membership Agreement','Fee Schedule'],
-            signed_at:now.toISOString()
-          })
-        });
+      const r = await fetch(SUPABASE_URL+'/functions/v1/deal-room-agreement-gateway', {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json', 'apikey':SUPABASE_ANON, 'Authorization':'Bearer '+regVerifiedToken },
+        body: JSON.stringify({
+          honeypot: getSpamGuardFields('regHoneypot','regRenderedAt').honeypot,
+          form_rendered_at: getSpamGuardFields('regHoneypot','regRenderedAt').form_rendered_at,
+          full_name: fullName, email, organisation: org, role,
+          agreement_id: agreementId,
+          documents_accepted: ['Non-Disclosure Agreement','Platform Membership Agreement','Fee Schedule'],
+        })
+      });
+      result = await r.json();
+      if(!r.ok){
+        const msg = (result.error === 'spam_detected' || result.error === 'rate_limited')
+          ? 'This submission could not be processed. If you believe this is an error, contact dealroom@abta.africa.'
+          : 'Could not complete registration. Please try again.';
+        showInlineError('regStep3Error', true, msg);
+        return;
       }
-    }catch(err){ console.warn('Supabase signature save:',err); }
+    }catch(err){
+      console.warn('deal-room-agreement-gateway:', err);
+      showInlineError('regStep3Error', true, 'Network error — please try again.');
+      return;
+    }finally{
+      if(nextBtn){ nextBtn.disabled=false; nextBtn.textContent='Continue →'; }
+    }
 
-    // Grant access
+    const signedAt = new Date(result.signed_at || Date.now());
+    const timeStr = signedAt.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+' · '+signedAt.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})+' UTC';
+
+    // Grant access locally for this session/device. This is a
+    // convenience flag for the UI only — deal-room-reveal,
+    // deal-room-submit-gateway and deal-room-interest-gateway all
+    // re-check deal_room_members server-side and do not trust it.
     localStorage.setItem('dr_member','true');
     localStorage.setItem('dr_email',email);
     localStorage.setItem('dr_name',fullName);
@@ -2004,11 +2313,14 @@
     // Show certificate step
     regCurrentStep=4; showRegStep(4);
 
-    // Auto-create AMI account for this member so they can use
-    // their AMI login for secure document access going forward
+    // Account creation and the password-setup email are now handled
+    // server-side by deal-room-agreement-gateway, so this only needs
+    // to show the right notice — it doesn't call createAmiAccount again.
     const amiNotice = document.getElementById('certAmiNotice');
-    createAmiAccount(email).then(function(result){
+    (function(){
       if(!amiNotice) return;
+      const existingToken = localStorage.getItem('ami_auth_token') || '';
+      const result = { skipped: !!existingToken, emailed: !existingToken };
       if(result.skipped){
         amiNotice.style.display = 'none'; // already logged in
       } else if(result.emailed){
@@ -2018,7 +2330,7 @@
           +'Use it to access deal documents securely on future visits.</span>';
         amiNotice.style.display = 'flex';
       }
-    });
+    })();
   }
 
   function printCertificate(){
@@ -2153,28 +2465,85 @@
     return article;
   }
 
+  let allDynamicDeals = [];
+
   async function loadApprovedDeals(){
+    const grid = document.getElementById('teasersGrid');
+    const loadingEl = document.createElement('div');
+    loadingEl.id = 'dealsLoading';
+    loadingEl.className = 'empty-state';
+    loadingEl.innerHTML = '<div class="empty-icon">◈</div><div class="empty-title">Loading opportunities…</div>';
+    grid.appendChild(loadingEl);
+
     try {
+      // Queries the deal_submissions_public VIEW, not the base table —
+      // deal_submissions itself has no anon SELECT policy as of Phase 1,
+      // so counterparty_data and submitter details can't leak this way.
       const res = await fetch(
-        SUPABASE_URL+'/rest/v1/deal_submissions?status=eq.approved'
-        +'&select=id,published_ref,deal_type,sector,region,capital_range,summary,teaser_headline,published_at'
+        SUPABASE_URL+'/rest/v1/deal_submissions_public?select=*'
         +'&order=published_at.desc',
         { headers: { 'apikey': SUPABASE_ANON } }
       );
-      if(!res.ok) return;
+      loadingEl.remove();
+      if(!res.ok){ showDealsError(); return; }
       const deals = await res.json();
-      if(!Array.isArray(deals)||!deals.length) return;
-      const grid = document.getElementById('teasersGrid');
-      const isMember = isDrMember();
-      deals.forEach(function(deal){
-        grid.appendChild(buildDynamicCard(deal, isMember));
-      });
-    } catch(err){ console.warn('loadApprovedDeals:', err); }
+      if(!Array.isArray(deals)) { showDealsError(); return; }
+      allDynamicDeals = deals;
+      renderDeals(deals);
+    } catch(err){
+      console.warn('loadApprovedDeals:', err);
+      loadingEl.remove();
+      showDealsError();
+    }
+  }
+
+  function showDealsError(){
+    const grid = document.getElementById('teasersGrid');
+    const el = document.createElement('div');
+    el.id = 'dealsErrorState';
+    el.className = 'empty-state';
+    el.innerHTML = '<div class="empty-icon">⚠</div><div class="empty-title">Could not load live opportunities</div>'
+      + '<p class="empty-body">The three opportunities above are still shown. <button onclick="document.getElementById(\'dealsErrorState\').remove();loadApprovedDeals()" style="background:none;border:none;color:var(--gold);text-decoration:underline;cursor:pointer;font:inherit">Try again</button></p>';
+    grid.appendChild(el);
+  }
+
+  function renderDeals(deals){
+    document.querySelectorAll('[data-dynamic="1"]').forEach(function(el){ el.remove(); });
+    const grid = document.getElementById('teasersGrid');
+    const isMember = isDrMember();
+    const q = (document.getElementById('teaserSearch')||{}).value?.trim().toLowerCase() || '';
+    const sortBy = (document.getElementById('teaserSort')||{}).value || 'date_desc';
+
+    let filtered = deals.filter(function(d){
+      if(!q) return true;
+      return (d.summary||'').toLowerCase().includes(q) || (d.sector||'').toLowerCase().includes(q)
+        || (d.region||'').toLowerCase().includes(q) || (d.teaser_headline||'').toLowerCase().includes(q);
+    });
+    filtered.sort(function(a,b){
+      if(sortBy==='date_asc') return new Date(a.published_at||0)-new Date(b.published_at||0);
+      return new Date(b.published_at||0)-new Date(a.published_at||0); // date_desc default
+    });
+
+    filtered.forEach(function(deal){
+      const card = buildDynamicCard(deal, isMember);
+      card.dataset.dynamic = '1';
+      grid.appendChild(card);
+    });
+    restoreBookmarks();
   }
 
   /* ════════════════════════════════════════════════
      INIT
   ════════════════════════════════════════════════ */
+  // Spam guard timing: records when each form became visible, so the
+  // gateways can reject submissions that arrive implausibly fast
+  // (a hallmark of scripted bots, not human form-filling).
+  (function(){
+    const now = String(Date.now());
+    const a = document.getElementById('dealSubmitRenderedAt'); if(a) a.value = now;
+    const b = document.getElementById('regRenderedAt'); if(b) b.value = now;
+  })();
+
   initAccessState();
   loadApprovedDeals();
 
