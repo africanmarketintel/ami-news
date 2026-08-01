@@ -936,7 +936,7 @@
   <div>
     <div class="dr-footer-title">ABTA Deal Room</div>
     Operated by the African Business Trade Association, London.<br>
-    Questions or help with your account: <a href="mailto:dealroom@abta.africa">dealroom@abta.africa</a>
+    Questions or help with your account: <a href="mailto:ami@abta.africa">ami@abta.africa</a>
   </div>
   <div>
     <div class="dr-footer-title">Platform documents</div>
@@ -1112,7 +1112,7 @@
         <input type="email" id="signinEmail" class="form-input" placeholder="you@organisation.com" autocomplete="email" onkeydown="if(event.key==='Enter')signinMember()">
       </div>
       <div class="signin-error" id="signinError">
-        We could not find a Deal Room account for that email address on this device. If you registered on another device, please complete the registration flow again. For help, contact <a href="mailto:dealroom@abta.africa" style="color:var(--terra)">dealroom@abta.africa</a>.
+        We could not find a Deal Room account for that email address on this device. If you registered on another device, please complete the registration flow again. For help, contact <a href="mailto:ami@abta.africa" style="color:var(--terra)">ami@abta.africa</a>.
       </div>
       <div id="signinAmiPrompt" style="display:none;margin-top:14px;background:var(--gold-pale);border:1px solid var(--border);border-left:3px solid var(--gold);padding:12px 16px;border-radius:2px;font-size:13px;color:var(--text-soft)">
         We found an active AMI subscription for this email. <strong style="color:var(--text)">Add Deal Room access for £99/yr.</strong>
@@ -2327,7 +2327,7 @@
       result = await r.json();
       if(!r.ok){
         const msg = (result.error === 'spam_detected' || result.error === 'rate_limited')
-          ? 'This submission could not be processed. If you believe this is an error, contact dealroom@abta.africa.'
+          ? 'This submission could not be processed. If you believe this is an error, contact ami@abta.africa.'
           : 'Could not complete registration. Please try again.';
         showInlineError('regStep3Error', true, msg);
         return;
