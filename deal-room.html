@@ -2326,11 +2326,19 @@
       });
       result = await r.json();
       if(!r.ok){
-        const msg = (result.error === 'spam_detected' || result.error === 'rate_limited')
-          ? 'This submission could not be processed. If you believe this is an error, contact ami@abta.africa.'
-          : 'Could not complete registration. Please try again.';
-        showInlineError('regStep3Error', true, msg);
+        // TEMP DEBUG: shows the raw error code + detail from the gateway
+        // directly on the page — remove this branch once the flow is
+        // confirmed working end to end, reverting to the friendly-message
+        // version below.
+        const debugMsg = 'DEBUG — ' + (result.error || 'unknown_error') + ': ' + JSON.stringify(result.detail || {});
+        showInlineError('regStep3Error', true, debugMsg);
         return;
+        // Friendly version (restore this and delete the block above once resolved):
+        // const msg = (result.error === 'spam_detected' || result.error === 'rate_limited')
+        //   ? 'This submission could not be processed. If you believe this is an error, contact ami@abta.africa.'
+        //   : 'Could not complete registration. Please try again.';
+        // showInlineError('regStep3Error', true, msg);
+        // return;
       }
     }catch(err){
       console.warn('deal-room-agreement-gateway:', err);
