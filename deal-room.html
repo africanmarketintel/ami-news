@@ -717,6 +717,19 @@
         </div>
       </div>
 
+      <div id="signInGate" style="display:none">
+        <div class="access-gate">
+          <div class="gate-icon">🔑</div>
+          <div class="gate-body">
+            <div class="gate-title">Please sign in to continue</div>
+            <p class="gate-text">You've completed the Deal Room agreement, but you're not currently signed in on this device. Check your inbox for the "set up your AMI login" email if you haven't set a password yet, then sign in below.</p>
+            <div class="gate-actions">
+              <button class="btn-gate-primary" onclick="requireSignIn()">Sign in →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div id="submitForm" class="submit-form-card" style="display:none">
         <form id="dealSubmitForm" onsubmit="submitDeal(event)">
 
@@ -1441,6 +1454,30 @@
   function isDrMember(){ return localStorage.getItem('dr_member')==='true'; }
   function isAmiOnly(){ return localStorage.getItem('ami_subscriber')==='true' && !isDrMember(); }
 
+  // isDrMember() only reflects having signed the agreement — it does
+  // NOT mean there's a valid, signed-in session. Someone can finish
+  // the agreement and get emailed a "set up your login" link without
+  // ever completing that step, so every server-checked member action
+  // (reveal, interest, submit, Q&A) needs this second check too, or
+  // it'll open a form that's guaranteed to fail with "not_authenticated".
+  function hasActiveSession(){
+    const token = localStorage.getItem('ami_auth_token') || '';
+    const expires = parseInt(localStorage.getItem('ami_token_expires') || '0', 10);
+    return !!(token && expires > Date.now());
+  }
+
+  // Called when isDrMember() is true but hasActiveSession() is false —
+  // prompts sign-in via login.js's own modal rather than either
+  // silently proceeding (which fails server-side) or re-showing the
+  // "join" flow (which they've already completed).
+  function requireSignIn(){
+    if(typeof window.amiOpenLogin === 'function'){
+      window.amiOpenLogin('signin');
+    } else {
+      alert('Please sign in to your Deal Room account to continue — check your inbox for the "set up your AMI login" email if you haven\'t yet.');
+    }
+  }
+
   /* ════════════════════════════════════════════════
      COUNTERPARTY DATA — fetched server-side, per reveal
      Counterparty data no longer ships in the page source. It is
@@ -1494,12 +1531,14 @@
   function initAccessState(){
     const banner=document.getElementById('memberBanner');
     const submitGate=document.getElementById('submitGate');
+    const signInGate=document.getElementById('signInGate');
     const submitForm=document.getElementById('submitForm');
     const drBar=document.getElementById('drMemberBar');
 
-    if(isDrMember()){
+    if(isDrMember() && hasActiveSession()){
       if(banner) banner.style.display='none';
       if(submitGate) submitGate.style.display='none';
+      if(signInGate) signInGate.style.display='none';
       if(submitForm) submitForm.style.display='block';
       if(drBar){
         const n=localStorage.getItem('dr_name');
@@ -1509,9 +1548,20 @@
       }
       restoreBookmarks();
       document.querySelectorAll('.btn-reveal').forEach(b=>{ if(b.textContent.indexOf('Hide')===-1) b.textContent='Reveal counterparty →'; });
+    } else if(isDrMember()){
+      // Agreement signed, but no valid session on this device — don't
+      // show the working form (it would fail server-side) and don't
+      // send them back through registration (they've already done it).
+      if(banner) banner.style.display='none';
+      if(submitGate) submitGate.style.display='none';
+      if(signInGate) signInGate.style.display='block';
+      if(submitForm) submitForm.style.display='none';
+      if(drBar) drBar.style.display='none';
+      document.querySelectorAll('.btn-reveal').forEach(b=>{ if(b.textContent.indexOf('Hide')===-1) b.textContent='Reveal counterparty →'; });
     } else {
       if(banner) banner.style.display='flex';
       if(submitGate) submitGate.style.display='block';
+      if(signInGate) signInGate.style.display='none';
       if(submitForm) submitForm.style.display='none';
       if(drBar) drBar.style.display='none';
       // Honest affordance for non-members — the action requires membership
@@ -1581,6 +1631,7 @@
   ════════════════════════════════════════════════ */
   async function handleReveal(id){
     if(!isDrMember()){ openRegistration(); return; }
+    if(!hasActiveSession()){ requireSignIn(); return; }
     const block=document.getElementById('revealed-'+id);
     const btn=document.getElementById('reveal-btn-'+id);
     if(!block || !btn) return;
@@ -1602,6 +1653,7 @@
   ════════════════════════════════════════════════ */
   async function toggleQA(teaserRef, panelId){
     if(!isDrMember()){ openRegistration(); return; }
+    if(!hasActiveSession()){ requireSignIn(); return; }
     const panel = document.getElementById(panelId);
     if(!panel) return;
     if(panel.style.display==='block'){ panel.style.display='none'; return; }
@@ -1662,6 +1714,7 @@
   ════════════════════════════════════════════════ */
   function handleInterest(ref,label){
     if(!isDrMember()){ openRegistration(); return; }
+    if(!hasActiveSession()){ requireSignIn(); return; }
     interestModalTrigger=document.activeElement;
     document.getElementById('hiddenTeaserRef').value=ref;
     document.getElementById('modalRef').textContent=ref+' — '+label;
@@ -1896,6 +1949,8 @@
   ════════════════════════════════════════════════ */
   async function submitDeal(e){
     e.preventDefault();
+    if(!isDrMember()){ openRegistration(); return; }
+    if(!hasActiveSession()){ requireSignIn(); return; }
     if(!enforceWordLimit(document.getElementById('dealSummary'),'dealSummaryCount',300)) return;
     const btn=e.target.querySelector('[type="submit"]');
     btn.disabled=true;

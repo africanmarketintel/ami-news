@@ -327,6 +327,23 @@
   ═══════════════════════════════════════════════ */
   function isDrMember(){ return localStorage.getItem('dr_member')==='true'; }
 
+  // isDrMember() only reflects having signed the agreement, not having
+  // a valid signed-in session — see the same helper in deal-room.html
+  // for the full explanation. Used to gate the Confirm Interest form.
+  function hasActiveSession(){
+    const token = localStorage.getItem('ami_auth_token') || '';
+    const expires = parseInt(localStorage.getItem('ami_token_expires') || '0', 10);
+    return !!(token && expires > Date.now());
+  }
+
+  function requireSignIn(){
+    if(typeof window.amiOpenLogin === 'function'){
+      window.amiOpenLogin('signin');
+    } else {
+      alert('Please sign in to your Deal Room account to continue — check your inbox for the "set up your AMI login" email if you haven\'t yet.');
+    }
+  }
+
   function toggleTheme(){
     const t=document.documentElement.dataset.theme==='dark'?'light':'dark';
     document.documentElement.dataset.theme=t;
@@ -544,6 +561,7 @@
      INTEREST MODAL
   ═══════════════════════════════════════════════ */
   function openInterest(){
+    if(!hasActiveSession()){ requireSignIn(); return; }
     document.getElementById('interestModalRef').textContent =
       (window._currentDealRef||'')+' — '+(window._currentDealLabel||'');
     document.getElementById('interestModal').classList.add('open');
