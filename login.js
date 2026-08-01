@@ -287,8 +287,6 @@
           'transition:background .15s;border-bottom:1px solid rgba(212,196,160,.4)" ',
           'onmouseover="this.style.background=\'#F0EAD9\'" onmouseout="this.style.background=\'none\'">',
           '📊&nbsp; Deal Tracker</a>',
-
-          '<button onclick="window.amiOpenMfaModal()" role="menuitem" ...>🔒&nbsp; Two-factor authentication</button>',
         
           '<button onclick="window.amiSignOut()" role="menuitem" style="display:flex;align-items:center;gap:8px;',
           'width:100%;text-align:left;padding:11px 16px;font-family:\'DM Mono\',monospace;font-size:11px;',
