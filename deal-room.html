@@ -793,6 +793,11 @@
             <label class="form-label" for="dealSummary">Executive Summary <span>*</span> <span style="font-weight:400;text-transform:none;letter-spacing:0">— max 300 words. Do not include identifying names at this stage.</span></label>
             <textarea id="dealSummary" class="form-textarea" style="min-height:130px" placeholder="Describe the opportunity, what is being sought, and the key value proposition. ABTA will anonymise this before publication." required oninput="updateWordCount(this,'dealSummaryCount',300)"></textarea>
             <div class="form-char-count" id="dealSummaryCount" aria-live="polite">0 / 300 words</div>
+            <div style="display:flex;align-items:center;gap:10px;margin-top:8px">
+              <button type="button" class="btn-reg-back" style="padding:7px 14px;font-size:10px" onclick="checkSummaryAnonymity()" id="anonCheckBtn">Check for identifying details</button>
+              <span id="anonCheckStatus" style="font-size:12px;color:var(--text-soft)"></span>
+            </div>
+            <div id="anonCheckResults" style="display:none;margin-top:10px;background:var(--gold-pale);border:1px solid var(--border);border-left:3px solid var(--terra);border-radius:2px;padding:12px 16px;font-size:13px;color:var(--text-soft);line-height:1.6"></div>
           </div>
 
           <div class="form-section-title" style="margin-top:8px">02 — Your details (confidential — not published)</div>
@@ -1944,6 +1949,56 @@
     }catch(err){
       errEl.textContent = err.message || 'Verification failed.';
       errEl.classList.add('visible');
+    }
+  }
+
+  /* ════════════════════════════════════════════════
+     ANONYMITY CHECK — advisory only, does not block
+     submission. Calls deal-room-anonymity-check (Gemini
+     3.5 Flash-Lite) to flag possible identifying details
+     in the Executive Summary before ABTA reviews it.
+  ════════════════════════════════════════════════ */
+  async function checkSummaryAnonymity(){
+    const btn = document.getElementById('anonCheckBtn');
+    const statusEl = document.getElementById('anonCheckStatus');
+    const resultsEl = document.getElementById('anonCheckResults');
+    const text = document.getElementById('dealSummary').value.trim();
+    resultsEl.style.display = 'none';
+    resultsEl.innerHTML = '';
+    if(!text){
+      statusEl.textContent = 'Write your summary first, then run the check.';
+      return;
+    }
+    const token = localStorage.getItem('ami_auth_token') || '';
+    btn.disabled = true;
+    statusEl.textContent = 'Checking…';
+    try{
+      const r = await fetch(SUPABASE_URL+'/functions/v1/deal-room-anonymity-check', {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json', 'apikey':SUPABASE_ANON, 'Authorization':'Bearer '+token },
+        body: JSON.stringify({ text })
+      });
+      const data = await r.json();
+      if(!r.ok || !data.ok){
+        statusEl.textContent = 'Could not run the check right now — you can still submit; ABTA will review manually.';
+        return;
+      }
+      if(!data.flags || data.flags.length===0){
+        statusEl.textContent = 'No obvious identifying details found.';
+        statusEl.style.color = 'var(--green-mid)';
+        return;
+      }
+      statusEl.textContent = '';
+      const rows = data.flags.map(f =>
+        '<div style="margin-bottom:6px"><strong style="color:var(--terra)">"'+esc(f.text)+'"</strong> — '+esc(f.reason)+'</div>'
+      ).join('');
+      resultsEl.innerHTML = '<div style="font-family:\'DM Mono\',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--terra);margin-bottom:8px">Possible identifying details — you may want to remove or generalise these</div>' + rows;
+      resultsEl.style.display = 'block';
+    }catch(err){
+      console.warn('checkSummaryAnonymity:', err);
+      statusEl.textContent = 'Could not run the check right now — you can still submit; ABTA will review manually.';
+    }finally{
+      btn.disabled = false;
     }
   }
 
