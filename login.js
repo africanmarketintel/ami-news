@@ -282,11 +282,11 @@
             '<div style="font-family:\'DM Mono\',monospace;font-size:9px;letter-spacing:.06em;color:#2E7D4F;margin-top:4px">',
             '✓ Premium Subscriber</div>',
           '</div>',
-          '<a href="deals.html" role="menuitem" style="display:flex;align-items:center;gap:8px;padding:11px 16px;',
+          '<a href="deal-room.html?join=1" role="menuitem" style="display:flex;align-items:center;gap:8px;padding:11px 16px;',
           'font-family:\'DM Mono\',monospace;font-size:11px;letter-spacing:.06em;color:#1A1208;text-decoration:none;',
           'transition:background .15s;border-bottom:1px solid rgba(212,196,160,.4)" ',
           'onmouseover="this.style.background=\'#F0EAD9\'" onmouseout="this.style.background=\'none\'">',
-          '📊&nbsp; Deal Tracker</a>',
+          '🔐&nbsp; Access Deal Room</a>',
         
           '<button onclick="window.amiSignOut()" role="menuitem" style="display:flex;align-items:center;gap:8px;',
           'width:100%;text-align:left;padding:11px 16px;font-family:\'DM Mono\',monospace;font-size:11px;',
