@@ -553,9 +553,13 @@
       </div>
 
       <div class="filter-bar" role="search" aria-label="Search and sort opportunities" style="margin-top:-8px">
-        <input type="text" id="teaserSearch" class="form-input" placeholder="Search by sector, region or keyword… or describe what you want in plain English"
+        <input type="text" id="teaserSearch" class="form-input" placeholder="Search by sector, region or keyword…"
           style="max-width:320px;margin-bottom:0;padding:7px 12px;font-size:13px" oninput="onTeaserSearchInput()" aria-label="Search opportunities">
-        <button type="button" class="filter-btn" style="padding:6px 12px" onclick="nlSearchGo()" id="nlSearchBtn" title="Parse a plain-English description into filters">✨ Search with AI</button>
+        <!-- AI search temporarily disabled — hidden, not removed, so it's a
+             one-line change (delete this style attribute) to bring back.
+             Underlying deal-room-nl-search function and nlSearchGo() JS
+             are untouched. -->
+        <button type="button" class="filter-btn" style="padding:6px 12px;display:none" onclick="nlSearchGo()" id="nlSearchBtn" title="Parse a plain-English description into filters">✨ Search with AI</button>
         <label class="filter-label" for="teaserSort" style="margin-left:10px">Sort:</label>
         <select id="teaserSort" class="filter-btn" style="padding:6px 10px" onchange="renderDeals(allDynamicDeals)" aria-label="Sort opportunities">
           <option value="date_desc">Newest first</option>
@@ -568,7 +572,7 @@
       <div class="teasers-grid" id="teasersGrid">
 
         <!-- TEASER 1 -->
-        <article class="teaser-card" data-type="equity" data-region="east-africa">
+        <article class="teaser-card" data-type="equity" data-region="east-africa" data-sector="Clean Energy">
           <div class="teaser-header">
             <div class="teaser-meta">
               <span class="teaser-id">ABTA-2026-001</span>
@@ -620,7 +624,7 @@
         </article>
 
         <!-- TEASER 2 -->
-        <article class="teaser-card" data-type="ma" data-region="west-africa">
+        <article class="teaser-card" data-type="ma" data-region="west-africa" data-sector="Financial Services">
           <div class="teaser-header">
             <div class="teaser-meta">
               <span class="teaser-id">ABTA-2026-002</span>
@@ -672,7 +676,7 @@
         </article>
 
         <!-- TEASER 3 -->
-        <article class="teaser-card" data-type="debt" data-region="north-africa">
+        <article class="teaser-card" data-type="debt" data-region="north-africa" data-sector="Infrastructure">
           <div class="teaser-header">
             <div class="teaser-meta"><span class="teaser-id">ABTA-2026-003</span><span class="teaser-type type-debt">Debt Financing</span></div>
             <div class="teaser-urgency"><span class="urgency-dot"></span> 3–6 months</div>
@@ -2924,6 +2928,30 @@
       card.dataset.dynamic = '1';
       grid.appendChild(card);
     });
+
+    // The three example teasers further up are static HTML, not part of
+    // `deals` (which only ever holds the live Supabase-backed rows) — so
+    // they need their own pass through the same search/filter criteria,
+    // or they'd stay visible regardless of what's typed or AI-parsed.
+    document.querySelectorAll('.teasers-grid .teaser-card:not([data-dynamic])').forEach(function(card){
+      let visible = true;
+      if(nlActiveFilters.sector && (card.dataset.sector||'').toLowerCase() !== nlActiveFilters.sector.toLowerCase()) visible = false;
+      if(visible && nlActiveFilters.region){
+        const regionKey = REGION_KEY[nlActiveFilters.region] || '';
+        if((card.dataset.region||'') !== regionKey) visible = false;
+      }
+      if(visible && nlActiveFilters.type && (card.dataset.type||'') !== nlActiveFilters.type) visible = false;
+      if(visible && q){
+        const summaryText = (card.querySelector('.teaser-summary')||{}).textContent || '';
+        const sectorText = (card.dataset.sector || (card.querySelector('.teaser-sector')||{}).textContent || '');
+        const regionText = (card.querySelector('.teaser-region')||{}).textContent || '';
+        const hay = (summaryText+' '+sectorText+' '+regionText).toLowerCase();
+        if(!hay.includes(q)) visible = false;
+      }
+      const wrapper = card.closest('.paywall-overlay') || card;
+      wrapper.style.display = visible ? '' : 'none';
+    });
+
     restoreBookmarks();
   }
 
