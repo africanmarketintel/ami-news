@@ -1406,7 +1406,10 @@
     <div class="reg-footer">
       <button class="btn-reg-back" id="regBackBtn" onclick="regBack()" style="visibility:hidden">← Back</button>
       <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);letter-spacing:.06em" id="regStepLabel">Step 1 of 3</div>
-      <button class="btn-reg-next" id="regNextBtn" onclick="regNext()">Continue →</button>
+      <div style="display:flex;gap:10px">
+        <button class="btn-reg-back" id="regDoneBtn" onclick="finishRegistration()" style="display:none">Continue to Deal Room →</button>
+        <button class="btn-reg-next" id="regNextBtn" onclick="regNext()">Continue →</button>
+      </div>
     </div>
   </div>
 </div>
@@ -2188,7 +2191,9 @@
     document.getElementById('regStep0').style.display = 'none';
     const backBtn = document.getElementById('regBackBtn');
     const nextBtn = document.getElementById('regNextBtn');
+    const doneBtn = document.getElementById('regDoneBtn');
     nextBtn.style.display = 'block';
+    if(doneBtn) doneBtn.style.display = n === 4 ? 'inline-block' : 'none';
     document.getElementById('regStepLabel').textContent = 'Step '+n+' of 4';
     // Back: on step 1 go to gateway; on steps 2-3 go to previous step
     backBtn.style.visibility = n >= 1 && n < 4 ? 'visible' : 'hidden';
@@ -2386,6 +2391,15 @@
       const result = { skipped: !!existingToken, emailed: !existingToken };
       if(result.skipped){
         amiNotice.style.display = 'none'; // already logged in
+      } else if(result.emailed && regFlow === 'upgrade'){
+        // Existing AMI subscriber, but no active session on this device —
+        // they already have a password, so this is a sign-in link, not
+        // an account-setup link. Wording must not say "set up".
+        amiNotice.innerHTML =
+          '<span style="font-size:15px;margin-right:8px">✉</span>'
+          +'<span>Your Deal Room access is now linked to your existing <strong>AMI account</strong>, but you\'re not '
+          +'signed in on this device. Check your inbox for a sign-in link, or sign in with your existing AMI email and password.</span>';
+        amiNotice.style.display = 'flex';
       } else if(result.emailed){
         amiNotice.innerHTML =
           '<span style="font-size:15px;margin-right:8px">✉</span>'
@@ -2407,6 +2421,28 @@
     </style></head><body>${content}</body></html>`);
     win.document.close();
     setTimeout(()=>win.print(),800);
+  }
+
+  // Called from the "Continue to Deal Room →" button on the certificate
+  // step. Closes the modal, refreshes the page's member/session state so
+  // gates and buttons reflect the new dr_member status, and — if the
+  // member already had an active AMI session before this registration
+  // (i.e. certAmiNotice was skipped) — re-fires whatever action originally
+  // opened the modal (Reveal, Confirm Interest, Submit a Deal, etc.) so
+  // they land back on the thing they were trying to do, not just the
+  // opportunities list. If they still need to sign in first, initAccessState()
+  // will correctly show the sign-in gate instead.
+  function finishRegistration(){
+    const trigger = regModalTrigger;
+    const canResume = hasActiveSession() && trigger && trigger !== document.body
+      && typeof trigger.click === 'function'
+      && !/join deal room|hero-primary|banner-join/i.test(trigger.className + ' ' + (trigger.textContent||''));
+    closeRegistration();
+    initAccessState();
+    showBanner('Deal Room access activated — welcome aboard.');
+    if(canResume){
+      setTimeout(()=>trigger.click(), 200);
+    }
   }
 
   function showBanner(msg){
