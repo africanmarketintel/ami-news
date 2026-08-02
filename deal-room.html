@@ -491,30 +491,8 @@
       <span class="hero-badge">📋 Full audit trail</span>
       <span class="hero-badge">✓ Membership verified server-side</span>
     </div>
-    <div class="hero-actions">
-      <button class="btn-hero-primary" onclick="openRegistration()">Join Deal Room — £99/yr</button>
-      <a href="#teasersGrid" class="btn-hero-secondary">Browse opportunities ↓</a>
-    </div>
   </div>
 </section>
-
-<!-- ═══ WORKFLOW TOGGLE (mobile) ═══════════════════ -->
-<button class="workflow-toggle" id="workflowToggle" aria-expanded="false" onclick="toggleWorkflow(this)">
-  How it works — 7 stages <span class="workflow-toggle-arrow">▾</span>
-</button>
-
-<!-- ═══ WORKFLOW STRIP ══════════════════════════════ -->
-<div class="workflow-strip" id="workflowStrip" role="region" aria-label="Deal process stages">
-  <div class="workflow-inner">
-    <div class="workflow-step"><div class="step-num">01</div><div><div class="step-title">Registration</div><div class="step-desc">Create Deal Room account (£99/yr)</div></div></div>
-    <div class="workflow-step"><div class="step-num">02</div><div><div class="step-title">Document Acceptance</div><div class="step-desc">Review and sign NDA + Platform Agreement</div></div></div>
-    <div class="workflow-step"><div class="step-num">03</div><div><div class="step-title">Blind Teaser</div><div class="step-desc">Browse anonymised opportunities</div></div></div>
-    <div class="workflow-step"><div class="step-num">04</div><div><div class="step-title">Interest Confirmation</div><div class="step-desc">Submit rationale and mandate</div></div></div>
-    <div class="workflow-step"><div class="step-num">05</div><div><div class="step-title">ABTA Screening</div><div class="step-desc">Suitability, credibility, fit</div></div></div>
-    <div class="workflow-step"><div class="step-num">06</div><div><div class="step-title">Introduction</div><div class="step-desc">Identities disclosed; NDA optional</div></div></div>
-    <div class="workflow-step"><div class="step-num">07</div><div><div class="step-title">Transaction</div><div class="step-desc">Direct negotiation under ABTA framework</div></div></div>
-  </div>
-</div>
 
 <!-- ═══ MAIN ════════════════════════════════════════ -->
 <div class="page-body">
@@ -523,14 +501,10 @@
     <!-- ── OPPORTUNITIES TAB ───────────────────── -->
     <div id="opportunitiesSection">
 
-      <!-- Soft informational banner — shown when NOT a Deal Room member -->
-      <div class="member-banner" id="memberBanner" style="display:none">
-        <span>You are viewing <strong>anonymised teasers</strong>. Join Deal Room to reveal counterparty data, submit interest confirmations and access ABTA's introduction process.</span>
-        <div class="member-banner-actions">
-          <button class="btn-banner-join" onclick="openRegistration()">Join Deal Room — £99/yr</button>
-          <button class="btn-banner-signin" onclick="openRegistration('signin')">Sign in</button>
-        </div>
-      </div>
+      <!-- Banner removed — sign-in is handled by the main site nav (Login
+           button, login.js/amiOpenLogin), no need to duplicate it here.
+           Non-members can still join Deal Room via the hero "Join Deal
+           Room — £99/yr" button above. -->
 
       <!-- Deal Room member bar — shown when dr_member is active -->
       <div id="drMemberBar" style="display:none;align-items:center;justify-content:space-between;padding:8px 16px;background:rgba(30,107,60,.08);border:1px solid rgba(30,107,60,.2);border-radius:3px;margin-bottom:16px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.07em;text-transform:uppercase">
@@ -1674,16 +1648,6 @@
      MOBILE NAV
   ════════════════════════════════════════════════ */
   function toggleMobileNav(){ document.getElementById('navMobileDrawer').classList.toggle('open'); }
-
-  /* ════════════════════════════════════════════════
-     WORKFLOW TOGGLE
-  ════════════════════════════════════════════════ */
-  function toggleWorkflow(btn){
-    const s=document.getElementById('workflowStrip');
-    const open=s.classList.toggle('expanded');
-    btn.classList.toggle('open',open);
-    btn.setAttribute('aria-expanded',open);
-  }
 
   /* ════════════════════════════════════════════════
      SECTION TABS
