@@ -104,6 +104,14 @@
     .attr-cell-value{font-size:15px;font-weight:600;color:var(--text)}
     @media(max-width:480px){.attr-grid{grid-template-columns:1fr}}
 
+    /* ── SIMILAR OPPORTUNITIES ───────────────────── */
+    .similar-deals-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+    .similar-deal-card{display:block;background:var(--card-bg);border:1px solid var(--divider);border-left:3px solid var(--gold);border-radius:2px;padding:16px;text-decoration:none;color:inherit;transition:box-shadow .2s,border-left-color .2s}
+    .similar-deal-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.08);border-left-color:var(--terra)}
+    .similar-deal-ref{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);letter-spacing:.06em;margin-bottom:8px;display:block}
+    .similar-deal-capital{font-family:'Playfair Display',serif;font-size:17px;font-weight:800;color:var(--text);display:block;margin-bottom:4px}
+    .similar-deal-meta{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--terra);display:block}
+
     /* ── DOCUMENTS ───────────────────────────── */
     .doc-list{display:flex;flex-direction:column;gap:8px}
     .doc-link{display:flex;align-items:center;gap:12px;background:var(--card-bg);border:1px solid var(--divider);padding:12px 16px;border-radius:2px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--text);transition:border-color .2s,color .2s}
@@ -281,6 +289,17 @@
 
     </aside>
   </div>
+
+  <!-- ═══ SIMILAR OPPORTUNITIES ═══════════════════ -->
+  <!-- Cross-sell for members who aren't sold on this specific deal —
+       reads the same public deal_submissions_public view the Deal
+       Room grid uses, filtered to the same sector or region as this
+       deal, excluding it. Hidden entirely if nothing else matches. -->
+  <div class="deal-section" id="similarDealsSection" style="display:none;margin-top:8px">
+    <div class="section-title">Similar Opportunities</div>
+    <div class="similar-deals-grid" id="similarDealsGrid"></div>
+  </div>
+
 </div>
 
 </main>
@@ -458,6 +477,7 @@
       const deal = data[0];
       renderDeal(deal);
       loadCounterparty(deal.id);
+      loadSimilarDeals(deal);
       // Load signed document URLs separately — Edge Function call
       const memberEmail = (
         localStorage.getItem('dr_email') ||
@@ -468,6 +488,44 @@
     } catch(err){
       console.error('loadDeal:', err);
       document.getElementById('loadingState').textContent = 'Unable to load deal. Please try again.';
+    }
+  }
+
+  /* ═══════════════════════════════════════════════
+     SIMILAR OPPORTUNITIES
+     Reads the same public deal_submissions_public view used above —
+     no new exposure, same anon-readable fields (sector, region, deal
+     type, capital range, headline). Matches on sector OR region,
+     excludes the current deal, most recent first. Section stays
+     hidden if nothing else qualifies (e.g. only one live deal).
+  ═══════════════════════════════════════════════ */
+  async function loadSimilarDeals(deal){
+    try{
+      const orFilter = 'sector.eq.'+encodeURIComponent(deal.sector)+',region.eq.'+encodeURIComponent(deal.region);
+      const res = await fetch(
+        SUPABASE_URL+'/rest/v1/deal_submissions_public?select=*'
+          +'&id=neq.'+encodeURIComponent(deal.id)
+          +'&or=('+orFilter+')'
+          +'&order=published_at.desc&limit=3',
+        { headers: { 'apikey': SUPABASE_ANON } }
+      );
+      if(!res.ok) return;
+      const similar = await res.json();
+      if(!Array.isArray(similar) || !similar.length) return;
+
+      const grid = document.getElementById('similarDealsGrid');
+      grid.innerHTML = similar.map(function(d){
+        const ref = d.published_ref || ('ABTA-DR-'+d.id.slice(0,8).toUpperCase());
+        return '<a class="similar-deal-card" href="deal-detail.html?id='+encodeURIComponent(d.id)+'">'
+          +'<span class="similar-deal-ref">'+esc(ref)+'</span>'
+          +'<span class="similar-deal-capital">'+esc(d.capital_range||'—')+'</span>'
+          +'<span class="similar-deal-meta">'+esc(d.deal_type)+' · '+esc(d.sector)+' · '+esc(d.region)+'</span>'
+          +'</a>';
+      }).join('');
+      document.getElementById('similarDealsSection').style.display = 'block';
+    }catch(err){
+      console.warn('loadSimilarDeals:', err);
+      // Fails silently — this is a cross-sell nicety, not core content.
     }
   }
 
