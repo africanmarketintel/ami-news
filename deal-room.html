@@ -1170,22 +1170,10 @@
       </button>
     </div>
 
-    <!-- SIGN-IN STEP -->
-    <div class="reg-body" id="regStepSignin" style="display:none">
-      <div class="reg-section-title">Sign in to Deal Room</div>
-      <p class="reg-section-sub">Enter the email address you registered with to restore your Deal Room access on this device.</p>
-      <div class="form-group" style="margin-top:8px">
-        <label class="form-label" for="signinEmail">Email address <span>*</span></label>
-        <input type="email" id="signinEmail" class="form-input" placeholder="you@organisation.com" autocomplete="email" onkeydown="if(event.key==='Enter')signinMember()">
-      </div>
-      <div class="signin-error" id="signinError">
-        We could not find a Deal Room account for that email address on this device. If you registered on another device, please complete the registration flow again. For help, contact <a href="mailto:ami@abta.africa" style="color:var(--terra)">ami@abta.africa</a>.
-      </div>
-      <div id="signinAmiPrompt" style="display:none;margin-top:14px;background:var(--gold-pale);border:1px solid var(--border);border-left:3px solid var(--gold);padding:12px 16px;border-radius:2px;font-size:13px;color:var(--text-soft)">
-        We found an active AMI subscription for this email. <strong style="color:var(--text)">Add Deal Room access for £99/yr.</strong>
-        <button onclick="selectGateway('upgrade')" style="display:block;margin-top:10px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;background:var(--gold);color:#060F09;border:none;padding:8px 16px;border-radius:2px;cursor:pointer">Upgrade for £99/yr →</button>
-      </div>
-    </div>
+    <!-- Deal Room's own "Sign in" step was removed — selectGateway('signin')
+         now hands off straight to the main AMI login (login.js), which is
+         the real, cross-device, password-based sign-in. See the comment
+         in selectGateway() below. -->
 
     <!-- STEP 1: Details -->
     <div class="reg-body" id="regStep1">
@@ -2317,7 +2305,6 @@
   function showGateway(preSelect){
     regCurrentStep = 0;
     document.getElementById('regStep0').style.display = 'block';
-    document.getElementById('regStepSignin').style.display = 'none';
     [1,2,3,4].forEach(i => document.getElementById('regStep'+i).style.display='none');
     document.getElementById('regProgressTabs').style.display = 'none';
     document.getElementById('regBackBtn').style.visibility = 'hidden';
@@ -2332,32 +2319,31 @@
     document.getElementById('regStep0').style.display = 'none';
 
     if(path === 'signin'){
-      regCurrentStep = 'S';
-      document.getElementById('regStepSignin').style.display = 'block';
-      document.getElementById('regProgressTabs').style.display = 'none';
-      document.getElementById('regBackBtn').style.visibility = 'visible';
-      document.getElementById('regNextBtn').style.display = 'block';
-      document.getElementById('regNextBtn').textContent = 'Sign in →';
-      document.getElementById('regNextBtn').disabled = false;
-      document.getElementById('regNextBtn').onclick = signinMember;
-      document.getElementById('regStepLabel').textContent = '';
-      document.getElementById('signinError').style.display = 'none';
-      document.getElementById('signinAmiPrompt').style.display = 'none';
-      // Pre-populate email: Deal Room email > AMI session email > ami_email fallback
-      const storedDrEmail = localStorage.getItem('dr_email')
-        || localStorage.getItem('ami_user_email')
-        || localStorage.getItem('ami_email')
-        || '';
-      if(storedDrEmail) document.getElementById('signinEmail').value = storedDrEmail;
-      setTimeout(()=>document.getElementById('signinEmail').focus(), 100);
+      // Deal Room's own email-only "sign in" used to just flip a
+      // localStorage flag on this one device — it never actually
+      // checked deal_room_members server-side, so a real member on a
+      // new browser was wrongly told to "upgrade for £99/yr" (their
+      // membership only ever lived in the browser that registered
+      // it). Fixed by handing off to the real, password-based AMI
+      // login (login.js) instead of maintaining a second, weaker
+      // sign-in system. Once that succeeds, syncDealRoomMembership()
+      // (below) checks deal_room_members server-side via
+      // deal-room-signin-check and restores dr_member correctly.
+      closeRegistration();
+      if(typeof window.amiOpenLogin === 'function'){
+        window.amiOpenLogin('signin');
+      } else {
+        console.warn('amiOpenLogin unavailable — login.js may not have loaded');
+      }
+      return;
 
     } else if(path === 'upgrade'){
       // AMI subscriber — same full form, but with upgrade banner and email pre-filled
       document.getElementById('upgradeBanner').style.display = 'block';
       document.getElementById('regTitle').textContent = 'Create your Deal Room account';
       document.getElementById('regSubTitle').textContent = 'Complete your details below. ABTA will verify your AMI subscription status before activating Deal Room access.';
-      // Pre-fill email: AMI session (login.js) > ami_email fallback > sign-in field
-      const amiEmail = localStorage.getItem('ami_user_email') || localStorage.getItem('ami_email') || document.getElementById('signinEmail').value || '';
+      // Pre-fill email from an existing AMI session, if any
+      const amiEmail = localStorage.getItem('ami_user_email') || localStorage.getItem('ami_email') || '';
       if(amiEmail) document.getElementById('regEmail').value = amiEmail;
       document.getElementById('regProgressTabs').style.display = 'flex';
       regCurrentStep = 1; showRegStep(1);
@@ -2371,67 +2357,41 @@
     }
   }
 
-  /* Check Supabase subscribers table for a paid AMI subscriber */
-  async function checkAmiSubscriber(email){
+  /* ════════════════════════════════════════════════
+     RECONCILE DEAL ROOM MEMBERSHIP WITH THE SERVER
+     Fixes a real bug: dr_member used to be set only once, on the
+     device that completed registration, and never re-derived on any
+     other device. A genuine member signing in elsewhere via the main
+     AMI login (login.js) had a valid AMI session but no local
+     dr_member flag, so the site wrongly treated them as a
+     non-member and offered the £99/yr upgrade prompt.
+     Runs on every page load: if there's a valid AMI session but no
+     local dr_member flag yet, ask deal-room-signin-check (server-
+     side, using the caller's own verified token — it can't be used
+     to probe other people's membership) whether this account is
+     already an active Deal Room member, and restore the flag if so.
+  ════════════════════════════════════════════════ */
+  async function syncDealRoomMembership(){
+    if(!hasActiveSession() || isDrMember()) return;
+    const token = localStorage.getItem('ami_auth_token');
     try{
-      const res = await fetch(
-        SUPABASE_URL + '/rest/v1/subscribers?email=eq.' + encodeURIComponent(email) + '&select=id&limit=1',
-        { headers: { 'apikey': SUPABASE_ANON } }
-      );
-      const data = await res.json();
-      return Array.isArray(data) && data.length > 0;
-    } catch(err){
-      console.warn('AMI subscriber check:', err);
-      return false;
-    }
-  }
-
-  /* Sign-in: restore Deal Room access by email */
-  async function signinMember(){
-    const email = document.getElementById('signinEmail').value.trim().toLowerCase();
-    if(!email){ document.getElementById('signinEmail').focus(); return; }
-
-    const nextBtn = document.getElementById('regNextBtn');
-    nextBtn.textContent = 'Checking…';
-    nextBtn.disabled = true;
-
-    const drEmail  = (localStorage.getItem('dr_email') || '').toLowerCase();
-    const isMember = localStorage.getItem('dr_member') === 'true';
-
-    if(isMember && drEmail && email === drEmail){
-      // Returning Deal Room member — restore session
-      closeRegistration();
-      showBanner('Welcome back — Deal Room access restored.');
-      initAccessState();
-      return;
-    }
-
-    // Check if AMI session already exists for this email (login.js token)
-    const amiSessionEmail = (localStorage.getItem('ami_user_email') || '').toLowerCase();
-    const amiToken = localStorage.getItem('ami_auth_token');
-    const amiExpiry = parseInt(localStorage.getItem('ami_token_expires') || '0');
-    const isAmiLoggedIn = !!(amiToken && amiSessionEmail && amiExpiry > Date.now());
-
-    let isAmiSub = false;
-    if(isAmiLoggedIn && amiSessionEmail === email){
-      // Already authenticated via AMI — skip Supabase check
-      isAmiSub = true;
-    } else {
-      // Check Supabase subscribers table
-      isAmiSub = await checkAmiSubscriber(email);
-    }
-
-    nextBtn.textContent = 'Sign in →';
-    nextBtn.disabled = false;
-
-    if(isAmiSub){
-      // Valid AMI subscriber — route to upgrade flow
-      document.getElementById('signinError').style.display = 'none';
-      document.getElementById('signinAmiPrompt').style.display = 'block';
-    } else {
-      // Not found in either
-      document.getElementById('signinAmiPrompt').style.display = 'none';
-      document.getElementById('signinError').style.display = 'block';
+      const r = await fetch(SUPABASE_URL+'/functions/v1/deal-room-signin-check', {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json', 'apikey':SUPABASE_ANON, 'Authorization':'Bearer '+token }
+      });
+      const data = await r.json();
+      if(r.ok && data.ok && data.isMember){
+        localStorage.setItem('dr_member','true');
+        localStorage.setItem('dr_email',(localStorage.getItem('ami_user_email')||'').toLowerCase());
+        if(data.member){
+          if(data.member.full_name)   localStorage.setItem('dr_name', data.member.full_name);
+          if(data.member.organisation) localStorage.setItem('dr_org', data.member.organisation);
+        }
+        showBanner('Welcome back — Deal Room access restored.');
+        initAccessState();
+      }
+    }catch(err){
+      console.warn('syncDealRoomMembership:', err);
     }
   }
 
@@ -2443,7 +2403,6 @@
       if(i < n) tab.classList.add('done');
       if(i === n) tab.classList.add('active');
     });
-    document.getElementById('regStepSignin').style.display = 'none';
     document.getElementById('regStep0').style.display = 'none';
     const backBtn = document.getElementById('regBackBtn');
     const nextBtn = document.getElementById('regNextBtn');
@@ -3048,6 +3007,7 @@
 
   initAccessState();
   loadApprovedDeals();
+  syncDealRoomMembership();
 
   // Deep link: deal-room.html?join=1 or #join opens the registration flow
   // (used by the deal-detail access gate and external campaigns)
