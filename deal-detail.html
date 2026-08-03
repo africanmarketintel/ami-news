@@ -134,7 +134,7 @@
 
     /* ── ATTR GRID ───────────────────────────── */
     .attr-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
-    .attr-cell{background:var(--card-bg);border:1px solid var(--divider);padding:14px 16px;border-radius:2px}
+    .attr-cell{padding:0}
     .attr-cell-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-soft);margin-bottom:4px}
     .attr-cell-value{font-size:15px;font-weight:600;color:var(--text)}
     @media(max-width:480px){.attr-grid{grid-template-columns:1fr}}
@@ -170,9 +170,12 @@
     .calc-card{background:var(--surface);border:1px solid var(--divider);border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.05)}
     .calc-card-body{padding:28px 28px 24px}
     .calc-card-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:800;color:var(--text);margin-bottom:22px}
+    /* Sits in the (narrower) main column now, not full page width, so
+       it collapses a viewport-width step earlier than a true full-width
+       section would. */
     .calc-fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:10px}
-    @media(max-width:700px){.calc-fields{grid-template-columns:1fr 1fr}}
-    @media(max-width:420px){.calc-fields{grid-template-columns:1fr}}
+    @media(max-width:1100px){.calc-fields{grid-template-columns:1fr 1fr}}
+    @media(max-width:700px){.calc-fields{grid-template-columns:1fr}}
     .calc-assumption{font-size:11px;color:var(--text-soft);line-height:1.6;margin-bottom:22px}
     .calc-result-line{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;padding-top:18px;border-top:1px solid var(--divider)}
     .calc-result-figure{font-family:'Playfair Display',serif;font-size:32px;font-weight:800;color:var(--gold);line-height:1}
@@ -364,6 +367,52 @@
         <p style="margin-top:12px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;color:var(--text-soft);line-height:1.6">Documents are shared under NDA. Do not distribute outside your organisation without ABTA's written consent.</p>
       </div>
 
+      <!-- Same width as Opportunity Overview/Key Attributes above — sits
+           in the main column rather than full page width. Equivalent to
+           Zoopla's mortgage calculator, styled the same way: a bordered
+           card with labelled fields, a prominent result line, a
+           Calculate button and a disclaimer strip along the bottom.
+           Fields are prepopulated with sensible defaults (parsed from
+           this deal's capital range where possible) so the calculator
+           never opens empty — members can edit any of them before
+           calculating. ABTA is not a financial adviser (Platform
+           Membership Agreement), so the disclaimer stays attached to
+           every result. Computes a real IRR (Newton-Raphson on the
+           cash flow series) rather than a simplified CAGR, assuming the
+           initial investment is returned in full in the final year on
+           top of any annual distribution. -->
+      <div class="calc-card">
+        <div class="calc-card-body">
+          <div class="calc-card-title">Indicative Return Calculator</div>
+          <div class="calc-fields">
+            <div class="form-group">
+              <label class="form-label" for="calcInvestment">Investment (USD)</label>
+              <input type="number" class="form-input" id="calcInvestment" min="0" step="any">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="calcAnnualDist">Annual distribution (USD)</label>
+              <input type="number" class="form-input" id="calcAnnualDist" min="0" step="any">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="calcYears">Hold period (years)</label>
+              <input type="number" class="form-input" id="calcYears" min="1" max="30" step="1">
+            </div>
+          </div>
+          <p class="calc-assumption">Assumes your initial investment is returned in full in the final year, in addition to that year's distribution.</p>
+          <div class="calc-result-line" id="calcResult">
+            <span class="calc-result-figure" id="calcResultFigure">—</span>
+            <div class="calc-result-caption">
+              <span class="calc-result-label">Indicative IRR</span>
+              <span class="calc-result-sub" id="calcResultSub">Enter figures and calculate to see a result</span>
+            </div>
+          </div>
+        </div>
+        <div class="calc-card-footer">
+          <button type="button" class="btn-modal-submit" onclick="calculateIRR()">Calculate →</button>
+          <p class="calc-disclaimer">Indicative only, based solely on the figures entered — not a projection, forecast, valuation or guarantee. ABTA does not verify or endorse these inputs and is not a financial adviser; seek independent professional advice before investing.</p>
+        </div>
+      </div>
+
     </div>
 
     <!-- Sidebar -->
@@ -384,54 +433,6 @@
       </div>
 
     </aside>
-  </div>
-
-  <!-- ═══ INDICATIVE RETURN CALCULATOR ════════════ -->
-  <!-- Full page width, sits after Key Attributes/Confirm Interest/
-       Supporting Documents in the reading order. Equivalent to
-       Zoopla's mortgage calculator, styled the same way: a bordered
-       card with labelled fields, a prominent result line, a Calculate
-       button and a disclaimer strip along the bottom. Fields are
-       prepopulated with sensible defaults (parsed from this deal's
-       capital range where possible) so the calculator never opens
-       empty — members can edit any of them before calculating. ABTA
-       is not a financial adviser (Platform Membership Agreement), so
-       the disclaimer stays attached to every result. Computes a real
-       IRR (Newton-Raphson on the cash flow series) rather than a
-       simplified CAGR, assuming the initial investment is returned in
-       full in the final year on top of any annual distribution. -->
-  <div class="full-width-section">
-    <div class="calc-card">
-      <div class="calc-card-body">
-        <div class="calc-card-title">Indicative Return Calculator</div>
-        <div class="calc-fields">
-          <div class="form-group">
-            <label class="form-label" for="calcInvestment">Investment (USD)</label>
-            <input type="number" class="form-input" id="calcInvestment" min="0" step="any">
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="calcAnnualDist">Annual distribution (USD)</label>
-            <input type="number" class="form-input" id="calcAnnualDist" min="0" step="any">
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="calcYears">Hold period (years)</label>
-            <input type="number" class="form-input" id="calcYears" min="1" max="30" step="1">
-          </div>
-        </div>
-        <p class="calc-assumption">Assumes your initial investment is returned in full in the final year, in addition to that year's distribution.</p>
-        <div class="calc-result-line" id="calcResult">
-          <span class="calc-result-figure" id="calcResultFigure">—</span>
-          <div class="calc-result-caption">
-            <span class="calc-result-label">Indicative IRR</span>
-            <span class="calc-result-sub" id="calcResultSub">Enter figures and calculate to see a result</span>
-          </div>
-        </div>
-      </div>
-      <div class="calc-card-footer">
-        <button type="button" class="btn-modal-submit" onclick="calculateIRR()">Calculate →</button>
-        <p class="calc-disclaimer">Indicative only, based solely on the figures entered — not a projection, forecast, valuation or guarantee. ABTA does not verify or endorse these inputs and is not a financial adviser; seek independent professional advice before investing.</p>
-      </div>
-    </div>
   </div>
 
   <!-- Equivalent to Zoopla's "Local area information" — context about
