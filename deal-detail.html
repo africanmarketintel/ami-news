@@ -98,12 +98,18 @@
     .btn-contact-abta:hover{background:var(--gold-light)}
 
     /* ── DEAL BODY ───────────────────────────── */
-    /* minmax(0,1fr) rather than a bare 1fr — without it, a grid track
-       won't shrink below its content's min-content width, so a long
-       unbreakable value anywhere in the main column can force the
-       whole grid wider than the viewport and push the second column
-       (and anything after it) off-screen, clipped by overflow-x:hidden. */
-    .deal-body{max-width:var(--box);margin:0 auto;padding:40px max(var(--gutter),calc((100% - var(--box))/2 + var(--gutter)));display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:40px;align-items:start}
+    /* max-width + margin:auto already centres and caps this box at
+       1280px — it does NOT also need the "(100% - box)/2 + gutter"
+       formula used by full-bleed containers like .top-nav/.deal-header
+       (which have no max-width of their own and rely on that formula,
+       calculated against the full viewport, to visually centre their
+       content). Applying both here compounded: padding was being
+       calculated against the full viewport width even though the box
+       itself was already capped at 1280px, so on wide screens it added
+       ~340px of padding per side on top of the centring that max-width
+       already did — crushing the real content column down to ~590px
+       in the middle of the page. Plain side padding is correct here. */
+    .deal-body{max-width:var(--box);margin:0 auto;padding:40px var(--gutter);display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:40px;align-items:start}
     @media(max-width:900px){.deal-body{grid-template-columns:minmax(0,1fr);gap:28px}}
     /* Grid items also need their own min-width:0 — the track sizing
        fix above only stops the *track* forcing overflow; without this
@@ -114,8 +120,11 @@
     /* ── FULL-WIDTH SECTIONS ─────────────────── */
     /* Sections that sit below .deal-body (the calculator, Similar
        Opportunities) but should share the same page max-width and
-       side padding rather than stretching edge-to-edge. */
-    .full-width-section{max-width:var(--box);margin:0 auto;padding:0 max(var(--gutter),calc((100% - var(--box))/2 + var(--gutter))) 40px}
+       side padding rather than stretching edge-to-edge. Same fix as
+       .deal-body above — plain gutter padding, not the full-bleed
+       centring formula, since max-width+margin:auto already centres
+       this box. */
+    .full-width-section{max-width:var(--box);margin:0 auto;padding:0 var(--gutter) 40px}
 
     /* ── SECTIONS ────────────────────────────── */
     .deal-section{margin-bottom:32px}
