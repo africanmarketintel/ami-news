@@ -177,7 +177,13 @@ async function screenDeal(id){
   try{
     const { notes } = await functionFetch('deal-room-screening-assist', { method:'POST', body: JSON.stringify({ deal_id: id }) });
     el.innerHTML = formatScreeningNotes(notes);
-  }catch(err){ el.textContent = 'Could not generate a read right now.'; }
+  }catch(err){
+    // Surface the real reason rather than a generic message — the
+    // most common causes are: function not deployed yet (404/"Failed
+    // to fetch"), GEMINI_API_KEY missing or invalid ("check_unavailable"),
+    // or not_admin if the admin_users row is missing/mismatched.
+    el.textContent = 'Could not generate a read: ' + (err.message || 'unknown error');
+  }
 }
 
 async function summariseDoc(dealId, path){
