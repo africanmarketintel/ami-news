@@ -195,6 +195,7 @@
     .teaser-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
     .teaser-id{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-soft);letter-spacing:.08em}
     .teaser-type{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:2px;font-weight:500}
+    .badge-new{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:2px;font-weight:600;background:var(--gold);color:#060F09}
     .type-equity{background:rgba(30,107,60,.12);color:#1E6B3C}
     .type-debt{background:rgba(184,92,56,.12);color:#B85C38}
     .type-ma{background:rgba(10,26,16,.1);color:#1A3020}
@@ -216,9 +217,9 @@
     .teaser-sector{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--terra)}
     .meta-divider{color:var(--border);font-size:10px}
     .teaser-summary{font-size:15px;color:var(--text);line-height:1.65;margin-bottom:18px}
+    .summary-toggle{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);background:none;border:none;padding:0;cursor:pointer;text-decoration:underline;white-space:nowrap}
 
-    .teaser-attrs{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:16px;background:var(--gold-pale);border:1px solid var(--divider);border-radius:2px;margin-bottom:18px}
-    [data-theme="dark"] .teaser-attrs{background:rgba(201,168,76,.04)}
+    .teaser-attrs{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:16px;border:1px solid var(--divider);border-radius:2px;margin-bottom:18px}
     .attr-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-soft);margin-bottom:3px}
     .attr-value{font-size:13px;font-weight:600;color:var(--text)}
 
@@ -236,9 +237,9 @@
     .teaser-highlights-title{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-soft);margin-bottom:8px}
     .highlight-list{list-style:none;display:flex;flex-direction:column;gap:5px}
     .highlight-list li{font-size:14px;color:var(--text);padding-left:18px;position:relative}
-    .highlight-list li::before{content:'→';position:absolute;left:0;color:var(--gold);font-size:12px}
+    .highlight-list li::before{content:'•';position:absolute;left:0;color:var(--gold);font-size:16px;line-height:1}
 
-    .teaser-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding-top:16px;border-top:1px solid var(--divider)}
+    .teaser-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding-top:16px}
     .teaser-date{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);letter-spacing:.06em}
     .teaser-actions{display:flex;gap:8px;flex-wrap:wrap}
 
@@ -584,14 +585,6 @@
               <button class="btn-reveal" id="reveal-btn-001" onclick="handleReveal('001')">Reveal counterparty →</button>
               <button class="btn-interest" onclick="handleInterest('ABTA-2026-001','Equity Investment — Clean Energy, East Africa')">Confirm Interest →</button>
               <button class="btn-bookmark" onclick="toggleQA('ABTA-2026-001','qa-001')">Questions</button>
-              <select class="filter-btn teaser-lang-select" style="padding:6px 10px;font-size:11px" onchange="translateTeaser(this)" aria-label="Translate this summary">
-                <option value="" selected>Translate to…</option>
-                <option value="French">French</option>
-                <option value="Portuguese">Portuguese</option>
-                <option value="Arabic">Arabic</option>
-                <option value="Swahili">Swahili</option>
-                <option value="Spanish">Spanish</option>
-              </select>
             </div>
           </div>
           <div class="qa-panel" id="qa-001" style="display:none"></div>
@@ -636,14 +629,6 @@
               <button class="btn-reveal" id="reveal-btn-002" onclick="handleReveal('002')">Reveal counterparty →</button>
               <button class="btn-interest" onclick="handleInterest('ABTA-2026-002','Acquisition — Financial Services, West Africa')">Confirm Interest →</button>
               <button class="btn-bookmark" onclick="toggleQA('ABTA-2026-002','qa-002')">Questions</button>
-              <select class="filter-btn teaser-lang-select" style="padding:6px 10px;font-size:11px" onchange="translateTeaser(this)" aria-label="Translate this summary">
-                <option value="" selected>Translate to…</option>
-                <option value="French">French</option>
-                <option value="Portuguese">Portuguese</option>
-                <option value="Arabic">Arabic</option>
-                <option value="Swahili">Swahili</option>
-                <option value="Spanish">Spanish</option>
-              </select>
             </div>
           </div>
           <div class="qa-panel" id="qa-002" style="display:none"></div>
@@ -681,14 +666,6 @@
               <button class="btn-reveal" id="reveal-btn-003" onclick="handleReveal('003')">Reveal counterparty →</button>
               <button class="btn-interest" onclick="handleInterest('ABTA-2026-003','Debt Financing — Infrastructure, North Africa')">Confirm Interest →</button>
               <button class="btn-bookmark" onclick="toggleQA('ABTA-2026-003','qa-003')">Questions</button>
-              <select class="filter-btn teaser-lang-select" style="padding:6px 10px;font-size:11px" onchange="translateTeaser(this)" aria-label="Translate this summary">
-                <option value="" selected>Translate to…</option>
-                <option value="French">French</option>
-                <option value="Portuguese">Portuguese</option>
-                <option value="Arabic">Arabic</option>
-                <option value="Swahili">Swahili</option>
-                <option value="Spanish">Spanish</option>
-              </select>
             </div>
           </div>
           <div class="qa-panel" id="qa-003" style="display:none"></div>
@@ -2722,6 +2699,22 @@
     });
   }
 
+  /* Expand/collapse a truncated teaser summary in place — text stored
+     in data-full/data-short (already HTML-escaped) so this never
+     re-fetches or re-escapes anything. */
+  function toggleSummary(btn){
+    const p = btn.closest('.teaser-summary');
+    if(!p) return;
+    const expanded = p.dataset.expanded === '1';
+    // .dataset decodes HTML entities on read, so the stored text must
+    // be re-escaped before going back into innerHTML — deal.summary
+    // is user-submitted, so this isn't optional.
+    p.innerHTML = expanded
+      ? esc(p.dataset.short) + ' <button type="button" class="summary-toggle" onclick="toggleSummary(this)">Read more</button>'
+      : esc(p.dataset.full) + ' <button type="button" class="summary-toggle" onclick="toggleSummary(this)">Show less</button>';
+    p.dataset.expanded = expanded ? '0' : '1';
+  }
+
   function buildDynamicCard(deal, isMember){
     const typeKey = DEAL_TYPE_KEY[deal.deal_type] || 'other';
     const regionKey = REGION_KEY[deal.region] || deal.region.toLowerCase().replace(/\s+/g,'-');
@@ -2731,9 +2724,25 @@
       : '';
     const typeCSS = TYPE_CSS[typeKey] || '';
 
+    // "New" badge for anything published in the last 7 days — a plain
+    // date string ("Published: 18 June 2026") requires the reader to
+    // do the maths themselves to spot what's actually recent.
+    const isNew = deal.published_at
+      && (Date.now() - new Date(deal.published_at).getTime()) < 7*24*60*60*1000;
+
+    // Long summaries are truncated with a "Read more" toggle rather
+    // than rendering the full paragraph on every card — keeps the
+    // grid scannable as more deals get added.
+    const SUMMARY_TRUNCATE_LEN = 220;
+    const summaryFull = deal.summary || '';
+    const summaryIsLong = summaryFull.length > SUMMARY_TRUNCATE_LEN;
+    const summaryShort = summaryIsLong
+      ? summaryFull.slice(0, SUMMARY_TRUNCATE_LEN).replace(/\s+\S*$/, '') + '…'
+      : summaryFull;
+
     const actionBtn = isMember
       ? `<a href="deal-detail.html?id=${deal.id}" class="btn-interest" style="text-decoration:none">View full deal →</a>`
-      : `<button class="btn-interest" onclick="openRegistration()">View full deal →</button>`;
+      : `<button class="btn-interest" onclick="openRegistration()">Join to view full deal →</button>`;
 
     const article = document.createElement('article');
     article.className = 'teaser-card';
@@ -2744,6 +2753,7 @@
         <div class="teaser-meta">
           <span class="teaser-id">${esc(ref)}</span>
           <span class="teaser-type ${typeCSS}">${esc(deal.deal_type)}</span>
+          ${isNew ? `<span class="badge-new">New</span>` : ''}
         </div>
       </div>
       <div class="teaser-location">
@@ -2754,7 +2764,9 @@
       ${deal.teaser_headline
         ? `<div style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);margin-bottom:10px">${esc(deal.teaser_headline)}</div>`
         : ''}
-      <p class="teaser-summary">${esc(deal.summary)}</p>
+      ${summaryIsLong
+        ? `<p class="teaser-summary" data-full="${esc(summaryFull)}" data-short="${esc(summaryShort)}">${esc(summaryShort)} <button type="button" class="summary-toggle" onclick="toggleSummary(this)">Read more</button></p>`
+        : `<p class="teaser-summary">${esc(summaryFull)}</p>`}
       <div class="teaser-attrs">
         <div class="attr-item"><div class="attr-label">Capital Range</div><div class="attr-value">${esc(deal.capital_range||'—')}</div></div>
         <div class="attr-item"><div class="attr-label">Sector</div><div class="attr-value">${esc(deal.sector)}</div></div>
@@ -2766,14 +2778,6 @@
         <div class="teaser-actions">
           <button class="btn-bookmark" onclick="bookmarkTeaser('${esc(ref)}',this)">Bookmark for review</button>
           ${actionBtn}
-          <select class="filter-btn teaser-lang-select" style="padding:6px 10px;font-size:11px" onchange="translateTeaser(this)" aria-label="Translate this summary">
-            <option value="" selected>Translate to…</option>
-            <option value="French">French</option>
-            <option value="Portuguese">Portuguese</option>
-            <option value="Arabic">Arabic</option>
-            <option value="Swahili">Swahili</option>
-            <option value="Spanish">Spanish</option>
-          </select>
         </div>
       </div>`;
     return article;
@@ -2943,54 +2947,6 @@
     document.getElementById('teaserSearch').value = '';
     document.getElementById('nlSearchChip').style.display = 'none';
     renderDeals(allDynamicDeals);
-  }
-
-  /* ════════════════════════════════════════════════
-     TRANSLATION — teaser summaries, shown alongside
-     the English original (never replacing it), since
-     machine translation of financial/legal terms can
-     be wrong.
-  ════════════════════════════════════════════════ */
-  async function translateTeaser(selectEl){
-    const lang = selectEl.value;
-    const card = selectEl.closest('.teaser-card');
-    const summaryEl = card && card.querySelector('.teaser-summary');
-    if(!card || !summaryEl) return;
-    let transEl = card.querySelector('.teaser-translation');
-    if(!lang){
-      if(transEl) transEl.remove();
-      return;
-    }
-    if(!summaryEl.dataset.originalText) summaryEl.dataset.originalText = summaryEl.textContent;
-    const originalText = summaryEl.dataset.originalText;
-
-    if(!transEl){
-      transEl = document.createElement('div');
-      transEl.className = 'teaser-translation';
-      transEl.style.cssText = 'margin-top:8px;padding:10px 12px;background:var(--gold-pale,#FDF6E3);border:1px solid var(--border,#D4C4A0);border-left:3px solid var(--gold,#C9A84C);border-radius:2px;font-size:13px;line-height:1.6;color:var(--text-soft)';
-      summaryEl.insertAdjacentElement('afterend', transEl);
-    }
-    transEl.textContent = 'Translating…';
-    selectEl.disabled = true;
-    try{
-      const r = await fetch(SUPABASE_URL+'/functions/v1/deal-room-translate', {
-        method:'POST',
-        headers:{ 'Content-Type':'application/json', 'apikey':SUPABASE_ANON },
-        body: JSON.stringify({ text: originalText, target_language: lang, context: 'deal teaser summary' })
-      });
-      const data = await r.json();
-      if(!r.ok || !data.ok){
-        transEl.textContent = 'Could not translate right now — please try again.';
-        return;
-      }
-      transEl.innerHTML = '<div style="font-family:\'DM Mono\',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold,#C9A84C);margin-bottom:6px">'
-        +esc(lang)+' — machine translation; refer to the English original above for exact terms</div>'+esc(data.translated);
-    }catch(err){
-      console.warn('translateTeaser:', err);
-      transEl.textContent = 'Could not translate right now — please try again.';
-    }finally{
-      selectEl.disabled = false;
-    }
   }
 
   /* ════════════════════════════════════════════════
