@@ -187,7 +187,7 @@
 
     /* ── TEASER CARDS ────────────────────────── */
     .teasers-grid{display:flex;flex-direction:column;gap:20px}
-    .teaser-card{background:var(--card-bg);border:1px solid var(--divider);border-left:4px solid var(--gold);border-radius:2px;padding:24px 28px;transition:box-shadow .2s,border-left-color .2s}
+    .teaser-card{background:var(--card-bg);border:1px solid var(--divider);border-left:4px solid var(--gold);border-radius:12px;padding:24px 28px;transition:box-shadow .2s,border-left-color .2s}
     .teaser-card:hover{box-shadow:0 4px 24px rgba(0,0,0,.08);border-left-color:var(--terra)}
     [data-theme="dark"] .teaser-card:hover{box-shadow:0 4px 24px rgba(0,0,0,.4)}
 
@@ -273,12 +273,12 @@
     .submit-step-num{font-family:'DM Mono',monospace;font-size:18px;font-weight:500;color:var(--gold);margin-bottom:6px}
     .submit-step-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-soft)}
 
-    .submit-form-card{background:var(--card-bg);border:1px solid var(--divider);border-radius:2px;padding:32px}
+    .submit-form-card{background:var(--card-bg);border:1px solid var(--divider);border-radius:12px;padding:32px}
     .form-section-title{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-soft);margin-bottom:20px;padding-bottom:10px;border-bottom:1px solid var(--divider)}
 
     /* ── SIDEBAR ─────────────────────────────── */
     .sidebar{display:flex;flex-direction:column;gap:24px}
-    .sidebar-card{background:var(--card-bg);border:1px solid var(--divider);border-radius:2px;padding:20px}
+    .sidebar-card{background:var(--card-bg);border:1px solid var(--divider);border-radius:12px;padding:20px}
     .sidebar-title{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-soft);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--divider)}
     .stat-row{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--divider)}
     .stat-row:last-child{border-bottom:none}
@@ -288,7 +288,7 @@
     .criteria-list li{font-size:13px;color:var(--text);padding-left:16px;position:relative}
     .criteria-list li::before{content:'✓';position:absolute;left:0;color:var(--green-mid);font-size:11px}
     .conf-notice{font-size:12px;color:var(--text-soft);line-height:1.5;font-style:italic}
-    .cta-card{background:linear-gradient(135deg,#0A1A10,#1A3020);border:1px solid rgba(201,168,76,.3);border-radius:2px;padding:24px 20px}
+    .cta-card{background:linear-gradient(135deg,#0A1A10,#1A3020);border:1px solid rgba(201,168,76,.3);border-radius:12px;padding:24px 20px}
     .cta-card-title{font-family:'Playfair Display',serif;font-size:17px;color:#EDE5D5;margin-bottom:10px;line-height:1.3}
     .cta-card-body{font-size:13px;color:rgba(237,229,213,.7);line-height:1.6;margin-bottom:18px}
     .btn-cta-full{display:block;width:100%;background:var(--gold);color:#060F09;font-family:'DM Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:11px 16px;border-radius:2px;text-align:center;border:none;cursor:pointer;transition:background .2s}
@@ -555,127 +555,14 @@
       <div id="nlSearchChip" style="display:none;margin:-8px 0 4px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-soft)"></div>
 
       <!-- Teasers -->
+      <!-- The three static example cards (ABTA-2026-001/002/003) that
+           lived here for most of this build have been removed now
+           that real, approved deals are live — loadApprovedDeals()
+           populates this grid entirely from Supabase
+           (deal_submissions_public) via buildDynamicCard(). If the
+           grid is ever empty, loadApprovedDeals() renders its own
+           empty state rather than falling back to placeholder cards. -->
       <div class="teasers-grid" id="teasersGrid">
-
-        <!-- TEASER 1 -->
-        <article class="teaser-card" data-type="equity" data-region="east-africa" data-sector="Clean Energy">
-          <div class="teaser-header">
-            <div class="teaser-meta"></div>
-            <div class="teaser-urgency"><span class="urgency-dot"></span> 1–3 months</div>
-          </div>
-          <div class="teaser-capital-row">
-            <span class="teaser-capital">USD 45–65m</span>
-            <span class="teaser-capital-label">Indicative range</span>
-            <span class="teaser-type type-equity" style="margin-left:auto">Equity Investment</span>
-          </div>
-          <div class="teaser-location">
-            <span class="teaser-region">East Africa</span>
-            <span class="meta-divider">·</span>
-            <span class="teaser-sector">Clean Energy</span>
-          </div>
-          <div class="teaser-secondary-facts">Stake on offer: 25–40% · Stage: Operational</div>
-          <p class="teaser-summary">An operational independent power producer seeks a strategic equity partner for a portfolio expansion across two East African markets. The business holds long-term power purchase agreements with sovereign offtakers and is targeting 120MW of additional capacity. The founding shareholder is offering a minority stake to a financially and operationally credible co-investor ahead of a structured refinancing process.</p>
-          <!-- Revealed data (Deal Room members only — populated by JS) -->
-          <div class="revealed-data" id="revealed-001"></div>
-          <div class="teaser-highlights">
-            <div class="teaser-highlights-title">Investment Highlights</div>
-            <ul class="highlight-list">
-              <li>Sovereign-backed offtake agreements in place; bankable revenue stream</li>
-              <li>First-mover position in two underserved capacity markets</li>
-              <li>Experienced management team with regional IPP track record</li>
-              <li>DFI co-financing available; structure is investor-friendly</li>
-            </ul>
-          </div>
-          <div class="teaser-footer">
-            <span class="teaser-date">Published: 18 June 2026</span>
-            <div class="teaser-actions">
-              <a class="btn-bookmark" href="mailto:ami@abta.africa?subject=Deal%20Room%20enquiry" style="text-decoration:none;display:inline-flex;align-items:center">Email</a>
-              <button class="btn-reveal" id="reveal-btn-001" onclick="handleReveal('001')">Reveal counterparty →</button>
-              <button class="btn-interest" onclick="handleInterest('ABTA-2026-001','Equity Investment — Clean Energy, East Africa')">Confirm Interest →</button>
-              <button class="btn-bookmark" onclick="toggleQA('ABTA-2026-001','qa-001')">Questions</button>
-            </div>
-          </div>
-          <div class="qa-panel" id="qa-001" style="display:none"></div>
-        </article>
-
-        <!-- TEASER 2 -->
-        <article class="teaser-card" data-type="ma" data-region="west-africa" data-sector="Financial Services">
-          <div class="teaser-header">
-            <div class="teaser-meta"></div>
-            <div class="teaser-urgency"><span class="urgency-dot amber"></span> Immediate</div>
-          </div>
-          <div class="teaser-capital-row">
-            <span class="teaser-capital">USD 18–25m</span>
-            <span class="teaser-capital-label">Indicative range</span>
-            <span class="teaser-type type-ma" style="margin-left:auto">Acquisition</span>
-          </div>
-          <div class="teaser-location">
-            <span class="teaser-region">West Africa</span>
-            <span class="meta-divider">·</span>
-            <span class="teaser-sector">Financial Services</span>
-          </div>
-          <div class="teaser-secondary-facts">Asset type: Full sale · Stage: Advanced · Licence status: Licensed</div>
-          <p class="teaser-summary">A UK-listed financial holding group is seeking a buyer for its West African consumer lending subsidiary, comprising operations in two Francophone markets. The business holds a valid microfinance licence, a performing loan book and an established agent-banking network. The vendor requires a clean full exit within 90 days of heads of terms.</p>
-          <!-- Revealed data (Deal Room members only — populated by JS) -->
-          <div class="revealed-data" id="revealed-002"></div>
-          <div class="teaser-highlights">
-            <div class="teaser-highlights-title">Transaction Highlights</div>
-            <ul class="highlight-list">
-              <li>Regulated, licensed entity — no greenfield licence risk</li>
-              <li>Performing loan book with established risk controls</li>
-              <li>Vendor motivated for clean exit; timeline is firm</li>
-              <li>Ideal for a strategic acquirer seeking instant market presence</li>
-            </ul>
-          </div>
-          <div class="teaser-footer">
-            <span class="teaser-date">Published: 10 June 2026</span>
-            <div class="teaser-actions">
-              <a class="btn-bookmark" href="mailto:ami@abta.africa?subject=Deal%20Room%20enquiry" style="text-decoration:none;display:inline-flex;align-items:center">Email</a>
-              <button class="btn-reveal" id="reveal-btn-002" onclick="handleReveal('002')">Reveal counterparty →</button>
-              <button class="btn-interest" onclick="handleInterest('ABTA-2026-002','Acquisition — Financial Services, West Africa')">Confirm Interest →</button>
-              <button class="btn-bookmark" onclick="toggleQA('ABTA-2026-002','qa-002')">Questions</button>
-            </div>
-          </div>
-          <div class="qa-panel" id="qa-002" style="display:none"></div>
-        </article>
-
-        <!-- TEASER 3 -->
-        <article class="teaser-card" data-type="debt" data-region="north-africa" data-sector="Infrastructure">
-          <div class="teaser-header">
-            <div class="teaser-meta"></div>
-            <div class="teaser-urgency"><span class="urgency-dot"></span> 3–6 months</div>
-          </div>
-          <div class="teaser-capital-row">
-            <span class="teaser-capital">USD 30m</span>
-            <span class="teaser-capital-label">Indicative range</span>
-            <span class="teaser-type type-debt" style="margin-left:auto">Debt Financing</span>
-          </div>
-          <div class="teaser-location"><span class="teaser-region">North Africa</span><span class="meta-divider">·</span><span class="teaser-sector">Infrastructure</span></div>
-          <div class="teaser-secondary-facts">Instrument: Mezzanine · Tenor: 5 years · Security: Asset-backed</div>
-          <p class="teaser-summary">A regional infrastructure developer is seeking mezzanine debt to bridge construction of a logistics hub in a high-growth North African gateway city. The facility will sit behind senior DFI debt and ahead of sponsor equity. The developer holds a confirmed anchor tenant on a 10-year lease.</p>
-          <div class="teaser-highlights">
-            <div class="teaser-highlights-title">Investment Highlights</div>
-            <ul class="highlight-list">
-              <li>Senior DFI debt already committed; mezzanine completes the capital structure</li>
-              <li>Anchor tenant signed on a 10-year lease, providing stable revenue visibility</li>
-              <li>Gateway logistics market with high barriers to entry</li>
-              <li>Experienced developer with completed assets in the region</li>
-            </ul>
-          </div>
-          <!-- Revealed data (Deal Room members only — populated by JS) -->
-          <div class="revealed-data" id="revealed-003"></div>
-          <div class="teaser-footer">
-            <span class="teaser-date">Published: 3 June 2026</span>
-            <div class="teaser-actions">
-              <a class="btn-bookmark" href="mailto:ami@abta.africa?subject=Deal%20Room%20enquiry" style="text-decoration:none;display:inline-flex;align-items:center">Email</a>
-              <button class="btn-reveal" id="reveal-btn-003" onclick="handleReveal('003')">Reveal counterparty →</button>
-              <button class="btn-interest" onclick="handleInterest('ABTA-2026-003','Debt Financing — Infrastructure, North Africa')">Confirm Interest →</button>
-              <button class="btn-bookmark" onclick="toggleQA('ABTA-2026-003','qa-003')">Questions</button>
-            </div>
-          </div>
-          <div class="qa-panel" id="qa-003" style="display:none"></div>
-        </article>
-
       </div><!-- /teasers-grid -->
     </div><!-- /opportunitiesSection -->
 
@@ -2781,10 +2668,6 @@
       ? summaryFull.slice(0, SUMMARY_TRUNCATE_LEN).replace(/\s+\S*$/, '') + '…'
       : summaryFull;
 
-    const actionBtn = isMember
-      ? `<a href="deal-detail.html?id=${deal.id}" class="btn-interest" style="text-decoration:none">View full deal →</a>`
-      : `<button class="btn-interest" onclick="openRegistration()">Join to view full deal →</button>`;
-
     // Both fields are ABTA-curated at approval time (Supabase Table
     // Editor), not submitter input — see docs/deal-room-highlights-
     // facts-schema.sql. Omitted entirely when empty, same as
@@ -2826,17 +2709,33 @@
       ${deal.teaser_headline
         ? `<div style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);margin-bottom:10px">${esc(deal.teaser_headline)}</div>`
         : ''}
-      ${summaryIsLong
-        ? `<p class="teaser-summary" data-full="${esc(summaryFull)}" data-short="${esc(summaryShort)}">${esc(summaryShort)} <button type="button" class="summary-toggle" onclick="toggleSummary(this)">Read more</button></p>`
-        : `<p class="teaser-summary">${esc(summaryFull)}</p>`}
+      <p class="teaser-summary">${esc(summaryIsLong ? summaryShort : summaryFull)}</p>
       ${highlightsHTML}
       <div class="teaser-footer">
         <span class="teaser-date">${pubDate?'Published: '+pubDate:''}</span>
-        <div class="teaser-actions">
-          <a class="btn-bookmark" href="mailto:ami@abta.africa?subject=Deal%20Room%20enquiry" style="text-decoration:none;display:inline-flex;align-items:center">Email</a>
-          ${actionBtn}
+        <div class="teaser-actions" style="margin-left:auto">
+          <a class="btn-bookmark" href="mailto:ami@abta.africa?subject=Deal%20Room%20enquiry" onclick="event.stopPropagation()" style="text-decoration:none;display:inline-flex;align-items:center">Email</a>
         </div>
       </div>`;
+
+    // Whole card is clickable through to the full deal — the "Read
+    // more" toggle and "View full deal" button are redundant once the
+    // card itself does that job. Members go straight to deal-detail;
+    // non-members get the same join prompt the old button used to
+    // open. role="link"/tabindex/keydown match the accessible-card
+    // pattern already used for .article-card on the AMI homepage.
+    article.setAttribute('role','link');
+    article.setAttribute('tabindex','0');
+    article.style.cursor='pointer';
+    const goToDeal = () => {
+      if(isMember){ window.location.href = 'deal-detail.html?id='+deal.id; }
+      else { openRegistration(); }
+    };
+    article.addEventListener('click', goToDeal);
+    article.addEventListener('keydown', function(e){
+      if(e.key==='Enter' || e.key===' '){ e.preventDefault(); goToDeal(); }
+    });
+
     return article;
   }
 
@@ -2878,7 +2777,7 @@
     el.id = 'dealsErrorState';
     el.className = 'empty-state';
     el.innerHTML = '<div class="empty-icon">⚠</div><div class="empty-title">Could not load live opportunities</div>'
-      + '<p class="empty-body">The three opportunities above are still shown. <button onclick="document.getElementById(\'dealsErrorState\').remove();loadApprovedDeals()" style="background:none;border:none;color:var(--gold);text-decoration:underline;cursor:pointer;font:inherit">Try again</button></p>';
+      + '<p class="empty-body">Please refresh the page, or <button onclick="document.getElementById(\'dealsErrorState\').remove();loadApprovedDeals()" style="background:none;border:none;color:var(--gold);text-decoration:underline;cursor:pointer;font:inherit">try again</button>.</p>';
     grid.appendChild(el);
   }
 
@@ -2889,6 +2788,8 @@
 
   function renderDeals(deals){
     document.querySelectorAll('[data-dynamic="1"]').forEach(function(el){ el.remove(); });
+    const existingEmpty = document.getElementById('dealsEmptyState');
+    if(existingEmpty) existingEmpty.remove();
     const grid = document.getElementById('teasersGrid');
     const isMember = isDrMember();
     const q = (document.getElementById('teaserSearch')||{}).value?.trim().toLowerCase() || '';
@@ -2913,28 +2814,19 @@
       grid.appendChild(card);
     });
 
-    // The three example teasers further up are static HTML, not part of
-    // `deals` (which only ever holds the live Supabase-backed rows) — so
-    // they need their own pass through the same search/filter criteria,
-    // or they'd stay visible regardless of what's typed or AI-parsed.
-    document.querySelectorAll('.teasers-grid .teaser-card:not([data-dynamic])').forEach(function(card){
-      let visible = true;
-      if(nlActiveFilters.sector && (card.dataset.sector||'').toLowerCase() !== nlActiveFilters.sector.toLowerCase()) visible = false;
-      if(visible && nlActiveFilters.region){
-        const regionKey = REGION_KEY[nlActiveFilters.region] || '';
-        if((card.dataset.region||'') !== regionKey) visible = false;
-      }
-      if(visible && nlActiveFilters.type && (card.dataset.type||'') !== nlActiveFilters.type) visible = false;
-      if(visible && q){
-        const summaryText = (card.querySelector('.teaser-summary')||{}).textContent || '';
-        const sectorText = (card.dataset.sector || (card.querySelector('.teaser-sector')||{}).textContent || '');
-        const regionText = (card.querySelector('.teaser-region')||{}).textContent || '';
-        const hay = (summaryText+' '+sectorText+' '+regionText).toLowerCase();
-        if(!hay.includes(q)) visible = false;
-      }
-      const wrapper = card.closest('.paywall-overlay') || card;
-      wrapper.style.display = visible ? '' : 'none';
-    });
+    // Grid used to always show the three static example teasers even
+    // with zero live deals or zero search matches, so an empty result
+    // was never actually visible as empty. Now that those are gone,
+    // say so explicitly rather than leaving a blank grid.
+    if(!filtered.length){
+      const empty = document.createElement('div');
+      empty.id = 'dealsEmptyState';
+      empty.className = 'empty-state';
+      empty.innerHTML = deals.length
+        ? '<div class="empty-icon">◈</div><div class="empty-title">No opportunities match your search</div><p class="empty-body">Try a different keyword or clear the filters above.</p>'
+        : '<div class="empty-icon">◈</div><div class="empty-title">No live opportunities right now</div><p class="empty-body">New teasers are published on a rolling basis — check back soon, or contact ABTA to be notified.</p>';
+      grid.appendChild(empty);
+    }
 
     restoreBookmarks();
   }
