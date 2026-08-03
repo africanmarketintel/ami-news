@@ -87,6 +87,15 @@
     .deal-meta-row{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.06em;color:rgba(237,229,213,.5);display:flex;gap:16px;flex-wrap:wrap}
     @media(max-width:640px){.deal-headline{font-size:22px}}
 
+    /* ── CAPITAL HERO — promoted above the headline, same price-first
+       treatment as the Deal Room grid cards ── */
+    .deal-capital-hero{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+    .deal-capital-figure{font-family:'Playfair Display',serif;font-size:32px;font-weight:800;color:var(--gold)}
+    .deal-capital-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:rgba(237,229,213,.5)}
+    .deal-contact-row{margin-top:20px}
+    .btn-contact-abta{display:inline-flex;align-items:center;gap:8px;font-family:'DM Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#060F09;background:var(--gold);padding:11px 20px;border-radius:2px;text-decoration:none;transition:background .2s}
+    .btn-contact-abta:hover{background:var(--gold-light)}
+
     /* ── DEAL BODY ───────────────────────────── */
     .deal-body{max-width:var(--box);margin:0 auto;padding:40px max(var(--gutter),calc((100% - var(--box))/2 + var(--gutter)));display:grid;grid-template-columns:1fr 380px;gap:40px;align-items:start}
     @media(max-width:900px){.deal-body{grid-template-columns:1fr;gap:28px}}
@@ -103,6 +112,31 @@
     .attr-cell-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-soft);margin-bottom:4px}
     .attr-cell-value{font-size:15px;font-weight:600;color:var(--text)}
     @media(max-width:480px){.attr-grid{grid-template-columns:1fr}}
+
+    /* ── INVESTMENT HIGHLIGHTS ───────────────── */
+    .highlight-list{list-style:none;display:flex;flex-direction:column;gap:6px;padding:0;margin:0}
+    .highlight-list li{font-size:14px;color:var(--text);padding-left:20px;position:relative;line-height:1.5}
+    .highlight-list li::before{content:'✓';position:absolute;left:0;color:var(--gold);font-size:13px;font-weight:700;line-height:1.5}
+
+    /* ── RELATED MARKET INTELLIGENCE ─────────── */
+    .related-articles-list{display:flex;flex-direction:column;gap:2px}
+    .related-article-link{display:block;padding:14px 0;border-bottom:1px solid var(--divider);text-decoration:none;color:inherit}
+    .related-article-link:last-child{border-bottom:none}
+    .related-article-section{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:5px}
+    .related-article-headline{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--text);line-height:1.4;transition:color .2s}
+    .related-article-link:hover .related-article-headline{color:var(--gold)}
+    .related-article-standfirst{font-size:12px;color:var(--text-soft);margin-top:4px;line-height:1.5}
+
+    /* ── INDICATIVE RETURN CALCULATOR ────────── */
+    .calc-intro{font-size:12px;color:var(--text-soft);line-height:1.6;margin-bottom:18px}
+    .calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:6px}
+    @media(max-width:480px){.calc-grid{grid-template-columns:1fr}}
+    .calc-result{margin-top:18px;padding-top:18px;border-top:1px solid var(--divider)}
+    .calc-result-figure{font-family:'Playfair Display',serif;font-size:34px;font-weight:800;color:var(--gold);line-height:1}
+    .calc-result-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-soft);margin-top:4px}
+    .calc-result-sub{font-size:13px;color:var(--text);margin-top:10px}
+    .calc-error{font-size:13px;color:var(--terra-dark)}
+    .calc-disclaimer{font-size:11px;color:var(--text-soft);line-height:1.6;margin-top:16px;padding-top:16px;border-top:1px solid var(--divider)}
 
     /* ── SIMILAR OPPORTUNITIES ───────────────────── */
     .similar-deals-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
@@ -222,15 +256,23 @@
   <div class="deal-header">
     <a href="deal-room.html" class="deal-back">← Back to Deal Room</a>
     <div class="deal-ref-row">
-      <span class="deal-ref" id="dealRef">—</span>
       <span class="deal-type-badge" id="dealTypeBadge"></span>
+    </div>
+    <!-- Capital range leads, same price-first hierarchy as the Deal
+         Room grid cards — the ref (internal ABTA tag) is deliberately
+         not shown here, same as on the grid. -->
+    <div class="deal-capital-hero">
+      <span class="deal-capital-figure" id="dealCapitalFigure">—</span>
+      <span class="deal-capital-label">Indicative range</span>
     </div>
     <h1 class="deal-headline" id="dealHeadline"></h1>
     <div class="deal-meta-row">
       <span id="dealMetaRegion"></span>
       <span id="dealMetaSector"></span>
-      <span id="dealMetaCapital"></span>
       <span id="dealMetaDate"></span>
+    </div>
+    <div class="deal-contact-row">
+      <a class="btn-contact-abta" href="mailto:ami@abta.africa?subject=Deal%20Room%20enquiry">✉ Email ABTA about this deal</a>
     </div>
   </div>
 
@@ -245,6 +287,14 @@
         <p class="deal-summary-text" id="dealSummary"></p>
       </div>
 
+      <!-- Only rendered when the deal has highlights set (ABTA fills
+           this in at approval time — see docs/deal-room-highlights-
+           facts-schema.sql). Hidden entirely otherwise. -->
+      <div class="deal-section" id="highlightsSection" style="display:none">
+        <div class="section-title" id="highlightsTitle">Investment Highlights</div>
+        <ul class="highlight-list" id="highlightsList"></ul>
+      </div>
+
       <div class="deal-section">
         <div class="section-title">Key Attributes</div>
         <div class="attr-grid">
@@ -255,12 +305,56 @@
         </div>
       </div>
 
+      <!-- Equivalent to Zoopla's mortgage calculator — a "run the
+           numbers" utility, but framed as strictly indicative/
+           planning-only. ABTA is explicitly not a financial adviser
+           (see the Platform Membership Agreement), so this is styled
+           to match that disclaimer load: heavy, unavoidable, printed
+           with every result, not just once in small type. Computes a
+           real IRR (Newton-Raphson on the entered cash flow series),
+           not a simplified CAGR, since deals may include periodic
+           distributions (debt/mezzanine coupons) as well as a single
+           exit value (typical equity/M&A structure). -->
+      <div class="deal-section">
+        <div class="section-title">Indicative Return Calculator</div>
+        <p class="calc-intro">Estimate an annualised return based on figures you enter — not a projection, forecast, valuation or guarantee. ABTA does not verify or endorse these inputs.</p>
+        <div class="calc-grid">
+          <div class="form-group">
+            <label class="form-label" for="calcInvestment">Investment amount (USD)</label>
+            <input type="number" class="form-input" id="calcInvestment" placeholder="e.g. 2000000" min="0" step="any">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="calcYears">Hold period (years)</label>
+            <input type="number" class="form-input" id="calcYears" placeholder="e.g. 5" min="1" max="30" step="1">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="calcAnnualDist">Annual cash distribution (USD, optional)</label>
+            <input type="number" class="form-input" id="calcAnnualDist" placeholder="0" min="0" step="any">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="calcExitValue">Expected exit / terminal value (USD)</label>
+            <input type="number" class="form-input" id="calcExitValue" placeholder="e.g. 3500000" min="0" step="any">
+          </div>
+        </div>
+        <button type="button" class="btn-modal-submit" onclick="calculateIRR()">Calculate →</button>
+        <div id="calcResult" style="display:none"></div>
+      </div>
+
       <div class="deal-section">
         <div class="section-title">Supporting Documents</div>
         <div class="doc-list" id="docsList">
           <p class="doc-empty">No documents attached to this deal.</p>
         </div>
         <p style="margin-top:12px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;color:var(--text-soft);line-height:1.6">Documents are shared under NDA. Do not distribute outside your organisation without ABTA's written consent.</p>
+      </div>
+
+      <!-- Equivalent to Zoopla's "Local area information" — context
+           about the market this deal sits in, using AMI's own
+           editorial content rather than any third-party data. Hidden
+           if nothing matches this deal's region/sector. -->
+      <div class="deal-section" id="relatedArticlesSection" style="display:none">
+        <div class="section-title">Related Market Intelligence</div>
+        <div class="related-articles-list" id="relatedArticlesList"></div>
       </div>
 
       <div class="deal-actions" style="margin-top:8px">
@@ -403,6 +497,69 @@
     });
   }
 
+  /* ═══════════════════════════════════════════════
+     INDICATIVE RETURN CALCULATOR
+     Standard Newton-Raphson IRR solver over an annual cash flow
+     series: cashflows[0] is the (negative) investment at year 0,
+     cashflows[1..n] are subsequent years' inflows, with the final
+     year including both any distribution and the exit value. This
+     is entirely client-side arithmetic on numbers the member types
+     in — nothing here is fetched, stored, verified, or used
+     anywhere else in the platform.
+  ═══════════════════════════════════════════════ */
+  function calcIRR(cashflows, guess){
+    let rate = guess || 0.1;
+    const maxIter = 100, tol = 1e-7;
+    for(let iter = 0; iter < maxIter; iter++){
+      let npv = 0, dnpv = 0;
+      for(let t = 0; t < cashflows.length; t++){
+        npv  += cashflows[t] / Math.pow(1+rate, t);
+        if(t > 0) dnpv += -t * cashflows[t] / Math.pow(1+rate, t+1);
+      }
+      if(Math.abs(npv) < tol) return rate;
+      if(dnpv === 0) break;
+      const next = rate - npv/dnpv;
+      if(!isFinite(next) || next <= -0.999) { rate = -0.999; break; }
+      rate = next;
+    }
+    return rate;
+  }
+
+  function calculateIRR(){
+    const investment  = parseFloat(document.getElementById('calcInvestment').value);
+    const years       = parseInt(document.getElementById('calcYears').value, 10);
+    const annualDist  = parseFloat(document.getElementById('calcAnnualDist').value) || 0;
+    const exitValue   = parseFloat(document.getElementById('calcExitValue').value) || 0;
+    const resultEl    = document.getElementById('calcResult');
+    resultEl.style.display = 'block';
+
+    if(!investment || investment <= 0 || !years || years < 1){
+      resultEl.innerHTML = '<div class="calc-result"><p class="calc-error">Enter at least an investment amount and a hold period to calculate.</p></div>';
+      return;
+    }
+    if(!annualDist && !exitValue){
+      resultEl.innerHTML = '<div class="calc-result"><p class="calc-error">Enter an expected exit value and/or an annual distribution.</p></div>';
+      return;
+    }
+
+    const cashflows = [-investment];
+    for(let y = 1; y <= years; y++){
+      cashflows.push(y === years ? annualDist + exitValue : annualDist);
+    }
+    const irr = calcIRR(cashflows);
+    const totalReturned = annualDist * years + exitValue;
+    const multiple = totalReturned / investment;
+
+    resultEl.innerHTML =
+      '<div class="calc-result">'
+        +'<div class="calc-result-figure">'+(irr*100).toFixed(1)+'%</div>'
+        +'<div class="calc-result-label">Indicative annualised return (IRR)</div>'
+        +'<div class="calc-result-sub">'+multiple.toFixed(2)+'x total multiple over '+years+' year'+(years===1?'':'s')
+          +' · USD '+Math.round(totalReturned).toLocaleString()+' total returned on a USD '+Math.round(investment).toLocaleString()+' investment</div>'
+        +'<div class="calc-disclaimer">This is an indicative calculation based only on the figures you entered above. It is not a projection, forecast, valuation or guarantee of any outcome — actual returns depend on factors this calculator does not account for. ABTA does not verify, endorse or take responsibility for any figures entered here, and is not a financial adviser. Seek independent professional advice before making any investment decision.</div>'
+      +'</div>';
+  }
+
   /* Call the Edge Function — returns array of { path, name, url } */
   async function loadSignedDocUrls(dealId, memberEmail){
     try {
@@ -476,6 +633,7 @@
       }
       const deal = data[0];
       renderDeal(deal);
+      loadRelatedArticles(deal);
       loadCounterparty(deal.id);
       loadSimilarDeals(deal);
       // Load signed document URLs separately — Edge Function call
@@ -488,6 +646,54 @@
     } catch(err){
       console.error('loadDeal:', err);
       document.getElementById('loadingState').textContent = 'Unable to load deal. Please try again.';
+    }
+  }
+
+  /* ═══════════════════════════════════════════════
+     RELATED MARKET INTELLIGENCE
+     Zoopla's equivalent here is "Local area information" — context
+     about the surrounding market, not the deal itself. AMI's own
+     articles table is the direct equivalent for a capital deal:
+     recent published coverage of this deal's region or sector.
+     Matches against the `tags` column, which is the actual field the
+     regional nav pages (east-africa.html etc.) filter on — see
+     regionPool() in those files: allArticles.filter(a =>
+     (a.section||'').includes(filterActive) || (a.tags||'').includes(
+     filterActive)). `section` is topic-based (Markets/Economy/Deals
+     etc.), so tags is the real region signal. Headline/standfirst
+     stay in as a broader fallback for recall. Hidden entirely if
+     nothing matches.
+  ═══════════════════════════════════════════════ */
+  async function loadRelatedArticles(deal){
+    try{
+      const like = function(col,term){ return col+'.ilike.*'+encodeURIComponent(term)+'*'; };
+      const res = await fetch(
+        SUPABASE_URL+'/rest/v1/articles?select=id,headline,standfirst,section,published_date'
+          +'&is_published=eq.true'
+          +'&or=('+[
+            like('tags',deal.region), like('tags',deal.sector),
+            like('section',deal.sector),
+            like('headline',deal.region), like('headline',deal.sector),
+            like('standfirst',deal.region), like('standfirst',deal.sector)
+          ].join(',')+')'
+          +'&order=published_date.desc&limit=3',
+        { headers: { 'apikey': SUPABASE_ANON } }
+      );
+      if(!res.ok) return;
+      const articles = await res.json();
+      if(!Array.isArray(articles) || !articles.length) return;
+
+      document.getElementById('relatedArticlesList').innerHTML = articles.map(function(a){
+        return '<a class="related-article-link" href="article.html?id='+encodeURIComponent(a.id)+'">'
+          +'<div class="related-article-section">'+esc(a.section||'AMI')+'</div>'
+          +'<div class="related-article-headline">'+esc(a.headline)+'</div>'
+          +(a.standfirst ? '<div class="related-article-standfirst">'+esc(a.standfirst)+'</div>' : '')
+          +'</a>';
+      }).join('');
+      document.getElementById('relatedArticlesSection').style.display = 'block';
+    }catch(err){
+      console.warn('loadRelatedArticles:', err);
+      // Fails silently — editorial cross-linking, not core content.
     }
   }
 
@@ -561,18 +767,19 @@
     const ref = deal.published_ref || ('ABTA-DR-'+deal.id.slice(0,8).toUpperCase());
     document.title = ref+' | AMI Deal Room';
 
-    // Header
-    document.getElementById('dealRef').textContent = ref;
+    // Header — ref is deliberately not shown, it's ABTA's internal
+    // tag, not something members should see (same as the grid cards).
     const badge = document.getElementById('dealTypeBadge');
     badge.textContent = deal.deal_type;
     badge.className = 'deal-type-badge '+(TYPE_CSS[deal.deal_type]||'');
+
+    document.getElementById('dealCapitalFigure').textContent = deal.capital_range || '—';
 
     document.getElementById('dealHeadline').textContent =
       deal.teaser_headline || (deal.deal_type+' — '+deal.sector+', '+deal.region);
 
     document.getElementById('dealMetaRegion').textContent  = deal.region;
     document.getElementById('dealMetaSector').textContent  = deal.sector;
-    document.getElementById('dealMetaCapital').textContent = deal.capital_range || '';
     if(deal.published_at){
       document.getElementById('dealMetaDate').textContent =
         'Published '+new Date(deal.published_at).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
@@ -583,6 +790,17 @@
     document.getElementById('attrSector').textContent  = deal.sector;
     document.getElementById('attrRegion').textContent  = deal.region;
     document.getElementById('attrCapital').textContent = deal.capital_range || '—';
+
+    // Investment Highlights — only shown if ABTA filled this in at
+    // approval time (see docs/deal-room-highlights-facts-schema.sql).
+    const highlights = Array.isArray(deal.highlights) ? deal.highlights.filter(Boolean) : [];
+    if(highlights.length){
+      document.getElementById('highlightsTitle').textContent =
+        deal.deal_type==='Acquisition / Sale' ? 'Transaction Highlights' : 'Investment Highlights';
+      document.getElementById('highlightsList').innerHTML =
+        highlights.map(function(h){ return '<li>'+esc(h)+'</li>'; }).join('');
+      document.getElementById('highlightsSection').style.display = 'block';
+    }
 
     // Summary
     document.getElementById('dealSummary').textContent = deal.summary;
