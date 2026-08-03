@@ -848,6 +848,12 @@
             <div class="success-icon">✓</div>
             <div class="success-title">Submission received</div>
             <p class="success-body">ABTA will review your opportunity within five business days. If it meets our criteria, we will contact you to proceed with anonymisation and publication. Your contact details and documents remain confidential to the ABTA team.</p>
+            <!-- Only shown when one or more attached files failed to
+                 upload — the submission itself still goes through
+                 (deal details aren't lost), but silently proceeding
+                 without telling the submitter their attachment didn't
+                 make it was a real, since-fixed bug. See submitDeal(). -->
+            <p class="success-body" id="submitUploadWarning" style="display:none;color:var(--terra-dark,#8C3A1F);margin-top:16px;font-weight:600"></p>
           </div>
         </div>
       </div>
@@ -2194,22 +2200,38 @@
       // 1 — Upload documents via a per-file signed URL (deal-documents
       // is a private bucket; deal-room-upload-url checks membership
       // before issuing each URL — see supabase/functions/deal-room-upload-url)
+      //
+      // Bug fixed here: the PUT to the signed upload URL was missing
+      // the 'apikey' header. Supabase's API gateway (Kong) checks for
+      // a valid apikey on every request that reaches it, including
+      // signed-upload-URL PUTs — the token in the URL alone isn't
+      // enough. Without it every upload was silently rejected, the
+      // failure was only ever console.warn'd, and the deal submission
+      // went on to succeed with no attachment at all. Also now
+      // tracking failures properly instead of swallowing them, so the
+      // submitter is told rather than shown an unqualified success.
       const docPaths=[];
+      const failedUploads=[];
       for(const file of uploadedFiles){
-        const urlRes = await fetch(SUPABASE_URL+'/functions/v1/deal-room-upload-url', {
-          method:'POST',
-          headers:{ 'Content-Type':'application/json', 'apikey':SUPABASE_ANON, 'Authorization':'Bearer '+memberToken },
-          body: JSON.stringify({ file_name: file.name })
-        });
-        if(!urlRes.ok){ console.warn('Could not get upload URL for', file.name); continue; }
-        const { path, signedUrl } = await urlRes.json();
-        const putRes = await fetch(signedUrl, {
-          method:'PUT',
-          headers:{ 'Content-Type': file.type || 'application/octet-stream' },
-          body:file
-        });
-        if(putRes.ok){ docPaths.push('deal-documents/'+path); }
-        else { console.warn('File upload failed:',file.name,await putRes.text()); }
+        try{
+          const urlRes = await fetch(SUPABASE_URL+'/functions/v1/deal-room-upload-url', {
+            method:'POST',
+            headers:{ 'Content-Type':'application/json', 'apikey':SUPABASE_ANON, 'Authorization':'Bearer '+memberToken },
+            body: JSON.stringify({ file_name: file.name })
+          });
+          if(!urlRes.ok){ console.warn('Could not get upload URL for', file.name); failedUploads.push(file.name); continue; }
+          const { path, signedUrl } = await urlRes.json();
+          const putRes = await fetch(signedUrl, {
+            method:'PUT',
+            headers:{ 'Content-Type': file.type || 'application/octet-stream', 'apikey': SUPABASE_ANON },
+            body:file
+          });
+          if(putRes.ok){ docPaths.push('deal-documents/'+path); }
+          else { console.warn('File upload failed:',file.name,await putRes.text()); failedUploads.push(file.name); }
+        }catch(uploadErr){
+          console.warn('File upload error:',file.name,uploadErr);
+          failedUploads.push(file.name);
+        }
       }
 
       // 2 — Submit form data via deal-room-submit-gateway (requires
@@ -2246,9 +2268,20 @@
         throw new Error(errBody.error || ('HTTP '+res.status));
       }
 
-      // 3 — Show success
+      // 3 — Show success — with a visible warning if any file didn't
+      // make it, rather than a silent, misleading "all good".
       document.getElementById('dealSubmitForm').style.display='none';
       document.getElementById('submitSuccess').style.display='block';
+      const warnEl = document.getElementById('submitUploadWarning');
+      if(failedUploads.length){
+        warnEl.textContent = 'Note: '+(failedUploads.length===1
+          ? 'one attached file ('+failedUploads[0]+') did not upload successfully.'
+          : failedUploads.length+' attached files ('+failedUploads.join(', ')+') did not upload successfully.')
+          +' Your submission was still received — please email these to ami@abta.africa directly, or contact us and we\'ll resend an upload link.';
+        warnEl.style.display = 'block';
+      } else {
+        warnEl.style.display = 'none';
+      }
 
     } catch(err){
       console.error('Submission error:',err);
