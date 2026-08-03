@@ -144,31 +144,45 @@
     .highlight-list li{font-size:14px;color:var(--text);padding-left:20px;position:relative;line-height:1.5}
     .highlight-list li::before{content:'✓';position:absolute;left:0;color:var(--gold);font-size:13px;font-weight:700;line-height:1.5}
 
-    /* ── RELATED MARKET INTELLIGENCE ─────────── */
-    .related-articles-list{display:flex;flex-direction:column;gap:2px}
-    .related-article-link{display:block;padding:14px 0;border-bottom:1px solid var(--divider);text-decoration:none;color:inherit}
-    .related-article-link:last-child{border-bottom:none}
-    .related-article-section{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:5px}
+    /* ── RELATED MARKET INTELLIGENCE ───────────
+       Same image-card grid as the AMI homepage's .article-card (image,
+       coloured section kicker, headline) rather than a plain text
+       list — kept visually consistent with how articles are presented
+       everywhere else on the site. */
+    .related-articles-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--divider);border:1px solid var(--divider)}
+    @media(max-width:900px){.related-articles-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:420px){.related-articles-grid{grid-template-columns:1fr}}
+    .related-article-card{background:var(--card-bg);display:block;text-decoration:none;color:inherit;overflow:hidden;transition:background .2s}
+    .related-article-card:hover{background:var(--gold-pale)}
+    [data-theme="dark"] .related-article-card:hover{background:#0D1F12}
+    .related-article-img{width:100%;height:130px;object-fit:cover;display:block}
+    .related-article-img-placeholder{width:100%;height:130px;background:linear-gradient(135deg,var(--ink-mid),var(--ink));display:flex;align-items:center;justify-content:center;font-size:22px;opacity:.4}
+    .related-article-content{padding:14px 16px 18px}
+    .related-article-kicker{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--terra);margin-bottom:8px}
     .related-article-headline{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--text);line-height:1.4;transition:color .2s}
-    .related-article-link:hover .related-article-headline{color:var(--gold)}
-    .related-article-standfirst{font-size:12px;color:var(--text-soft);margin-top:4px;line-height:1.5}
+    .related-article-card:hover .related-article-headline{color:var(--gold)}
 
     /* ── INDICATIVE RETURN CALCULATOR ──────────
-       Plain-English sentence with inline input boxes, at full page
-       width — three figures only (investment, annual distribution,
-       years); the initial investment is assumed returned in the
-       final year, so there's no separate exit-value field to fill in. */
-    .calc-sentence{font-size:15px;color:var(--text);line-height:2.6;margin-bottom:16px;overflow-wrap:break-word}
-    .calc-inline-input{display:inline-block;width:150px;max-width:100%;margin:0 4px;padding:6px 10px;font-size:14px;vertical-align:baseline}
-    .calc-inline-input-sm{width:70px}
-    @media(max-width:480px){.calc-inline-input{width:120px}}
-    .calc-intro{font-size:11px;color:var(--text-soft);line-height:1.6;margin-top:12px}
-    .calc-result{margin-top:16px;padding-top:16px;border-top:1px solid var(--divider);display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
-    .calc-result-figure{font-family:'Playfair Display',serif;font-size:30px;font-weight:800;color:var(--gold);line-height:1}
+       Card layout — bordered, rounded, with a shaded footer strip for
+       the button + disclaimer, matching a standard "run the numbers"
+       utility (e.g. a mortgage calculator card): labelled fields,
+       then a prominent result line, then the action + small print. */
+    .calc-card{background:var(--surface);border:1px solid var(--divider);border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+    .calc-card-body{padding:28px 28px 24px}
+    .calc-card-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:800;color:var(--text);margin-bottom:22px}
+    .calc-fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:10px}
+    @media(max-width:700px){.calc-fields{grid-template-columns:1fr 1fr}}
+    @media(max-width:420px){.calc-fields{grid-template-columns:1fr}}
+    .calc-assumption{font-size:11px;color:var(--text-soft);line-height:1.6;margin-bottom:22px}
+    .calc-result-line{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;padding-top:18px;border-top:1px solid var(--divider)}
+    .calc-result-figure{font-family:'Playfair Display',serif;font-size:32px;font-weight:800;color:var(--gold);line-height:1}
+    .calc-result-caption{display:flex;flex-direction:column;gap:2px}
     .calc-result-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-soft)}
-    .calc-result-sub{font-size:13px;color:var(--text)}
-    .calc-error{font-size:13px;color:var(--terra-dark)}
-    .calc-disclaimer{width:100%;font-size:11px;color:var(--text-soft);line-height:1.6;margin-top:8px}
+    .calc-result-sub{font-size:12px;color:var(--text)}
+    .calc-error{color:var(--terra-dark)}
+    .calc-card-footer{border-top:1px solid var(--divider);background:var(--cream-dark);padding:20px 28px}
+    [data-theme="dark"] .calc-card-footer{background:rgba(255,255,255,.03)}
+    .calc-disclaimer{font-size:11px;color:var(--text-soft);line-height:1.6;margin-top:12px}
 
     /* ── SIMILAR OPPORTUNITIES ───────────────────── */
     .similar-deals-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
@@ -337,26 +351,17 @@
         </div>
       </div>
 
+      <div class="deal-actions" style="margin-top:8px">
+        <button class="btn-interest-lg" onclick="openInterest()">Confirm Interest →</button>
+        <a href="deal-room.html" class="btn-back">← All deals</a>
+      </div>
+
       <div class="deal-section">
         <div class="section-title">Supporting Documents</div>
         <div class="doc-list" id="docsList">
           <p class="doc-empty">No documents attached to this deal.</p>
         </div>
         <p style="margin-top:12px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;color:var(--text-soft);line-height:1.6">Documents are shared under NDA. Do not distribute outside your organisation without ABTA's written consent.</p>
-      </div>
-
-      <!-- Equivalent to Zoopla's "Local area information" — context
-           about the market this deal sits in, using AMI's own
-           editorial content rather than any third-party data. Hidden
-           if nothing matches this deal's region/sector. -->
-      <div class="deal-section" id="relatedArticlesSection" style="display:none">
-        <div class="section-title">Related Market Intelligence</div>
-        <div class="related-articles-list" id="relatedArticlesList"></div>
-      </div>
-
-      <div class="deal-actions" style="margin-top:8px">
-        <button class="btn-interest-lg" onclick="openInterest()">Confirm Interest →</button>
-        <a href="deal-room.html" class="btn-back">← All deals</a>
       </div>
 
     </div>
@@ -382,31 +387,61 @@
   </div>
 
   <!-- ═══ INDICATIVE RETURN CALCULATOR ════════════ -->
-  <!-- Full page width, same as Similar Opportunities below — sits
-       after Supporting Documents in the reading order. Equivalent to
-       Zoopla's mortgage calculator ("run the numbers" utility), kept
-       simple: a single row of inputs, one result line, one disclaimer
-       line. ABTA is not a financial adviser (Platform Membership
-       Agreement), so the disclaimer stays attached to every result,
-       just short rather than a wall of text. Computes a real IRR
-       (Newton-Raphson on the cash flow series) rather than a
-       simplified CAGR, since deals may include periodic distributions
-       (debt/mezzanine coupons) as well as a single exit value. -->
+  <!-- Full page width, sits after Key Attributes/Confirm Interest/
+       Supporting Documents in the reading order. Equivalent to
+       Zoopla's mortgage calculator, styled the same way: a bordered
+       card with labelled fields, a prominent result line, a Calculate
+       button and a disclaimer strip along the bottom. Fields are
+       prepopulated with sensible defaults (parsed from this deal's
+       capital range where possible) so the calculator never opens
+       empty — members can edit any of them before calculating. ABTA
+       is not a financial adviser (Platform Membership Agreement), so
+       the disclaimer stays attached to every result. Computes a real
+       IRR (Newton-Raphson on the cash flow series) rather than a
+       simplified CAGR, assuming the initial investment is returned in
+       full in the final year on top of any annual distribution. -->
   <div class="full-width-section">
-    <div class="deal-section" style="margin-bottom:0">
-      <div class="section-title">Indicative Return Calculator</div>
-      <p class="calc-sentence">
-        My initial investment is
-        <input type="number" class="form-input calc-inline-input" id="calcInvestment" placeholder="USD" min="0" step="any" aria-label="Initial investment, USD">
-        I expect to receive
-        <input type="number" class="form-input calc-inline-input" id="calcAnnualDist" placeholder="USD" min="0" step="any" aria-label="Annual distribution, USD">
-        at the end of each year, for the next
-        <input type="number" class="form-input calc-inline-input calc-inline-input-sm" id="calcYears" placeholder="e.g. 5" min="1" max="30" step="1" aria-label="Number of years">
-        years — with my initial investment returned in full in the final year.
-      </p>
-      <button type="button" class="btn-modal-submit" onclick="calculateIRR()">Calculate →</button>
-      <p class="calc-intro">Figures you enter only — not a projection, forecast or guarantee, and not verified by ABTA.</p>
-      <div id="calcResult" style="display:none"></div>
+    <div class="calc-card">
+      <div class="calc-card-body">
+        <div class="calc-card-title">Indicative Return Calculator</div>
+        <div class="calc-fields">
+          <div class="form-group">
+            <label class="form-label" for="calcInvestment">Investment (USD)</label>
+            <input type="number" class="form-input" id="calcInvestment" min="0" step="any">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="calcAnnualDist">Annual distribution (USD)</label>
+            <input type="number" class="form-input" id="calcAnnualDist" min="0" step="any">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="calcYears">Hold period (years)</label>
+            <input type="number" class="form-input" id="calcYears" min="1" max="30" step="1">
+          </div>
+        </div>
+        <p class="calc-assumption">Assumes your initial investment is returned in full in the final year, in addition to that year's distribution.</p>
+        <div class="calc-result-line" id="calcResult">
+          <span class="calc-result-figure" id="calcResultFigure">—</span>
+          <div class="calc-result-caption">
+            <span class="calc-result-label">Indicative IRR</span>
+            <span class="calc-result-sub" id="calcResultSub">Enter figures and calculate to see a result</span>
+          </div>
+        </div>
+      </div>
+      <div class="calc-card-footer">
+        <button type="button" class="btn-modal-submit" onclick="calculateIRR()">Calculate →</button>
+        <p class="calc-disclaimer">Indicative only, based solely on the figures entered — not a projection, forecast, valuation or guarantee. ABTA does not verify or endorse these inputs and is not a financial adviser; seek independent professional advice before investing.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Equivalent to Zoopla's "Local area information" — context about
+       the market this deal sits in, using AMI's own editorial content
+       rather than any third-party data. Hidden if nothing matches
+       this deal's region/sector. -->
+  <div class="full-width-section">
+    <div class="deal-section" id="relatedArticlesSection" style="display:none;margin-bottom:0">
+      <div class="section-title">Related Market Intelligence</div>
+      <div class="related-articles-grid" id="relatedArticlesList"></div>
     </div>
   </div>
 
@@ -557,17 +592,20 @@
     const investment  = parseFloat(document.getElementById('calcInvestment').value);
     const annualDist  = parseFloat(document.getElementById('calcAnnualDist').value) || 0;
     const years       = parseInt(document.getElementById('calcYears').value, 10);
-    const resultEl    = document.getElementById('calcResult');
-    resultEl.style.display = 'block';
+    const figureEl    = document.getElementById('calcResultFigure');
+    const subEl       = document.getElementById('calcResultSub');
 
     if(!investment || investment <= 0 || !years || years < 1){
-      resultEl.innerHTML = '<div class="calc-result"><p class="calc-error">Enter an investment amount and a number of years to calculate.</p></div>';
+      figureEl.textContent = '—';
+      figureEl.className = 'calc-result-figure calc-error';
+      subEl.textContent = 'Enter an investment amount and a number of years to calculate.';
       return;
     }
+    figureEl.className = 'calc-result-figure';
 
     // Initial investment is assumed returned in full in the final
     // year, on top of that year's distribution — a simple bond-style
-    // cash flow, matching the "at the end of each year" phrasing above.
+    // cash flow (see the assumption note above the result line).
     const cashflows = [-investment];
     for(let y = 1; y <= years; y++){
       cashflows.push(y === years ? annualDist + investment : annualDist);
@@ -576,14 +614,30 @@
     const totalReturned = annualDist * years + investment;
     const multiple = totalReturned / investment;
 
-    resultEl.innerHTML =
-      '<div class="calc-result">'
-        +'<div><div class="calc-result-figure">'+(irr*100).toFixed(1)+'%</div>'
-        +'<div class="calc-result-label">Indicative IRR</div></div>'
-        +'<div class="calc-result-sub">'+multiple.toFixed(2)+'x multiple over '+years+' year'+(years===1?'':'s')
-          +' · USD '+Math.round(totalReturned).toLocaleString()+' returned on USD '+Math.round(investment).toLocaleString()+'</div>'
-        +'<div class="calc-disclaimer">Indicative only, based solely on the figures entered — not a projection, forecast, valuation or guarantee. ABTA does not verify or endorse these inputs and is not a financial adviser; seek independent professional advice before investing.</div>'
-      +'</div>';
+    figureEl.textContent = (irr*100).toFixed(1)+'%';
+    subEl.textContent = multiple.toFixed(2)+'x multiple over '+years+' year'+(years===1?'':'s')
+      +' · USD '+Math.round(totalReturned).toLocaleString()+' returned on USD '+Math.round(investment).toLocaleString();
+  }
+
+  /* Best-effort parse of a capital_range string (e.g. "USD 45-65m",
+     "Under USD 5m", "USD 30m") into a single USD number, used only to
+     prepopulate the calculator with a sensible starting figure — the
+     member can change it before calculating anything. Falls back to
+     a generic default if the string doesn't parse. */
+  function parseCapitalRangeToUSD(range){
+    if(!range) return null;
+    const unitMatch = String(range).match(/(bn|m|k)(?=\D|$)/i);
+    const mult = !unitMatch ? 1 : unitMatch[1].toLowerCase()==='bn' ? 1e9 : unitMatch[1].toLowerCase()==='m' ? 1e6 : 1e3;
+    const nums = (String(range).match(/\d+(?:\.\d+)?/g) || []).map(function(s){ return parseFloat(s)*mult; });
+    if(!nums.length) return null;
+    return nums.length===1 ? nums[0] : (nums[0]+nums[1])/2;
+  }
+
+  function prepopulateCalculator(deal){
+    const investment = parseCapitalRangeToUSD(deal && deal.capital_range) || 1000000;
+    document.getElementById('calcInvestment').value = Math.round(investment);
+    document.getElementById('calcYears').value = 5;
+    document.getElementById('calcAnnualDist').value = 0;
   }
 
   /* Call the Edge Function — returns array of { path, name, url } */
@@ -694,7 +748,7 @@
     try{
       const like = function(col,term){ return col+'.ilike.*'+encodeURIComponent(term)+'*'; };
       const res = await fetch(
-        SUPABASE_URL+'/rest/v1/articles?select=id,headline,standfirst,section,published_date'
+        SUPABASE_URL+'/rest/v1/articles?select=id,headline,standfirst,section,published_date,hero_image'
           +'&is_published=eq.true'
           +'&or=('+[
             like('tags',deal.region), like('tags',deal.sector),
@@ -702,19 +756,25 @@
             like('headline',deal.region), like('headline',deal.sector),
             like('standfirst',deal.region), like('standfirst',deal.sector)
           ].join(',')+')'
-          +'&order=published_date.desc&limit=3',
+          +'&order=published_date.desc&limit=4',
         { headers: { 'apikey': SUPABASE_ANON } }
       );
       if(!res.ok) return;
       const articles = await res.json();
       if(!Array.isArray(articles) || !articles.length) return;
 
+      // Same image-card markup as the homepage's article grid
+      // (.article-card / .card-img) — see index.html's articleCardsContainer.
       document.getElementById('relatedArticlesList').innerHTML = articles.map(function(a){
-        return '<a class="related-article-link" href="article.html?id='+encodeURIComponent(a.id)+'">'
-          +'<div class="related-article-section">'+esc(a.section||'AMI')+'</div>'
-          +'<div class="related-article-headline">'+esc(a.headline)+'</div>'
-          +(a.standfirst ? '<div class="related-article-standfirst">'+esc(a.standfirst)+'</div>' : '')
-          +'</a>';
+        const img = a.hero_image
+          ? '<img src="'+esc(a.hero_image)+'" class="related-article-img" alt="" loading="lazy" onerror="this.outerHTML=\'<div class=related-article-img-placeholder>📰</div>\'">'
+          : '<div class="related-article-img-placeholder">📰</div>';
+        return '<a class="related-article-card" href="article.html?id='+encodeURIComponent(a.id)+'">'
+          + img
+          + '<div class="related-article-content">'
+          + '<div class="related-article-kicker">'+esc(a.section||'AMI')+'</div>'
+          + '<div class="related-article-headline">'+esc(a.headline)+'</div>'
+          + '</div></a>';
       }).join('');
       document.getElementById('relatedArticlesSection').style.display = 'block';
     }catch(err){
@@ -816,6 +876,11 @@
     document.getElementById('attrSector').textContent  = deal.sector;
     document.getElementById('attrRegion').textContent  = deal.region;
     document.getElementById('attrCapital').textContent = deal.capital_range || '—';
+
+    // Return calculator — always prepopulated (parsed from this
+    // deal's capital range where possible) so it's never blank;
+    // members can edit any figure before calculating.
+    prepopulateCalculator(deal);
 
     // Investment Highlights — only shown if ABTA filled this in at
     // approval time (see docs/deal-room-highlights-facts-schema.sql).
