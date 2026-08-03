@@ -97,7 +97,12 @@
     .btn-contact-abta:hover{background:var(--gold-light)}
 
     /* ── DEAL BODY ───────────────────────────── */
-    .deal-body{max-width:var(--box);margin:0 auto;padding:40px max(var(--gutter),calc((100% - var(--box))/2 + var(--gutter)));display:grid;grid-template-columns:1fr 380px;gap:40px;align-items:start}
+    /* minmax(0,1fr) rather than a bare 1fr — without it, a grid track
+       won't shrink below its content's min-content width, so a long
+       unbreakable value anywhere in the main column can force the
+       whole grid wider than the viewport and push the second column
+       (and anything after it) off-screen, clipped by overflow-x:hidden. */
+    .deal-body{max-width:var(--box);margin:0 auto;padding:40px max(var(--gutter),calc((100% - var(--box))/2 + var(--gutter)));display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:40px;align-items:start}
     @media(max-width:900px){.deal-body{grid-template-columns:1fr;gap:28px}}
 
     /* ── FULL-WIDTH SECTIONS ─────────────────── */
@@ -113,7 +118,7 @@
     .deal-summary-text{font-size:15px;color:var(--text);line-height:1.75}
 
     /* ── ATTR GRID ───────────────────────────── */
-    .attr-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .attr-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
     .attr-cell{background:var(--card-bg);border:1px solid var(--divider);padding:14px 16px;border-radius:2px}
     .attr-cell-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-soft);margin-bottom:4px}
     .attr-cell-value{font-size:15px;font-weight:600;color:var(--text)}
@@ -134,14 +139,14 @@
     .related-article-standfirst{font-size:12px;color:var(--text-soft);margin-top:4px;line-height:1.5}
 
     /* ── INDICATIVE RETURN CALCULATOR ──────────
-       Simple single-row layout at full page width — one row of
-       inputs plus the Calculate button, then one result line. */
-    .calc-grid{display:grid;grid-template-columns:repeat(4,1fr) auto;gap:14px;align-items:end;margin-bottom:10px}
-    .calc-btn-group{margin-bottom:0}
-    .calc-grid .btn-modal-submit{white-space:nowrap}
-    @media(max-width:900px){.calc-grid{grid-template-columns:1fr 1fr}}
-    @media(max-width:480px){.calc-grid{grid-template-columns:1fr}}
-    .calc-intro{font-size:11px;color:var(--text-soft);line-height:1.6}
+       Plain-English sentence with inline input boxes, at full page
+       width — three figures only (investment, annual distribution,
+       years); the initial investment is assumed returned in the
+       final year, so there's no separate exit-value field to fill in. */
+    .calc-sentence{font-size:15px;color:var(--text);line-height:2.6;margin-bottom:16px}
+    .calc-inline-input{display:inline-block;width:150px;margin:0 4px;padding:6px 10px;font-size:14px;vertical-align:baseline}
+    .calc-inline-input-sm{width:70px}
+    .calc-intro{font-size:11px;color:var(--text-soft);line-height:1.6;margin-top:12px}
     .calc-result{margin-top:16px;padding-top:16px;border-top:1px solid var(--divider);display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
     .calc-result-figure{font-family:'Playfair Display',serif;font-size:30px;font-weight:800;color:var(--gold);line-height:1}
     .calc-result-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-soft)}
@@ -374,27 +379,16 @@
   <div class="full-width-section">
     <div class="deal-section" style="margin-bottom:0">
       <div class="section-title">Indicative Return Calculator</div>
-      <div class="calc-grid">
-        <div class="form-group">
-          <label class="form-label" for="calcInvestment">Investment (USD)</label>
-          <input type="number" class="form-input" id="calcInvestment" placeholder="e.g. 2,000,000" min="0" step="any">
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="calcYears">Hold period (years)</label>
-          <input type="number" class="form-input" id="calcYears" placeholder="e.g. 5" min="1" max="30" step="1">
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="calcAnnualDist">Annual distribution (USD)</label>
-          <input type="number" class="form-input" id="calcAnnualDist" placeholder="0" min="0" step="any">
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="calcExitValue">Exit value (USD)</label>
-          <input type="number" class="form-input" id="calcExitValue" placeholder="e.g. 3,500,000" min="0" step="any">
-        </div>
-        <div class="form-group calc-btn-group">
-          <button type="button" class="btn-modal-submit" onclick="calculateIRR()">Calculate →</button>
-        </div>
-      </div>
+      <p class="calc-sentence">
+        My initial investment is
+        <input type="number" class="form-input calc-inline-input" id="calcInvestment" placeholder="USD" min="0" step="any" aria-label="Initial investment, USD">
+        I expect to receive
+        <input type="number" class="form-input calc-inline-input" id="calcAnnualDist" placeholder="USD" min="0" step="any" aria-label="Annual distribution, USD">
+        at the end of each year, for the next
+        <input type="number" class="form-input calc-inline-input calc-inline-input-sm" id="calcYears" placeholder="e.g. 5" min="1" max="30" step="1" aria-label="Number of years">
+        years — with my initial investment returned in full in the final year.
+      </p>
+      <button type="button" class="btn-modal-submit" onclick="calculateIRR()">Calculate →</button>
       <p class="calc-intro">Figures you enter only — not a projection, forecast or guarantee, and not verified by ABTA.</p>
       <div id="calcResult" style="display:none"></div>
     </div>
@@ -545,27 +539,25 @@
 
   function calculateIRR(){
     const investment  = parseFloat(document.getElementById('calcInvestment').value);
-    const years       = parseInt(document.getElementById('calcYears').value, 10);
     const annualDist  = parseFloat(document.getElementById('calcAnnualDist').value) || 0;
-    const exitValue   = parseFloat(document.getElementById('calcExitValue').value) || 0;
+    const years       = parseInt(document.getElementById('calcYears').value, 10);
     const resultEl    = document.getElementById('calcResult');
     resultEl.style.display = 'block';
 
     if(!investment || investment <= 0 || !years || years < 1){
-      resultEl.innerHTML = '<div class="calc-result"><p class="calc-error">Enter at least an investment amount and a hold period to calculate.</p></div>';
-      return;
-    }
-    if(!annualDist && !exitValue){
-      resultEl.innerHTML = '<div class="calc-result"><p class="calc-error">Enter an expected exit value and/or an annual distribution.</p></div>';
+      resultEl.innerHTML = '<div class="calc-result"><p class="calc-error">Enter an investment amount and a number of years to calculate.</p></div>';
       return;
     }
 
+    // Initial investment is assumed returned in full in the final
+    // year, on top of that year's distribution — a simple bond-style
+    // cash flow, matching the "at the end of each year" phrasing above.
     const cashflows = [-investment];
     for(let y = 1; y <= years; y++){
-      cashflows.push(y === years ? annualDist + exitValue : annualDist);
+      cashflows.push(y === years ? annualDist + investment : annualDist);
     }
     const irr = calcIRR(cashflows);
-    const totalReturned = annualDist * years + exitValue;
+    const totalReturned = annualDist * years + investment;
     const multiple = totalReturned / investment;
 
     resultEl.innerHTML =
