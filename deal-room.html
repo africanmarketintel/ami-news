@@ -212,6 +212,17 @@
     .urgency-dot.amber{background:#C9A84C}
     .urgency-dot.red{background:#B85C38}
 
+    /* ── CAPITAL ROW — the promoted "price" line, replacing the old
+       boxed attrs grid's equal-weight treatment of every field.
+       Mirrors an estate listing's price-first hierarchy: the single
+       most decision-relevant number (indicative capital) leads,
+       paired with a small qualifier label and the deal type as a
+       lightweight pill rather than another grid cell. ── */
+    .teaser-capital-row{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+    .teaser-capital{font-family:'Playfair Display',serif;font-size:22px;font-weight:800;color:var(--text)}
+    .teaser-capital-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-soft)}
+    .teaser-secondary-facts{font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.02em;color:var(--text-soft);margin-bottom:14px}
+
     .teaser-location{display:flex;align-items:center;gap:8px;margin-bottom:14px}
     .teaser-region{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-soft)}
     .teaser-sector{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--terra)}
@@ -551,22 +562,21 @@
           <div class="teaser-header">
             <div class="teaser-meta">
               <span class="teaser-id">ABTA-2026-001</span>
-              <span class="teaser-type type-equity">Equity Investment</span>
             </div>
             <div class="teaser-urgency"><span class="urgency-dot"></span> 1–3 months</div>
+          </div>
+          <div class="teaser-capital-row">
+            <span class="teaser-capital">USD 45–65m</span>
+            <span class="teaser-capital-label">Indicative range</span>
+            <span class="teaser-type type-equity" style="margin-left:auto">Equity Investment</span>
           </div>
           <div class="teaser-location">
             <span class="teaser-region">East Africa</span>
             <span class="meta-divider">·</span>
             <span class="teaser-sector">Clean Energy</span>
           </div>
+          <div class="teaser-secondary-facts">Stake on offer: 25–40% · Stage: Operational</div>
           <p class="teaser-summary">An operational independent power producer seeks a strategic equity partner for a portfolio expansion across two East African markets. The business holds long-term power purchase agreements with sovereign offtakers and is targeting 120MW of additional capacity. The founding shareholder is offering a minority stake to a financially and operationally credible co-investor ahead of a structured refinancing process.</p>
-          <div class="teaser-attrs">
-            <div class="attr-item"><div class="attr-label">Stake on Offer</div><div class="attr-value">25–40%</div></div>
-            <div class="attr-item"><div class="attr-label">Target Raise</div><div class="attr-value">USD 45–65m</div></div>
-            <div class="attr-item"><div class="attr-label">Stage</div><div class="attr-value">Operational</div></div>
-            <div class="attr-item"><div class="attr-label">Instrument</div><div class="attr-value">Equity</div></div>
-          </div>
           <!-- Revealed data (Deal Room members only — populated by JS) -->
           <div class="revealed-data" id="revealed-001"></div>
           <div class="teaser-highlights">
@@ -579,7 +589,7 @@
             </ul>
           </div>
           <div class="teaser-footer">
-            <span class="teaser-date">Published: 18 June 2026 · Ref: ABTA-2026-001</span>
+            <span class="teaser-date">Published: 18 June 2026</span>
             <div class="teaser-actions">
               <button class="btn-bookmark" onclick="bookmarkTeaser('ABTA-2026-001',this)">Bookmark for review</button>
               <button class="btn-reveal" id="reveal-btn-001" onclick="handleReveal('001')">Reveal counterparty →</button>
@@ -595,22 +605,21 @@
           <div class="teaser-header">
             <div class="teaser-meta">
               <span class="teaser-id">ABTA-2026-002</span>
-              <span class="teaser-type type-ma">Acquisition</span>
             </div>
             <div class="teaser-urgency"><span class="urgency-dot amber"></span> Immediate</div>
+          </div>
+          <div class="teaser-capital-row">
+            <span class="teaser-capital">USD 18–25m</span>
+            <span class="teaser-capital-label">Indicative range</span>
+            <span class="teaser-type type-ma" style="margin-left:auto">Acquisition</span>
           </div>
           <div class="teaser-location">
             <span class="teaser-region">West Africa</span>
             <span class="meta-divider">·</span>
             <span class="teaser-sector">Financial Services</span>
           </div>
+          <div class="teaser-secondary-facts">Asset type: Full sale · Stage: Advanced · Licence status: Licensed</div>
           <p class="teaser-summary">A UK-listed financial holding group is seeking a buyer for its West African consumer lending subsidiary, comprising operations in two Francophone markets. The business holds a valid microfinance licence, a performing loan book and an established agent-banking network. The vendor requires a clean full exit within 90 days of heads of terms.</p>
-          <div class="teaser-attrs">
-            <div class="attr-item"><div class="attr-label">Asset Type</div><div class="attr-value">Full Sale</div></div>
-            <div class="attr-item"><div class="attr-label">Indicative Value</div><div class="attr-value">USD 18–25m</div></div>
-            <div class="attr-item"><div class="attr-label">Stage</div><div class="attr-value">Advanced</div></div>
-            <div class="attr-item"><div class="attr-label">Licence Status</div><div class="attr-value">Licensed</div></div>
-          </div>
           <!-- Revealed data (Deal Room members only — populated by JS) -->
           <div class="revealed-data" id="revealed-002"></div>
           <div class="teaser-highlights">
@@ -623,7 +632,7 @@
             </ul>
           </div>
           <div class="teaser-footer">
-            <span class="teaser-date">Published: 10 June 2026 · Ref: ABTA-2026-002</span>
+            <span class="teaser-date">Published: 10 June 2026</span>
             <div class="teaser-actions">
               <button class="btn-bookmark" onclick="bookmarkTeaser('ABTA-2026-002',this)">Bookmark for review</button>
               <button class="btn-reveal" id="reveal-btn-002" onclick="handleReveal('002')">Reveal counterparty →</button>
@@ -637,17 +646,17 @@
         <!-- TEASER 3 -->
         <article class="teaser-card" data-type="debt" data-region="north-africa" data-sector="Infrastructure">
           <div class="teaser-header">
-            <div class="teaser-meta"><span class="teaser-id">ABTA-2026-003</span><span class="teaser-type type-debt">Debt Financing</span></div>
+            <div class="teaser-meta"><span class="teaser-id">ABTA-2026-003</span></div>
             <div class="teaser-urgency"><span class="urgency-dot"></span> 3–6 months</div>
           </div>
-          <div class="teaser-location"><span class="teaser-region">North Africa</span><span class="meta-divider">·</span><span class="teaser-sector">Infrastructure</span></div>
-          <p class="teaser-summary">A regional infrastructure developer is seeking mezzanine debt to bridge construction of a logistics hub in a high-growth North African gateway city. The facility will sit behind senior DFI debt and ahead of sponsor equity. The developer holds a confirmed anchor tenant on a 10-year lease.</p>
-          <div class="teaser-attrs">
-            <div class="attr-item"><div class="attr-label">Instrument</div><div class="attr-value">Mezzanine</div></div>
-            <div class="attr-item"><div class="attr-label">Target</div><div class="attr-value">USD 30m</div></div>
-            <div class="attr-item"><div class="attr-label">Tenor</div><div class="attr-value">5 years</div></div>
-            <div class="attr-item"><div class="attr-label">Security</div><div class="attr-value">Asset-backed</div></div>
+          <div class="teaser-capital-row">
+            <span class="teaser-capital">USD 30m</span>
+            <span class="teaser-capital-label">Indicative range</span>
+            <span class="teaser-type type-debt" style="margin-left:auto">Debt Financing</span>
           </div>
+          <div class="teaser-location"><span class="teaser-region">North Africa</span><span class="meta-divider">·</span><span class="teaser-sector">Infrastructure</span></div>
+          <div class="teaser-secondary-facts">Instrument: Mezzanine · Tenor: 5 years · Security: Asset-backed</div>
+          <p class="teaser-summary">A regional infrastructure developer is seeking mezzanine debt to bridge construction of a logistics hub in a high-growth North African gateway city. The facility will sit behind senior DFI debt and ahead of sponsor equity. The developer holds a confirmed anchor tenant on a 10-year lease.</p>
           <div class="teaser-highlights">
             <div class="teaser-highlights-title">Investment Highlights</div>
             <ul class="highlight-list">
@@ -660,7 +669,7 @@
           <!-- Revealed data (Deal Room members only — populated by JS) -->
           <div class="revealed-data" id="revealed-003"></div>
           <div class="teaser-footer">
-            <span class="teaser-date">Published: 3 June 2026 · Ref: ABTA-2026-003</span>
+            <span class="teaser-date">Published: 3 June 2026</span>
             <div class="teaser-actions">
               <button class="btn-bookmark" onclick="bookmarkTeaser('ABTA-2026-003',this)">Bookmark for review</button>
               <button class="btn-reveal" id="reveal-btn-003" onclick="handleReveal('003')">Reveal counterparty →</button>
@@ -2752,9 +2761,13 @@
       <div class="teaser-header">
         <div class="teaser-meta">
           <span class="teaser-id">${esc(ref)}</span>
-          <span class="teaser-type ${typeCSS}">${esc(deal.deal_type)}</span>
           ${isNew ? `<span class="badge-new">New</span>` : ''}
         </div>
+      </div>
+      <div class="teaser-capital-row">
+        <span class="teaser-capital">${esc(deal.capital_range||'—')}</span>
+        <span class="teaser-capital-label">Indicative range</span>
+        <span class="teaser-type ${typeCSS}" style="margin-left:auto">${esc(deal.deal_type)}</span>
       </div>
       <div class="teaser-location">
         <span class="teaser-region">${esc(deal.region)}</span>
@@ -2767,14 +2780,8 @@
       ${summaryIsLong
         ? `<p class="teaser-summary" data-full="${esc(summaryFull)}" data-short="${esc(summaryShort)}">${esc(summaryShort)} <button type="button" class="summary-toggle" onclick="toggleSummary(this)">Read more</button></p>`
         : `<p class="teaser-summary">${esc(summaryFull)}</p>`}
-      <div class="teaser-attrs">
-        <div class="attr-item"><div class="attr-label">Capital Range</div><div class="attr-value">${esc(deal.capital_range||'—')}</div></div>
-        <div class="attr-item"><div class="attr-label">Sector</div><div class="attr-value">${esc(deal.sector)}</div></div>
-        <div class="attr-item"><div class="attr-label">Geography</div><div class="attr-value">${esc(deal.region)}</div></div>
-        <div class="attr-item"><div class="attr-label">Type</div><div class="attr-value">${esc(deal.deal_type)}</div></div>
-      </div>
       <div class="teaser-footer">
-        <span class="teaser-date">${pubDate?'Published: '+pubDate+' · ':''}Ref: ${esc(ref)}</span>
+        <span class="teaser-date">${pubDate?'Published: '+pubDate:''}</span>
         <div class="teaser-actions">
           <button class="btn-bookmark" onclick="bookmarkTeaser('${esc(ref)}',this)">Bookmark for review</button>
           ${actionBtn}
