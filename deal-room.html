@@ -248,7 +248,7 @@
     .teaser-highlights-title{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-soft);margin-bottom:8px}
     .highlight-list{list-style:none;display:flex;flex-direction:column;gap:5px}
     .highlight-list li{font-size:14px;color:var(--text);padding-left:18px;position:relative}
-    .highlight-list li::before{content:'•';position:absolute;left:0;color:var(--gold);font-size:16px;line-height:1}
+    .highlight-list li::before{content:'✓';position:absolute;left:0;color:var(--gold);font-size:13px;line-height:1.5;font-weight:700}
 
     .teaser-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding-top:16px}
     .teaser-date{font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);letter-spacing:.06em}
@@ -560,9 +560,7 @@
         <!-- TEASER 1 -->
         <article class="teaser-card" data-type="equity" data-region="east-africa" data-sector="Clean Energy">
           <div class="teaser-header">
-            <div class="teaser-meta">
-              <span class="teaser-id">ABTA-2026-001</span>
-            </div>
+            <div class="teaser-meta"></div>
             <div class="teaser-urgency"><span class="urgency-dot"></span> 1–3 months</div>
           </div>
           <div class="teaser-capital-row">
@@ -591,7 +589,7 @@
           <div class="teaser-footer">
             <span class="teaser-date">Published: 18 June 2026</span>
             <div class="teaser-actions">
-              <button class="btn-bookmark" onclick="bookmarkTeaser('ABTA-2026-001',this)">Bookmark for review</button>
+              <a class="btn-bookmark" href="mailto:ami@abta.africa?subject=Deal%20Room%20enquiry" style="text-decoration:none;display:inline-flex;align-items:center">Email</a>
               <button class="btn-reveal" id="reveal-btn-001" onclick="handleReveal('001')">Reveal counterparty →</button>
               <button class="btn-interest" onclick="handleInterest('ABTA-2026-001','Equity Investment — Clean Energy, East Africa')">Confirm Interest →</button>
               <button class="btn-bookmark" onclick="toggleQA('ABTA-2026-001','qa-001')">Questions</button>
@@ -603,9 +601,7 @@
         <!-- TEASER 2 -->
         <article class="teaser-card" data-type="ma" data-region="west-africa" data-sector="Financial Services">
           <div class="teaser-header">
-            <div class="teaser-meta">
-              <span class="teaser-id">ABTA-2026-002</span>
-            </div>
+            <div class="teaser-meta"></div>
             <div class="teaser-urgency"><span class="urgency-dot amber"></span> Immediate</div>
           </div>
           <div class="teaser-capital-row">
@@ -634,7 +630,7 @@
           <div class="teaser-footer">
             <span class="teaser-date">Published: 10 June 2026</span>
             <div class="teaser-actions">
-              <button class="btn-bookmark" onclick="bookmarkTeaser('ABTA-2026-002',this)">Bookmark for review</button>
+              <a class="btn-bookmark" href="mailto:ami@abta.africa?subject=Deal%20Room%20enquiry" style="text-decoration:none;display:inline-flex;align-items:center">Email</a>
               <button class="btn-reveal" id="reveal-btn-002" onclick="handleReveal('002')">Reveal counterparty →</button>
               <button class="btn-interest" onclick="handleInterest('ABTA-2026-002','Acquisition — Financial Services, West Africa')">Confirm Interest →</button>
               <button class="btn-bookmark" onclick="toggleQA('ABTA-2026-002','qa-002')">Questions</button>
@@ -646,7 +642,7 @@
         <!-- TEASER 3 -->
         <article class="teaser-card" data-type="debt" data-region="north-africa" data-sector="Infrastructure">
           <div class="teaser-header">
-            <div class="teaser-meta"><span class="teaser-id">ABTA-2026-003</span></div>
+            <div class="teaser-meta"></div>
             <div class="teaser-urgency"><span class="urgency-dot"></span> 3–6 months</div>
           </div>
           <div class="teaser-capital-row">
@@ -671,7 +667,7 @@
           <div class="teaser-footer">
             <span class="teaser-date">Published: 3 June 2026</span>
             <div class="teaser-actions">
-              <button class="btn-bookmark" onclick="bookmarkTeaser('ABTA-2026-003',this)">Bookmark for review</button>
+              <a class="btn-bookmark" href="mailto:ami@abta.africa?subject=Deal%20Room%20enquiry" style="text-decoration:none;display:inline-flex;align-items:center">Email</a>
               <button class="btn-reveal" id="reveal-btn-003" onclick="handleReveal('003')">Reveal counterparty →</button>
               <button class="btn-interest" onclick="handleInterest('ABTA-2026-003','Debt Financing — Infrastructure, North Africa')">Confirm Interest →</button>
               <button class="btn-bookmark" onclick="toggleQA('ABTA-2026-003','qa-003')">Questions</button>
@@ -1751,7 +1747,10 @@
     if(!hasActiveSession()){ requireSignIn(); return; }
     interestModalTrigger=document.activeElement;
     document.getElementById('hiddenTeaserRef').value=ref;
-    document.getElementById('modalRef').textContent=ref+' — '+label;
+    // ref stays in the hidden field (submitted with the form) but is
+    // no longer shown to the member — it's ABTA's internal tag, not
+    // something customers should see.
+    document.getElementById('modalRef').textContent=label;
     document.getElementById('interestModal').classList.add('open');
     document.getElementById('modalFormState').style.display='';
     document.getElementById('modalSuccessState').style.display='none';
@@ -2753,6 +2752,23 @@
       ? `<a href="deal-detail.html?id=${deal.id}" class="btn-interest" style="text-decoration:none">View full deal →</a>`
       : `<button class="btn-interest" onclick="openRegistration()">Join to view full deal →</button>`;
 
+    // Both fields are ABTA-curated at approval time (Supabase Table
+    // Editor), not submitter input — see docs/deal-room-highlights-
+    // facts-schema.sql. Omitted entirely when empty, same as
+    // teaser_headline already does.
+    const secondaryFacts = Array.isArray(deal.secondary_facts) ? deal.secondary_facts : [];
+    const secondaryFactsHTML = secondaryFacts.length
+      ? `<div class="teaser-secondary-facts">${secondaryFacts.map(f=>esc(f.label)+': '+esc(f.value)).join(' · ')}</div>`
+      : '';
+
+    const highlightsList = Array.isArray(deal.highlights) ? deal.highlights.filter(Boolean) : [];
+    const highlightsHTML = highlightsList.length
+      ? `<div class="teaser-highlights">
+          <div class="teaser-highlights-title">${deal.deal_type==='Acquisition / Sale' ? 'Transaction Highlights' : 'Investment Highlights'}</div>
+          <ul class="highlight-list">${highlightsList.map(h=>'<li>'+esc(h)+'</li>').join('')}</ul>
+        </div>`
+      : '';
+
     const article = document.createElement('article');
     article.className = 'teaser-card';
     article.dataset.type = typeKey;
@@ -2760,7 +2776,6 @@
     article.innerHTML = `
       <div class="teaser-header">
         <div class="teaser-meta">
-          <span class="teaser-id">${esc(ref)}</span>
           ${isNew ? `<span class="badge-new">New</span>` : ''}
         </div>
       </div>
@@ -2774,16 +2789,18 @@
         <span class="meta-divider">·</span>
         <span class="teaser-sector">${esc(deal.sector)}</span>
       </div>
+      ${secondaryFactsHTML}
       ${deal.teaser_headline
         ? `<div style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);margin-bottom:10px">${esc(deal.teaser_headline)}</div>`
         : ''}
       ${summaryIsLong
         ? `<p class="teaser-summary" data-full="${esc(summaryFull)}" data-short="${esc(summaryShort)}">${esc(summaryShort)} <button type="button" class="summary-toggle" onclick="toggleSummary(this)">Read more</button></p>`
         : `<p class="teaser-summary">${esc(summaryFull)}</p>`}
+      ${highlightsHTML}
       <div class="teaser-footer">
         <span class="teaser-date">${pubDate?'Published: '+pubDate:''}</span>
         <div class="teaser-actions">
-          <button class="btn-bookmark" onclick="bookmarkTeaser('${esc(ref)}',this)">Bookmark for review</button>
+          <a class="btn-bookmark" href="mailto:ami@abta.africa?subject=Deal%20Room%20enquiry" style="text-decoration:none;display:inline-flex;align-items:center">Email</a>
           ${actionBtn}
         </div>
       </div>`;
