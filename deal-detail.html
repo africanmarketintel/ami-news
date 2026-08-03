@@ -100,6 +100,12 @@
     .deal-body{max-width:var(--box);margin:0 auto;padding:40px max(var(--gutter),calc((100% - var(--box))/2 + var(--gutter)));display:grid;grid-template-columns:1fr 380px;gap:40px;align-items:start}
     @media(max-width:900px){.deal-body{grid-template-columns:1fr;gap:28px}}
 
+    /* ── FULL-WIDTH SECTIONS ─────────────────── */
+    /* Sections that sit below .deal-body (the calculator, Similar
+       Opportunities) but should share the same page max-width and
+       side padding rather than stretching edge-to-edge. */
+    .full-width-section{max-width:var(--box);margin:0 auto;padding:0 max(var(--gutter),calc((100% - var(--box))/2 + var(--gutter))) 40px}
+
     /* ── SECTIONS ────────────────────────────── */
     .deal-section{margin-bottom:32px}
     .deal-section:last-child{margin-bottom:0}
@@ -127,16 +133,21 @@
     .related-article-link:hover .related-article-headline{color:var(--gold)}
     .related-article-standfirst{font-size:12px;color:var(--text-soft);margin-top:4px;line-height:1.5}
 
-    /* ── INDICATIVE RETURN CALCULATOR ────────── */
-    .calc-intro{font-size:12px;color:var(--text-soft);line-height:1.6;margin-bottom:18px}
-    .calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:6px}
+    /* ── INDICATIVE RETURN CALCULATOR ──────────
+       Simple single-row layout at full page width — one row of
+       inputs plus the Calculate button, then one result line. */
+    .calc-grid{display:grid;grid-template-columns:repeat(4,1fr) auto;gap:14px;align-items:end;margin-bottom:10px}
+    .calc-btn-group{margin-bottom:0}
+    .calc-grid .btn-modal-submit{white-space:nowrap}
+    @media(max-width:900px){.calc-grid{grid-template-columns:1fr 1fr}}
     @media(max-width:480px){.calc-grid{grid-template-columns:1fr}}
-    .calc-result{margin-top:18px;padding-top:18px;border-top:1px solid var(--divider)}
-    .calc-result-figure{font-family:'Playfair Display',serif;font-size:34px;font-weight:800;color:var(--gold);line-height:1}
-    .calc-result-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-soft);margin-top:4px}
-    .calc-result-sub{font-size:13px;color:var(--text);margin-top:10px}
+    .calc-intro{font-size:11px;color:var(--text-soft);line-height:1.6}
+    .calc-result{margin-top:16px;padding-top:16px;border-top:1px solid var(--divider);display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+    .calc-result-figure{font-family:'Playfair Display',serif;font-size:30px;font-weight:800;color:var(--gold);line-height:1}
+    .calc-result-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-soft)}
+    .calc-result-sub{font-size:13px;color:var(--text)}
     .calc-error{font-size:13px;color:var(--terra-dark)}
-    .calc-disclaimer{font-size:11px;color:var(--text-soft);line-height:1.6;margin-top:16px;padding-top:16px;border-top:1px solid var(--divider)}
+    .calc-disclaimer{width:100%;font-size:11px;color:var(--text-soft);line-height:1.6;margin-top:8px}
 
     /* ── SIMILAR OPPORTUNITIES ───────────────────── */
     .similar-deals-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
@@ -305,41 +316,6 @@
         </div>
       </div>
 
-      <!-- Equivalent to Zoopla's mortgage calculator — a "run the
-           numbers" utility, but framed as strictly indicative/
-           planning-only. ABTA is explicitly not a financial adviser
-           (see the Platform Membership Agreement), so this is styled
-           to match that disclaimer load: heavy, unavoidable, printed
-           with every result, not just once in small type. Computes a
-           real IRR (Newton-Raphson on the entered cash flow series),
-           not a simplified CAGR, since deals may include periodic
-           distributions (debt/mezzanine coupons) as well as a single
-           exit value (typical equity/M&A structure). -->
-      <div class="deal-section">
-        <div class="section-title">Indicative Return Calculator</div>
-        <p class="calc-intro">Estimate an annualised return based on figures you enter — not a projection, forecast, valuation or guarantee. ABTA does not verify or endorse these inputs.</p>
-        <div class="calc-grid">
-          <div class="form-group">
-            <label class="form-label" for="calcInvestment">Investment amount (USD)</label>
-            <input type="number" class="form-input" id="calcInvestment" placeholder="e.g. 2000000" min="0" step="any">
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="calcYears">Hold period (years)</label>
-            <input type="number" class="form-input" id="calcYears" placeholder="e.g. 5" min="1" max="30" step="1">
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="calcAnnualDist">Annual cash distribution (USD, optional)</label>
-            <input type="number" class="form-input" id="calcAnnualDist" placeholder="0" min="0" step="any">
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="calcExitValue">Expected exit / terminal value (USD)</label>
-            <input type="number" class="form-input" id="calcExitValue" placeholder="e.g. 3500000" min="0" step="any">
-          </div>
-        </div>
-        <button type="button" class="btn-modal-submit" onclick="calculateIRR()">Calculate →</button>
-        <div id="calcResult" style="display:none"></div>
-      </div>
-
       <div class="deal-section">
         <div class="section-title">Supporting Documents</div>
         <div class="doc-list" id="docsList">
@@ -384,14 +360,56 @@
     </aside>
   </div>
 
+  <!-- ═══ INDICATIVE RETURN CALCULATOR ════════════ -->
+  <!-- Full page width, same as Similar Opportunities below — sits
+       after Supporting Documents in the reading order. Equivalent to
+       Zoopla's mortgage calculator ("run the numbers" utility), kept
+       simple: a single row of inputs, one result line, one disclaimer
+       line. ABTA is not a financial adviser (Platform Membership
+       Agreement), so the disclaimer stays attached to every result,
+       just short rather than a wall of text. Computes a real IRR
+       (Newton-Raphson on the cash flow series) rather than a
+       simplified CAGR, since deals may include periodic distributions
+       (debt/mezzanine coupons) as well as a single exit value. -->
+  <div class="full-width-section">
+    <div class="deal-section" style="margin-bottom:0">
+      <div class="section-title">Indicative Return Calculator</div>
+      <div class="calc-grid">
+        <div class="form-group">
+          <label class="form-label" for="calcInvestment">Investment (USD)</label>
+          <input type="number" class="form-input" id="calcInvestment" placeholder="e.g. 2,000,000" min="0" step="any">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="calcYears">Hold period (years)</label>
+          <input type="number" class="form-input" id="calcYears" placeholder="e.g. 5" min="1" max="30" step="1">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="calcAnnualDist">Annual distribution (USD)</label>
+          <input type="number" class="form-input" id="calcAnnualDist" placeholder="0" min="0" step="any">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="calcExitValue">Exit value (USD)</label>
+          <input type="number" class="form-input" id="calcExitValue" placeholder="e.g. 3,500,000" min="0" step="any">
+        </div>
+        <div class="form-group calc-btn-group">
+          <button type="button" class="btn-modal-submit" onclick="calculateIRR()">Calculate →</button>
+        </div>
+      </div>
+      <p class="calc-intro">Figures you enter only — not a projection, forecast or guarantee, and not verified by ABTA.</p>
+      <div id="calcResult" style="display:none"></div>
+    </div>
+  </div>
+
   <!-- ═══ SIMILAR OPPORTUNITIES ═══════════════════ -->
   <!-- Cross-sell for members who aren't sold on this specific deal —
        reads the same public deal_submissions_public view the Deal
        Room grid uses, filtered to the same sector or region as this
        deal, excluding it. Hidden entirely if nothing else matches. -->
-  <div class="deal-section" id="similarDealsSection" style="display:none;margin-top:8px">
-    <div class="section-title">Similar Opportunities</div>
-    <div class="similar-deals-grid" id="similarDealsGrid"></div>
+  <div class="full-width-section">
+    <div class="deal-section" id="similarDealsSection" style="display:none;margin-bottom:0">
+      <div class="section-title">Similar Opportunities</div>
+      <div class="similar-deals-grid" id="similarDealsGrid"></div>
+    </div>
   </div>
 
 </div>
@@ -552,11 +570,11 @@
 
     resultEl.innerHTML =
       '<div class="calc-result">'
-        +'<div class="calc-result-figure">'+(irr*100).toFixed(1)+'%</div>'
-        +'<div class="calc-result-label">Indicative annualised return (IRR)</div>'
-        +'<div class="calc-result-sub">'+multiple.toFixed(2)+'x total multiple over '+years+' year'+(years===1?'':'s')
-          +' · USD '+Math.round(totalReturned).toLocaleString()+' total returned on a USD '+Math.round(investment).toLocaleString()+' investment</div>'
-        +'<div class="calc-disclaimer">This is an indicative calculation based only on the figures you entered above. It is not a projection, forecast, valuation or guarantee of any outcome — actual returns depend on factors this calculator does not account for. ABTA does not verify, endorse or take responsibility for any figures entered here, and is not a financial adviser. Seek independent professional advice before making any investment decision.</div>'
+        +'<div><div class="calc-result-figure">'+(irr*100).toFixed(1)+'%</div>'
+        +'<div class="calc-result-label">Indicative IRR</div></div>'
+        +'<div class="calc-result-sub">'+multiple.toFixed(2)+'x multiple over '+years+' year'+(years===1?'':'s')
+          +' · USD '+Math.round(totalReturned).toLocaleString()+' returned on USD '+Math.round(investment).toLocaleString()+'</div>'
+        +'<div class="calc-disclaimer">Indicative only, based solely on the figures entered — not a projection, forecast, valuation or guarantee. ABTA does not verify or endorse these inputs and is not a financial adviser; seek independent professional advice before investing.</div>'
       +'</div>';
   }
 
