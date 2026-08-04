@@ -676,6 +676,34 @@
             <div id="anonCheckResults" style="display:none;margin-top:10px;background:var(--gold-pale);border:1px solid var(--border);border-left:3px solid var(--terra);border-radius:2px;padding:12px 16px;font-size:13px;color:var(--text-soft);line-height:1.6"></div>
           </div>
 
+          <div class="form-section-title" style="margin-top:8px">01a — Investment readiness <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional — for your own reference)</span></div>
+          <p style="font-size:13px;color:var(--text-soft);margin-bottom:16px;line-height:1.6">DFIs and DFI-adjacent investors typically pre-screen against financial records, governance, ESG/impact evidence and capital structure before a first meeting. Answer the two questions below and run the check to see a private read on where your submission stands — this is shown only to you and is never seen by ABTA or stored.</p>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="dealFinancialsStatus">Financial records</label>
+              <select id="dealFinancialsStatus" class="form-select">
+                <option value="" selected>Prefer not to say</option>
+                <option>3 years, audited</option>
+                <option>Some financial records, not fully audited</option>
+                <option>Not yet prepared</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="dealCapStructureStatus">Capital structure documentation</label>
+              <select id="dealCapStructureStatus" class="form-select">
+                <option value="" selected>Prefer not to say</option>
+                <option>Clearly documented</option>
+                <option>Partially documented</option>
+                <option>Not yet documented</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+            <button type="button" class="btn-reg-back" style="padding:7px 14px;font-size:10px" onclick="checkInvestmentReadiness()" id="readinessCheckBtn">Check investment readiness</button>
+            <span id="readinessCheckStatus" style="font-size:12px;color:var(--text-soft)"></span>
+          </div>
+          <div id="readinessCheckResults" style="display:none;margin-top:4px;margin-bottom:20px;background:var(--gold-pale);border:1px solid var(--border);border-left:3px solid var(--terra);border-radius:2px;padding:16px;font-size:13px;color:var(--text-soft);line-height:1.6"></div>
+
           <div class="form-section-title" style="margin-top:8px">02 — Your details (confidential — not published)</div>
           <div class="form-row">
             <div class="form-group">
@@ -1972,6 +2000,82 @@
     }catch(err){
       console.warn('checkSummaryAnonymity:', err);
       statusEl.textContent = 'Could not run the check right now — you can still submit; ABTA will review manually.';
+    }finally{
+      btn.disabled = false;
+    }
+  }
+
+  /* ════════════════════════════════════════════════
+     INVESTMENT READINESS CHECK — advisory only, private
+     to the submitter, never stored or shown to ABTA.
+     Calls deal-room-readiness-check (Gemini 3.6 Flash) to
+     score the submission against the four categories DFIs
+     and DFI-adjacent investors pre-screen on: financials,
+     governance, ESG/impact, capital structure.
+  ════════════════════════════════════════════════ */
+  const READINESS_STATUS_DOT = { ready: '●', partial: '◐', missing: '○' };
+  const READINESS_STATUS_COLOR = { ready: 'var(--green-mid)', partial: 'var(--terra)', missing: 'var(--text-soft)' };
+  const READINESS_CATEGORY_LABEL = {
+    financials: 'Financials',
+    governance: 'Governance',
+    esg_impact: 'ESG / impact',
+    capital_structure: 'Capital structure',
+  };
+
+  async function checkInvestmentReadiness(){
+    const btn = document.getElementById('readinessCheckBtn');
+    const statusEl = document.getElementById('readinessCheckStatus');
+    const resultsEl = document.getElementById('readinessCheckResults');
+    const summary = document.getElementById('dealSummary').value.trim();
+    resultsEl.style.display = 'none';
+    resultsEl.innerHTML = '';
+    statusEl.style.color = '';
+    if(!summary){
+      statusEl.textContent = 'Write your Executive Summary first, then run the check.';
+      return;
+    }
+    const token = localStorage.getItem('ami_auth_token') || '';
+    btn.disabled = true;
+    statusEl.textContent = 'Checking…';
+    try{
+      const r = await fetch(SUPABASE_URL+'/functions/v1/deal-room-readiness-check', {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json', 'apikey':SUPABASE_ANON, 'Authorization':'Bearer '+token },
+        body: JSON.stringify({
+          deal_type: document.getElementById('dealType').value,
+          sector: document.getElementById('dealSector').value,
+          region: document.getElementById('dealRegion').value,
+          capital_range: document.getElementById('dealSize').value,
+          summary: summary,
+          financials_status: document.getElementById('dealFinancialsStatus').value,
+          capital_structure_status: document.getElementById('dealCapStructureStatus').value,
+        })
+      });
+      const data = await r.json();
+      if(!r.ok || !data.ok || !data.result){
+        statusEl.textContent = 'Could not run the check right now — this has no effect on your submission.';
+        return;
+      }
+      const result = data.result;
+      const cats = result.categories || {};
+      const rows = Object.keys(READINESS_CATEGORY_LABEL).map(function(key){
+        const cat = cats[key] || {};
+        const status = ['ready','partial','missing'].includes(cat.status) ? cat.status : 'missing';
+        return '<div style="display:flex;gap:10px;margin-bottom:8px;align-items:flex-start">'
+          + '<span style="color:'+READINESS_STATUS_COLOR[status]+';font-size:14px;line-height:1.5">'+READINESS_STATUS_DOT[status]+'</span>'
+          + '<div><strong style="color:var(--text)">'+esc(READINESS_CATEGORY_LABEL[key])+'</strong> — '+esc(cat.note||'')+'</div>'
+          + '</div>';
+      }).join('');
+      statusEl.textContent = '';
+      resultsEl.innerHTML =
+        '<div style="font-family:\'DM Mono\',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--terra);margin-bottom:4px">Investment readiness — private to you, not shown to ABTA</div>'
+        + '<div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:12px">Stage: '+esc(result.stage||'—')+'</div>'
+        + rows
+        + '<div style="margin-top:8px;padding-top:12px;border-top:1px solid var(--border)">'+esc(result.summary||'')+'</div>';
+      resultsEl.style.display = 'block';
+    }catch(err){
+      console.warn('checkInvestmentReadiness:', err);
+      statusEl.textContent = 'Could not run the check right now — this has no effect on your submission.';
     }finally{
       btn.disabled = false;
     }
