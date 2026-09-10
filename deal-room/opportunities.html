@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://*.supabase.co; form-action 'self'; base-uri 'self'; object-src 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+
+<title>Investment opportunities – ABTA Deal Room</title>
+<link rel="stylesheet" href="assets/dr.css">
+<script src="../config.js"></script>
+<script src="assets/dr-core.js"></script>
+<script src="assets/dr-demo.js"></script>
+</head>
+<body>
+<a href="#main" class="dr-skip">Skip to main content</a>
+<div class="dr-review-banner">
+  <div class="dr-width"><strong class="dr-tag dr-tag--yellow">Beta</strong> This is a new service. <a href="mailto:ami@abta.africa?subject=Deal%20Room%20feedback">Your feedback</a> will help us improve it.
+  <span id="dr-review-banner" hidden><strong>Sample data is shown and nothing you enter is sent.</strong></span></div>
+</div>
+<header class="dr-header">
+  <div class="dr-width dr-header__inner">
+    <a class="dr-logo" href="index.html"><span class="dr-logo__mark" aria-hidden="true">ABTA</span><span>Deal Room<span class="dr-logo__sub">African Business Trade Association</span></span></a>
+    <button class="dr-nav__toggle" type="button" aria-controls="dr-nav" aria-expanded="false">Menu</button>
+    <nav id="dr-nav" class="dr-nav" aria-label="Main">
+      <a href="opportunities.html" aria-current="page">Find opportunities</a><a href="submit-opportunity.html">List an opportunity</a><a href="how-it-works.html">How it works</a><a href="create-account.html">Join</a>
+      <a class="dr-nav__account" id="dr-account-link" href="sign-in.html">Sign in</a>
+    </nav>
+  </div>
+</header>
+
+<div class="dr-width">
+  <nav class="dr-breadcrumbs" aria-label="Breadcrumb"><ol><li><a href="index.html">Deal Room</a></li><li>Investment opportunities</li></ol></nav>
+</div>
+<main id="main">
+  <div class="dr-width"><h1 style="margin:1rem 0 1.25rem">Investment opportunities</h1></div>
+  <section class="dr-filterbar" aria-label="Search and filter">
+    <form class="dr-width dr-filterbar__form" id="filters" action="opportunities.html" method="get" role="search">
+      <div class="dr-filterbar__grid">
+        <div class="dr-form-group dr-form-group--keywords">
+          <label class="dr-label" for="f-keywords">Keywords</label>
+          <input class="dr-input" id="f-keywords" name="keywords" type="search" autocomplete="off">
+        </div>
+        <div class="dr-form-group">
+          <label class="dr-label" for="f-type">Deal type</label>
+          <select class="dr-select" id="f-type" name="type"><option value="">Any</option><option value="Equity Investment">Equity investment</option><option value="Debt Financing">Debt financing</option><option value="Acquisition / Sale">Acquisition or sale</option><option value="Joint Venture">Joint venture</option><option value="Commercial Contract">Commercial contract</option><option value="Other">Other</option></select>
+        </div>
+        <div class="dr-form-group">
+          <label class="dr-label" for="f-sector">Sector</label>
+          <select class="dr-select" id="f-sector" name="sector"><option value="">Any</option><option value="Clean Energy">Clean energy</option><option value="Infrastructure">Infrastructure</option><option value="Financial Services">Financial services</option><option value="Agriculture & Food">Agriculture and food</option><option value="Technology & Digital">Technology and digital</option><option value="Healthcare">Healthcare</option><option value="Mining & Resources">Mining and resources</option><option value="Real Estate">Real estate</option><option value="Manufacturing">Manufacturing</option><option value="Other">Other</option></select>
+        </div>
+        <div class="dr-form-group">
+          <label class="dr-label" for="f-region">Region</label>
+          <select class="dr-select" id="f-region" name="region"><option value="">Any</option><option value="West Africa">West Africa</option><option value="East Africa">East Africa</option><option value="North Africa">North Africa</option><option value="Southern Africa">Southern Africa</option><option value="Central Africa">Central Africa</option><option value="Pan-African">Pan-African</option></select>
+        </div>
+        <div class="dr-form-group">
+          <label class="dr-label" for="f-capital">Capital sought</label>
+          <select class="dr-select" id="f-capital" name="capital"><option value="">Any</option><option value="Under USD 5m">Under USD 5m</option><option value="USD 5m – 15m">USD 5m to 15m</option><option value="USD 15m – 50m">USD 15m to 50m</option><option value="USD 50m – 150m">USD 50m to 150m</option><option value="USD 150m+">USD 150m or more</option></select>
+        </div>
+        <div class="dr-filterbar__actions"><button class="dr-button" type="submit">Search</button></div>
+      </div>
+      <input type="hidden" name="sort" id="f-sort-hidden">
+    </form>
+  </section>
+  <div class="dr-width">
+    <div class="dr-results-bar">
+      <p class="dr-results-count" id="results-count" role="status" aria-live="polite">Loading opportunities…</p>
+      <div class="dr-results-bar__tools">
+        <a class="dr-button dr-button--secondary" id="create-alert" href="account.html?section=alerts">Create alert</a>
+        <form class="dr-sort" id="sort-form" action="opportunities.html" method="get">
+          <label class="dr-label" for="sort">Sort by</label>
+          <select class="dr-select" id="sort" name="sort">
+            <option value="newest">Newest listed</option>
+            <option value="oldest">Oldest listed</option>
+            <option value="largest">Largest capital sought</option>
+            <option value="smallest">Smallest capital sought</option>
+          </select>
+          <button class="dr-button dr-button--secondary" type="submit" style="margin:0">Sort</button>
+        </form>
+      </div>
+    </div>
+    <ul class="dr-active-filters" id="active-filters" aria-label="Active filters"></ul>
+    <ul class="dr-cards" id="results"></ul>
+    <nav class="dr-pagination" id="pagination" aria-label="Results pages" hidden></nav>
+  </div>
+</main>
+
+<footer class="dr-footer">
+  <div class="dr-width">
+    <div class="dr-footer__grid">
+      <div>
+        <h2>Deal Room</h2>
+        <ul>
+          <li><a href="opportunities.html">Find opportunities</a></li>
+          <li><a href="submit-opportunity.html">List an opportunity</a></li>
+          <li><a href="how-it-works.html">How it works</a></li>
+          <li><a href="create-account.html">Join the Deal Room</a></li>
+          <li><a href="account.html">Your Deal Room</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Agreements and policies</h2>
+        <ul>
+          <li><a href="../docs/platform-agreement.html">Platform Membership Agreement</a></li>
+          <li><a href="../docs/nda.html">Non-Disclosure Agreement</a></li>
+          <li><a href="../docs/fee-schedule.html">Fee Schedule</a></li>
+          <li><a href="../privacy.html">Privacy</a></li>
+          <li><a href="../contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Contact</h2>
+        <p>Questions about the Deal Room or your account: <a href="mailto:ami@abta.africa">ami@abta.africa</a></p>
+        <p>We aim to reply within 2 business days.</p>
+        <p><a href="../index.html">African Market Intelligence home</a></p>
+      </div>
+    </div>
+    <div class="dr-footer__legal">
+      <p>The ABTA Deal Room is operated by the African Business Trade Association, London.</p><p>ABTA does not give investment, legal, tax or financial advice and does not recommend any opportunity. Listings are prepared from information supplied by the parties and have not been independently verified.</p>
+    </div>
+  </div>
+</footer>
+<noscript><div class="dr-width"><p>You need to turn on JavaScript to use the Deal Room forms. Email <a href="mailto:ami@abta.africa">ami@abta.africa</a> if you cannot do this.</p></div></noscript>
+<script src="assets/results.js" defer></script>
+</body>
+</html>

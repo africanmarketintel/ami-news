@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://*.supabase.co; form-action 'self'; base-uri 'self'; object-src 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="description" content="Screened, anonymised investment opportunities across African markets, facilitated by ABTA.">
+<title>Find screened investment opportunities in African markets – ABTA Deal Room</title>
+<link rel="stylesheet" href="assets/dr.css">
+<script src="../config.js"></script>
+<script src="assets/dr-core.js"></script>
+<script src="assets/dr-demo.js"></script>
+</head>
+<body>
+<a href="#main" class="dr-skip">Skip to main content</a>
+<div class="dr-review-banner">
+  <div class="dr-width"><strong class="dr-tag dr-tag--yellow">Beta</strong> This is a new service. <a href="mailto:ami@abta.africa?subject=Deal%20Room%20feedback">Your feedback</a> will help us improve it.
+  <span id="dr-review-banner" hidden><strong>Sample data is shown and nothing you enter is sent.</strong></span></div>
+</div>
+<header class="dr-header">
+  <div class="dr-width dr-header__inner">
+    <a class="dr-logo" href="index.html"><span class="dr-logo__mark" aria-hidden="true">ABTA</span><span>Deal Room<span class="dr-logo__sub">African Business Trade Association</span></span></a>
+    <button class="dr-nav__toggle" type="button" aria-controls="dr-nav" aria-expanded="false">Menu</button>
+    <nav id="dr-nav" class="dr-nav" aria-label="Main">
+      <a href="opportunities.html">Find opportunities</a><a href="submit-opportunity.html">List an opportunity</a><a href="how-it-works.html">How it works</a><a href="create-account.html">Join</a>
+      <a class="dr-nav__account" id="dr-account-link" href="sign-in.html">Sign in</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <section class="dr-hero" aria-labelledby="hero-title">
+    <div class="dr-width dr-hero__inner">
+      <h1 id="hero-title">Find screened investment opportunities in African markets</h1>
+      <p class="dr-hero__sub">Anonymised opportunities, reviewed by ABTA before they are published. Identities are shared only through a formal introduction.</p>
+      <div class="dr-searchcard">
+        <nav class="dr-searchcard__tabs" aria-label="What do you want to do?">
+          <a href="opportunities.html" aria-current="page">Find opportunities</a>
+          <a href="submit-opportunity.html">List an opportunity</a>
+        </nav>
+        <form class="dr-searchcard__body" action="opportunities.html" method="get" role="search">
+          <div class="dr-searchcard__row">
+            <div class="dr-form-group">
+              <label class="dr-label" for="home-keywords">Sector, country or keyword</label>
+              <input class="dr-input" id="home-keywords" name="keywords" type="search" autocomplete="off">
+            </div>
+            <div class="dr-form-group">
+              <label class="dr-label" for="home-region">Region</label>
+              <select class="dr-select" id="home-region" name="region"><option value="">Any region</option><option value="West Africa">West Africa</option><option value="East Africa">East Africa</option><option value="North Africa">North Africa</option><option value="Southern Africa">Southern Africa</option><option value="Central Africa">Central Africa</option><option value="Pan-African">Pan-African</option></select>
+            </div>
+            <button class="dr-button" type="submit">Search</button>
+          </div>
+        </form>
+      </div>
+      <ul class="dr-trust">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3l8 3v6c0 5-3.5 8-8 9c-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5l4.5-5"/></svg> Screened by ABTA</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 11h12v9H6z"/><path d="M8.5 11V8a3.5 3.5 0 0 1 7 0v3"/></svg> Anonymised until introduction</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12l4-4l5 3l5-3l4 4"/><path d="M7 8l-4 4l6 6l3-2l3 2l6-6l-4-4"/></svg> Introductions made by ABTA</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="dr-width" aria-labelledby="latest-title" style="padding-block:2.5rem 1rem">
+    <h2 id="latest-title" style="margin-top:0">Latest opportunities</h2>
+    <p id="latest-status" class="dr-loading" role="status">Loading opportunities…</p>
+    <ul class="dr-cards" id="latest"></ul>
+    <p style="margin-top:1.5rem"><a href="opportunities.html">View all opportunities</a></p>
+  </section>
+
+  <section class="dr-section-alt" aria-labelledby="how-title">
+    <div class="dr-width" style="padding-block:2.5rem">
+      <h2 id="how-title" style="margin-top:0">How the Deal Room works</h2>
+      <div class="dr-feature-grid">
+        <div class="dr-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10.5 4a6.5 6.5 0 1 0 0 13a6.5 6.5 0 1 0 0-13z"/><path d="M20 20l-4.8-4.8"/></svg><h3>1. Browse anonymised opportunities</h3><p>See the sector, region, deal type and capital sought. Names and contact details are not shown.</p></div>
+        <div class="dr-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12l16-8l-6 16l-3-7z"/></svg><h3>2. Express interest</h3><p>Members tell ABTA why an opportunity fits their mandate.</p></div>
+        <div class="dr-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12l4-4l5 3l5-3l4 4"/><path d="M7 8l-4 4l6 6l3-2l3 2l6-6l-4-4"/></svg><h3>3. ABTA screens and introduces</h3><p>ABTA reviews each request. If it is suitable, ABTA issues an Introduction Notice to both parties.</p></div>
+      </div>
+      <p style="margin-top:1.5rem"><a href="how-it-works.html">Read the full process, timescales and fees</a></p>
+    </div>
+  </section>
+
+  <section class="dr-width" aria-labelledby="join-title" style="padding-block:2.5rem">
+    <div class="dr-grid dr-grid--two-thirds">
+      <div>
+        <h2 id="join-title" style="margin-top:0">Who the Deal Room is for</h2>
+        <p>The Deal Room is for organisations that invest in, lend to, acquire or partner with businesses and projects in African markets, including:</p>
+        <ul class="dr-list">
+          <li>strategic investors and corporate buyers</li>
+          <li>private equity firms and family offices</li>
+          <li>development finance institutions</li>
+          <li>banks and alternative lenders</li>
+          <li>commercial trade partners</li>
+        </ul>
+        <p>Businesses, project sponsors and their advisers can also list opportunities for ABTA to review.</p>
+        <h2>Raising capital or selling a business?</h2>
+        <p>Members can submit an opportunity for review. If it meets ABTA’s criteria, ABTA contacts you to prepare an anonymised listing before it is published.</p>
+        <p><a href="submit-opportunity.html">List an opportunity</a></p>
+      </div>
+      <aside class="dr-price-box" aria-labelledby="price-title">
+        <h2 id="price-title" class="dr-h3" style="margin-top:0">Deal Room membership</h2>
+        <p class="dr-price-box__amount">£99</p>
+        <p>a year, including VAT where applicable</p>
+        <ul class="dr-list">
+          <li>browse all opportunities</li>
+          <li>express interest and ask ABTA questions</li>
+          <li>list your own opportunities</li>
+          <li>weekly email alerts</li>
+        </ul>
+        <a href="create-account.html" role="button" class="dr-button dr-button--start dr-button--full" draggable="false">Join the Deal Room</a>
+        <p class="dr-small">Already a member? <a href="sign-in.html">Sign in</a></p>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<footer class="dr-footer">
+  <div class="dr-width">
+    <div class="dr-footer__grid">
+      <div>
+        <h2>Deal Room</h2>
+        <ul>
+          <li><a href="opportunities.html">Find opportunities</a></li>
+          <li><a href="submit-opportunity.html">List an opportunity</a></li>
+          <li><a href="how-it-works.html">How it works</a></li>
+          <li><a href="create-account.html">Join the Deal Room</a></li>
+          <li><a href="account.html">Your Deal Room</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Agreements and policies</h2>
+        <ul>
+          <li><a href="../docs/platform-agreement.html">Platform Membership Agreement</a></li>
+          <li><a href="../docs/nda.html">Non-Disclosure Agreement</a></li>
+          <li><a href="../docs/fee-schedule.html">Fee Schedule</a></li>
+          <li><a href="../privacy.html">Privacy</a></li>
+          <li><a href="../contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Contact</h2>
+        <p>Questions about the Deal Room or your account: <a href="mailto:ami@abta.africa">ami@abta.africa</a></p>
+        <p>We aim to reply within 2 business days.</p>
+        <p><a href="../index.html">African Market Intelligence home</a></p>
+      </div>
+    </div>
+    <div class="dr-footer__legal">
+      <p>The ABTA Deal Room is operated by the African Business Trade Association, London.</p><p>ABTA does not give investment, legal, tax or financial advice and does not recommend any opportunity. Listings are prepared from information supplied by the parties and have not been independently verified.</p>
+    </div>
+  </div>
+</footer>
+<noscript><div class="dr-width"><p>You need to turn on JavaScript to use the Deal Room forms. Email <a href="mailto:ami@abta.africa">ami@abta.africa</a> if you cannot do this.</p></div></noscript>
+<script src="assets/home.js" defer></script>
+</body>
+</html>
