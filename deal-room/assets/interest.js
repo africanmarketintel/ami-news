@@ -154,7 +154,7 @@
               invest_range: a.invest_range || null,
               rationale: a.rationale,
               eligibility_confirmed: ELIGIBILITY.map(function (e) { return e.value; }),
-              acknowledgements_version: '2.0-draft'
+              acknowledgements_version: '2.0'
             } }).then(function (res) {
               if (!res.ok) {
                 var err = res.data && res.data.error;

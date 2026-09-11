@@ -59,13 +59,16 @@
           h('li', { text: 'a summary of up to 300 words that does not name the business, people or exact locations' }),
           h('li', { text: 'supporting documents, if you have them (PDF, Word, Excel or PowerPoint, up to 25MB each)' })),
         h('p', { text: 'You can save your progress and come back to it in the same browser tab.' }),
+        h('h2', { text: 'Fees' }),
+        h('p', { text: 'There is no charge to submit or list an opportunity. If your listing leads to a completed deal with a party ABTA introduced, you pay a success fee of 1.798% of the transaction value, plus VAT where applicable.' }),
+        h('p', null, h('a', { href: 'legal/fee-schedule.html', text: 'Read the Fee Schedule' })),
         h('a', { href: 'submit-opportunity.html?step=tasks', role: 'button', draggable: 'false', class: 'dr-button dr-button--start' }, 'Start now'),
         h('h2', { text: 'What ABTA looks for' }),
         h('p', { text: 'ABTA reviews each submission for credibility, completeness and fit with the Deal Room’s members. We aim to reply within 5 business days.' }),
         h('p', null, 'For a list of documents investors commonly ask for, email ', h('a', { href: 'mailto:ami@abta.africa?subject=Deal%20Room%20document%20checklist', text: 'ami@abta.africa' }), ' for the Deal Room document checklist.')),
       h('aside', null, h('div', { class: 'dr-contact-panel' },
         h('h2', { text: 'Not a member yet?' }),
-        h('p', { text: 'Membership is £99 a year and includes listing opportunities.' }),
+        h('p', { text: 'Membership is £99 a year, plus VAT where applicable, and includes listing opportunities.' }),
         h('a', { href: 'create-account.html', text: 'Join the Deal Room' })))));
   }
 
@@ -163,7 +166,8 @@
               h('ul', { class: 'dr-list' },
                 h('li', { text: 'you are authorised to submit it and to share the documents you have uploaded' }),
                 h('li', { text: 'the information is accurate to the best of your knowledge' }),
-                h('li', { text: 'you agree that ABTA may review it and, if approved, publish an anonymised listing as described in the Platform Membership Agreement' })),
+                h('li', { text: 'you agree that ABTA may review it and, if approved, publish an anonymised listing as described in the Platform Membership Agreement' }),
+                h('li', { text: 'you agree to pay ABTA a success fee of 1.798% of the transaction value, plus VAT where applicable, if this opportunity leads to a completed deal with a party ABTA introduced, as set out in the Fee Schedule' })),
               h('p', { text: 'Your contact details and documents stay confidential to the ABTA team unless ABTA makes an introduction.' })
             ];
           },

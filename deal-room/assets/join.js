@@ -93,7 +93,7 @@
               h('div', null,
                 h('h1', { text: 'Join the ABTA Deal Room' }),
                 h('p', { class: 'dr-lead', text: 'Membership lets your organisation browse screened opportunities, express interest, ask ABTA questions and list its own opportunities.' }),
-                h('p', { text: 'Membership costs £99 a year and renews automatically. You can turn off renewal in your account.' }),
+                h('p', { text: 'Membership costs £99 a year, plus VAT where applicable, and renews automatically. You can turn off renewal in your account.' }),
                 h('h2', { text: 'Before you start' }),
                 h('p', { text: 'You will need:' }),
                 h('ul', { class: 'dr-list' },
@@ -201,20 +201,19 @@
                 h('p', null, h('a', { href: href, target: '_blank', rel: 'noopener', text: 'Read the full ' + title + ' (opens in new tab)' }))];
             }
             return [
-              h('div', { class: 'dr-draft', role: 'note' }, h('strong', { text: 'Review build: ' }), 'these agreements are drafts awaiting legal review.'),
               h('p', { text: 'These are the key points. The full documents are the binding versions.' }),
               doc('Platform Membership Agreement', 'legal/platform-agreement.html', [
-                'Membership is £99 a year and renews automatically unless you turn off renewal.',
+                'Membership is £99 a year, plus VAT where applicable, and renews automatically unless you turn off renewal.',
                 'ABTA verifies your organisation and screens it against sanctions lists before any introduction.',
                 'Identities are shared only through an Introduction Notice from ABTA.',
-                'You must not deal with an introduced party outside the Deal Room to avoid ABTA’s process or any fee that applies.',
+                'For 36 months after an introduction, you must not deal with an introduced party outside the Deal Room to avoid ABTA’s process or any fee that applies.',
                 'ABTA does not give advice or recommend opportunities.']),
               doc('Non-Disclosure Agreement', 'legal/nda.html', [
                 'Keep information from the Deal Room confidential and use it only to assess a possible transaction.',
                 'You may share it with advisers and staff who need it and keep it confidential.']),
               doc('Fee Schedule', 'legal/fee-schedule.html', [
-                'The membership fee and renewal terms.',
-                'Whether any introduction or success fee applies.'])
+                'Membership is £99 a year, plus VAT where applicable. There is no fee for expressing interest or for introductions.',
+                'If you list an opportunity that leads to a completed deal with a party ABTA introduced, you pay a success fee of 1.798% of the transaction value, plus VAT where applicable.'])
             ];
           },
           fields: [{ type: 'checkboxes', name: 'agree', legend: 'Your agreement', legendSize: 'm', options: [

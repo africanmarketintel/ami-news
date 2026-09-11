@@ -505,7 +505,7 @@
         h('p', null, 'Contact ABTA at ', h('a', { href: 'mailto:ami@abta.africa', text: 'ami@abta.africa' }), ' if you think this is wrong.')];
     } else {
       content = [h('h1', { text: 'You need to be a Deal Room member to ' + purpose }),
-        h('p', { text: 'Membership costs £99 a year. You will need your organisation’s registration details and a debit or credit card.' }),
+        h('p', { text: 'Membership costs £99 a year, plus VAT where applicable. You will need your organisation’s registration details and a debit or credit card.' }),
         h('a', { href: 'create-account.html', role: 'button', draggable: 'false', class: 'dr-button', text: 'Join the Deal Room' }),
         h('p', null, 'Signed in with the wrong account? ', h('a', { href: '#', 'data-sign-out-inline': '1', text: 'Sign out' }))];
     }
