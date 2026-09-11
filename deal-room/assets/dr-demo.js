@@ -1,5 +1,5 @@
 /* ==========================================================================
-   ABTA Deal Room v2 – review mode
+   AMI Deal Room v2 – review mode
    Sample listings and simulated API responses so the design and journeys
    can be reviewed without a live back end. Nothing is sent anywhere.
    All listings are fictional and labelled as sample data on screen.

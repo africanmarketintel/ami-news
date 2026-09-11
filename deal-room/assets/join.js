@@ -86,12 +86,12 @@
       caption: 'Join the Deal Room',
       checkStep: 'check',
       steps: [
-        { id: 'start', type: 'custom', title: 'Join the ABTA Deal Room', back: false, render: function (ctx) {
+        { id: 'start', type: 'custom', title: 'Join the AMI Deal Room', back: false, render: function (ctx) {
             var w = ctx.wrapper;
             w.className = '';
             w.appendChild(h('div', { class: 'dr-grid dr-grid--two-thirds' },
               h('div', null,
-                h('h1', { text: 'Join the ABTA Deal Room' }),
+                h('h1', { text: 'Join the AMI Deal Room' }),
                 h('p', { class: 'dr-lead', text: 'Membership lets your organisation browse screened opportunities, express interest, ask ABTA questions and list its own opportunities.' }),
                 h('p', { text: 'Membership costs £99 a year, plus VAT where applicable, and renews automatically. You can turn off renewal in your account.' }),
                 h('h2', { text: 'Before you start' }),
@@ -351,7 +351,7 @@
           DR.store.remove(KEY);
           DR.setTitle('Membership confirmed');
           DR.clear(w);
-          w.appendChild(h('div', { class: 'dr-panel' }, h('h1', { text: 'Membership confirmed' }), h('div', { class: 'dr-panel__body' }, 'Welcome to the ABTA Deal Room', m.agreement_id ? [h('br'), 'Agreement reference', h('strong', { text: m.agreement_id })] : null)));
+          w.appendChild(h('div', { class: 'dr-panel' }, h('h1', { text: 'Membership confirmed' }), h('div', { class: 'dr-panel__body' }, 'Welcome to the AMI Deal Room', m.agreement_id ? [h('br'), 'Agreement reference', h('strong', { text: m.agreement_id })] : null)));
           w.appendChild(h('h2', { text: 'What happens next' }));
           w.appendChild(h('p', { text: 'ABTA will now verify your organisation, including sanctions screening. You can browse opportunities, express interest and list opportunities straight away, but ABTA will not make an introduction until verification is complete. We will email you when it is.' }));
           w.appendChild(h('a', { href: 'opportunities.html', role: 'button', draggable: 'false', class: 'dr-button', text: 'Browse opportunities' }));

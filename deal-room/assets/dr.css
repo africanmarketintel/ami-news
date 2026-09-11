@@ -1,5 +1,5 @@
 /* ==========================================================================
-   ABTA Deal Room v2 – design system
+   AMI Deal Room v2 – design system
    Patterns follow the GOV.UK Design System (question pages, error summary,
    check answers, confirmation panel, task list, summary list, tags).
    Layout follows property-portal conventions (single search hero, filter
@@ -167,8 +167,7 @@ a:hover, .dr-link:hover { color: var(--brand-hover); text-decoration-thickness: 
 .dr-hero { background: var(--header); color: var(--white); position: relative; overflow: hidden; }
 .dr-hero::before { content: ""; position: absolute; inset: 0; background:
   radial-gradient(circle at 85% 20%, rgba(201,168,76,.22), transparent 40%),
-  radial-gradient(circle at 10% 90%, rgba(30,107,60,.55), transparent 45%),
-  repeating-linear-gradient(135deg, rgba(255,255,255,.035) 0 2px, transparent 2px 22px); }
+  radial-gradient(circle at 10% 90%, rgba(30,107,60,.55), transparent 45%); }
 .dr-hero__inner { position: relative; padding-block: 3.5rem 4rem; }
 .dr-hero h1 { color: var(--white); font-size: 2.75rem; max-width: 22ch; margin-bottom: .75rem; }
 .dr-hero__sub { font-size: 1.375rem; max-width: 46ch; margin-bottom: 2rem; color: #e9efe9; }

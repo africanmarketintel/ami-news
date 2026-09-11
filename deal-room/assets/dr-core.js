@@ -1,5 +1,5 @@
 /* ==========================================================================
-   ABTA Deal Room v2 – core
+   AMI Deal Room v2 – core
    - Safe DOM building only (no innerHTML with data)
    - Session shared with AMI login (ami_* keys)
    - Calls Supabase REST view and Edge Functions
@@ -303,7 +303,7 @@
 
   /* ---------------- Page title helpers ---------------- */
   DR.setTitle = function (title, hasError) {
-    document.title = (hasError ? 'Error: ' : '') + title + ' – ABTA Deal Room';
+    document.title = (hasError ? 'Error: ' : '') + title + ' – AMI Deal Room';
   };
 
   /* ---------------- Bookmarks ---------------- */

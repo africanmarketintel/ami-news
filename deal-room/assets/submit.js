@@ -233,7 +233,7 @@
       h('details', { class: 'dr-details' },
         h('summary', { class: 'dr-details__summary', text: 'How this check works' }),
         h('div', { class: 'dr-details__text' },
-          h('p', { text: 'The check sends your description to Google’s Gemini AI service, which looks for names, addresses and other details that could identify the business. It is optional and only a suggestion. It does not approve or reject your opportunity.' }),
+          h('p', { text: 'The check sends your description to an AI tool, which looks for names, addresses and other details that could identify the business. It is optional and only a suggestion. It does not approve or reject your opportunity.' }),
           h('p', null, h('a', { href: 'legal/privacy-notice.html', target: '_blank', rel: 'noopener', text: 'Read how we use AI (opens in new tab)' })))),
       results);
   }

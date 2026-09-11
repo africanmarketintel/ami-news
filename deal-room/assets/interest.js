@@ -135,7 +135,7 @@
               h('h2', { text: 'Now send your request' }),
               h('p', { text: 'By sending this request you confirm that the information you have given is correct, and you acknowledge that:' }),
               h('ul', { class: 'dr-list' },
-                h('li', { text: 'this opportunity was made available to you through the ABTA Deal Room' }),
+                h('li', { text: 'this opportunity was made available to you through the AMI Deal Room' }),
                 h('li', { text: 'any introduction is governed by the Platform Membership Agreement, including its non-circumvention terms' }),
                 h('li', { text: 'any disclosure of identity by ABTA counts as an introduction' }),
                 h('li', { text: 'you will not try to identify or contact the other party outside ABTA’s process' }),

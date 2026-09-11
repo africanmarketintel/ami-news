@@ -1,5 +1,5 @@
 /* ==========================================================================
-   ABTA Deal Room v2 – question page engine
+   AMI Deal Room v2 – question page engine
    One question per page, error summary, specific error messages,
    check answers with change links, confirmation page. Each step has its
    own URL (?step=) so browser Back works as users expect.
