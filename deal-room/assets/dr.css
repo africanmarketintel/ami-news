@@ -16,7 +16,9 @@
   --brand-hover: #14532d;
   --brand-tint: #e8f1ec;
   --header: #0a1a10;
-  --gold: #c9a84c;
+  --gold: #c9a84c;        /* ABTA gold: button fill, 8.1:1 with --ink text */
+  --gold-light: #f9c53d;  /* button hover, 11.5:1 with --ink text */
+  --gold-dark: #7a5f1a;   /* button bottom edge, 6.0:1 on white; use for gold text on white */
   --border: #b1b4b6;
   --border-light: #d8dadc;
   --input: #1a1208;
@@ -145,15 +147,16 @@ a:hover, .dr-link:hover { color: var(--brand-hover); text-decoration-thickness: 
 .dr-button {
   display: inline-block; position: relative; margin: 0 .75rem 1rem 0; padding: .55rem 1rem .5rem;
   font: inherit; font-weight: 600; font-size: 1.1875rem; line-height: 1.2; text-align: center; text-decoration: none;
-  color: var(--white); background: var(--brand); border: 2px solid transparent; border-radius: var(--radius);
-  box-shadow: 0 2px 0 var(--header); cursor: pointer; -webkit-appearance: none; appearance: none;
+  color: var(--ink); background: var(--gold); border: 2px solid transparent; border-radius: var(--radius);
+  box-shadow: 0 2px 0 var(--gold-dark); cursor: pointer; -webkit-appearance: none; appearance: none;
 }
-.dr-button:hover { background: var(--brand-hover); color: var(--white); }
+.dr-button:hover { background: var(--gold-light); color: var(--ink); }
 .dr-button:active { top: 2px; box-shadow: none; }
 .dr-button:focus-visible { background: var(--focus) !important; color: var(--focus-text) !important; border-color: var(--focus); box-shadow: inset 0 0 0 1px var(--focus), 0 2px 0 var(--focus-text); outline: 3px solid transparent; }
 .dr-button--secondary { background: var(--page-alt); color: var(--ink); box-shadow: 0 2px 0 #929191; }
 .dr-button--secondary:hover { background: #dbdad9; color: var(--ink); }
-.dr-button--warning { background: var(--error); box-shadow: 0 2px 0 #55150b; }
+.dr-button--warning { background: var(--error); color: var(--white); box-shadow: 0 2px 0 #55150b; }
+.dr-button--warning:hover { background: #aa2a16; color: var(--white); }
 .dr-button--start { font-size: 1.375rem; padding: .7rem 1.25rem .65rem; display: inline-flex; align-items: center; gap: .5rem; }
 .dr-button--full { width: 100%; margin-right: 0; }
 .dr-button[aria-disabled="true"] { opacity: .6; cursor: not-allowed; }
