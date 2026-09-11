@@ -45,8 +45,12 @@ a{color:inherit;text-decoration:none}button{cursor:pointer;border:none;backgroun
 .masthead-meta{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:12px;border-top:1px solid var(--divider);font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);text-transform:uppercase;letter-spacing:.1em;position:relative}
 .edition-badge{background:var(--terra);color:white;padding:2px 10px;font-size:10px;letter-spacing:.15em}
 /* Section nav */
-.section-nav{border-bottom:2px solid var(--gold);background:var(--surface);overflow-x:auto;scrollbar-width:none}
-.section-nav-inner{display:flex;padding:0 24px}
+.section-nav{
+      position: relative;
+      z-index: 200;border-bottom:2px solid var(--gold);background:var(--surface);overflow: visible;}
+.section-nav-inner{
+      overflow-x: auto;
+      scrollbar-width: none;display:flex;padding:0 24px}
 .section-tab{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-soft);padding:12px 18px;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;cursor:pointer;transition:color .2s,border-color .2s}
 .section-tab:hover,.section-tab.active{color:var(--terra);border-bottom-color:var(--terra)}
 /* Layout */
@@ -694,7 +698,7 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
       background: var(--surface);
       border: 1px solid var(--divider);
       border-top: 2px solid var(--gold);
-      z-index: 500;
+      z-index: 1500;
       min-width: 170px;
       display: none;
       box-shadow: 0 6px 24px rgba(0,0,0,.15);
@@ -794,6 +798,8 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
     }
     /* Section nav inner already has padding; just cap its width */
     .section-nav-inner {
+      overflow-x: auto;
+      scrollbar-width: none;
       max-width: var(--box);
       margin-left: auto;
       margin-right: auto;
@@ -840,121 +846,189 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
     }
 
   </style>
+<style>
+/* ── AMI page content in the AMI Deal Room style (scoped to .dr-page) ── */
+.dr-page{background:#fff;color:#1a1208;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-size:1.1875rem;line-height:1.4}
+.dr-page *,.dr-page *::before,.dr-page *::after{box-sizing:border-box}
+.dr-page__inner{max-width:1200px;margin:0 auto;padding:2rem 16px 3.5rem}
+.dr-page .dr-narrow{max-width:760px}
+.dr-page h1{font-family:inherit;font-size:2.25rem;line-height:1.15;font-weight:700;margin:0 0 1.25rem;color:inherit}
+.dr-page h2{font-family:inherit;font-size:1.6rem;line-height:1.2;font-weight:700;margin:2rem 0 1rem;color:inherit}
+.dr-page p{margin:0 0 1rem;font-size:inherit;line-height:inherit;color:inherit}
+.dr-page .dr-lead{font-size:1.375rem;line-height:1.35}
+.dr-page .dr-secondary{color:#505a5f}
+.dr-page a{color:#1e6b3c;text-decoration:underline;text-underline-offset:.15em}
+.dr-page a:hover{color:#14532d;text-decoration-thickness:max(3px,.1875rem)}
+.dr-page a:focus-visible{outline:3px solid transparent;background:#ffdd00;color:#0b0c0c;box-shadow:0 -2px #ffdd00,0 4px #0b0c0c;text-decoration:none}
+.dr-page .dr-form-group{margin-bottom:1.75rem}
+.dr-page .dr-label{display:block;font-weight:600;margin-bottom:.35rem;font-family:inherit;font-size:inherit;letter-spacing:0;text-transform:none;color:inherit}
+.dr-page .dr-error-message{display:block;color:#d4351c;font-weight:700;margin-bottom:.6rem}
+.dr-page .dr-input,.dr-page .dr-select,.dr-page .dr-textarea{display:block;width:100%;max-width:59ex;min-height:48px;margin:0;padding:.4rem 1rem;font:inherit;color:#1a1208;background:#fff;border:2px solid #1a1208;border-radius:999px}
+.dr-page .dr-select{-webkit-appearance:none;appearance:none;padding-right:2.6rem;background-image:linear-gradient(45deg,transparent 50%,#1a1208 50%),linear-gradient(135deg,#1a1208 50%,transparent 50%);background-position:calc(100% - 24px) 55%,calc(100% - 18px) 55%;background-size:6px 6px;background-repeat:no-repeat}
+.dr-page .dr-textarea{max-width:100%;min-height:9rem;border-radius:16px;padding:.6rem 1rem;resize:vertical}
+.dr-page .dr-input--error,.dr-page .dr-textarea--error{border-color:#d4351c}
+.dr-page input:focus-visible,.dr-page select:focus-visible,.dr-page textarea:focus-visible{outline:3px solid #ffdd00;outline-offset:0;box-shadow:inset 0 0 0 2px #0b0c0c}
+.dr-page .dr-button{display:inline-block;margin:0 0 1rem;padding:.55rem 1.5rem .5rem;font:inherit;font-weight:600;font-size:1.1875rem;line-height:1.2;color:#1a1208;background:#f9c53d;border:2px solid transparent;border-radius:999px;cursor:pointer;letter-spacing:0;text-transform:none}
+.dr-page .dr-button:hover{background:#c9a84c;color:#1a1208}
+.dr-page .dr-button:focus-visible{background:#ffdd00;color:#0b0c0c;border-color:#0b0c0c;box-shadow:0 0 0 3px #0b0c0c;outline:3px solid transparent}
+.dr-page .dr-button[aria-disabled="true"]{opacity:.6;cursor:not-allowed}
+.dr-page .dr-error-summary{padding:1.25rem;margin-bottom:2rem;border:5px solid #d4351c;border-radius:8px}
+.dr-page .dr-error-summary:focus{outline:3px solid #ffdd00}
+.dr-page .dr-error-summary h2{font-size:1.5rem;margin:0 0 .75rem}
+.dr-page .dr-error-summary ul{list-style:none;margin:0;padding:0}
+.dr-page .dr-error-summary a{color:#d4351c;font-weight:700}
+.dr-page .dr-banner{border:5px solid #1e6b3c;background:#1e6b3c;border-radius:8px;margin-bottom:2rem}
+.dr-page .dr-banner__title{color:#fff;font-weight:700;margin:0;padding:.2rem .9rem .3rem}
+.dr-page .dr-banner__content{background:#fff;border-radius:3px;padding:1rem 1.2rem}
+.dr-page .dr-banner__content>:last-child{margin-bottom:0}
+@media (max-width:640px){.dr-page{font-size:1rem}.dr-page h1{font-size:2rem}.dr-page .dr-lead{font-size:1.1875rem}}
+[data-theme="dark"] .dr-page{background:#0a1a10;color:#ede5d5}
+[data-theme="dark"] .dr-page .dr-secondary{color:#c9bca5}
+[data-theme="dark"] .dr-page a{color:#7fd1a2}
+[data-theme="dark"] .dr-page .dr-input,[data-theme="dark"] .dr-page .dr-select,[data-theme="dark"] .dr-page .dr-textarea{background-color:#0f2015;color:#ede5d5;border-color:#ede5d5}
+[data-theme="dark"] .dr-page .dr-select{background-image:linear-gradient(45deg,transparent 50%,#ede5d5 50%),linear-gradient(135deg,#ede5d5 50%,transparent 50%)}
+[data-theme="dark"] .dr-page .dr-error-message,[data-theme="dark"] .dr-page .dr-error-summary a{color:#ff8f7a}
+[data-theme="dark"] .dr-page .dr-banner__content{background:#0f2015}
+/* ── AMI Deal Room footer format ── */
+footer.dr-footer{background:#f3f2f1;color:#1a1208;border-top:1px solid #b1b4b6;margin:0;padding:2.5rem 0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-size:1rem;line-height:1.4}
+footer.dr-footer *{box-sizing:border-box}
+footer.dr-footer .dr-footer__inner{max-width:1200px;margin:0 auto;padding:0 16px}
+footer.dr-footer .dr-footer__grid{display:grid;gap:1.5rem}
+@media (min-width:760px){footer.dr-footer .dr-footer__grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+footer.dr-footer h2{font-family:inherit;font-size:1.125rem;font-weight:700;line-height:1.2;margin:0 0 .75rem;color:inherit;letter-spacing:0;text-transform:none}
+footer.dr-footer ul{list-style:none;margin:0;padding:0}
+footer.dr-footer li{margin:0 0 .4rem;padding:0}
+footer.dr-footer p{margin:0 0 1rem;font-size:inherit;line-height:inherit;color:inherit}
+footer.dr-footer a{color:#1a1208;text-decoration:underline;text-underline-offset:.15em;font-size:inherit;font-weight:400}
+footer.dr-footer a:hover{color:#1a1208;text-decoration-thickness:max(3px,.1875rem)}
+footer.dr-footer a:focus-visible{outline:3px solid transparent;background:#ffdd00;color:#0b0c0c;box-shadow:0 -2px #ffdd00,0 4px #0b0c0c;text-decoration:none}
+footer.dr-footer .dr-footer__legal{margin-top:2rem;padding-top:1.25rem;border-top:1px solid #b1b4b6;color:#383f43}
+[data-theme="dark"] footer.dr-footer{background:#060f09;color:#ede5d5;border-top-color:#1a3020}
+[data-theme="dark"] footer.dr-footer a{color:#ede5d5}
+[data-theme="dark"] footer.dr-footer .dr-footer__legal{border-top-color:#1a3020;color:#c9bca5}
+</style>
+<style>
+.ami-skip{position:absolute;left:-9999px;top:0;padding:.6rem 1rem;background:#ffdd00;color:#0b0c0c;z-index:100}
+.ami-skip:focus{left:0}
+.ami-header{background:#fff;border-bottom:4px solid #1e6b3c;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:#1a1208}
+.ami-header *{box-sizing:border-box}
+.ami-header__inner{max-width:1200px;margin:0 auto;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:68px;flex-wrap:wrap}
+.ami-logo{display:inline-block;text-decoration:none;color:#1a1208;font-weight:700;font-size:1.25rem;line-height:1.3;padding:.25rem 0}
+.ami-logo:hover{color:#1a1208}
+.ami-logo__sub{display:block;font-weight:400;font-size:1rem;color:#505a5f}
+.ami-nav{display:flex;align-items:center;gap:.25rem;flex-wrap:wrap}
+.ami-nav a{display:inline-block;padding:.6rem .55rem;color:#1a1208;text-decoration:none;font-size:1.0625rem;font-weight:600;border-bottom:3px solid transparent}
+.ami-nav a:hover{color:#1e6b3c;border-bottom-color:#1e6b3c}
+.ami-nav a[aria-current="page"]{color:#1e6b3c;border-bottom-color:#1e6b3c}
+.ami-header a:focus-visible,.ami-header button:focus-visible{outline:3px solid transparent;background:#ffdd00;color:#0b0c0c;box-shadow:0 -2px #ffdd00,0 4px #0b0c0c;text-decoration:none}
+.ami-nav__toggle{display:none}
+.ami-sections{border-top:1px solid #d8dadc}
+.ami-sections__label{display:none;max-width:1200px;margin:0 auto;padding:.5rem 16px 0;font-size:.875rem;font-weight:600;color:#505a5f}
+.ami-sections .ami-nav{max-width:1200px;margin:0 auto;padding:0 8px;gap:0;flex-wrap:wrap}
+.ami-sections .ami-nav a{font-size:.9375rem;font-weight:500;padding:.55rem .5rem;white-space:nowrap}
+@media (max-width:480px){.ami-logo{font-size:1.0625rem}.ami-logo__sub{font-size:.875rem}.ami-header__inner{gap:.5rem}}
+@media (max-width:900px){
+  .ami-nav__toggle{display:inline-flex;align-items:center;background:none;border:2px solid #1a1208;border-radius:999px;padding:.4rem .9rem;font:inherit;font-size:1rem;font-weight:600;color:#1a1208;cursor:pointer}
+  .ami-header__inner{flex-wrap:wrap}.ami-logo{flex:1 1 auto;min-width:0}.ami-header .ami-nav{display:none;width:100%;flex-basis:100%;flex-direction:column;align-items:stretch;padding-bottom:.75rem}
+  .ami-header .ami-nav.is-open{display:flex}
+  .ami-header .ami-nav a{border-bottom:1px solid #d8dadc;padding-left:0}
+  .ami-sections{display:none;border-top:0}
+  .ami-sections.is-open{display:block}
+  .ami-sections .ami-nav{display:flex;flex-direction:column;align-items:stretch;flex-wrap:nowrap;overflow:visible;padding:0 16px .75rem}
+  .ami-sections .ami-nav a{font-weight:500;padding:.6rem 0}
+  .ami-sections__label{display:block}
+}
+[data-theme="dark"] .ami-header{background:#0a1a10;color:#ede5d5;border-bottom-color:#2e9b5e}
+[data-theme="dark"] .ami-logo,[data-theme="dark"] .ami-nav a{color:#ede5d5}
+[data-theme="dark"] .ami-logo__sub,[data-theme="dark"] .ami-sections__label{color:#c9bca5}
+[data-theme="dark"] .ami-sections{border-top-color:#1a3020}
+[data-theme="dark"] .ami-nav__toggle{color:#ede5d5;border-color:#ede5d5}
+@media (max-width:900px){[data-theme="dark"] .ami-header .ami-nav a{border-bottom-color:#1a3020}}
+[data-theme="dark"] .ami-nav a:hover,[data-theme="dark"] .ami-nav a[aria-current="page"]{color:#7fd9a4;border-bottom-color:#7fd9a4}
+</style>
 </head>
 <body>
-
-
-<div class="ticker-bar"><div class="ticker-inner" id="tickerInner">
-  <span class="ticker-item"><span class="sym">Loading markets…</span></span>
-</div></div>
-<nav class="top-nav" aria-label="Main navigation">
-  <button class="nav-hamburger" id="navHamburger" aria-expanded="false" aria-controls="navMobileDrawer" aria-label="Open navigation menu" onclick="toggleMobileNav()"><span></span><span></span><span></span></button><div class="nav-left">
-    </div>
-  <div class="nav-right">
-    <input class="nav-search" type="text" placeholder="Search AMI…" oninput="if(this.value)window.location.href='index.html?q='+encodeURIComponent(this.value)">
-    <a href="membership.html" id="navSubscribeBtn" class="btn-subscribe">Subscribe</a>
+<a href="#main" class="ami-skip">Skip to main content</a>
+<header class="ami-header">
+  <div class="ami-header__inner">
+    <a class="ami-logo" href="index.html">African Market Intelligence<span class="ami-logo__sub">African Business Trade Association</span></a>
+    <button class="ami-nav__toggle" type="button" aria-controls="ami-nav ami-sections" aria-expanded="false">Menu</button>
+    <nav id="ami-nav" class="ami-nav" aria-label="Main"><a href="deal-room/index.html">Deal Room</a><a href="membership.html">Membership</a><a href="contact.html" aria-current="page">Contact</a></nav>
   </div>
-</nav>
-
-<!-- ═══ MOBILE NAV DRAWER ════════════════════════════ -->
-<div class="nav-mobile-drawer" id="navMobileDrawer"
-     role="dialog" aria-modal="true"
-     aria-label="Navigation menu" aria-hidden="true">
-  <div class="nav-mobile-search">
-    <input type="search" placeholder="Search AMI…" aria-label="Search articles"
-           oninput="typeof searchArticles==='function'&&searchArticles(this.value)">
-  </div>
-  <a href="index.html">Home</a>
-    <a href="west-africa.html">West Africa</a>
-    <a href="east-africa.html">East Africa</a>
-    <a href="central-africa.html">Central Africa</a>
-    <a href="southern-africa.html">Southern Africa</a>
-    <a href="north-africa.html">North Africa</a>
-  <a href="markets.html">Markets</a>
-  <a href="politics.html">Politics</a>
-  <a href="economy.html">Economy</a>
-  <a href="energy.html">Energy</a>
-  <a href="technology.html">Technology</a>
-  <a href="opinion.html">Opinion</a>
-  <a href="deals.html">Deals</a>
-  <a href="membership.html">Membership</a>
-  <a href="deals.html" class="mob-subscribe">Deal Tracker →</a>
-</div>
-
-
-<header class="masthead" role="banner">
-  <div class="masthead-header-row">
-    <div class="masthead-name"><a href="index.html" style="color:inherit">African Market <span>Intelligence</span></a></div>
-    <div class="masthead-cta">
-      <a href="membership.html" class="btn-subscribe">Membership</a>
-      <a href="deals.html" id="navSubscribeBtn" class="btn-subscribe" style="display:none">Deal Tracker</a>
-    </div>
-  </div>
-  <div class="masthead-tagline" id="siteTaglineDisplay" data-editable="text" data-cms-type="setting" data-cms-key="tagline">What Africa's deal makers read first</div>
-
+  <div id="ami-sections" class="ami-sections"><p class="ami-sections__label">Sections</p><nav class="ami-nav" aria-label="Sections"><a href="west-africa.html">West Africa</a><a href="east-africa.html">East Africa</a><a href="central-africa.html">Central Africa</a><a href="southern-africa.html">Southern Africa</a><a href="north-africa.html">North Africa</a><a href="markets.html">Markets</a><a href="politics.html">Politics</a><a href="economy.html">Economy</a><a href="energy.html">Energy</a><a href="technology.html">Technology</a><a href="opinion.html">Opinion</a><a href="deals.html">Deals</a></nav></div>
 </header>
-<div class="static-page">
-  <h1 id="page-title-display" data-editable="text" data-cms-type="page" data-page-name="contact" data-page-field="title">Contact AMI</h1>
-  <div class="page-subtitle" id="page-subtitle-display" data-editable="text" data-cms-type="page" data-page-name="contact" data-page-field="subtitle"><!-- CMS subtitle --></div>
-  <div id="page-body-display" data-editable="richtext" data-cms-type="page" data-page-name="contact" data-page-field="body">
-<p style="font-family:'DM Mono',monospace;font-size:13px;color:var(--text-soft);margin-bottom:24px">For all enquiries — editorial, subscriptions, press, corporate and advertising — email <a href="mailto:abta@abta.africa" style="color:var(--gold)">abta@abta.africa</a>.</p>
-<div class="contact-form">
-  <h2 style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;margin-bottom:4px;color:var(--text);margin-top:0">Send a Message</h2>
-  <p style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-soft);margin-bottom:0">We aim to respond within 2 business days.</p>
-  <label for="cf-name">Your Name</label><input type="text" placeholder="Full name" id="cf-name">
-  <label for="cf-email">Email Address</label><input type="email" placeholder="your@email.com" id="cf-email">
-  <label for="cf-subject">Subject</label>
-  <select id="cf-subject">
-    <option>Editorial enquiry</option><option>Subscription support</option>
-    <option>Press / media request</option><option>Corporate subscription</option><option>Advertising</option><option>Other</option>
-  </select>
-  <label for="cf-message">Message</label><textarea id="cf-message" placeholder="Your message…"></textarea>
-  <button class="cf-submit" onclick="submitContactForm()">Send Message →</button>
-  <div id="cf-status" style="margin-top:14px;font-family:'DM Mono',monospace;font-size:12px;color:var(--text-soft)"></div>
-</div>
+
+<main id="main" class="dr-page">
+  <div class="dr-page__inner">
+    <div class="dr-narrow">
+      <div id="cf-errors"></div>
+      <h1>Contact AMI</h1>
+      <p class="dr-lead">For editorial, subscription, press, corporate and advertising enquiries, email <a href="mailto:abta@abta.africa">abta@abta.africa</a>.</p>
+      <div id="cf-status" role="status" aria-live="polite"></div>
+      <h2>Send a message</h2>
+      <p class="dr-secondary">We aim to reply within 2 business days.</p>
+      <form id="cf-form" novalidate>
+        <div class="dr-form-group" id="cf-name-group">
+          <label class="dr-label" for="cf-name">Your name</label>
+          <input class="dr-input" id="cf-name" name="name" type="text" autocomplete="name">
+        </div>
+        <div class="dr-form-group" id="cf-email-group">
+          <label class="dr-label" for="cf-email">Email address</label>
+          <input class="dr-input" id="cf-email" name="email" type="email" autocomplete="email" spellcheck="false">
+        </div>
+        <div class="dr-form-group">
+          <label class="dr-label" for="cf-subject">Subject</label>
+          <select class="dr-select" id="cf-subject" name="subject">
+            <option>Editorial enquiry</option><option>Subscription support</option><option>Press or media request</option><option>Corporate subscription</option><option>Advertising</option><option>Other</option>
+          </select>
+        </div>
+        <div class="dr-form-group" id="cf-message-group">
+          <label class="dr-label" for="cf-message">Message</label>
+          <textarea class="dr-textarea" id="cf-message" name="message" rows="6"></textarea>
+        </div>
+        <button type="submit" class="dr-button cf-submit">Send message</button>
+      </form>
+    </div>
   </div>
-</div>
-<footer>
-  <div class="footer-inner">
-    <div class="footer-top">
+</main>
+
+<footer class="dr-footer">
+  <div class="dr-footer__inner">
+    <div class="dr-footer__grid">
       <div>
-        <div class="footer-brand">African Market Intelligence</div>
-        <p class="footer-about">The continent's most trusted source for financial news and business intelligence across Africa's 54 markets.</p>
-      </div>
-      <div>
-        <div class="footer-col-title" id="footerCol1Title" data-editable="text" data-cms-type="setting" data-cms-key="footer_col1_title">Sections</div>
-        <ul class="footer-links" id="footerCol1Links">
-          <li><a href="markets.html">Markets</a></li>
-          <li><a href="economy.html">Economy</a></li>
-          <li><a href="politics.html">Politics</a></li>
-          <li><a href="energy.html">Energy</a></li>
-          <li><a href="technology.html">Technology</a></li>
-          <li><a href="opinion.html">Opinion</a></li>
+        <h2>Deal Room</h2>
+        <ul>
+          <li><a href="deal-room/opportunities.html">Find opportunities</a></li>
+          <li><a href="deal-room/submit-opportunity.html">List an opportunity</a></li>
+          <li><a href="deal-room/how-it-works.html">How it works</a></li>
+          <li><a href="deal-room/create-account.html">Join the Deal Room</a></li>
+          <li><a href="deal-room/account.html">Your Deal Room</a></li>
         </ul>
       </div>
       <div>
-        <div class="footer-col-title" id="footerCol2Title" data-editable="text" data-cms-type="setting" data-cms-key="footer_col2_title">Regions</div>
-        <ul class="footer-links" id="footerCol2Links">
-          <li><a href="west-africa.html">West Africa</a></li>
-          <li><a href="east-africa.html">East Africa</a></li>
-          <li><a href="north-africa.html">North Africa</a></li>
-          <li><a href="southern-africa.html">Southern Africa</a></li>
+        <h2>Agreements and policies</h2>
+        <ul>
+          <li><a href="deal-room/legal/platform-agreement.html">Platform Membership Agreement</a></li>
+          <li><a href="deal-room/legal/nda.html">Non-Disclosure Agreement</a></li>
+          <li><a href="deal-room/legal/fee-schedule.html">Fee Schedule</a></li>
+          <li><a href="deal-room/legal/privacy-notice.html">Privacy policy</a></li>
+          <li><a href="contact.html">Contact</a></li>
         </ul>
       </div>
       <div>
-        <div class="footer-col-title" id="footerCol3Title" data-editable="text" data-cms-type="setting" data-cms-key="footer_col3_title">Company</div>
-        <ul class="footer-links" id="footerCol3Links">
+        <h2>Contact</h2>
+        <p>Questions about the Deal Room or your account: <a href="mailto:ami@abta.africa">ami@abta.africa</a></p>
+        <p>We aim to reply within 2 business days.</p>
+        <ul>
+          <li><a href="index.html">African Market Intelligence home</a></li>
           <li><a href="about.html">About AMI</a></li>
           <li><a href="membership.html">Membership</a></li>
-          <li><a href="careers.html">Careers</a></li>
-          <li></li>
-          <li><a href="privacy.html">Privacy Policy</a></li>
         </ul>
       </div>
     </div>
-    <div class="footer-bottom">
-      <span id="copyrightDisplay" data-editable="text" data-cms-type="setting" data-cms-key="copyright">© 2025 African Market Intelligence by African Business Trade Association. All rights reserved.</span>
-      <span>Terms · Privacy · Cookie Policy</span>
+    <div class="dr-footer__legal">
+      <p>The AMI Deal Room is operated by African Business Trade Association Limited, a company registered in England and Wales, United Kingdom.</p>
+      <p>ABTA does not give investment, legal, tax or financial advice and does not recommend any opportunity. Listings are prepared from information supplied by the parties and have not been independently verified.</p>
     </div>
   </div>
 </footer>
@@ -1035,41 +1109,82 @@ async function loadCMSContent(pageName) {
 }
 </script>
 <script>
-loadCMSContent('contact');
+/* Content is set in this file so the new design is not replaced by the site editor. */
 </script>
 <script>
-async function submitContactForm(){
-  const name    = document.getElementById('cf-name').value.trim();
-  const email   = document.getElementById('cf-email').value.trim();
-  const subject = document.getElementById('cf-subject').value.trim();
-  const msg     = document.getElementById('cf-message').value.trim();
-  const status  = document.getElementById('cf-status');
-  const btn     = document.querySelector('.cf-submit');
-  if(!name||!email||!msg){
-    status.textContent='Please fill in all required fields.';
-    status.style.color='var(--terra)';
-    return;
-  }
-  btn.disabled=true; btn.textContent='Sending…';
-  status.textContent=''; status.style.color='';
-  try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/contact_messages`, {
-      method: 'POST',
-      headers: { apikey: SUPABASE_ANON, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
-      body: JSON.stringify({ name, email, subject, message: msg })
+(function () {
+  var form = document.getElementById('cf-form');
+  if (!form) return;
+  var FIELDS = [
+    { id: 'cf-name', cls: 'dr-input--error', check: function (v) { return v ? '' : 'Enter your name'; } },
+    { id: 'cf-email', cls: 'dr-input--error', check: function (v) { return !v ? 'Enter your email address' : (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? '' : 'Enter an email address in the correct format, like name@example.com'); } },
+    { id: 'cf-message', cls: 'dr-textarea--error', check: function (v) { return v ? '' : 'Enter your message'; } }
+  ];
+  function el(tag, attrs, text) { var n = document.createElement(tag); for (var k in (attrs || {})) n.setAttribute(k, attrs[k]); if (text) n.textContent = text; return n; }
+  function clearErrors() {
+    document.getElementById('cf-errors').innerHTML = '';
+    FIELDS.forEach(function (f) {
+      var input = document.getElementById(f.id); input.classList.remove(f.cls); input.removeAttribute('aria-describedby');
+      var old = document.getElementById(f.id + '-error'); if (old) old.remove();
     });
-    if(!res.ok) throw new Error(await res.text());
-    status.textContent='Thank you — your message has been received. We aim to respond within 2 business days.';
-    status.style.color='#2E9B5E';
-    ['cf-name','cf-email','cf-message'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
-    document.getElementById('cf-subject').selectedIndex=0;
-  } catch(err){
-    status.textContent='Something went wrong. Please email us directly at abta@abta.africa';
-    status.style.color='var(--terra)';
-  } finally {
-    btn.disabled=false; btn.textContent='Send Message →';
+    document.title = document.title.replace(/^Error: /, '');
   }
-}
+  function showErrors(errors) {
+    var box = el('div', { class: 'dr-error-summary', tabindex: '-1', role: 'alert' });
+    box.appendChild(el('h2', null, 'There is a problem'));
+    var ul = el('ul');
+    errors.forEach(function (e) {
+      var li = el('li'); var a = el('a', { href: '#' + e.id }, e.message);
+      a.addEventListener('click', function (ev) { ev.preventDefault(); document.getElementById(e.id).focus(); });
+      li.appendChild(a); ul.appendChild(li);
+      var input = document.getElementById(e.id); input.classList.add(e.cls);
+      var msg = el('p', { class: 'dr-error-message', id: e.id + '-error' }); msg.appendChild(el('span', { class: 'visually-hidden', style: 'position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)' }, 'Error: ')); msg.appendChild(document.createTextNode(e.message));
+      input.parentNode.insertBefore(msg, input); input.setAttribute('aria-describedby', e.id + '-error');
+    });
+    box.appendChild(ul);
+    var holder = document.getElementById('cf-errors'); holder.appendChild(box);
+    document.title = 'Error: ' + document.title;
+    box.focus();
+  }
+  form.addEventListener('submit', async function (ev) {
+    ev.preventDefault();
+    var btn = form.querySelector('.cf-submit');
+    if (btn.getAttribute('aria-disabled') === 'true') return;
+    clearErrors();
+    var status = document.getElementById('cf-status'); status.innerHTML = '';
+    var errors = [];
+    FIELDS.forEach(function (f) { var m = f.check(document.getElementById(f.id).value.trim()); if (m) errors.push({ id: f.id, cls: f.cls, message: m }); });
+    if (errors.length) { showErrors(errors); return; }
+    var payload = {
+      name: document.getElementById('cf-name').value.trim(),
+      email: document.getElementById('cf-email').value.trim(),
+      subject: document.getElementById('cf-subject').value.trim(),
+      message: document.getElementById('cf-message').value.trim()
+    };
+    btn.setAttribute('aria-disabled', 'true'); btn.textContent = 'Sending…';
+    try {
+      var res = await fetch(SUPABASE_URL + '/rest/v1/contact_messages', {
+        method: 'POST',
+        headers: { apikey: SUPABASE_ANON, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error(await res.text());
+      var banner = el('div', { class: 'dr-banner' });
+      banner.appendChild(el('p', { class: 'dr-banner__title' }, 'Message sent'));
+      var content = el('div', { class: 'dr-banner__content' }); content.appendChild(el('p', null, 'Thank you. We aim to reply within 2 business days.'));
+      banner.appendChild(content); status.appendChild(banner);
+      form.reset();
+      status.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch (err) {
+      var box = el('div', { class: 'dr-error-summary', tabindex: '-1', role: 'alert' });
+      box.appendChild(el('h2', null, 'There is a problem'));
+      var p = el('p', null, 'Your message could not be sent. Email '); var a = el('a', { href: 'mailto:abta@abta.africa' }, 'abta@abta.africa'); p.appendChild(a); p.appendChild(document.createTextNode(' instead.'));
+      box.appendChild(p); document.getElementById('cf-errors').appendChild(box); box.focus();
+    } finally {
+      btn.removeAttribute('aria-disabled'); btn.textContent = 'Send message';
+    }
+  });
+})();
 </script>
 <script>
 // Render footer columns from Supabase if configured
@@ -1572,5 +1687,8 @@ async function amiDbUpdateArticle(id, fields) {
 })(); // end IIFE
 </script>
 
+<script>
+(function(){var b=document.querySelector('.ami-nav__toggle'),n=document.getElementById('ami-nav');if(!b||!n)return;b.addEventListener('click',function(){var o=n.classList.toggle('is-open');var x=document.getElementById('ami-sections');if(x)x.classList.toggle('is-open',o);b.setAttribute('aria-expanded',o?'true':'false');});})();
+</script>
 </body>
 </html>
