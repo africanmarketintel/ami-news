@@ -246,7 +246,8 @@
               h('h2', { text: 'Payment' }),
               h('dl', { class: 'dr-summary-list' },
                 h('div', { class: 'dr-summary-list__row' }, h('dt', { class: 'dr-summary-list__key', text: 'Deal Room membership, 12 months' }), h('dd', { class: 'dr-summary-list__value', text: '£99' }), h('dd', { class: 'dr-summary-list__actions' }))),
-              h('p', { text: 'When you continue, we record that you have accepted the agreements on behalf of your organisation. You will then pay securely on Stripe’s website. ABTA does not see or store your card details.' })
+              h('p', { text: 'When you continue, we record that you have accepted the agreements on behalf of your organisation. You will then pay securely on Stripe’s website. ABTA does not see or store your card details.' }),
+              h('p', { text: 'If ABTA has given you a promotion code, you can enter it on the payment page.' })
             ];
           },
           onSubmit: function (s) {
@@ -309,6 +310,7 @@
           h('div', { class: 'dr-summary-list__row' }, h('dt', { class: 'dr-summary-list__key', text: 'Organisation' }), h('dd', { class: 'dr-summary-list__value', text: m.organisation || '' }), h('dd', { class: 'dr-summary-list__actions' })),
           h('div', { class: 'dr-summary-list__row' }, h('dt', { class: 'dr-summary-list__key', text: 'Deal Room membership, 12 months' }), h('dd', { class: 'dr-summary-list__value', text: '£99' }), h('dd', { class: 'dr-summary-list__actions' }))));
         w.appendChild(h('p', { text: 'You will pay securely on Stripe’s website. ABTA does not see or store your card details.' }));
+        w.appendChild(h('p', { text: 'If ABTA has given you a promotion code, you can enter it on the payment page.' }));
         var errBox = h('div');
         w.insertBefore(errBox, w.firstChild);
         var btn = h('button', { type: 'button', class: 'dr-button', text: 'Continue to payment' });

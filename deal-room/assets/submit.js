@@ -59,7 +59,7 @@
           h('li', { text: 'a summary of up to 300 words that does not name the business, people or exact locations' }),
           h('li', { text: 'supporting documents, if you have them (PDF, Word, Excel or PowerPoint, up to 25MB each)' })),
         h('p', { text: 'You can save your progress and come back to it in the same browser tab.' }),
-        h('a', { href: 'submit-opportunity.html?step=tasks', role: 'button', draggable: 'false', class: 'dr-button dr-button--start' }, 'Start now', startArrow()),
+        h('a', { href: 'submit-opportunity.html?step=tasks', role: 'button', draggable: 'false', class: 'dr-button dr-button--start' }, 'Start now'),
         h('h2', { text: 'What ABTA looks for' }),
         h('p', { text: 'ABTA reviews each submission for credibility, completeness and fit with the Deal Room’s members. We aim to reply within 5 business days.' }),
         h('p', null, 'For a list of documents investors commonly ask for, email ', h('a', { href: 'mailto:ami@abta.africa?subject=Deal%20Room%20document%20checklist', text: 'ami@abta.africa' }), ' for the Deal Room document checklist.')),
@@ -67,15 +67,6 @@
         h('h2', { text: 'Not a member yet?' }),
         h('p', { text: 'Membership is £99 a year and includes listing opportunities.' }),
         h('a', { href: 'create-account.html', text: 'Join the Deal Room' })))));
-  }
-
-  function startArrow() {
-    var ns = 'http://www.w3.org/2000/svg';
-    var svg = document.createElementNS(ns, 'svg');
-    svg.setAttribute('width', '17.5'); svg.setAttribute('height', '19'); svg.setAttribute('viewBox', '0 0 33 40');
-    svg.setAttribute('aria-hidden', 'true'); svg.setAttribute('focusable', 'false');
-    var p = document.createElementNS(ns, 'path'); p.setAttribute('fill', 'currentColor'); p.setAttribute('d', 'M0 0h13l20 20-20 20H0l20-20z');
-    svg.appendChild(p); return svg;
   }
 
   function flow(app, account) {

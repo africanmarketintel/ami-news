@@ -16,9 +16,9 @@
   --brand-hover: #14532d;
   --brand-tint: #e8f1ec;
   --header: #0a1a10;
-  --gold: #c9a84c;        /* ABTA gold: button fill, 8.1:1 with --ink text */
-  --gold-light: #f9c53d;  /* button hover, 11.5:1 with --ink text */
-  --gold-dark: #7a5f1a;   /* button bottom edge, 6.0:1 on white; use for gold text on white */
+  --gold: #c9a84c;        /* ABTA gold: button hover, banners, icons; 8.1:1 with --ink text */
+  --gold-light: #f9c53d;  /* button fill, 11.5:1 with --ink text */
+  --gold-dark: #7a5f1a;   /* 6.0:1 on white; use for gold text on white */
   --border: #b1b4b6;
   --border-light: #d8dadc;
   --input: #1a1208;
@@ -116,7 +116,6 @@ a:hover, .dr-link:hover { color: var(--brand-hover); text-decoration-thickness: 
 .dr-header__inner { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 68px; flex-wrap: wrap; }
 .dr-logo { display: inline-flex; align-items: center; gap: .6rem; text-decoration: none; color: var(--ink); font-weight: 700; font-size: 1.25rem; padding: .25rem 0; }
 .dr-logo:hover { color: var(--ink); }
-.dr-logo__mark { display: inline-grid; place-items: center; min-width: 56px; height: 40px; padding: 0 .5rem; border-radius: 6px; background: var(--header); color: var(--gold); font-size: 1rem; letter-spacing: .04em; }
 .dr-logo__sub { display: block; font-weight: 400; font-size: 1rem; color: var(--secondary); }
 @media (max-width: 480px) { .dr-logo__sub { display: none; } }
 .dr-mobile-only { display: block; }
@@ -128,7 +127,7 @@ a:hover, .dr-link:hover { color: var(--brand-hover); text-decoration-thickness: 
 .dr-nav__account { margin-left: .5rem; }
 .dr-nav__toggle { display: none; }
 @media (max-width: 820px) {
-  .js .dr-nav__toggle { display: inline-flex; align-items: center; gap: .4rem; background: none; border: 2px solid var(--ink); border-radius: var(--radius); padding: .4rem .7rem; font: inherit; font-size: 1rem; font-weight: 600; color: var(--ink); cursor: pointer; }
+  .js .dr-nav__toggle { display: inline-flex; align-items: center; gap: .4rem; background: none; border: 2px solid var(--ink); border-radius: 999px; padding: .4rem .9rem; font: inherit; font-size: 1rem; font-weight: 600; color: var(--ink); cursor: pointer; }
   .dr-nav { width: 100%; flex-direction: column; align-items: stretch; padding-bottom: .75rem; }
   .js .dr-nav { display: none; }
   .js .dr-nav.is-open { display: flex; }
@@ -145,19 +144,20 @@ a:hover, .dr-link:hover { color: var(--brand-hover); text-decoration-thickness: 
 
 /* ---------- Buttons ---------- */
 .dr-button {
-  display: inline-block; position: relative; margin: 0 .75rem 1rem 0; padding: .55rem 1rem .5rem;
+  display: inline-block; position: relative; margin: 0 .75rem 1rem 0; padding: .55rem 1.5rem .5rem;
   font: inherit; font-weight: 600; font-size: 1.1875rem; line-height: 1.2; text-align: center; text-decoration: none;
-  color: var(--ink); background: var(--gold); border: 2px solid transparent; border-radius: var(--radius);
-  box-shadow: 0 2px 0 var(--gold-dark); cursor: pointer; -webkit-appearance: none; appearance: none;
+  color: var(--ink); background: var(--gold-light); border: 2px solid transparent; border-radius: 999px;
+  box-shadow: none; cursor: pointer; -webkit-appearance: none; appearance: none;
 }
-.dr-button:hover { background: var(--gold-light); color: var(--ink); }
-.dr-button:active { top: 2px; box-shadow: none; }
-.dr-button:focus-visible { background: var(--focus) !important; color: var(--focus-text) !important; border-color: var(--focus); box-shadow: inset 0 0 0 1px var(--focus), 0 2px 0 var(--focus-text); outline: 3px solid transparent; }
-.dr-button--secondary { background: var(--page-alt); color: var(--ink); box-shadow: 0 2px 0 #929191; }
+.dr-button:hover { background: var(--gold); color: var(--ink); }
+.dr-button:active { top: 1px; }
+/* Pill buttons: keyboard focus is yellow with a 3px black ring all round (19.6:1 on white) */
+.dr-button:focus-visible, .dr-save:focus-visible, .dr-nav__toggle:focus-visible { background: var(--focus) !important; color: var(--focus-text) !important; border-color: var(--focus-text); box-shadow: 0 0 0 3px var(--focus-text); outline: 3px solid transparent; }
+.dr-button--secondary { background: var(--page-alt); color: var(--ink); border-color: var(--secondary); }
 .dr-button--secondary:hover { background: #dbdad9; color: var(--ink); }
-.dr-button--warning { background: var(--error); color: var(--white); box-shadow: 0 2px 0 #55150b; }
+.dr-button--warning { background: var(--error); color: var(--white); border-color: #55150b; }
 .dr-button--warning:hover { background: #aa2a16; color: var(--white); }
-.dr-button--start { font-size: 1.375rem; padding: .7rem 1.25rem .65rem; display: inline-flex; align-items: center; gap: .5rem; }
+.dr-button--start { font-size: 1.375rem; padding: .7rem 1.75rem .65rem; display: inline-flex; align-items: center; gap: .5rem; }
 .dr-button--full { width: 100%; margin-right: 0; }
 .dr-button[aria-disabled="true"] { opacity: .6; cursor: not-allowed; }
 .dr-button-group { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 1rem; }
@@ -188,7 +188,8 @@ a:hover, .dr-link:hover { color: var(--brand-hover); text-decoration-thickness: 
 
 /* ---------- Forms (GOV.UK patterns) ---------- */
 .dr-form-group { margin-bottom: 1.75rem; }
-.dr-form-group--error { padding-left: 15px; border-left: 5px solid var(--error); }
+/* Errors are shown by the red message and red field border (no red bar on the left) */
+.dr-form-group--error { }
 .dr-label { display: block; font-weight: 600; margin-bottom: .35rem; }
 .dr-label--l { font-size: 2.25rem; line-height: 1.15; font-weight: 700; margin-bottom: .9rem; }
 @media (max-width: 640px) { .dr-label--l { font-size: 1.75rem; } }
@@ -202,6 +203,10 @@ a:hover, .dr-link:hover { color: var(--brand-hover); text-decoration-thickness: 
   background-image: linear-gradient(45deg, transparent 50%, var(--ink) 50%), linear-gradient(135deg, var(--ink) 50%, transparent 50%);
   background-position: calc(100% - 18px) 55%, calc(100% - 12px) 55%; background-size: 6px 6px; background-repeat: no-repeat; }
 .dr-textarea { min-height: 9rem; resize: vertical; }
+/* Curved fields everywhere: single-line fields and dropdowns are pill-shaped, text boxes have 16px corners */
+.dr-input, .dr-select { border-radius: 999px; padding-left: 1rem; padding-right: 1rem; }
+.dr-select { padding-right: 2.6rem; background-position: calc(100% - 24px) 55%, calc(100% - 18px) 55%; }
+.dr-textarea { border-radius: 16px; padding: .6rem 1rem; }
 .dr-input--error, .dr-select--error, .dr-textarea--error { border-color: var(--error); }
 .dr-input--w10 { max-width: 23ex; } .dr-input--w20 { max-width: 41ex; } .dr-input--w30 { max-width: 59ex; }
 .dr-fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
@@ -236,7 +241,7 @@ a:hover, .dr-link:hover { color: var(--brand-hover); text-decoration-thickness: 
 .dr-details__text { padding: .9rem 0 .9rem 1rem; border-left: 5px solid var(--border); margin-top: .5rem; }
 
 /* ---------- Error summary ---------- */
-.dr-error-summary { padding: 1.25rem; margin-bottom: 2rem; border: 5px solid var(--error); }
+.dr-error-summary { padding: 1.25rem; margin-bottom: 2rem; border: 5px solid var(--error); border-radius: 8px; }
 .dr-error-summary:focus { outline: 3px solid var(--focus); }
 .dr-error-summary__title { font-size: 1.5rem; margin: 0 0 1rem; }
 .dr-error-summary__list { margin: 0; padding: 0; list-style: none; }
@@ -244,23 +249,25 @@ a:hover, .dr-link:hover { color: var(--brand-hover); text-decoration-thickness: 
 .dr-error-summary__list a { color: var(--error); font-weight: 700; }
 
 /* ---------- Notification banner, inset text, warning text ---------- */
-.dr-banner { border: 5px solid var(--brand); background: var(--brand); margin-bottom: 2rem; }
+.dr-banner { border: 5px solid var(--brand); background: var(--brand); border-radius: 8px; margin-bottom: 2rem; }
 .dr-banner__title { color: var(--white); font-size: 1.1875rem; font-weight: 700; margin: 0; padding: .2rem .9rem .3rem; }
-.dr-banner__content { background: var(--white); padding: 1rem 1.2rem; }
+.dr-banner__content { background: var(--white); border-radius: 3px; padding: 1rem 1.2rem; }
 .dr-banner__content > :last-child { margin-bottom: 0; }
-.dr-banner--important { border-color: #1d70b8; background: #1d70b8; }
+/* Important: ABTA gold with dark title text (8.1:1). Success stays ABTA green. */
+.dr-banner--important { border-color: var(--gold); background: var(--gold); }
+.dr-banner--important .dr-banner__title { color: var(--ink); }
 .dr-inset { padding: 1rem; margin: 1.5rem 0; border-left: 10px solid var(--border); }
 .dr-inset > :last-child { margin-bottom: 0; }
 .dr-warning { position: relative; padding: .6rem 0 .6rem 3.2rem; font-weight: 700; margin-bottom: 1.25rem; }
 .dr-warning::before { content: "!"; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 35px; height: 35px; border-radius: 50%; background: var(--ink); color: var(--white); font-size: 1.6rem; line-height: 35px; text-align: center; }
 
 /* ---------- Draft legal notice ---------- */
-.dr-draft { border: 3px dashed #8c3a1f; background: #fcede8; color: #5c2412; padding: 1rem 1.25rem; margin: 1.25rem 0 2rem; }
+.dr-draft { border: 3px dashed #8c3a1f; border-radius: 8px; background: #fcede8; color: #5c2412; padding: 1rem 1.25rem; margin: 1.25rem 0 2rem; }
 .dr-draft strong { color: #3d1809; }
 .dr-placeholder { background: #fff7bf; color: #3d3400; padding: 0 .2em; border-bottom: 2px solid #b39b00; font-weight: 600; }
 
 /* ---------- Panel (confirmation) ---------- */
-.dr-panel { background: var(--brand); color: var(--white); text-align: center; padding: 2rem 1.5rem; margin-bottom: 2rem; }
+.dr-panel { background: var(--brand); color: var(--white); text-align: center; padding: 2rem 1.5rem; margin-bottom: 2rem; border-radius: 8px; }
 .dr-panel h1 { color: var(--white); margin-bottom: 1rem; }
 .dr-panel__body { font-size: 1.5rem; }
 .dr-panel__body strong { display: block; font-size: 1.75rem; letter-spacing: .02em; margin-top: .25rem; word-break: break-word; }
@@ -343,7 +350,7 @@ a:hover, .dr-link:hover { color: var(--brand-hover); text-decoration-thickness: 
 .dr-card__snippet { margin: .25rem 0 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .dr-card__footer { margin-top: auto; padding-top: .6rem; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .5rem 1rem; font-size: 1rem; color: var(--secondary); border-top: 1px solid var(--border-light); }
 .dr-card__save { position: relative; z-index: 2; }
-.dr-save { display: inline-flex; align-items: center; gap: .35rem; background: var(--white); border: 1px solid var(--ink); border-radius: var(--radius); padding: .3rem .7rem; font: inherit; font-size: 1rem; font-weight: 600; color: var(--ink); cursor: pointer; }
+.dr-save { display: inline-flex; align-items: center; gap: .35rem; background: var(--white); border: 1px solid var(--ink); border-radius: 999px; padding: .3rem .9rem; font: inherit; font-size: 1rem; font-weight: 600; color: var(--ink); cursor: pointer; }
 .dr-save svg { width: 18px; height: 18px; }
 .dr-save[aria-pressed="true"] { background: var(--brand-tint); border-color: var(--brand); color: var(--brand-hover); }
 .dr-save[aria-pressed="true"] svg path { fill: currentColor; }
@@ -423,7 +430,7 @@ a:hover, .dr-link:hover { color: var(--brand-hover); text-decoration-thickness: 
 
 /* ---------- Dialog (timeout warning) ---------- */
 .dr-dialog-overlay { position: fixed; inset: 0; background: rgba(11,12,12,.75); z-index: 1000; display: grid; place-items: center; padding: 16px; }
-.dr-dialog { background: var(--white); max-width: 540px; width: 100%; padding: 1.75rem; border: 5px solid var(--ink); }
+.dr-dialog { background: var(--white); max-width: 540px; width: 100%; padding: 1.75rem; border: 5px solid var(--ink); border-radius: 8px; }
 .dr-dialog:focus { outline: 3px solid var(--focus); }
 .dr-dialog h2 { margin-top: 0; }
 
