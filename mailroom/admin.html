@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://*.supabase.co; form-action 'self'; base-uri 'self'; object-src 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="ABTA admin for AMI Mailroom.">
+<title>Admin – AMI Mailroom</title>
+<link rel="stylesheet" href="assets/mr.css">
+<script src="../config.js"></script>
+<script src="assets/mr-core.js"></script>
+<script src="assets/mr-sample.js"></script>
+<script src="assets/mr-admin.js"></script>
+</head>
+<body>
+<a href="#main" class="dr-skip">Skip to main content</a>
+<div class="dr-review-banner" id="mr-preview-banner">
+  <div class="dr-width"><strong class="dr-tag dr-tag--yellow">Preview</strong>
+  This service is not live yet. <strong>Everything shown is invented sample data, no email is sent and nothing you enter is saved.</strong></div>
+</div>
+<header class="dr-header">
+  <div class="dr-width dr-header__inner">
+    <a class="dr-logo" href="index.html"><span>AMI Mailroom<span class="dr-logo__sub">African Business Trade Association</span></span></a>
+    <button class="dr-nav__toggle" type="button" aria-controls="dr-nav" aria-expanded="false">Menu</button>
+    <nav id="dr-nav" class="dr-nav" aria-label="Main">
+      <a href="how-it-works.html">How it works</a><a href="archive.html">Archive</a><a href="pricing.html">Sending policy</a>
+      <a class="dr-nav__account" id="mr-account-link" data-account="account.html" href="sign-in.html">Sign in</a>
+      <a class="dr-nav__account" id="mr-sign-out" href="#" hidden>Sign out</a>
+    </nav>
+  </div>
+</header>
+<main id="main">
+
+<div class="dr-width" id="mr-admin">
+  <h1>AMI Mailroom admin</h1>
+  <p class="dr-lead">Open flags, campaigns held for review, sending domains waiting for DNS records, complaint rates, and suspensions. Senders are not approved here. Only accounts on the ABTA admin list see anything: the database decides, not this page.</p>
+  <p class="dr-small">In preview mode there is nothing to show.</p>
+</div>
+
+</main>
+<footer class="dr-footer">
+  <div class="dr-width">
+    <div class="dr-footer__grid">
+      <div>
+        <h2>AMI Mailroom</h2>
+        <ul>
+          <li><a href="how-it-works.html">How it works</a></li>
+          <li><a href="pricing.html">Sending policy</a></li>
+          <li><a href="archive.html">Archive</a></li>
+          <li><a href="account.html">Your mailroom</a></li>
+          <li><a href="domain.html">Sending domains</a></li>
+          <li><a href="brand.html">How your email looks</a></li>
+          <li><a href="create-account.html">Create a sender account</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Agreements and policies</h2>
+        <ul>
+          <li><a href="legal/sender-terms.html">Terms for senders</a></li>
+          <li><a href="legal/acceptable-use.html">Acceptable use policy</a></li>
+          <li><a href="legal/data-processing.html">Data processing terms</a></li>
+          <li><a href="legal/privacy-notice.html">Privacy policy</a></li>
+          <li><a href="legal/complaints.html">Complaints</a></li>
+          <li><a href="legal/accessibility.html">Accessibility</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Contact</h2>
+        <p>Questions about a campaign or an account: <a href="mailto:ami@abta.africa">ami@abta.africa</a></p>
+        <p>Received an email you did not ask for? Reply to it, or tell us, and we will act.</p>
+        <p><a href="../index.html">African Market Intelligence home</a></p>
+      </div>
+    </div>
+    <div class="dr-footer__legal">
+      <p>AMI is operated by African Business Trade Association Limited, a company registered in England and Wales, United Kingdom.</p>
+      <p>Campaigns are written and sent by the organisations that own the lists. ABTA operates the platform, checks every campaign automatically and enforces the sending rules.</p>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

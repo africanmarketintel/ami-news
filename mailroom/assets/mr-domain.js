@@ -1,0 +1,368 @@
+/* ==========================================================================
+   AMI Mailroom – sending domains (domain.html)
+     Send from your own domain, or from a subdomain ABTA sets up for you.
+     Everything that decides whether mail may leave is in the database and
+     the mailroom-domain function. This file shows the records to publish
+     and asks the provider to look again.
+   ========================================================================== */
+(function () {
+  'use strict';
+  var MR = window.MR;
+  if (!MR) return;
+
+  var STATUS_TEXT = {
+    not_started: 'Waiting for the DNS records',
+    pending: 'Checking the DNS records',
+    verified: 'Verified',
+    failed: 'The records could not be read',
+    temporary_failure: 'The records could not be read just now'
+  };
+  var STATUS_TAG = {
+    not_started: 'grey', pending: 'yellow', verified: 'green',
+    failed: 'red', temporary_failure: 'yellow'
+  };
+
+  MR.domainLabel = function (d) {
+    if (!d) return 'the AMI Mailroom address';
+    return d.from_local + '@' + d.domain;
+  };
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var wrap = document.getElementById('mr-domain');
+    if (!wrap) return;
+
+    var account = null;
+    var domains = [];
+
+    if (MR.cfg.demo) {
+      account = MR.sampleAccount;
+      domains = (MR.sampleDomains || []).slice();
+      render();
+      return;
+    }
+
+    MR.requireAccount(wrap).then(function (a) {
+      account = a;
+      return MR.api.select('mailroom_domains?select=*&order=created_at.asc');
+    }).then(function (rows) {
+      domains = rows || [];
+      render();
+    }).catch(function (err) {
+      if (err.message === 'signed out' || err.message === 'no account') return;
+      console.error(err);
+    });
+
+    /* ---------------- page ---------------- */
+    function render() {
+      wrap.textContent = '';
+      wrap.appendChild(MR.h('h1', { text: 'Where your email comes from' }));
+      wrap.appendChild(MR.h('p', { class: 'dr-lead' },
+        'Every campaign leaves from a domain. Until you add one of your own, yours go out from the shared AMI Mailroom address, and readers see your organisation name in front of it.'));
+
+      var verified = domains.filter(function (d) { return d.status === 'verified'; });
+      if (verified.length) {
+        wrap.appendChild(MR.h('p', null, 'Campaigns can be sent from ',
+          MR.h('strong', { text: verified.map(MR.domainLabel).join(', ') }), '.'));
+      }
+
+      wrap.appendChild(MR.h('div', { class: 'mr-aside' },
+        MR.h('h2', { class: 'dr-h', text: 'Why it is worth doing' }),
+        MR.h('ul', { class: 'dr-list' },
+          MR.h('li', { text: 'Readers see your own address, not ABTA’s, which is what most people open.' }),
+          MR.h('li', { text: 'Your delivery record is your own. Another sender having a bad month cannot slow you down, and your own mistakes stay with you.' }),
+          MR.h('li', { text: 'A suspension lands on the domain, not on your account, so a bad campaign here does not stop you sending from the shared address.' })),
+        MR.h('p', { class: 'dr-small', text: 'Neither the Mailroom nor your own domain has a daily cap. A domain nobody has heard of is treated with more suspicion at first, though, so build up over a few sends rather than mailing your whole list from it on day one.' })));
+
+      domains.forEach(function (d) { wrap.appendChild(card(d)); });
+
+      if (!account.allows_own_domain) {
+        // The rule is enforced in the database. This is here so the page says
+        // so before somebody fills in a form that will be refused.
+        wrap.appendChild(upgradePrompt());
+      } else {
+        if (!verified.length) wrap.appendChild(movePrompt());
+        if (domains.length < 3) wrap.appendChild(addForm());
+      }
+
+      wrap.appendChild(MR.h('p', null,
+        MR.h('a', { class: 'dr-button dr-button--secondary', href: 'account.html', text: 'Back to your mailroom' })));
+    }
+
+    /* ---------------- prompts ---------------- */
+
+    // Free plan. Deliberately not framed as a feature being withheld: the
+    // reason free accounts stay on the shared address is that the shared
+    // address is where the content and import checks do their work.
+    function upgradePrompt() {
+      return MR.h('div', { class: 'mr-aside', id: 'mr-domain-upgrade' },
+        MR.h('h2', { class: 'dr-h', text: 'Sending from your own domain' }),
+        MR.h('p', null, 'Your campaigns go out from the shared AMI Mailroom address, with your organisation name in front of it. That works, and there is nothing you need to set up.'),
+        MR.h('p', null, 'A sending domain of your own comes with ',
+          MR.h('strong', { text: 'any paid plan' }),
+          ', at no extra charge. It is not an add-on, because a sender on their own domain carries their own delivery record, and that is better for everybody.'),
+        MR.h('p', null,
+          MR.h('a', { class: 'dr-button', href: 'pricing.html', id: 'mr-domain-upgrade-link',
+                      text: 'See the plans' })));
+    }
+
+    // Paid plan, still on the shared address. Worth one nudge, not a nag.
+    function movePrompt() {
+      return MR.h('div', { class: 'mr-aside', id: 'mr-domain-move' },
+        MR.h('h2', { class: 'dr-h', text: 'You are still on the shared address' }),
+        MR.h('p', null, 'Your plan includes a sending domain of your own and you have not set one up yet. On the shared address your delivery depends partly on how everyone else on it behaves.'),
+        MR.h('p', { class: 'dr-small', text: 'Adding one takes a few DNS records, or ABTA can set up a subdomain for you with nothing to publish.' }));
+    }
+
+    /* ---------------- one domain ---------------- */
+    function card(d) {
+      var box = MR.h('div', { class: 'mr-aside' });
+      box.appendChild(MR.h('h2', { class: 'dr-h' }, d.domain, ' ',
+        MR.h('span', { class: 'dr-tag dr-tag--' + (STATUS_TAG[d.status] || 'grey'),
+          text: STATUS_TEXT[d.status] || d.status })));
+
+      box.appendChild(MR.h('p', null, 'Campaigns go out as ',
+        MR.h('strong', { text: MR.domainLabel(d) }), '.',
+        d.kind === 'abta_subdomain'
+          ? ' ABTA publishes the records for this one, so there is nothing for you to do.' : ''));
+
+      if (d.sending_status === 'suspended') {
+        box.appendChild(MR.h('p', { class: 'dr-error-message',
+          text: 'Sending from this domain is suspended. ' + (d.suspension_reason || '') }));
+      }
+
+      if (d.status === 'verified') {
+        box.appendChild(MR.h('p', { class: 'dr-small',
+          text: MR.number(d.clean_campaigns || 0) + ' clean campaign' +
+                ((d.clean_campaigns || 0) === 1 ? '' : 's') + ' from this domain. ' +
+                'There is no daily limit. Complaints and bounces are what stop a domain sending.' }));
+        if (!d.is_default) {
+          box.appendChild(MR.h('button', {
+            class: 'dr-button dr-button--secondary', type: 'button',
+            text: 'Use this by default',
+            onclick: function () { setDefault(d); }
+          }));
+        } else {
+          box.appendChild(MR.h('p', { class: 'dr-small', text: 'New campaigns use this domain unless you choose another.' }));
+        }
+      } else {
+        box.appendChild(records(d));
+        box.appendChild(MR.h('div', { class: 'dr-button-group' },
+          MR.h('button', {
+            class: 'dr-button', type: 'button', text: 'Check the records now',
+            onclick: function (e) { check(d, e.target); }
+          })));
+        box.appendChild(MR.h('p', { class: 'dr-small',
+          text: d.last_checked_at
+            ? 'Last checked ' + MR.date(d.last_checked_at) + '. DNS changes can take a few hours to spread.'
+            : 'DNS changes can take a few hours to spread, so a first check often comes back unverified.' }));
+      }
+
+      box.appendChild(MR.h('p', null, MR.h('button', {
+        class: 'dr-button dr-button--warning', type: 'button', text: 'Remove this domain',
+        onclick: function () { remove(d); }
+      })));
+      return box;
+    }
+
+    /* ---------------- the DNS records ---------------- */
+    function records(d) {
+      var list = Array.isArray(d.records) ? d.records : [];
+      if (!list.length) {
+        return MR.h('p', { class: 'dr-empty', text: 'The provider has not returned any records yet. Check again in a moment.' });
+      }
+      var body = MR.h('tbody');
+      list.forEach(function (r) {
+        body.appendChild(MR.h('tr', null,
+          MR.h('td', { text: r.type || '' }),
+          MR.h('td', null, MR.h('code', { class: 'mr-dns', text: r.name || '' })),
+          MR.h('td', null, MR.h('code', { class: 'mr-dns', text: r.value || '' })),
+          MR.h('td', { text: r.priority == null ? '' : String(r.priority) }),
+          MR.h('td', null, copyButton(r))));
+      });
+      return MR.h('div', null,
+        MR.h('h3', { class: 'dr-h', text: 'Publish these records with whoever runs your DNS' }),
+        MR.h('p', { class: 'dr-small', text: 'Your IT provider, your web host or your domain registrar. Copy each value exactly. Some control panels add the domain to the name for you, so check the result reads once, not twice.' }),
+        MR.h('div', { class: 'dr-table-wrap' },
+          MR.h('table', { class: 'dr-table' },
+            MR.h('caption', { class: 'dr-visually-hidden', text: 'DNS records for ' + d.domain }),
+            MR.h('thead', null, MR.h('tr', null,
+              ['Type', 'Name', 'Value', 'Priority', ''].map(function (h) {
+                return MR.h('th', { scope: 'col', text: h });
+              }))),
+            body)));
+    }
+
+    function copyButton(r) {
+      var btn = MR.h('button', {
+        class: 'dr-button dr-button--secondary', type: 'button', text: 'Copy value',
+        onclick: function () {
+          var done = function () { btn.textContent = 'Copied'; MR.announce('Value copied'); };
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(r.value || '').then(done, fallback);
+          } else { fallback(); }
+          function fallback() {
+            var input = MR.h('input', { type: 'text', value: r.value || '' });
+            document.body.appendChild(input);
+            input.select();
+            try { document.execCommand('copy'); done(); } catch (e) { btn.textContent = 'Select it by hand'; }
+            input.remove();
+          }
+        }
+      });
+      return btn;
+    }
+
+    /* ---------------- add a domain ---------------- */
+    function addForm() {
+      var form = MR.h('form', { id: 'mr-domain-form', novalidate: true });
+      form.appendChild(MR.h('h2', { text: 'Add a sending domain' }));
+
+      var kind = 'own_domain';
+      var ownBox, abtaBox;
+
+      var ownRadio = MR.h('input', { class: 'dr-choice__input', id: 'd-own', type: 'radio', name: 'd-kind', value: 'own_domain', checked: true });
+      var abtaRadio = MR.h('input', { class: 'dr-choice__input', id: 'd-abta', type: 'radio', name: 'd-kind', value: 'abta_subdomain' });
+
+      form.appendChild(MR.h('div', { class: 'dr-choice' }, ownRadio,
+        MR.h('label', { class: 'dr-choice__label', for: 'd-own' }, 'Your own domain',
+          MR.h('span', { class: 'dr-choice__hint', text: 'Readers see your address. You need whoever runs your DNS to publish a few records.' }))));
+      form.appendChild(MR.h('div', { class: 'dr-choice' }, abtaRadio,
+        MR.h('label', { class: 'dr-choice__label', for: 'd-abta' }, 'A subdomain ABTA sets up',
+          MR.h('span', { class: 'dr-choice__hint', text: 'Something like yourname.mail.abta.africa. Nothing for you to publish, and your delivery record is still your own, but the address reads as ABTA.' }))));
+
+      var domainInput = MR.h('input', { class: 'dr-input', id: 'd-domain', type: 'text', placeholder: 'news.example.com' });
+      ownBox = MR.h('div', { class: 'dr-form-group' },
+        MR.h('label', { class: 'dr-label', for: 'd-domain', text: 'Your domain' }),
+        MR.h('span', { class: 'dr-hint', text: 'A subdomain such as news.example.com is better than the bare domain: a problem with marketing email then cannot touch your ordinary mail.' }),
+        domainInput);
+
+      var labelInput = MR.h('input', { class: 'dr-input', id: 'd-label', type: 'text', placeholder: 'yourname' });
+      abtaBox = MR.h('div', { class: 'dr-form-group', hidden: true },
+        MR.h('label', { class: 'dr-label', for: 'd-label', text: 'The name in front' }),
+        MR.h('span', { class: 'dr-hint', text: 'Letters, numbers and hyphens. It becomes yourname.mail.abta.africa.' }),
+        labelInput);
+
+      var localInput = MR.h('input', { class: 'dr-input dr-input--w', id: 'd-local', type: 'text', value: 'hello' });
+      var localBox = MR.h('div', { class: 'dr-form-group' },
+        MR.h('label', { class: 'dr-label', for: 'd-local', text: 'The address in front of it' }),
+        MR.h('span', { class: 'dr-hint', text: 'For example hello, news or updates. Replies still go to your reply-to address.' }),
+        localInput);
+
+      form.appendChild(ownBox);
+      form.appendChild(abtaBox);
+      form.appendChild(localBox);
+      form.appendChild(MR.h('button', { class: 'dr-button', type: 'submit', text: 'Add the domain' }));
+
+      function switchKind() {
+        kind = abtaRadio.checked ? 'abta_subdomain' : 'own_domain';
+        ownBox.hidden = kind !== 'own_domain';
+        abtaBox.hidden = kind !== 'abta_subdomain';
+      }
+      ownRadio.addEventListener('change', switchKind);
+      abtaRadio.addEventListener('change', switchKind);
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var errors = [];
+        var value = kind === 'own_domain' ? domainInput.value.trim() : labelInput.value.trim();
+        if (kind === 'own_domain' && !/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(value.replace(/^https?:\/\//, '').replace(/\/.*$/, ''))) {
+          errors.push({ id: 'd-domain', message: 'Enter a domain, such as news.example.com' });
+        }
+        if (kind === 'abta_subdomain' && !/^[a-z0-9-]{3,30}$/i.test(value)) {
+          errors.push({ id: 'd-label', message: 'Enter at least three letters or numbers' });
+        }
+        if (!/^[a-z0-9]([a-z0-9._-]{0,62}[a-z0-9])?$/i.test(localInput.value.trim())) {
+          errors.push({ id: 'd-local', message: 'Enter the part before the @, such as hello' });
+        }
+        if (MR.errors.show(form, errors)) return;
+
+        if (MR.cfg.demo) {
+          MR.banner(wrap, 'Preview only',
+            'On the live service the records to publish would appear here within a second or two.');
+          return;
+        }
+        var button = form.querySelector('button[type=submit]');
+        button.disabled = true;
+        button.textContent = 'Adding…';
+        MR.fn('mailroom-domain', {
+          action: 'add', account_id: account.id, kind: kind,
+          domain: kind === 'own_domain' ? value : undefined,
+          label: kind === 'abta_subdomain' ? value : undefined,
+          from_local: localInput.value.trim()
+        }).then(function (r) {
+          domains.push(r.domain);
+          render();
+          MR.announce(kind === 'own_domain'
+            ? 'Domain added. Publish the records shown.'
+            : 'Subdomain requested. ABTA will publish the records.');
+        }).catch(function (err) {
+          button.disabled = false;
+          button.textContent = 'Add the domain';
+          MR.errors.show(form, [{
+            id: kind === 'own_domain' ? 'd-domain' : 'd-label', message: message(err)
+          }]);
+        });
+      });
+      return form;
+    }
+
+    /* ---------------- actions ---------------- */
+    function check(d, button) {
+      if (MR.cfg.demo) { MR.banner(wrap, 'Preview only', 'Nothing is checked in preview mode.'); return; }
+      button.disabled = true;
+      button.textContent = 'Checking…';
+      MR.fn('mailroom-domain', { action: 'check', domain_id: d.id }).then(function (r) {
+        domains = domains.map(function (x) { return x.id === d.id ? r.domain : x; });
+        render();
+        MR.announce(r.verified ? 'Domain verified' : 'Not verified yet');
+      }).catch(function (err) {
+        button.disabled = false;
+        button.textContent = 'Check the records now';
+        MR.banner(wrap, 'Could not check', message(err), 'important');
+      });
+    }
+
+    function setDefault(d) {
+      if (MR.cfg.demo) { MR.banner(wrap, 'Preview only', 'Nothing is saved in preview mode.'); return; }
+      MR.api.update('mailroom_domains', 'id=eq.' + d.id, { is_default: true }).then(function () {
+        return MR.api.select('mailroom_domains?select=*&order=created_at.asc');
+      }).then(function (rows) {
+        domains = rows || [];
+        render();
+        MR.announce('Default sending domain changed');
+      }).catch(function (err) {
+        MR.banner(wrap, 'Could not change it', message(err), 'important');
+      });
+    }
+
+    function remove(d) {
+      if (!confirm('Remove ' + d.domain + '? Campaigns already sent keep their record, and new ones go out from the shared address until you add another domain.')) return;
+      if (MR.cfg.demo) { MR.banner(wrap, 'Preview only', 'Nothing is removed in preview mode.'); return; }
+      MR.fn('mailroom-domain', { action: 'remove', domain_id: d.id }).then(function () {
+        domains = domains.filter(function (x) { return x.id !== d.id; });
+        render();
+        MR.announce('Domain removed');
+      }).catch(function (err) {
+        MR.banner(wrap, 'Could not remove it', message(err), 'important');
+      });
+    }
+
+    function message(err) {
+      var m = String((err && err.message) || '');
+      if (/not_a_domain/.test(m)) return 'That does not look like a domain. Try news.example.com.';
+      if (/public_mailbox/.test(m)) return 'You cannot send from a free mailbox domain such as gmail.com. Use a domain your organisation owns.';
+      if (/abta_domain/.test(m)) return 'That domain belongs to ABTA. Choose the ABTA subdomain option instead.';
+      if (/already_added/.test(m)) return 'That domain is already on your account.';
+      if (/taken/.test(m)) return 'That domain is already in use by another sender.';
+      if (/too_many_domains/.test(m)) return 'An account can hold three sending domains. Remove one first.';
+      if (/label_too_short/.test(m)) return 'Enter at least three letters or numbers.';
+      if (/not_an_address/.test(m)) return 'Enter the part before the @, such as hello.';
+      if (/campaign_in_flight/.test(m)) return 'A campaign is going out from this domain. Try again once it has finished.';
+      if (/account_not_active/.test(m)) return 'Sending is suspended on this account.';
+      if (/provider_refused/.test(m)) return 'The email provider would not accept that domain. Check the spelling.';
+      if (/provider_unavailable/.test(m)) return 'The email provider did not answer. Try again shortly.';
+      if (/not_configured/.test(m)) return 'Sending is not switched on yet.';
+      return 'That could not be done. Please try again shortly.';
+    }
+  });
+})();
