@@ -462,6 +462,24 @@ a:hover, .dr-link:hover { color: var(--brand-hover); text-decoration-thickness: 
 
 
 /* ---------- AMI Mailroom additions ---------- */
+
+/* The member navigation. Structure only: every colour here is an existing
+   token, so this adds a bar without changing how anything looks.
+   The settings group is lighter in weight, not in colour, because weight
+   says "less often" without inventing a second palette. */
+.mr-subnav { border-bottom: 1px solid var(--border-light); background: #fff; }
+.mr-subnav__inner { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: space-between; }
+.mr-subnav__group { display: flex; flex-wrap: wrap; gap: .25rem; }
+.mr-subnav a { display: inline-block; padding: .55rem .5rem; color: var(--ink); text-decoration: none; font-size: 1rem; font-weight: 600; border-bottom: 3px solid transparent; }
+.mr-subnav a:hover { color: var(--brand); border-bottom-color: var(--brand); }
+.mr-subnav a[aria-current="page"] { color: var(--brand); border-bottom-color: var(--brand); }
+.mr-subnav__group--settings a { font-weight: 400; }
+@media (max-width: 699px) {
+  .mr-subnav__inner { flex-direction: column; align-items: stretch; gap: 0; }
+  .mr-subnav__group { width: 100%; }
+  .mr-subnav__group--settings { border-top: 1px solid var(--border-light); padding-top: .25rem; }
+}
+
 .mr-aside { border: 1px solid #b1b4b6; border-radius: 8px; padding: 1rem 1.25rem; background: #fff; margin: 0 0 1.5rem; }
 .mr-aside h2 { margin-top: 0; }
 .mr-trial { border-left: 3px solid #c9a84c; background: #fdf6e3; padding: 0.75rem 1rem; margin: 0.75rem 0; border-radius: 0 4px 4px 0; }

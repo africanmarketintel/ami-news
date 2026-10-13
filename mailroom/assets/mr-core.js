@@ -432,6 +432,11 @@
       account.textContent = 'Your account';
       account.setAttribute('href', account.getAttribute('data-account') || 'account.html');
     }
+    // The member navigation. Shown to a signed-in member, and in preview mode
+    // so the sample pages demonstrate the product rather than a locked door.
+    var memberNav = document.getElementById('mr-member-nav');
+    if (memberNav) memberNav.hidden = !(MR.auth.signedIn() || MR.cfg.demo);
+
     var out = document.getElementById('mr-sign-out');
     if (out) {
       out.hidden = !MR.auth.signedIn();
