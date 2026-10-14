@@ -651,7 +651,7 @@
        share button covers the job. */
     .share-rail {
       position: fixed;
-      left: 16px;
+      left: var(--art-gutter);
       top: 50%;
       transform: translateY(-50%);
       z-index: 40;
@@ -715,6 +715,18 @@
 
     @media (max-width: 1200px) {
       .share-rail { display: none }
+
+      .article-full {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 40px 24px 80px;
+      }
+
+      .back-link {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 20px 24px 0 !important;
+      }
     }
 
     /* More from AMI
@@ -3270,41 +3282,10 @@
       pointer-events: none;
     }
 
-    /* ── Share button ── */
-    .share-btn-row {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin: 0.75rem 0;
-    }
-
-    .share-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.45rem;
-      padding: 0.4rem 0.85rem;
-      border: 1px solid var(--divider);
-      background: transparent;
-      color: var(--text-soft);
-      font-family: 'DM Mono', monospace;
-      font-size: 0.68rem;
-      letter-spacing: 0.07em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: border-color 0.2s, color 0.2s, background 0.2s;
-    }
-
-    .share-btn:hover {
-      border-color: var(--gold);
-      color: var(--gold);
-      background: var(--gold-pale);
-    }
-
-    .share-btn svg {
-      width: 13px;
-      height: 13px;
-      flex-shrink: 0;
-    }
+    /* The top and bottom Share buttons were removed on 14 October 2026 at YO's
+       request; the fixed rail on the left is the only share control on the
+       article page now. Their CSS - .share-btn-row and .share-btn - went with
+       them. The share MODAL is untouched and still opens from elsewhere. */
 
     /* ── Share modal ── */
     .share-modal-backdrop {
@@ -3491,10 +3472,24 @@
   </style>
 
   <style>
+    /* Article column.
+       Changed 14 October 2026. The column was 760px centred on the page, so on
+       a 1440px screen its left edge sat at 340px while the masthead wordmark
+       and the footer headings sat at 104px - three different left edges on one
+       page. It now shares the chrome's gutter: the share rail sits on that
+       gutter and the reading column starts 96px further in, which is the rail
+       (46px) plus a 50px gap. The measure stays 760px at every width.
+       Below 1200px the rail hides and the column returns to centred. */
+    :root {
+      --art-gutter: max(24px, calc((100% - 1280px) / 2 + 24px));
+      --art-rail-space: 96px;
+    }
+
     .article-full {
-      max-width: 760px;
-      margin: 0 auto;
-      padding: 40px 24px 80px;
+      max-width: calc(760px + var(--art-gutter) + var(--art-rail-space) + 24px);
+      margin: 0;
+      padding: 40px 24px 80px calc(var(--art-gutter) + var(--art-rail-space));
+      box-sizing: border-box;
     }
 
     .article-full .af-kicker {
@@ -4093,7 +4088,7 @@
 
 
   <a href="index.html" onclick="if(history.length > 1){ event.preventDefault(); history.back(); }" class="back-link"
-    style="display:block;padding:20px 24px 0;max-width:760px;margin:0 auto">← Back</a>
+    style="display:block;padding:20px 24px 0 calc(var(--art-gutter) + var(--art-rail-space))">← Back</a>
   <div class="article-full" id="articleFull">
     <div class="loading-art">Loading article…</div>
   </div>
@@ -4318,9 +4313,7 @@
         <span>${a.read_time || ''}</span>
         ${a.tags ? `<span>${a.tags}</span>` : ''}
       </div>
-      <div class="share-btn-row"><button class="share-btn" onclick="openShareModal()"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="13" cy="2.5" r="1.5"/><circle cx="13" cy="13.5" r="1.5"/><circle cx="2.5" cy="8" r="1.5"/><line x1="4" y1="8" x2="11.5" y2="3.2"/><line x1="4" y1="8" x2="11.5" y2="12.8"/></svg> Share</button></div>
-      <div class="af-body" id="articleBody" data-editable="richtext" data-cms-type="article" data-article-field="body" data-article-id="${a.id}">${a.body || '<p>Full article content coming soon.</p>'}</div>
-      <div class="share-btn-row" style="margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid var(--divider)"><button class="share-btn" onclick="openShareModal()"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="13" cy="2.5" r="1.5"/><circle cx="13" cy="13.5" r="1.5"/><circle cx="2.5" cy="8" r="1.5"/><line x1="4" y1="8" x2="11.5" y2="3.2"/><line x1="4" y1="8" x2="11.5" y2="12.8"/></svg> Share</button></div>`;
+      <div class="af-body" id="articleBody" data-editable="richtext" data-cms-type="article" data-article-field="body" data-article-id="${a.id}">${a.body || '<p>Full article content coming soon.</p>'}</div>`;
 
         // ── Paywall: locked articles always gate; metered gate after 5 free reads ──
         const articleId = params.get('id');
