@@ -166,11 +166,11 @@
   // must not depend on the page's markup surviving either.
   const MASTHEAD_CSS = `
 @media (min-width:768px){.top-nav{display:none!important}}
-.masthead{text-align:left!important;padding:14px 24px!important}
+.masthead{text-align:left!important;padding:14px max(24px,calc((100% - 1280px)/2 + 24px))!important;box-sizing:border-box}
 .masthead-header-row{display:flex!important;grid-template-columns:none!important;align-items:center!important;
   justify-content:space-between!important;gap:24px!important;margin-bottom:0!important}
 .masthead-name{grid-column:auto!important;text-align:left!important;margin-bottom:0!important;
-  font-size:clamp(24px,3.2vw,40px)!important}
+  font-size:clamp(20px,2.2vw,28px)!important}
 .masthead-tagline{display:none!important}
 .masthead-cta{grid-column:auto!important;justify-self:auto!important;display:inline-flex!important;
   align-items:center!important;gap:18px!important;flex-shrink:0}
@@ -372,7 +372,7 @@
         + '">' + p.label + '</a>';
     }).join('');
     return '<nav class="ami-product-row" aria-label="AMI services" '
-      + 'style="border-bottom:1px solid #D4C4A0;padding:0 24px;display:flex;gap:26px;background:#FAF7F0">'
+      + 'style="border-bottom:1px solid #D4C4A0;padding:0 max(24px,calc((100% - 1280px)/2 + 24px));display:flex;gap:26px;background:#FAF7F0;box-sizing:border-box">'
       + links + '</nav>';
   }
 
@@ -394,10 +394,30 @@
   // strip on every product, so nav.js builds it where there is none.
   const TICKER_CSS = `
 .ami-ticker{background:#0A1A10;color:#C9A84C;font-family:'DM Mono',ui-monospace,monospace;font-size:11px;
-  padding:7px 24px;overflow:hidden;white-space:nowrap;letter-spacing:.04em}
+  padding:7px max(24px,calc((100% - 1280px)/2 + 24px));overflow:hidden;white-space:nowrap;letter-spacing:.04em;box-sizing:border-box}
 .ami-ticker span+span::before{content:'\\00a0\\00a0·\\00a0\\00a0';color:#6c7a70}`;
 
+  // deals.html has a .ticker-bar but none of the rules for it, so it rendered
+  // as 16px Spectral on no ground above the masthead. Same treatment as the
+  // footer: measured, and styled only where the page does not.
+  function fixBareTicker() {
+    const t = document.querySelector('.ticker-bar');
+    if (!t) return;
+    const bg = getComputedStyle(t).backgroundColor;
+    if (bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent') return;
+    if (!document.getElementById('amiTickerFixCSS')) {
+      const st = document.createElement('style');
+      st.id = 'amiTickerFixCSS';
+      st.textContent = '.ticker-bar.ami-ticker--bare{background:#0A1A10;color:#C9A84C;'
+        + "font-family:'DM Mono',ui-monospace,monospace;font-size:11px;letter-spacing:.04em;"
+        + 'padding:7px max(24px,calc((100% - 1280px)/2 + 24px));overflow:hidden;white-space:nowrap;box-sizing:border-box}';
+      document.head.appendChild(st);
+    }
+    t.classList.add('ami-ticker--bare');
+  }
+
   function ensureTicker() {
+    fixBareTicker();
     if (document.querySelector('.ticker-bar') || document.querySelector('.ami-ticker')) return;
     const st = document.createElement('style');
     st.textContent = TICKER_CSS;
@@ -441,7 +461,7 @@
 .ami-search-btn{background:none;border:0;padding:9px 0 7px;margin-left:auto;cursor:pointer;color:#1A1208;
   display:inline-flex;align-items:center}
 .ami-search-btn svg{display:block}
-.ami-search-panel{display:none;background:#FAF7F0;border-bottom:1px solid #D4C4A0;padding:16px 24px}
+.ami-search-panel{display:none;background:#FAF7F0;border-bottom:1px solid #D4C4A0;padding:16px max(24px,calc((100% - 1280px)/2 + 24px));box-sizing:border-box}
 .ami-search-panel[data-open="1"]{display:block}
 .ami-search-row{display:flex;align-items:center;gap:14px}
 .ami-search-row input{flex:1;min-width:0;height:44px;background:#fff;border:2px solid #1A1208;padding:0 14px;
@@ -624,7 +644,7 @@
   ];
 
   const bandCSS = `
-.ami-band{background:#0A1A10;padding:0 24px}
+.ami-band{background:#0A1A10;padding:0 max(24px,calc((100% - 1280px)/2 + 24px));box-sizing:border-box}
 .ami-band__inner{display:flex;align-items:center;gap:20px;min-height:42px}
 .ami-band__name{margin:0;font-family:'Playfair Display',Georgia,serif;font-size:19px;font-weight:600;color:#FAF7F0;white-space:nowrap}
 .ami-band__nav{margin-left:auto;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
@@ -754,7 +774,7 @@
   // document and styled only where the page does not style it. The values below
   // are read off index.html, where it is right.
   const FOOTER_CSS = `
-footer.ami-footer--bare{background:#0A1A10;color:#A89070;padding:40px 24px 24px;margin-top:48px}
+footer.ami-footer--bare{background:#0A1A10;color:#A89070;padding:40px 24px 24px;margin-top:48px;box-sizing:border-box}
 footer.ami-footer--bare .footer-inner{max-width:1280px;margin:0 auto}
 footer.ami-footer--bare .footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;padding-bottom:32px}
 footer.ami-footer--bare .footer-brand{font-family:'Playfair Display',Georgia,serif;font-size:22px;font-weight:800;color:#C9A84C;margin-bottom:12px}
