@@ -11,14 +11,11 @@
 //
 // Requires config.js to be loaded first (SUPABASE_URL + SUPABASE_ANON).
 // ═══════════════════════════════════════════════════════════════════
-
 (function () {
   'use strict';
-
   // ── Config helpers ──────────────────────────────────────────────
   function sbUrl()  { return (typeof SUPABASE_URL  !== 'undefined' ? SUPABASE_URL  : '').replace(/\/$/, ''); }
   function sbAnon() { return (typeof SUPABASE_ANON !== 'undefined' ? SUPABASE_ANON : ''); }
-
   // ── Session helpers ─────────────────────────────────────────────
   function getSession() {
     return {
@@ -28,7 +25,6 @@
       expires: parseInt(localStorage.getItem('ami_token_expires') || '0', 10),
     };
   }
-
   function saveSession(data) {
     const email = (data.user && data.user.email) ? data.user.email : getSession().email;
     localStorage.setItem('ami_auth_token',    data.access_token  || '');
@@ -40,23 +36,19 @@
     window.amiIsSubscriber      = true;
     window.amiPaywallSuppressed = true;
   }
-
   function clearSession() {
     ['ami_auth_token', 'ami_refresh_token', 'ami_user_email', 'ami_token_expires',
      'ami_subscriber', 'ami_email'].forEach(function (k) { localStorage.removeItem(k); });
     window.amiIsSubscriber      = false;
     window.amiPaywallSuppressed = false;
   }
-
   function isLoggedIn() {
     var s = getSession();
     return !!(s.token && s.email && s.expires > Date.now());
   }
-
   function getInitials(email) {
     return (email || '??').slice(0, 2).toUpperCase();
   }
-
   // ── Supabase Auth REST calls ────────────────────────────────────
   async function sbSignIn(email, password) {
     var r = await fetch(sbUrl() + '/auth/v1/token?grant_type=password', {
@@ -68,7 +60,6 @@
     if (!r.ok) throw new Error(data.error_description || data.msg || data.error || 'Sign in failed');
     return data;
   }
-
   async function sbSignUp(email, password) {
     var r = await fetch(sbUrl() + '/auth/v1/signup', {
       method: 'POST',
@@ -79,7 +70,6 @@
     if (!r.ok) throw new Error(data.error_description || data.msg || data.error || 'Sign up failed');
     return data;
   }
-
   async function sbRecover(email) {
     var r = await fetch(sbUrl() + '/auth/v1/recover', {
       method: 'POST',
@@ -91,7 +81,6 @@
       throw new Error(d.error_description || d.msg || 'Could not send reset email');
     }
   }
-
   async function sbRefresh(refreshToken) {
     var r = await fetch(sbUrl() + '/auth/v1/token?grant_type=refresh_token', {
       method: 'POST',
@@ -102,7 +91,6 @@
     if (!r.ok) throw new Error('Token refresh failed');
     return data;
   }
-
   async function sbUpdatePassword(token, newPassword) {
     var r = await fetch(sbUrl() + '/auth/v1/user', {
       method: 'PUT',
@@ -118,7 +106,6 @@
       throw new Error(d.error_description || d.msg || 'Password update failed');
     }
   }
-
   async function sbSignOut(token) {
     try {
       await fetch(sbUrl() + '/auth/v1/logout', {
@@ -127,7 +114,6 @@
       });
     } catch (e) { /* best-effort */ }
   }
-
   async function checkSubscriberStatus(email, token) {
     var r = await fetch(sbUrl() + '/rest/v1/rpc/verify_subscriber', {
       method: 'POST',
@@ -141,7 +127,6 @@
     if (!r.ok) return false;
     return await r.json(); // true or false
   }
-
   // ── Refresh expired session ─────────────────────────────────────
   async function tryRefreshSession() {
     var s = getSession();
@@ -156,17 +141,14 @@
       return false;
     }
   }
-
   // ═══════════════════════════════════════════════════════════════
   // MODAL HTML
   // ═══════════════════════════════════════════════════════════════
   var MODAL_HTML = [
     '<div id="amiLoginOverlay" style="display:none;position:fixed;inset:0;background:rgba(6,15,9,.87);z-index:10000;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(5px)" onclick="if(event.target===this)window.amiCloseLogin()">',
     '<div style="background:#FAF7F0;max-width:430px;width:100%;border-top:4px solid #C9A84C;box-shadow:0 24px 80px rgba(0,0,0,.55);font-family:\'Spectral\',Georgia,serif;position:relative;max-height:90vh;overflow-y:auto">',
-
     // Close button
     '<button onclick="window.amiCloseLogin()" aria-label="Close" style="position:sticky;top:0;float:right;margin:12px 14px 0 0;background:none;border:none;font-size:22px;color:#9A8070;cursor:pointer;line-height:1;z-index:2">×</button>',
-
     // Header
     '<div style="padding:28px 32px 0;clear:right">',
       '<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">',
@@ -175,13 +157,11 @@
       '</div>',
       '<p style="font-size:13px;color:#6B5344;line-height:1.6;margin:0 0 0 13px">Premium access for African Market Intelligence subscribers.</p>',
     '</div>',
-
     // Tabs
     '<div style="display:flex;border-bottom:1px solid #D4C4A0;margin-top:20px;padding:0 32px">',
       '<button id="amiTabSignIn" onclick="window.amiSwitchTab(\'signin\')" style="font-family:\'DM Mono\',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:10px 0;margin-right:24px;border:none;background:none;cursor:pointer;color:#C9A84C;border-bottom:2px solid #C9A84C;font-weight:600;transition:color .2s">Sign In</button>',
       '<button id="amiTabSetup" onclick="window.amiSwitchTab(\'setup\')" style="font-family:\'DM Mono\',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:10px 0;border:none;background:none;cursor:pointer;color:#9A8070;border-bottom:2px solid transparent;font-weight:400;transition:color .2s">Set Up Account</button>',
     '</div>',
-
     // ── Sign In panel ──
     '<div id="amiPanelSignIn" style="padding:24px 32px 32px">',
       '<div style="margin-bottom:14px">',
@@ -199,7 +179,6 @@
       '<div id="amiSignInError" style="display:none;background:#FFF0ED;border-left:3px solid #B85C38;padding:10px 14px;margin-top:12px;font-family:\'DM Mono\',monospace;font-size:11px;color:#8C3A1F;line-height:1.5"></div>',
       '<p style="text-align:center;margin-top:16px;font-size:12px;color:#9A8070;font-family:\'DM Mono\',monospace">First time here? <button onclick="window.amiSwitchTab(\'setup\')" style="background:none;border:none;font-family:\'DM Mono\',monospace;font-size:12px;color:#C9A84C;cursor:pointer;padding:0;text-decoration:underline">Set up your account →</button></p>',
     '</div>',
-
     // ── Set Up Account panel ──
     '<div id="amiPanelSetup" style="display:none;padding:24px 32px 32px">',
       // Welcome banner — shown only when arriving from Stripe success URL (?setup=1)
@@ -224,7 +203,6 @@
       '<div id="amiSetupError"   style="display:none;background:#FFF0ED;border-left:3px solid #B85C38;padding:10px 14px;margin-top:12px;font-family:\'DM Mono\',monospace;font-size:11px;color:#8C3A1F;line-height:1.5"></div>',
       '<div id="amiSetupSuccess" style="display:none;background:#F0FFF5;border-left:3px solid #2E7D4F;padding:10px 14px;margin-top:12px;font-family:\'DM Mono\',monospace;font-size:11px;color:#1A4D2E;line-height:1.5"></div>',
     '</div>',
-
     // ── Reset Password panel ──
     '<div id="amiPanelReset" style="display:none;padding:24px 32px 32px">',
       '<p style="font-size:13px;color:#6B5344;line-height:1.6;margin-bottom:18px">Enter your subscription email and we\'ll send you a link to set a new password.</p>',
@@ -237,28 +215,21 @@
       '<div id="amiResetError"   style="display:none;background:#FFF0ED;border-left:3px solid #B85C38;padding:10px 14px;margin-top:12px;font-family:\'DM Mono\',monospace;font-size:11px;color:#8C3A1F;line-height:1.5"></div>',
       '<div id="amiResetSuccess" style="display:none;background:#F0FFF5;border-left:3px solid #2E7D4F;padding:10px 14px;margin-top:12px;font-family:\'DM Mono\',monospace;font-size:11px;color:#1A4D2E;line-height:1.5"></div>',
     '</div>',
-
     '</div></div>'
   ].join('');
-
   // ═══════════════════════════════════════════════════════════════
   // NAV BUTTON INJECTION
   // ═══════════════════════════════════════════════════════════════
-
   function injectLoginButton() {
     var existing = document.getElementById('navSubscribeBtn');
     if (!existing) return;
-
     // Hide original (keep in DOM so existing page scripts don't crash)
     existing.style.display = 'none';
-
     var sess = getSession();
-
     if (isLoggedIn()) {
       // ── Logged-in: show Account button with dropdown ──
       var initials  = getInitials(sess.email);
       var shortMail = sess.email.length > 24 ? sess.email.slice(0, 22) + '…' : sess.email;
-
       var wrapper = document.createElement('div');
       wrapper.id = 'amiAccountWrapper';
       wrapper.style.cssText = 'position:relative;display:inline-flex;align-items:center';
@@ -282,12 +253,12 @@
             '<div style="font-family:\'DM Mono\',monospace;font-size:9px;letter-spacing:.06em;color:#2E7D4F;margin-top:4px">',
             '✓ Premium Subscriber</div>',
           '</div>',
-          '<a href="deal-room.html?join=1" role="menuitem" style="display:flex;align-items:center;gap:8px;padding:11px 16px;',
+          '<a href="dealroom.html?join=1" role="menuitem" style="display:flex;align-items:center;gap:8px;padding:11px 16px;',
           'font-family:\'DM Mono\',monospace;font-size:11px;letter-spacing:.06em;color:#1A1208;text-decoration:none;',
           'transition:background .15s;border-bottom:1px solid rgba(212,196,160,.4)" ',
           'onmouseover="this.style.background=\'#F0EAD9\'" onmouseout="this.style.background=\'none\'">',
           '🔐&nbsp; Access Deal Room</a>',
-        
+
           '<button onclick="window.amiSignOut()" role="menuitem" style="display:flex;align-items:center;gap:8px;',
           'width:100%;text-align:left;padding:11px 16px;font-family:\'DM Mono\',monospace;font-size:11px;',
           'letter-spacing:.06em;color:#B85C38;border:none;background:none;cursor:pointer;transition:background .15s"',
@@ -295,9 +266,7 @@
           '⎋&nbsp; Sign Out</button>',
         '</div>'
       ].join('');
-
       existing.insertAdjacentElement('afterend', wrapper);
-
     } else {
       // ── Not logged in: show Login button ──
       var btn = document.createElement('button');
@@ -309,7 +278,6 @@
       existing.insertAdjacentElement('afterend', btn);
     }
   }
-
   // Update mobile nav drawer
   function updateMobileNav() {
     var mobBtns = document.querySelectorAll('.mob-subscribe');
@@ -332,21 +300,17 @@
       }
     });
   }
-
   // ═══════════════════════════════════════════════════════════════
   // MODAL INJECTION & CONTROLS
   // ═══════════════════════════════════════════════════════════════
-
   function injectLoginModal() {
     if (!document.getElementById('amiLoginOverlay')) {
       document.body.insertAdjacentHTML('beforeend', MODAL_HTML);
     }
   }
-
   window.amiSwitchTab = function (tab) {
     var panels = { signin: 'amiPanelSignIn', setup: 'amiPanelSetup', reset: 'amiPanelReset' };
     var tabBtns = { signin: 'amiTabSignIn', setup: 'amiTabSetup' };
-
     Object.keys(panels).forEach(function (t) {
       var panel = document.getElementById(panels[t]);
       if (panel) panel.style.display = (t === tab) ? '' : 'none';
@@ -360,7 +324,6 @@
       b.style.fontWeight  = active ? '600' : '400';
     });
   };
-
   window.amiOpenLogin = function (tab) {
     var overlay = document.getElementById('amiLoginOverlay');
     if (!overlay) { injectLoginModal(); overlay = document.getElementById('amiLoginOverlay'); }
@@ -372,7 +335,6 @@
       if (f) f.focus();
     }, 80);
   };
-
   window.amiCloseLogin = function () {
     var overlay = document.getElementById('amiLoginOverlay');
     if (overlay) overlay.style.display = 'none';
@@ -392,11 +354,9 @@
       if (el) { el.value = ''; el.style.borderColor = '#D4C4A0'; }
     });
   };
-
   // ═══════════════════════════════════════════════════════════════
   // ACCOUNT MENU TOGGLE
   // ═══════════════════════════════════════════════════════════════
-
   window.amiToggleAccountMenu = function (e) {
     if (e) e.stopPropagation();
     var menu = document.getElementById('amiAccountMenu');
@@ -406,7 +366,6 @@
     menu.style.display = open ? 'none' : 'block';
     if (btn) btn.setAttribute('aria-expanded', String(!open));
   };
-
   document.addEventListener('click', function (e) {
     var wrapper = document.getElementById('amiAccountWrapper');
     if (wrapper && !wrapper.contains(e.target)) {
@@ -414,7 +373,6 @@
       if (menu) menu.style.display = 'none';
     }
   });
-
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
       var menu = document.getElementById('amiAccountMenu');
@@ -423,22 +381,17 @@
       if (overlay && overlay.style.display !== 'none') window.amiCloseLogin();
     }
   });
-
   // ═══════════════════════════════════════════════════════════════
   // SIGN IN
   // ═══════════════════════════════════════════════════════════════
-
   window.amiDoSignIn = async function () {
     var emailEl = document.getElementById('amiSubEmail');
     var passEl  = document.getElementById('amiSubPassword');
     var btn     = document.getElementById('amiSignInBtn');
     var errorEl = document.getElementById('amiSignInError');
-
     var email    = emailEl ? emailEl.value.trim() : '';
     var password = passEl  ? passEl.value         : '';
-
     if (errorEl) { errorEl.style.display = 'none'; errorEl.textContent = ''; }
-
     var valid = true;
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       if (emailEl) emailEl.style.borderColor = '#B85C38';
@@ -449,12 +402,9 @@
       valid = false;
     }
     if (!valid) return;
-
     if (btn) { btn.textContent = 'Signing in…'; btn.disabled = true; }
-
     try {
       var data = await sbSignIn(email, password);
-
       // Verify this is a paying subscriber
       var isPaid = await checkSubscriberStatus(email, data.access_token);
       if (!isPaid) {
@@ -465,11 +415,9 @@
         if (btn) { btn.textContent = 'Sign In →'; btn.disabled = false; }
         return;
       }
-
       saveSession(data);
       window.amiCloseLogin();
       window.location.reload();
-
     } catch (err) {
       var msg = err.message || 'Sign in failed. Please try again.';
       if (/invalid|credential|wrong|incorrect/i.test(msg)) {
@@ -479,11 +427,9 @@
       if (btn) { btn.textContent = 'Sign In →'; btn.disabled = false; }
     }
   };
-
   // ═══════════════════════════════════════════════════════════════
   // SET UP ACCOUNT (first-time signup for paying subscribers)
   // ═══════════════════════════════════════════════════════════════
-
   window.amiDoSetup = async function () {
     var emailEl   = document.getElementById('amiSetupEmail');
     var passEl    = document.getElementById('amiSetupPassword');
@@ -491,14 +437,11 @@
     var btn       = document.getElementById('amiSetupBtn');
     var errorEl   = document.getElementById('amiSetupError');
     var successEl = document.getElementById('amiSetupSuccess');
-
     var email    = emailEl   ? emailEl.value.trim()  : '';
     var password = passEl    ? passEl.value          : '';
     var confirm  = confirmEl ? confirmEl.value       : '';
-
     if (errorEl)   { errorEl.style.display = 'none';   errorEl.textContent   = ''; }
     if (successEl) { successEl.style.display = 'none'; successEl.textContent = ''; }
-
     var valid = true;
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       if (emailEl) emailEl.style.borderColor = '#B85C38'; valid = false;
@@ -512,12 +455,10 @@
       if (confirmEl) confirmEl.style.borderColor = '#B85C38'; valid = false;
     }
     if (!valid) return;
-
     if (emailEl)   emailEl.style.borderColor   = '#D4C4A0';
     if (passEl)    passEl.style.borderColor     = '#D4C4A0';
     if (confirmEl) confirmEl.style.borderColor  = '#D4C4A0';
     if (btn) { btn.textContent = 'Checking subscription…'; btn.disabled = true; }
-
     try {
       // Step 1: verify email is a paying subscriber
       var isPaid = await checkSubscriberStatus(email, null);
@@ -531,12 +472,9 @@
         if (btn) { btn.textContent = 'Create Account →'; btn.disabled = false; }
         return;
       }
-
       if (btn) btn.textContent = 'Creating account…';
-
       // Step 2: create Supabase Auth account
       await sbSignUp(email, password);
-
       // Step 3: try to sign in immediately
       if (btn) btn.textContent = 'Signing in…';
       try {
@@ -555,7 +493,6 @@
         }
         if (btn) { btn.textContent = 'Create Account →'; btn.disabled = false; }
       }
-
     } catch (err) {
       var msg = err.message || 'Account creation failed.';
       if (/already registered|already exists|already been registered/i.test(msg)) {
@@ -565,29 +502,23 @@
       if (btn) { btn.textContent = 'Create Account →'; btn.disabled = false; }
     }
   };
-
   // ═══════════════════════════════════════════════════════════════
   // PASSWORD RESET
   // ═══════════════════════════════════════════════════════════════
-
   window.amiDoReset = async function () {
     var emailEl   = document.getElementById('amiResetEmail');
     var btn       = document.getElementById('amiResetBtn');
     var errorEl   = document.getElementById('amiResetError');
     var successEl = document.getElementById('amiResetSuccess');
-
     var email = emailEl ? emailEl.value.trim() : '';
-
     if (errorEl)   { errorEl.style.display = 'none';   errorEl.textContent   = ''; }
     if (successEl) { successEl.style.display = 'none'; successEl.textContent = ''; }
-
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       if (emailEl) emailEl.style.borderColor = '#B85C38';
       return;
     }
     if (emailEl) emailEl.style.borderColor = '#D4C4A0';
     if (btn)     { btn.textContent = 'Sending…'; btn.disabled = true; }
-
     try {
       await sbRecover(email);
       if (successEl) {
@@ -600,43 +531,35 @@
       if (btn)     { btn.textContent = 'Send Reset Link →'; btn.disabled = false; }
     }
   };
-
   // ═══════════════════════════════════════════════════════════════
   // SIGN OUT
   // ═══════════════════════════════════════════════════════════════
-
   window.amiSignOut = function () {
     var token = getSession().token;
     if (token) sbSignOut(token);
     clearSession();
     window.location.reload();
   };
-
   // ═══════════════════════════════════════════════════════════════
   // PASSWORD RESET REDIRECT HANDLER
   // When Supabase sends a reset email, user clicks the link and
   // lands back on the site with #access_token=...&type=recovery
   // ═══════════════════════════════════════════════════════════════
-
   function handleAuthRedirect() {
     var hash = window.location.hash;
     if (!hash || !hash.includes('access_token')) return;
-
     var params = new URLSearchParams(hash.replace(/^#/, ''));
     var type   = params.get('type');
     var token  = params.get('access_token');
-
     // 'recovery' = password reset link clicked; 'invite' = post-payment account setup email clicked
     if ((type === 'recovery' || type === 'invite') && token) {
       history.replaceState(null, '', window.location.pathname + window.location.search);
       showSetNewPasswordModal(token);
     }
   }
-
   function showSetNewPasswordModal(recoveryToken) {
     var id = 'amiSetNewPassModal';
     if (document.getElementById(id)) return;
-
     var html = [
       '<div id="' + id + '" style="position:fixed;inset:0;background:rgba(6,15,9,.87);z-index:10001;display:flex;',
       'align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(5px)">',
@@ -668,19 +591,15 @@
         '</div>',
       '</div>'
     ].join('');
-
     document.body.insertAdjacentHTML('beforeend', html);
-
     window._amiUpdatePass = async function () {
       var p1  = document.getElementById('amiNewPass1')?.value || '';
       var p2  = document.getElementById('amiNewPass2')?.value || '';
       var btn = document.getElementById('amiUpdatePassBtn');
       var err = document.getElementById('amiNewPassErr');
       var ok  = document.getElementById('amiNewPassOk');
-
       if (err) err.style.display = 'none';
       if (ok)  ok.style.display  = 'none';
-
       if (p1.length < 8) {
         if (err) { err.textContent = 'Password must be at least 8 characters.'; err.style.display = 'block'; }
         return;
@@ -690,7 +609,6 @@
         return;
       }
       if (btn) { btn.textContent = 'Updating…'; btn.disabled = true; }
-
       try {
         await sbUpdatePassword(recoveryToken, p1);
         if (ok) { ok.textContent = '✓ Password updated! You can now sign in.'; ok.style.display = 'block'; }
@@ -705,7 +623,6 @@
       }
     };
   }
-
   // ═══════════════════════════════════════════════════════════════
   // POST-PAYMENT REDIRECT HANDLER
   // Stripe success_url should be set to:
@@ -713,24 +630,18 @@
   // When a new subscriber lands with ?setup=1, automatically open
   // the Set Up Account tab and show a welcome message.
   // ═══════════════════════════════════════════════════════════════
-
   function handlePostPaymentRedirect() {
     var params = new URLSearchParams(window.location.search);
     if (params.get('setup') !== '1') return;
-
     // Clean the URL regardless of what we do next
     var cleanUrl = window.location.pathname + (window.location.hash || '');
     history.replaceState(null, '', cleanUrl);
-
     // Already fully logged in — nothing to do, they have an account
     if (isLoggedIn()) return;
-
     // Pre-filled email if passed (e.g. ?setup=1&email=user@example.com)
     var prefillEmail = params.get('email') || '';
-
     // Open the modal with a brief delay to ensure DOM is fully injected
     setTimeout(function () {
-
       // If they have a stored email it means they've set up before — send them
       // straight to Sign In rather than the setup form
       var knownEmail = getSession().email || localStorage.getItem('ami_email') || '';
@@ -749,16 +660,13 @@
         }
         return;
       }
-
       // First-time setup
       window.amiOpenLogin('setup');
-
       // Show the welcome banner, hide the generic info banner
       var welcomeBanner = document.getElementById('amiSetupWelcome');
       var infoBanner    = document.getElementById('amiSetupInfoBanner');
       if (welcomeBanner) welcomeBanner.style.display = 'block';
       if (infoBanner)    infoBanner.style.display    = 'none';
-
       // Pre-fill email field if we have one
       if (prefillEmail) {
         var emailEl = document.getElementById('amiSetupEmail');
@@ -771,18 +679,15 @@
       }
     }, 350);
   }
-
   // ═══════════════════════════════════════════════════════════════
   // BETA FEEDBACK BANNER + MODAL
   // Banner on every page. "feedback" link opens a modal that saves
   // directly to the Supabase `feedback` table.
   // Dismissed state persists in localStorage site-wide.
   // ═══════════════════════════════════════════════════════════════
-
   function injectBetaBanner() {
     if (localStorage.getItem('ami_beta_dismissed') === '1') return;
     if (document.getElementById('amiBetaBanner')) return;
-
     var banner = document.createElement('div');
     banner.id = 'amiBetaBanner';
     banner.style.cssText = 'background:#F5F0E8;border-bottom:1px solid #D4C4A0;padding:8px max(24px,calc((100% - 1280px)/2 + 24px));display:flex;align-items:center;gap:10px;font-family:\'DM Mono\',monospace;font-size:11px;color:#6B5344;position:relative;z-index:999;box-sizing:border-box';
@@ -794,7 +699,6 @@
       '<button onclick="window.amiDismissBeta()" aria-label="Dismiss beta banner" ',
       'style="margin-left:auto;background:none;border:none;font-size:18px;color:#9A8070;cursor:pointer;line-height:1;flex-shrink:0;padding:0 4px" title="Dismiss">×</button>'
     ].join('');
-
     // Insert after section-nav (the "Home | Markets | … | All Africa" bar)
     var sectionNav = document.querySelector('nav[aria-label="Site sections"]');
     var nav = sectionNav || document.querySelector('nav.top-nav') || document.querySelector('nav');
@@ -803,7 +707,6 @@
     } else {
       document.body.insertAdjacentElement('afterbegin', banner);
     }
-
     // Inject feedback modal (hidden until opened)
     if (!document.getElementById('amiFeedbackOverlay')) {
       document.body.insertAdjacentHTML('beforeend', [
@@ -828,7 +731,6 @@
       ].join(''));
     }
   }
-
   window.amiOpenFeedback = function () {
     var o = document.getElementById('amiFeedbackOverlay');
     if (o) {
@@ -837,33 +739,26 @@
       if (msg) msg.focus();
     }
   };
-
   window.amiCloseFeedback = function () {
     var o = document.getElementById('amiFeedbackOverlay');
     if (o) o.style.display = 'none';
   };
-
   window.amiSubmitFeedback = async function () {
     var msgEl   = document.getElementById('amiFeedbackMsg');
     var emailEl = document.getElementById('amiFeedbackEmail');
     var btn     = document.getElementById('amiFeedbackBtn');
     var errEl   = document.getElementById('amiFeedbackErr');
     var okEl    = document.getElementById('amiFeedbackOk');
-
     var message = msgEl  ? msgEl.value.trim()  : '';
     var email   = emailEl ? emailEl.value.trim() : '';
-
     if (errEl) { errEl.style.display = 'none'; errEl.textContent = ''; }
     if (okEl)  { okEl.style.display  = 'none'; okEl.textContent  = ''; }
-
     if (!message) {
       if (msgEl)  msgEl.style.borderColor = '#B85C38';
       if (errEl) { errEl.textContent = 'Please enter your feedback before sending.'; errEl.style.display = 'block'; }
       return;
     }
-
     if (btn) { btn.textContent = 'Sending…'; btn.disabled = true; }
-
     try {
       var r = await fetch(sbUrl() + '/rest/v1/feedback', {
         method:  'POST',
@@ -879,39 +774,31 @@
           page:       window.location.pathname
         })
       });
-
       if (!r.ok) {
         var d = await r.json().catch(function(){ return {}; });
         throw new Error(d.message || d.error || ('HTTP ' + r.status));
       }
-
       if (okEl)  { okEl.textContent  = '✓ Thank you — your feedback has been received.'; okEl.style.display = 'block'; }
       if (msgEl)   msgEl.value  = '';
       if (emailEl) emailEl.value = '';
       if (btn) { btn.textContent = 'Send Feedback →'; btn.disabled = false; }
-
       setTimeout(function () { window.amiCloseFeedback(); }, 2000);
-
     } catch (err) {
       if (errEl) { errEl.textContent = 'Could not send feedback: ' + (err.message || 'please try again.'); errEl.style.display = 'block'; }
       if (btn) { btn.textContent = 'Send Feedback →'; btn.disabled = false; }
     }
   };
-
   window.amiDismissBeta = function () {
     localStorage.setItem('ami_beta_dismissed', '1');
     var b = document.getElementById('amiBetaBanner');
     if (b) b.style.display = 'none';
   };
-
   // ═══════════════════════════════════════════════════════════════
   // INITIALISE
   // ═══════════════════════════════════════════════════════════════
-
   async function init() {
     // Refresh token if near expiry
     await tryRefreshSession();
-
     // Sync subscriber state with login state
     if (isLoggedIn()) {
       window.amiIsSubscriber      = true;
@@ -932,7 +819,6 @@
       // NOTE: We don't auto-clear ami_subscriber here to avoid breaking
       // users who haven't set a password yet — they can still email-verify
     }
-
     injectBetaBanner();
     injectLoginModal();
     injectLoginButton();
@@ -941,31 +827,25 @@
     handlePostPaymentRedirect();
     setupGlobalSearch();
   }
-
   // ═══════════════════════════════════════════════════════════════
   // GLOBAL SEARCH REDIRECT
   // On non-homepage pages, redirect search queries to /?q=value
   // ═══════════════════════════════════════════════════════════════
-
   function setupGlobalSearch() {
     var path = window.location.pathname;
     var isHome = path === '/' || path === '/index.html' || path.endsWith('/index.html') || path === '';
     if (isHome) return;
-
     function redirectToSearch(val) {
       if (!val || !val.trim()) return;
       window.location.href = '/?q=' + encodeURIComponent(val.trim());
     }
-
     function attachToInput(input) {
       // Remove any existing oninput handler so it doesn't call a local searchArticles
       input.removeAttribute('oninput');
-
       // Redirect on Enter key
       input.addEventListener('keydown', function (e) {
         if (e.key === 'Enter') redirectToSearch(this.value);
       });
-
       // Redirect after user stops typing (600ms debounce, min 3 chars)
       var timer;
       input.addEventListener('input', function () {
@@ -976,10 +856,8 @@
         }
       });
     }
-
     // Attach to nav search inputs immediately
     document.querySelectorAll('.nav-search, #navSearchInput, [type="search"]').forEach(attachToInput);
-
     // Also catch any inputs injected later (e.g. mobile nav)
     var observer = new MutationObserver(function () {
       document.querySelectorAll('.nav-search:not([data-gsearch]), #navSearchInput:not([data-gsearch]), [type="search"]:not([data-gsearch])').forEach(function (input) {
@@ -989,11 +867,9 @@
     });
     observer.observe(document.body, { childList: true, subtree: true });
   }
-
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
     init();
   }
-
 })();
