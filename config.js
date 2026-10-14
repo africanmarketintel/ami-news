@@ -17,7 +17,7 @@
 //
 // ═══════════════════════════════════════════════════════════════════
 
-const SUPABASE_URL = 'https://ucpjwyghwxjalkfvmbro.supabase.co';
-const SUPABASE_ANON = 'sb_publishable_7cI4RoxyLr88DhwDWRC1vg_DSpczsHt';
+const SUPABASE_URL = 'SUPABASE_URL_PLACEHOLDER';   // injected by GitHub Actions from repository secret
+const SUPABASE_ANON = 'SUPABASE_ANON_PLACEHOLDER'; // injected by GitHub Actions from repository secret
 const STRIPE_DIGITAL = '';
 const STRIPE_PREMIUM = '';

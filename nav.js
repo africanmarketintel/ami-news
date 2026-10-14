@@ -940,6 +940,19 @@ footer.ami-foot .ami-foot__verify:hover{background:#FDF6E3}
     run();
   }
 
+  // A page with no chrome of its own - privacy.html is the one - takes all four
+  // tiers from here. ensureTicker() runs first and inserts at the top of body,
+  // then the masthead, product row and band are inserted above it, so the
+  // ticker finishes below the band instead of on top. This puts it back.
+  // Guarded on the ticker being a direct child of body: on a page that has its
+  // own chrome the ticker sits inside that wrapper and must not be moved.
+  function liftTicker() {
+    const t = document.querySelector('.ami-ticker');
+    if (!t || t.parentNode !== document.body) return;
+    const first = document.body.firstElementChild;
+    if (first && first !== t) document.body.insertBefore(t, first);
+  }
+
   function run() {
     harvestProductHeader();
     ensureTicker();
@@ -947,6 +960,7 @@ footer.ami-foot .ami-foot__verify:hover{background:#FDF6E3}
     initMasthead();
     injectProducts();
     injectBand();
+    liftTicker();
     initSearch();
     setTimeout(syncProductNav, 0);
     // The Mailroom unhides its member bar once the session resolves, which can

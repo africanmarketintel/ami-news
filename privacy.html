@@ -19,17 +19,10 @@
   body{margin:0;background:var(--cream);color:var(--ink);
        font-family:Spectral,Georgia,serif;font-size:18px;line-height:1.65}
   .width{max-width:760px;margin:0 auto;padding:0 24px}
-  .ticker{background:var(--nav);color:var(--gold);
-          font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;padding:6px 0}
-  header{padding:18px 0 12px}
-  .masthead{font-family:'Playfair Display',serif;font-weight:800;font-size:30px;
-            line-height:1;letter-spacing:-.02em;color:var(--ink);text-decoration:none;display:inline-block}
-  .masthead span{color:var(--gold)}
-  .products{border-bottom:1px solid var(--border)}
-  .products a{font-family:system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
-              font-size:15px;color:var(--ink);text-decoration:none;display:inline-block;padding:9px 0 7px;margin-right:28px}
-  .band{background:var(--nav);color:var(--cream);padding:9px 0}
-  .band p{margin:0;font-family:'Playfair Display',serif;font-size:19px;font-weight:600}
+  /* The chrome and footer CSS that used to live here went with the markup on
+     14 October 2026. nav.js carries its own. .masthead in particular set
+     display:inline-block, which collapsed the injected masthead to the width
+     of the wordmark. */
   main{padding:30px 0 56px}
   h1{font-family:'Playfair Display',serif;font-size:40px;font-weight:600;
      line-height:1.1;letter-spacing:-.015em;margin:0 0 8px}
@@ -48,33 +41,20 @@
   table{border-collapse:collapse;width:100%;margin:0 0 18px;font-size:16px}
   th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:top}
   th{font-family:system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;font-size:14px;font-weight:700}
-  footer{background:var(--cream-dark);border-top:1px solid var(--border);padding:26px 0;
-         font-size:15px;color:var(--ink-mid)}
-  footer p{margin:0 0 8px}
   .skip{position:absolute;left:-9999px}
   .skip:focus{left:24px;top:8px;background:var(--gold);color:var(--ink);padding:8px 14px;z-index:10}
 </style>
+<!-- ✅ CREDENTIALS: Edit config.js once — applies to all pages -->
+<script src="config.js"></script>
+<script src="nav.js"></script>
 </head>
 <body>
 <a href="#main" class="skip">Skip to main content</a>
 
-<div class="ticker"><div class="width">Part of African Market Intelligence</div></div>
-
-<header>
-  <div class="width">
-    <a class="masthead" href="index.html">African Market <span>Intelligence</span></a>
-  </div>
-</header>
-
-<nav class="products" aria-label="Products">
-  <div class="width">
-    <a href="index.html">News</a>
-    <a href="dealroom/index.html">Dealroom</a>
-    <a href="mailroom/index.html">Mailroom</a>
-  </div>
-</nav>
-
-<div class="band"><div class="width"><p>Privacy</p></div></div>
+<!-- The ticker, masthead, product row and section band were this page's own
+     simplified copies of the chrome. nav.js builds all four, so keeping them
+     here produced two of each. Removed 14 October 2026; nav.js is the only
+     source of the chrome and the footer on this page now. -->
 
 <main id="main">
 <div class="width">
@@ -172,12 +152,7 @@
 </div>
 </main>
 
-<footer>
-  <div class="width">
-    <p><a href="index.html">African Market Intelligence</a> &nbsp;·&nbsp; <a href="dealroom/index.html">Dealroom</a> &nbsp;·&nbsp; <a href="mailroom/index.html">Mailroom</a></p>
-    <p>AMI is a service of African Business Trade Association Limited, a company registered in England and Wales, United Kingdom.</p>
-  </div>
-</footer>
+<!-- Footer removed; nav.js injects the standard one. -->
 
 </body>
 </html>
