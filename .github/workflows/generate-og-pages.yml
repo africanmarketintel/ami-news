@@ -15,6 +15,14 @@ jobs:
       pages: write
       id-token: write
 
+    # actions/deploy-pages@v4 refuses to create a deployment unless the job
+    # declares this environment. Without it the run fails with "Missing
+    # environment" and GitHub's own branch build publishes the repo instead,
+    # placeholders and all.
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4.2.2
@@ -54,4 +62,5 @@ jobs:
           path: '.'
 
       - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4
