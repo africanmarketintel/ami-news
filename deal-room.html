@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AMI Deal Room has moved</title>
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://ami.abta.africa/dealroom/">
+<script>
+  // The Deal Room moved from /deal-room/ to /dealroom/ on 14 October 2026.
+  //
+  // GitHub Pages serves static files and has no redirect configuration, so a
+  // real 301 is not available. This page is the substitute: anything already
+  // indexed, bookmarked or sent in an email still arrives at the right place.
+  //
+  // The canonical link above is what tells search engines which URL is the
+  // real one, since a client-side redirect alone does not pass that on.
+  (function () {
+    var p = new URLSearchParams(location.search);
+    var join = (p.get('join') === '1' || location.hash === '#join');
+    location.replace('dealroom/' + (join ? 'create-account.html' : 'index.html'));
+  })();
+</script>
+<noscript><meta http-equiv="refresh" content="0; url=dealroom/index.html"></noscript>
+<style>body{font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;font-size:19px;line-height:1.4;color:#1a1208;background:#faf7f0;margin:0;padding:2rem 16px}a{color:#1e6b3c}</style>
+</head>
+<body>
+<main>
+  <h1>The AMI Deal Room has moved</h1>
+  <p>It now lives at <a href="dealroom/index.html">ami.abta.africa/dealroom</a>.</p>
+</main>
+</body>
+</html>

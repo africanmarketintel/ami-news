@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AMI Deal Room opportunity has moved</title>
+<meta name="robots" content="noindex">
+<script>
+  // Opportunity pages now live at /dealroom/opportunity.html.
+  // deal-detail.html?id=<id> is sent to the same opportunity.
+  (function () {
+    var id = new URLSearchParams(location.search).get('id') || '';
+    location.replace(id ? 'dealroom/opportunity.html?id=' + encodeURIComponent(id) : 'dealroom/opportunities.html');
+  })();
+</script>
+<noscript><meta http-equiv="refresh" content="0; url=dealroom/opportunities.html"></noscript>
+<style>body{font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;font-size:19px;line-height:1.4;color:#1a1208;margin:0;padding:2rem 16px}a{color:#1e6b3c}</style>
+</head>
+<body>
+<main>
+  <h1>This opportunity has moved</h1>
+  <p><a href="dealroom/opportunities.html">Go to Deal Room opportunities</a></p>
+</main>
+</body>
+</html>
