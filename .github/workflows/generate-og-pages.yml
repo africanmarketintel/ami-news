@@ -2,31 +2,27 @@ name: Generate OG Article Pages
 
 on:
   schedule:
-    - cron: '0 * * * *'
-  workflow_dispatch:
+    - cron: '0 * * * *'   # runs every hour
+  workflow_dispatch:       # allows manual trigger from GitHub Actions tab
   push:
-    branches: [main]
-
-concurrency:
-  group: generate-og-pages
-  cancel-in-progress: true
+    branches: [main]       # also runs on every push to main
 
 jobs:
   generate:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pages: write
+      id-token: write
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+        uses: actions/checkout@v4.2.2
 
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v4.4.0
         with:
-          node-version: '20'
+          node-version: '24'
 
       - name: Generate OG pages
         run: node scripts/generate-og-pages.js
@@ -39,5 +35,23 @@ jobs:
         with:
           commit_message: 'chore: regenerate article OG pages'
           file_pattern: 'articles/*.html'
-          skip_fetch: false
-          skip_dirty_check: false
+
+      # This workflow deploys the whole repo to Pages, so it has to put the
+      # real credentials into config.js first. Without this step it publishes
+      # SUPABASE_URL_PLACEHOLDER and every page reports "Could not connect to
+      # database". The sed runs after the commit step above, which only commits
+      # articles/*.html, so the real values go into the deployed artifact and
+      # never into the repository.
+      - name: Inject Supabase secrets
+        run: |
+          sed -i "s|SUPABASE_URL_PLACEHOLDER|${{ secrets.SUPABASE_URL }}|g" config.js
+          sed -i "s|SUPABASE_ANON_PLACEHOLDER|${{ secrets.SUPABASE_ANON }}|g" config.js
+          grep -q PLACEHOLDER config.js && { echo "config.js still has a placeholder - is the secret set?"; exit 1; } || true
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
