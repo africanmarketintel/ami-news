@@ -80,8 +80,8 @@
   <div class="footer-inner">
     <div class="footer-top">
       <div>
-        <div class="footer-brand">African Market Intelligence</div>
-        <p class="footer-about">The continent's most trusted source for financial news and business intelligence across Africa's 54 markets.</p>
+        <div class="footer-brand" id="footerBrand">African Market Intelligence</div>
+        <p class="footer-about" id="footerAboutDisplay">The continent's most trusted source for financial news and business intelligence across Africa's 54 markets.</p>
         <p style="margin-top:12px">
           <button onclick="amiVerifyAccess()" style="background:none;border:1px solid rgba(201,168,76,.4);color:rgba(201,168,76,.8);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:6px 12px;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='#C9A84C';this.style.color='#C9A84C'" onmouseout="this.style.borderColor='rgba(201,168,76,.4)';this.style.color='rgba(201,168,76,.8)'">Already a subscriber? Verify access →</button>
         </p>
@@ -118,7 +118,7 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© ${new Date().getFullYear()} African Market Intelligence Ltd. All rights reserved.</span>
+      <span id="copyrightDisplay">© ${new Date().getFullYear()} African Market Intelligence Ltd. All rights reserved.</span>
       <span>Terms · Privacy · Cookie Policy</span>
     </div>
   </div>
@@ -719,7 +719,15 @@
     const done = function () { rewriteLinks(document.querySelector('.top-nav')); };
     const existing = document.querySelector('.top-nav');
     if (existing) {
-      existing.outerHTML = navHTML;
+      // Left alone on purpose. Replacing it on 14 October 2026 took out
+      // #themeBtn, #visibleAdminBtn, #mastDate, #navHamburger and
+      // #marketsDisplay with it. MASTHEAD_CSS hides this bar above 768px, and
+      // below that it is the page's real hamburger and drawer, which is what
+      // should be there.
+      done();
+      return;
+    }
+    if (false) {
     } else {
       const ticker = document.querySelector('.ticker-bar');
       if (ticker) {
