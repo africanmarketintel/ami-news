@@ -265,9 +265,13 @@
   let slot = null;
 
   function harvestProductHeader() {
-    const header = document.querySelector('.dr-header');
+    // .ami-header is contact.html's, and only contact.html's: a third header
+    // with the GOV.UK-style wordmark and the ABTA line under it. Left in place
+    // it sat below the shared chrome instead of being replaced by it, so the
+    // page carried two headers and no masthead. It is harvested the same way.
+    const header = document.querySelector('.dr-header, .ami-header');
     if (!header || harvested) return;
-    const nav = header.querySelector('.dr-nav');
+    const nav = header.querySelector('.dr-nav, .ami-nav');
     const here_ = window.location.pathname.split('/').pop() || 'index.html';
     const links = [];
     const account = [];
@@ -292,7 +296,6 @@
   function ensureMasthead() {
     harvestProductHeader();
     if (document.querySelector('.masthead')) return;
-    if (document.querySelector('.ami-logo')) return;
     const st = document.createElement('style');
     st.textContent = MASTHEAD_BASE_CSS;
     document.head.appendChild(st);
@@ -742,6 +745,43 @@
   }
 
   // ── Inject footer: replace existing footer or append to body ──
+  // The shared footer was written to borrow the publication's own footer CSS,
+  // which the publication has and the products do not. On the Dealroom and the
+  // Mailroom it therefore rendered as a bare list on a white ground, and on
+  // deals.html it came out dark but bulleted and stacked.
+  //
+  // Rather than override every page, the footer is measured once it is in the
+  // document and styled only where the page does not style it. The values below
+  // are read off index.html, where it is right.
+  const FOOTER_CSS = `
+footer.ami-footer--bare{background:#0A1A10;color:#A89070;padding:40px 24px 24px;margin-top:48px}
+footer.ami-footer--bare .footer-inner{max-width:1280px;margin:0 auto}
+footer.ami-footer--bare .footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;padding-bottom:32px}
+footer.ami-footer--bare .footer-brand{font-family:'Playfair Display',Georgia,serif;font-size:22px;font-weight:800;color:#C9A84C;margin-bottom:12px}
+footer.ami-footer--bare .footer-about{font-family:Spectral,Georgia,serif;font-size:13px;line-height:1.7;color:#A89070;max-width:260px;margin:0}
+footer.ami-footer--bare .footer-col-title{font-family:'DM Mono',ui-monospace,monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#C9A84C;margin-bottom:14px}
+footer.ami-footer--bare .footer-links{list-style:none;margin:0;padding:0}
+footer.ami-footer--bare .footer-links li{margin-bottom:10px}
+footer.ami-footer--bare .footer-links a{font-family:Spectral,Georgia,serif;font-size:13px;color:#EDE5D5;text-decoration:none}
+footer.ami-footer--bare .footer-links a:hover{color:#C9A84C;text-decoration:underline}
+footer.ami-footer--bare .footer-bottom{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  border-top:1px solid rgba(201,168,76,.25);padding-top:16px;
+  font-family:'DM Mono',ui-monospace,monospace;font-size:10px;color:#8d9b92}
+@media (max-width:860px){footer.ami-footer--bare .footer-top{grid-template-columns:1fr 1fr;gap:28px}}
+@media (max-width:520px){footer.ami-footer--bare .footer-top{grid-template-columns:1fr}}
+`;
+
+  // Styled by the page, or not? Transparent catches the products, where none of
+  // these rules exist at all. The grid test catches deals.html, which has the
+  // dark ground but lays the columns out as blocks with bullets.
+  function footerNeedsStyles(f) {
+    const bg = getComputedStyle(f).backgroundColor;
+    const transparent = (bg === 'rgba(0, 0, 0, 0)' || bg === 'transparent');
+    const top = f.querySelector('.footer-top');
+    const notGrid = !top || getComputedStyle(top).display !== 'grid';
+    return transparent || notGrid;
+  }
+
   function injectFooter() {
     const existing = document.querySelector('footer');
     if (existing) {
@@ -749,7 +789,17 @@
     } else {
       document.body.insertAdjacentHTML('beforeend', footerHTML);
     }
-    rewriteLinks(document.querySelector('footer'));
+    const f = document.querySelector('footer');
+    rewriteLinks(f);
+    if (f && footerNeedsStyles(f)) {
+      if (!document.getElementById('amiFooterCSS')) {
+        const st = document.createElement('style');
+        st.id = 'amiFooterCSS';
+        st.textContent = FOOTER_CSS;
+        document.head.appendChild(st);
+      }
+      f.classList.add('ami-footer--bare');
+    }
   }
 
   // ── Inject verify modal once into body ─────────────────────
