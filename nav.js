@@ -74,57 +74,7 @@
   </div>
 </nav>`;
 
-  // ── Footer HTML ────────────────────────────────────────────
-  const footerHTML = `
-<footer>
-  <div class="footer-inner">
-    <div class="footer-top">
-      <div>
-        <div class="footer-brand" id="footerBrand">African Market Intelligence</div>
-        <p class="footer-about" id="footerAboutDisplay">The continent's most trusted source for financial news and business intelligence across Africa's 54 markets.</p>
-        <p style="margin-top:12px">
-          <button onclick="amiVerifyAccess()" style="background:none;border:1px solid rgba(201,168,76,.4);color:rgba(201,168,76,.8);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:6px 12px;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='#C9A84C';this.style.color='#C9A84C'" onmouseout="this.style.borderColor='rgba(201,168,76,.4)';this.style.color='rgba(201,168,76,.8)'">Already a subscriber? Verify access →</button>
-        </p>
-      </div>
-      <div>
-        <div class="footer-col-title">Sections</div>
-        <ul class="footer-links">
-          <li><a href="markets.html">Markets</a></li>
-          <li><a href="economy.html">Economy</a></li>
-          <li><a href="politics.html">Politics</a></li>
-          <li><a href="energy.html">Energy</a></li>
-          <li><a href="technology.html">Technology</a></li>
-          <li><a href="opinion.html">Opinion</a></li>
-        </ul>
-      </div>
-      <div>
-        <div class="footer-col-title">Regions</div>
-        <ul class="footer-links">
-          <li><a href="west-africa.html">West Africa</a></li>
-          <li><a href="east-africa.html">East Africa</a></li>
-          <li><a href="north-africa.html">North Africa</a></li>
-          <li><a href="southern-africa.html">Southern Africa</a></li>
-        </ul>
-      </div>
-      <div>
-        <div class="footer-col-title">Company</div>
-        <ul class="footer-links">
-          <li><a href="about.html">About AMI</a></li>
-          <li><a href="membership.html">Membership</a></li>
-          <li><a href="careers.html">Careers</a></li>
-          <li><a href="contact.html">Contact</a></li>
-          <li><a href="privacy.html">Privacy Policy</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <span id="copyrightDisplay">© ${new Date().getFullYear()} African Market Intelligence Ltd. All rights reserved.</span>
-      <span>Terms · Privacy · Cookie Policy</span>
-    </div>
-  </div>
-</footer>`;
 
-  // ── Subscriber verification modal HTML ─────────────────────
   const verifyModalHTML = `
 <div id="amiVerifyOverlay" style="display:none;position:fixed;inset:0;background:rgba(6,15,9,.85);z-index:9999;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(4px)">
   <div style="background:#FAF7F0;max-width:440px;width:100%;border-top:4px solid #C9A84C;box-shadow:0 24px 80px rgba(0,0,0,.5);padding:36px 32px;font-family:'Spectral',Georgia,serif;position:relative">
@@ -183,6 +133,122 @@
 @media (max-width:767px){.masthead-header-row{flex-direction:row!important;gap:12px!important}
   .masthead-name{text-align:left!important}.masthead-cta{gap:12px!important;justify-self:auto!important}}
 `;
+
+  // ── Footer ─────────────────────────────────────────────────
+  // One footer for AMI and every product, in the structure the Recruiter
+  // already used: the product you are in, then agreements and policies, then
+  // contact, then a rule and the company line.
+  //
+  // Cream-dark ground, #F0EAD9, the same tint as the masthead band. No gold:
+  // it is 1.90:1 here and cannot be text, so the headings are ink instead.
+  //
+  // Links are ink and underlined rather than green. Green is the design
+  // system's signal colour, and a footer where every link is the signal colour
+  // signals nothing - it just turns the block green. Ink underlined is what the
+  // Recruiter footer this is modelled on already did.
+  //
+  // No rule above it: a tint change separates on its own, and the design system
+  // says not to draw a line where it already does.
+  //
+  // Column one is the product's own navigation, read off the page the same way
+  // the band reads it, so there is no second list to keep in step. Column two
+  // is per product because each one has its own legal folder.
+  const FOOTER_LEGAL = {
+    news: [
+      ['privacy.html', 'Privacy policy'],
+      ['contact.html', 'Contact']
+    ],
+    dealroom: [
+      ['dealroom/legal/website-terms.html', 'Website terms'],
+      ['dealroom/legal/privacy-notice.html', 'Privacy notice'],
+      ['dealroom/legal/cookies.html', 'Cookies'],
+      ['dealroom/legal/security.html', 'Security'],
+      ['dealroom/legal/complaints.html', 'Complaints'],
+      ['dealroom/legal/accessibility.html', 'Accessibility']
+    ],
+    mailroom: [
+      ['mailroom/legal/sender-terms.html', 'Sender terms'],
+      ['mailroom/legal/acceptable-use.html', 'Acceptable use'],
+      ['mailroom/legal/data-processing.html', 'Data processing'],
+      ['mailroom/legal/privacy-notice.html', 'Privacy notice'],
+      ['mailroom/legal/complaints.html', 'Complaints'],
+      ['mailroom/legal/accessibility.html', 'Accessibility']
+    ]
+  };
+
+  const FOOTER_CSS_BASE = `
+footer.ami-foot{background:#F0EAD9;color:#1A1208;margin-top:48px;
+  padding:40px max(24px,calc((100% - 1280px)/2 + 24px)) 26px;box-sizing:border-box;text-align:left}
+footer.ami-foot *{box-sizing:border-box}
+footer.ami-foot .ami-foot__cols{display:grid;grid-template-columns:repeat(3,1fr);gap:48px}
+footer.ami-foot h2{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+  font-size:15px;font-weight:700;color:#1A1208;margin:0 0 12px;letter-spacing:0;text-transform:none}
+footer.ami-foot ul{list-style:none;margin:0;padding:0;border:0}
+footer.ami-foot li{margin:0 0 9px;padding:0;border:0}
+footer.ami-foot a{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+  font-size:14px;color:#1A1208;text-decoration:underline;text-underline-offset:2px}
+footer.ami-foot a:hover,footer.ami-foot a:focus{color:#8C3A1F}
+footer.ami-foot p{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+  font-size:14px;line-height:1.55;margin:0 0 10px;color:#1A1208}
+footer.ami-foot .ami-foot__rule{height:1px;background:#D4C4A0;margin:28px 0 18px}
+footer.ami-foot .ami-foot__legal p{font-size:13px;color:#6B5344;margin-bottom:8px}
+footer.ami-foot .ami-foot__verify{background:none;border:1px solid #1A1208;color:#1A1208;
+  font-family:'DM Mono',ui-monospace,monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  padding:7px 13px;cursor:pointer;margin-top:4px}
+footer.ami-foot .ami-foot__verify:hover{background:#FDF6E3}
+@media (max-width:860px){footer.ami-foot .ami-foot__cols{grid-template-columns:1fr 1fr;gap:28px}}
+@media (max-width:560px){footer.ami-foot .ami-foot__cols{grid-template-columns:1fr}}
+`;
+
+  function footerLinks(pairs) {
+    return pairs.map(function (x) {
+      return '<li><a href="' + P(x[0]) + '">' + x[1] + '</a></li>';
+    }).join('');
+  }
+
+  // Column one. The product's own nav, from the same place the band gets it.
+  function footerProductLinks(who) {
+    if (who === 'news') {
+      return footerLinks(SECTIONS.map(function (x) { return [x.href, x.label]; })
+        .concat(REGIONS.map(function (x) { return [x.href, x.label]; })));
+    }
+    if (harvested && harvested.links.length) {
+      return harvested.links.map(function (x) {
+        return '<li><a href="' + x.href + '">' + x.label + '</a></li>';
+      }).join('');
+    }
+    return '';
+  }
+
+  function buildFooter() {
+    const who = currentProduct();
+    const product = PRODUCTS.filter(function (x) { return x.key === who; })[0];
+    const name = product ? (who === 'news' ? 'AMI News' : 'AMI ' + product.label) : 'AMI';
+    return '<footer class="ami-foot">'
+      + '<div class="ami-foot__cols">'
+      + '<div><h2>' + name + '</h2><ul>' + footerProductLinks(who) + '</ul></div>'
+      + '<div><h2>Agreements and policies</h2><ul>'
+      + footerLinks(FOOTER_LEGAL[who] || FOOTER_LEGAL.news) + '</ul></div>'
+      + '<div><h2>Contact</h2>'
+      + '<p>Questions about your account or a story:<br>'
+      + '<a href="mailto:ami@abta.africa">ami@abta.africa</a></p>'
+      + '<p>We aim to reply within 2 business days.</p>'
+      + '<p><a href="' + P('index.html') + '">African Market Intelligence home</a></p>'
+      + '<p><a href="' + P('about.html') + '">About AMI</a></p>'
+      + '<p><button type="button" class="ami-foot__verify" onclick="if(typeof amiVerifyAccess===\'function\')amiVerifyAccess()">'
+      + 'Already a subscriber? Verify access &rarr;</button></p>'
+      + '</div>'
+      + '</div>'
+      + '<div class="ami-foot__rule"></div>'
+      + '<div class="ami-foot__legal">'
+      + '<p>AMI is operated by African Business Trade Association Limited, a company registered in '
+      + 'England and Wales, United Kingdom. Company number 16401954.</p>'
+      + '<p>&copy; ' + new Date().getFullYear() + ' African Business Trade Association Limited. '
+      + '<a href="' + P('privacy.html') + '">Privacy</a></p>'
+      + '</div>'
+      + '</footer>';
+  }
+
 
   // The sign-in control is login.js's, not ours. All this does is make sure it
   // lands in the masthead row rather than in the dark bar above it, and that it
@@ -792,86 +858,41 @@
     done();
   }
 
-  // ── Inject footer: replace existing footer or append to body ──
-  // The shared footer was written to borrow the publication's own footer CSS,
-  // which the publication has and the products do not. On the Dealroom and the
-  // Mailroom it therefore rendered as a bare list on a white ground, and on
-  // deals.html it came out dark but bulleted and stacked.
-  //
-  // Rather than override every page, the footer is measured once it is in the
-  // document and styled only where the page does not style it. The values below
-  // are read off index.html, where it is right.
-  const FOOTER_CSS = `
-footer.ami-footer--bare{background:#0A1A10;color:#A89070;padding-top:40px;padding-bottom:24px;margin-top:48px;text-align:left}
-footer.ami-footer--bare .footer-top>div{text-align:left}
-footer.ami-footer--bare .footer-col-title{border:0;padding:0}
-footer.ami-footer--bare .footer-links li{border:0;padding:0}
-footer.ami-footer--bare .footer-inner{max-width:none;margin:0}
-footer.ami-footer--bare .footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;padding-bottom:32px}
-footer.ami-footer--bare .footer-brand{font-family:'Playfair Display',Georgia,serif;font-size:22px;font-weight:800;color:#C9A84C;margin-bottom:12px}
-footer.ami-footer--bare .footer-about{font-family:Spectral,Georgia,serif;font-size:13px;line-height:1.7;color:#A89070;max-width:260px;margin:0}
-footer.ami-footer--bare .footer-col-title{font-family:'DM Mono',ui-monospace,monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#C9A84C;margin-bottom:14px}
-footer.ami-footer--bare .footer-links{list-style:none;margin:0;padding:0;border:0}
-footer.ami-footer--bare .footer-links li{margin-bottom:10px}
-footer.ami-footer--bare .footer-links a{font-family:Spectral,Georgia,serif;font-size:13px;color:#EDE5D5;text-decoration:none;padding:0;margin:0;border:0}
-footer.ami-footer--bare .footer-links a:hover{color:#C9A84C;text-decoration:underline}
-footer.ami-footer--bare .footer-bottom{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
-  border-top:1px solid rgba(201,168,76,.25);padding-top:16px;
-  font-family:'DM Mono',ui-monospace,monospace;font-size:10px;color:#8d9b92}
-@media (max-width:860px){footer.ami-footer--bare .footer-top{grid-template-columns:1fr 1fr;gap:28px}}
-@media (max-width:520px){footer.ami-footer--bare .footer-top{grid-template-columns:1fr}}
-`;
-
-  // Styled by the page, or not? Transparent catches the products, where none of
-  // these rules exist at all. The grid test catches deals.html, which has the
-  // dark ground but lays the columns out as blocks with bullets.
-  function footerNeedsStyles(f) {
-    const bg = getComputedStyle(f).backgroundColor;
-    const transparent = (bg === 'rgba(0, 0, 0, 0)' || bg === 'transparent');
-    const top = f.querySelector('.footer-top');
-    const notGrid = !top || getComputedStyle(top).display !== 'grid';
-    return transparent || notGrid;
-  }
-
-  // The footer's content column has to line up with the header's. The
-  // publication centres .footer-inner inside a flat 24px gutter, which puts
-  // footer text 24px to the left of the band above it on any screen wider than
-  // 1328px - the two columns visibly disagree. This applies the chrome formula
-  // to the footer as well, so one line runs down the left edge of the page from
-  // the wordmark to the copyright.
-  //
-  // Applied on every page, not just the bare ones: a shared footer that aligns
-  // on some pages and not others is the problem this was meant to solve.
-  function alignFooter() {
-    if (document.getElementById('amiFooterAlignCSS')) return;
-    const st = document.createElement('style');
-    st.id = 'amiFooterAlignCSS';
-    st.textContent = 'footer{padding-left:max(24px,calc((100% - 1280px)/2 + 24px));'
-      + 'padding-right:max(24px,calc((100% - 1280px)/2 + 24px));box-sizing:border-box}'
-      + 'footer .footer-inner{max-width:none;margin:0}';
-    document.head.appendChild(st);
-  }
-
+  // ── Inject footer ──────────────────────────────────────────
+  // One footer everywhere, built by buildFooter(), carrying all of its own
+  // styling. The previous version borrowed the publication's footer CSS, which
+  // the products do not have, so it rendered as a bare list on white there and
+  // needed a measure-and-patch pass. Nothing is borrowed now.
   function injectFooter() {
+    if (!document.getElementById('amiFooterCSS')) {
+      const st = document.createElement('style');
+      st.id = 'amiFooterCSS';
+      st.textContent = FOOTER_CSS_BASE;
+      document.head.appendChild(st);
+    }
+    const html = buildFooter();
     const existing = document.querySelector('footer');
-    if (existing) {
-      existing.outerHTML = footerHTML;
-    } else {
-      document.body.insertAdjacentHTML('beforeend', footerHTML);
-    }
-    const f = document.querySelector('footer');
-    rewriteLinks(f);
-    alignFooter();
-    if (f && footerNeedsStyles(f)) {
-      if (!document.getElementById('amiFooterCSS')) {
-        const st = document.createElement('style');
-        st.id = 'amiFooterCSS';
-        st.textContent = FOOTER_CSS;
-        document.head.appendChild(st);
-      }
-      f.classList.add('ami-footer--bare');
-    }
+    if (existing) existing.outerHTML = html;
+    else document.body.insertAdjacentHTML('beforeend', html);
+    keepFooterIds(document.querySelector('footer'));
   }
+
+  // index.html line 4785 is getElementById('footerBrand').textContent = name,
+  // with no guard, and the same applies to footerAboutDisplay and
+  // copyrightDisplay. Those ids were on the old footer's brand and blurb, which
+  // this structure does not have. Taking them away threw inside init() and
+  // killed the whole page load once already, so they are kept as an off-screen
+  // target for the page to write into.
+  function keepFooterIds(f) {
+    if (!f || document.getElementById('footerBrand')) return;
+    const hold = document.createElement('div');
+    hold.setAttribute('aria-hidden', 'true');
+    hold.style.cssText = 'position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap';
+    hold.innerHTML = '<span id="footerBrand"></span><span id="footerAboutDisplay"></span>'
+      + '<span id="copyrightDisplay"></span>';
+    f.appendChild(hold);
+  }
+
 
   // ── Inject verify modal once into body ─────────────────────
   function injectVerifyModal() {
