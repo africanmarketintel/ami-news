@@ -430,9 +430,13 @@
             account_id: rows[0].id, user_id: MR.auth.userId(), email: v.email, role: 'owner'
           });
         }).then(function () {
-          form.textContent = '';
-          MR.banner(form.parentNode, 'Account created',
-            'You can import a list and send as soon as you have recorded how the addresses were collected. There is no daily limit: a monthly quota and the complaint thresholds are what hold a sender back.');
+          // This used to leave the member on the signup form with the banner
+          // and nothing to click: no onward link, and the member navigation
+          // does not appear until another page loads, so the only way forward
+          // was knowing the URL. Go straight to the dashboard instead and
+          // show the message there. Not a timed redirect, which would fail
+          // WCAG 2.2.1 unless the member could stop it. 14 October 2026.
+          location.href = 'account.html?created=1';
         });
       };
 
@@ -494,6 +498,9 @@
         ? (MR.sampleLists || []).reduce(function (n, l) { return n + (l.subscribers || 0); }, 0)
         : (res[6] || []).length;
       wrap.textContent = '';
+      // Arriving straight from create-account.html, which no longer leaves the
+      // member stranded on the signup form.
+      var justCreated = MR.qs('created') === '1';
       // Heading row to YO's mockup of 14 October 2026: the title and a plain
       // sentence on the left, the one action a member comes here to take on
       // the right. The account name and status tag that used to sit under the
@@ -504,6 +511,11 @@
           MR.h('p', { class: 'dr-lead', text: 'Everything you have sent, and what it did.' })),
         MR.h('div', { class: 'mr-page-head__action' },
           MR.h('a', { class: 'dr-button', href: 'campaign.html', text: 'Write a campaign' }))));
+
+      if (justCreated) {
+        MR.banner(wrap, 'Account created',
+          'Your next step is a list. A list can only be mailed once you have recorded how its addresses were collected, which is also your consent record. There is no daily limit: a monthly quota and the complaint thresholds are what hold a sender back.');
+      }
 
       var sent = campaigns.filter(function (c) { return c.status === 'sent'; });
       var recipients = sent.reduce(function (n, c) { return n + (c.recipients || 0); }, 0);
