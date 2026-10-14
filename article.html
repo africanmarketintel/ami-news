@@ -24,6 +24,9 @@
     rel="stylesheet">
 
   <!-- ✅ CREDENTIALS: Edit config.js once — applies to all pages -->
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    crossorigin="anonymous" referrerpolicy="no-referrer">
   <script src="config.js"></script>
   <script src="nav.js"></script>
 <script src="login.js"></script>  
@@ -636,6 +639,153 @@
 
     .lock-icon {
       color: var(--gold)
+    }
+
+    /* Share rail
+       Rebuilt 14 October 2026. article.html kept the share MODAL - .share-modal
+       and its copy, native-share and subscribe rows - but the rail itself was
+       gone, and with it every network link: no facebook, linkedin or telegram
+       anywhere in the file.
+       Cream ground, 1px border, square corners, per the design system. Hidden
+       below 1200px, where there is no margin to put it in and the existing
+       share button covers the job. */
+    .share-rail {
+      position: fixed;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 40;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      padding: 10px 6px;
+      background: var(--cream);
+      border: 1px solid var(--divider)
+    }
+
+    .share-rail__label {
+      font-family: 'DM Mono', monospace;
+      font-size: 8px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      margin-bottom: 6px
+    }
+
+    .share-rail__btn {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 0;
+      background: none;
+      padding: 0;
+      cursor: pointer;
+      color: var(--text);
+      text-decoration: none;
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: .04em;
+      border-radius: 50%;
+      transition: background .2s
+    }
+
+    .share-rail__btn:hover,
+    .share-rail__btn:focus-visible {
+      background: var(--gold-pale)
+    }
+
+    .share-rail__btn i {
+      font-size: 15px;
+      line-height: 1
+    }
+
+    .share-rail__copy {
+      margin-top: 4px;
+      border-top: 1px solid var(--divider);
+      border-radius: 0;
+      width: 32px
+    }
+
+    .share-rail__copied {
+      color: var(--green)
+    }
+
+    @media (max-width: 1200px) {
+      .share-rail { display: none }
+    }
+
+    /* More from AMI
+       Rebuilt 14 October 2026. The grid, card, image and headline rules it
+       uses - .article-row, .article-card, .card-img, .card-content,
+       .card-headline - were all still in this file; only the markup and the
+       function that filled them had gone. Four across rather than the three
+       .article-row sets, and an eyebrow in terracotta above each headline. */
+    .more-from {
+      max-width: 1280px;
+      margin: 48px auto 0;
+      padding: 28px 24px 0;
+      border-top: 1px solid var(--divider)
+    }
+
+    .more-from__head {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      margin-bottom: 18px
+    }
+
+    .more-from__title {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 800;
+      margin: 0
+    }
+
+    .more-from__all {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--terra);
+      text-decoration: none;
+      white-space: nowrap
+    }
+
+    .more-from__all:hover {
+      text-decoration: underline
+    }
+
+    .more-from .article-row {
+      grid-template-columns: repeat(4, 1fr);
+      margin-bottom: 0
+    }
+
+    .more-from .card-eyebrow {
+      display: block;
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--terra)
+    }
+
+    .more-from .card-content {
+      padding: 14px 16px 18px
+    }
+
+    .more-from .card-headline {
+      margin-bottom: 0
+    }
+
+    @media (max-width: 1000px) {
+      .more-from .article-row { grid-template-columns: repeat(2, 1fr) }
+    }
+
+    @media (max-width: 560px) {
+      .more-from .article-row { grid-template-columns: 1fr }
     }
 
     /* Markets */
@@ -3948,6 +4098,17 @@
     <div class="loading-art">Loading article…</div>
   </div>
 
+  <!-- More from AMI. Hidden until it has something to show. -->
+  <aside class="share-rail" id="shareRail" aria-label="Share this article"></aside>
+
+  <section class="more-from" id="moreFrom" hidden aria-labelledby="moreFromTitle">
+    <div class="more-from__head">
+      <h2 class="more-from__title" id="moreFromTitle">More from AMI</h2>
+      <a class="more-from__all" href="index.html">View all &rarr;</a>
+    </div>
+    <div class="article-row" id="moreFromGrid"></div>
+  </section>
+
 
   <footer>
     <div class="footer-inner">
@@ -5002,6 +5163,109 @@
     </div>
   </div>
 
+
+  <script>
+  // More from AMI
+  // Runs on its own rather than inside loadArticle(), so a failure here cannot
+  // take the article down with it. Eight most recent published stories, the
+  // one being read removed, which is why it asks for nine.
+  (function () {
+    function go() {
+      var grid = document.getElementById('moreFromGrid');
+      var wrap = document.getElementById('moreFrom');
+      if (!grid || !wrap) return;
+      if (typeof SUPABASE_URL !== 'string' || SUPABASE_URL.indexOf('http') !== 0) return;
+      var here = new URLSearchParams(window.location.search).get('id');
+      var url = SUPABASE_URL + '/rest/v1/articles'
+        + '?select=id,headline,section,hero_image'
+        + '&is_published=eq.true&order=created_at.desc&limit=9';
+      fetch(url, { headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer ' + SUPABASE_ANON } })
+        .then(function (r) { return r.ok ? r.json() : []; })
+        .then(function (rows) {
+          var list = (rows || []).filter(function (a) { return a.id !== here; }).slice(0, 8);
+          if (!list.length) return;
+          grid.innerHTML = list.map(function (a) {
+            var img = a.hero_image
+              ? '<img class="card-img" src="' + esc(a.hero_image) + '" alt="" loading="lazy">'
+              : '<div class="card-img-placeholder"></div>';
+            var eyebrow = a.section ? '<span class="card-eyebrow">' + esc(a.section) + '</span>' : '';
+            return '<a class="article-card" style="text-decoration:none;color:inherit;display:block" '
+              + 'href="article.html?id=' + encodeURIComponent(a.id) + '">'
+              + img
+              + '<div class="card-content">' + eyebrow
+              + '<div class="card-headline">' + esc(a.headline || 'Untitled') + '</div>'
+              + '</div></a>';
+          }).join('');
+          wrap.hidden = false;
+        })
+        .catch(function () { /* the article is what matters; this is extra */ });
+    }
+    function esc(t) {
+      return String(t).replace(/[&<>"]/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+      });
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go);
+    else go();
+  })();
+  </script>
+
+  <script>
+  // Share rail
+  // The links are built here rather than written out, so the URL is always the
+  // page you are actually on.
+  //
+  // Icons are Font Awesome 6.5.2 brands, loaded from cdnjs - your choice over
+  // local SVGs. If the stylesheet fails to load the buttons are empty circles,
+  // so each one carries an aria-label and a title regardless.
+  (function () {
+    var NETS = [
+      { icon: 'fa-brands fa-facebook-f', name: 'Facebook', url: 'https://www.facebook.com/sharer/sharer.php?u={u}' },
+      { icon: 'fa-brands fa-whatsapp',   name: 'WhatsApp', url: 'https://wa.me/?text={t}%20{u}' },
+      { icon: 'fa-brands fa-linkedin-in',name: 'LinkedIn', url: 'https://www.linkedin.com/sharing/share-offsite/?url={u}' },
+      { icon: 'fa-brands fa-telegram',   name: 'Telegram', url: 'https://t.me/share/url?url={u}&text={t}' },
+      { icon: 'fa-brands fa-x-twitter',  name: 'X',        url: 'https://twitter.com/intent/tweet?url={u}&text={t}' }
+    ];
+    function build() {
+      var rail = document.getElementById('shareRail');
+      if (!rail) return;
+      var u = encodeURIComponent(window.location.href);
+      var t = encodeURIComponent(document.title.replace(/\s*\|.*$/, ''));
+      var html = '<span class="share-rail__label">Share</span>';
+      NETS.forEach(function (n) {
+        var href = n.url.split('{u}').join(u).split('{t}').join(t);
+        html += '<a class="share-rail__btn" href="' + href + '" target="_blank" rel="noopener noreferrer"'
+          + ' aria-label="Share on ' + n.name + '" title="Share on ' + n.name + '">'
+          + '<i class="' + n.icon + '" aria-hidden="true"></i>'
+          + '</a>';
+      });
+      html += '<button type="button" class="share-rail__btn share-rail__copy" id="shareRailCopy"'
+        + ' aria-label="Copy link to this article" title="Copy link">'
+        + '<i class="fa-solid fa-link" aria-hidden="true"></i></button>';
+      rail.innerHTML = html;
+      var copy = document.getElementById('shareRailCopy');
+      copy.addEventListener('click', function () {
+        var done = function () {
+          copy.innerHTML = '<i class="fa-solid fa-check share-rail__copied" aria-hidden="true"></i>';
+          setTimeout(function () {
+            copy.innerHTML = '<i class="fa-solid fa-link" aria-hidden="true"></i>';
+          }, 1600);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(window.location.href).then(done, function () {});
+        } else {
+          var i = document.createElement('input');
+          i.value = window.location.href;
+          document.body.appendChild(i); i.select();
+          try { document.execCommand('copy'); done(); } catch (e) {}
+          document.body.removeChild(i);
+        }
+      });
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', build);
+    else build();
+  })();
+  </script>
 </body>
 
 </html>

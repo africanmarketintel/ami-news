@@ -703,6 +703,11 @@
   function syncProductNav() {
     const nav = document.querySelector('.ami-band__nav');
     if (!nav) return;
+    syncDealroomNav(nav);
+    syncMailroomNav(nav);
+  }
+
+  function syncDealroomNav(nav) {
     let active = false;
     try { active = !!(window.DR && DR.session && DR.session.active()); } catch (e) { active = false; }
     if (!active) return;
@@ -710,6 +715,29 @@
     if (!join) return;
     join.textContent = 'Your interests';
     join.setAttribute('href', join.getAttribute('href').replace('create-account.html', 'account.html'));
+  }
+
+  // The Mailroom's member pages carry a second navigation, #mr-member-nav,
+  // built by build.py and kept hidden until mr-core.js confirms a session.
+  // Left alone, a signed-in member got two rows: the band with the visitor's
+  // links - How it works, Archive, Sending policy, none of which they need
+  // after the first visit - and the member bar underneath it.
+  //
+  // The agreed design has one row. So when the member bar is showing, its links
+  // become the band and the bar itself goes. mr-core.js stays the only thing
+  // that decides whether a member is signed in; this reads its answer.
+  function syncMailroomNav(nav) {
+    const bar = document.getElementById('mr-member-nav');
+    if (!bar || bar.hidden) return;
+    const links = [].slice.call(bar.querySelectorAll('a'));
+    if (!links.length) return;
+    const here = window.location.pathname.split('/').pop() || 'index.html';
+    nav.innerHTML = links.map(function (a) {
+      const h = a.getAttribute('href') || '';
+      const on = h.split('/').pop() === here || a.getAttribute('aria-current') === 'page';
+      return '<a href="' + h + '"' + (on ? ' aria-current="page"' : '') + '>' + a.textContent.trim() + '</a>';
+    }).join('');
+    bar.hidden = true;
   }
 
   function sectionBand() {
@@ -774,15 +802,18 @@
   // document and styled only where the page does not style it. The values below
   // are read off index.html, where it is right.
   const FOOTER_CSS = `
-footer.ami-footer--bare{background:#0A1A10;color:#A89070;padding:40px 24px 24px;margin-top:48px;box-sizing:border-box}
-footer.ami-footer--bare .footer-inner{max-width:1280px;margin:0 auto}
+footer.ami-footer--bare{background:#0A1A10;color:#A89070;padding-top:40px;padding-bottom:24px;margin-top:48px;text-align:left}
+footer.ami-footer--bare .footer-top>div{text-align:left}
+footer.ami-footer--bare .footer-col-title{border:0;padding:0}
+footer.ami-footer--bare .footer-links li{border:0;padding:0}
+footer.ami-footer--bare .footer-inner{max-width:none;margin:0}
 footer.ami-footer--bare .footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;padding-bottom:32px}
 footer.ami-footer--bare .footer-brand{font-family:'Playfair Display',Georgia,serif;font-size:22px;font-weight:800;color:#C9A84C;margin-bottom:12px}
 footer.ami-footer--bare .footer-about{font-family:Spectral,Georgia,serif;font-size:13px;line-height:1.7;color:#A89070;max-width:260px;margin:0}
 footer.ami-footer--bare .footer-col-title{font-family:'DM Mono',ui-monospace,monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#C9A84C;margin-bottom:14px}
-footer.ami-footer--bare .footer-links{list-style:none;margin:0;padding:0}
+footer.ami-footer--bare .footer-links{list-style:none;margin:0;padding:0;border:0}
 footer.ami-footer--bare .footer-links li{margin-bottom:10px}
-footer.ami-footer--bare .footer-links a{font-family:Spectral,Georgia,serif;font-size:13px;color:#EDE5D5;text-decoration:none}
+footer.ami-footer--bare .footer-links a{font-family:Spectral,Georgia,serif;font-size:13px;color:#EDE5D5;text-decoration:none;padding:0;margin:0;border:0}
 footer.ami-footer--bare .footer-links a:hover{color:#C9A84C;text-decoration:underline}
 footer.ami-footer--bare .footer-bottom{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
   border-top:1px solid rgba(201,168,76,.25);padding-top:16px;
@@ -802,6 +833,25 @@ footer.ami-footer--bare .footer-bottom{display:flex;justify-content:space-betwee
     return transparent || notGrid;
   }
 
+  // The footer's content column has to line up with the header's. The
+  // publication centres .footer-inner inside a flat 24px gutter, which puts
+  // footer text 24px to the left of the band above it on any screen wider than
+  // 1328px - the two columns visibly disagree. This applies the chrome formula
+  // to the footer as well, so one line runs down the left edge of the page from
+  // the wordmark to the copyright.
+  //
+  // Applied on every page, not just the bare ones: a shared footer that aligns
+  // on some pages and not others is the problem this was meant to solve.
+  function alignFooter() {
+    if (document.getElementById('amiFooterAlignCSS')) return;
+    const st = document.createElement('style');
+    st.id = 'amiFooterAlignCSS';
+    st.textContent = 'footer{padding-left:max(24px,calc((100% - 1280px)/2 + 24px));'
+      + 'padding-right:max(24px,calc((100% - 1280px)/2 + 24px));box-sizing:border-box}'
+      + 'footer .footer-inner{max-width:none;margin:0}';
+    document.head.appendChild(st);
+  }
+
   function injectFooter() {
     const existing = document.querySelector('footer');
     if (existing) {
@@ -811,6 +861,7 @@ footer.ami-footer--bare .footer-bottom{display:flex;justify-content:space-betwee
     }
     const f = document.querySelector('footer');
     rewriteLinks(f);
+    alignFooter();
     if (f && footerNeedsStyles(f)) {
       if (!document.getElementById('amiFooterCSS')) {
         const st = document.createElement('style');
@@ -877,6 +928,12 @@ footer.ami-footer--bare .footer-bottom{display:flex;justify-content:space-betwee
     injectBand();
     initSearch();
     setTimeout(syncProductNav, 0);
+    // The Mailroom unhides its member bar once the session resolves, which can
+    // be after this tick, so the swap is watched rather than done once.
+    const memberBar = document.getElementById('mr-member-nav');
+    if (memberBar && window.MutationObserver) {
+      new MutationObserver(syncProductNav).observe(memberBar, { attributes: true, attributeFilter: ['hidden'] });
+    }
     injectFooter();
     injectVerifyModal();
     applySubscriberUI();
