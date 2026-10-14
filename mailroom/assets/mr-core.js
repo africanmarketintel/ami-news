@@ -396,8 +396,12 @@
     var s = MR.auth.session();
     return fetch(MR.cfg.url + '/functions/v1/' + name, {
       method: 'POST',
+      // No apikey header. The functions allow only "authorization,
+      // content-type" in Access-Control-Allow-Headers, so sending apikey made
+      // the preflight fail and the browser blocked the request before it left
+      // - which the page could only report as "Failed to fetch". The gateway
+      // authenticates from the Authorization bearer alone. 14 October 2026.
       headers: {
-        apikey: MR.cfg.key,
         Authorization: 'Bearer ' + ((s && s.access_token) || MR.cfg.key),
         'Content-Type': 'application/json'
       },
