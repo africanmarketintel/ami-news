@@ -560,8 +560,8 @@
     // either. What is left in that strip is the sample-data warning, which is
     // not a Beta notice - it is the page saying nothing you do here is real.
     // The id is now on the strip itself, so this line still governs it.
-    var preview = document.getElementById('mr-preview-banner');
-    if (preview) preview.hidden = !MR.cfg.demo;
+    // The sample-data strip was removed on 14 October 2026 at YO's request,
+    // markup and all, so there is nothing left here to show or hide.
   }
 
   if (document.readyState === 'loading') {

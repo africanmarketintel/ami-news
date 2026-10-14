@@ -494,8 +494,36 @@
         ? (MR.sampleLists || []).reduce(function (n, l) { return n + (l.subscribers || 0); }, 0)
         : (res[6] || []).length;
       wrap.textContent = '';
-      wrap.appendChild(MR.h('h1', { text: 'Your mailroom' }));
-      wrap.appendChild(MR.h('p', { class: 'dr-lead' }, account.name, ' · ', statusTag(account.status)));
+      // Heading row to YO's mockup of 14 October 2026: the title and a plain
+      // sentence on the left, the one action a member comes here to take on
+      // the right. The account name and status tag that used to sit under the
+      // title are gone; a suspended account still gets the banner below.
+      wrap.appendChild(MR.h('div', { class: 'mr-page-head' },
+        MR.h('div', null,
+          MR.h('h1', { text: 'Your mailroom' }),
+          MR.h('p', { class: 'dr-lead', text: 'Everything you have sent, and what it did.' })),
+        MR.h('div', { class: 'mr-page-head__action' },
+          MR.h('a', { class: 'dr-button', href: 'campaign.html', text: 'Write a campaign' }))));
+
+      var sent = campaigns.filter(function (c) { return c.status === 'sent'; });
+      var recipients = sent.reduce(function (n, c) { return n + (c.recipients || 0); }, 0);
+      var complaints = sent.reduce(function (n, c) { return n + (c.complained || 0); }, 0);
+      var delivered = sent.reduce(function (n, c) { return n + (c.delivered || 0); }, 0);
+      // "Across the last 12 months" has to be true, so the count is filtered
+      // to that window rather than being every campaign ever sent.
+      var yearAgo = Date.now() - 365 * 24 * 60 * 60 * 1000;
+      var sentThisYear = sent.filter(function (c) {
+        return c.sent_at && new Date(c.sent_at).getTime() >= yearAgo;
+      });
+      // Each figure carries the thing you would do about it, or the line it
+      // must not cross. A complaint rate with no threshold beside it tells a
+      // member nothing: they cannot know whether 0.04% is fine or alarming.
+      wrap.appendChild(MR.h('div', { class: 'mr-figures mr-figures--cards' },
+        card('Campaigns sent', MR.number(sentThisYear.length), 'Across the last 12 months'),
+        card('Delivered', MR.number(delivered),
+             recipients ? MR.percent(delivered, recipients) + ' of everything queued' : 'Nothing queued yet'),
+        card('Complaint rate', MR.percent(complaints, recipients),
+             'Sending is suspended above 0.3%')));
 
       if (account.status === 'suspended') {
         MR.banner(wrap, 'Sending suspended', account.suspension_reason || 'Contact ami@abta.africa.', 'important');
@@ -504,38 +532,32 @@
       var onOwnDomain = live.length > 0;
 
       // Where the email goes out from, and what to do about it.
-      var domainBox = MR.h('div', { class: 'mr-aside' },
-        MR.h('h2', { class: 'dr-h', text: 'Where your email comes from' }));
+      // Sending domain, as a single tinted row at the foot of the page rather
+       // than the panel of paragraphs and buttons that was here before. The
+       // mockup of 14 October 2026 puts one line and one link in it. Everything
+       // the panel explained is on domain.html, which the link goes to, and
+       // "How your email looks" is in the member navigation above.
+      var domainRow = MR.h('div', { class: 'mr-domain-row' });
+      var domainText = MR.h('div');
       if (onOwnDomain) {
-        domainBox.appendChild(MR.h('p', null, 'Campaigns go out as ',
-          MR.h('strong', { text: live.map(function (d) { return d.from_local + '@' + d.domain; }).join(', ') }),
-          '. Your delivery record is your own.'));
+        var addresses = live.map(function (d) { return d.from_local + '@' + d.domain; }).join(', ');
+        var clean = live.reduce(function (n, d) { return n + (d.clean_campaigns || 0); }, 0);
+        domainText.appendChild(MR.h('h2', { text: live.map(function (d) { return d.domain; }).join(', ') + (live.length === 1 ? ' is verified' : ' are verified') }));
+        domainText.appendChild(MR.h('p', { text: 'Campaigns go out as ' + addresses + '.'
+          + (clean ? ' ' + MR.number(clean) + (clean === 1 ? ' clean campaign' : ' clean campaigns') + ' from this domain.' : '') }));
       } else if (domains.length) {
-        domainBox.appendChild(MR.h('p', { text: domains[0].domain + ' is waiting for its DNS records. Until it is verified, campaigns go out from the shared AMI Mailroom address.' }));
-      } else if (account.sender_local) {
-        domainBox.appendChild(MR.h('p', null, 'Campaigns go out as ',
-          MR.h('strong', { text: account.sender_local + '@mail.abta.africa' }),
-          ', with your organisation name in front of it. Sending from your own domain instead puts your real address in front of readers and keeps your delivery record separate from other senders.'));
+        domainText.appendChild(MR.h('h2', { text: domains[0].domain + ' is waiting for its DNS records' }));
+        domainText.appendChild(MR.h('p', { text: 'Until it is verified, campaigns go out from the shared AMI Mailroom address.' }));
       } else {
-        domainBox.appendChild(MR.h('p', { text: 'Campaigns go out from the shared AMI Mailroom address, with your organisation name in front of it. Sending from your own domain is better for opens and keeps your delivery record separate from other senders.' }));
+        domainText.appendChild(MR.h('h2', { text: 'Sending from the shared ABTA domain' }));
+        domainText.appendChild(MR.h('p', { text: account.sender_local
+          ? 'Campaigns go out as ' + account.sender_local + '@mail.abta.africa, with your organisation name in front of it. Your own domain keeps your delivery record separate from other senders.'
+          : 'Campaigns go out from the shared AMI Mailroom address, with your organisation name in front of it. Your own domain keeps your delivery record separate from other senders.' }));
       }
-      // Whatever else is set up, the account keeps its address on the shared
-      // domain, and a campaign falls back to it. Worth saying, because it is
-      // the address most campaigns actually leave from.
-      if (account.sender_local && (onOwnDomain || domains.length)) {
-        domainBox.appendChild(MR.h('p', { class: 'dr-small' },
-          'Your address on the shared ABTA domain is ',
-          MR.h('strong', { text: account.sender_local + '@mail.abta.africa' }),
-          '. Any campaign not sent from your own domain goes out from it.'));
-      }
-      domainBox.appendChild(MR.h('p', null, MR.h('a', {
-        class: 'dr-button dr-button--secondary', href: 'domain.html',
-        text: onOwnDomain ? 'Manage sending domains' : 'Send from your own domain'
-      }), ' ', MR.h('a', {
-        class: 'dr-button dr-button--secondary', href: 'brand.html',
-        text: 'How your email looks'
-      })));
-      wrap.appendChild(domainBox);
+      domainRow.appendChild(domainText);
+      domainRow.appendChild(MR.h('a', { class: 'mr-domain-row__link', href: 'domain.html', text: 'Sending domains' }));
+      // Appended at the foot, below the campaign list, as the mockup has it.
+
       wrap.appendChild(replyBox(account, replies));
       wrap.appendChild(timezoneBox(account));
       var emailsThisMonth = campaigns.filter(function (c) {
@@ -595,19 +617,6 @@
           MR.h('p', { class: 'dr-small', text: 'A scheduled campaign is locked. Open it to unschedule it, then edit and schedule it again.' })));
       }
 
-      var sent = campaigns.filter(function (c) { return c.status === 'sent'; });
-      var recipients = sent.reduce(function (n, c) { return n + (c.recipients || 0); }, 0);
-      var complaints = sent.reduce(function (n, c) { return n + (c.complained || 0); }, 0);
-      // Each figure carries the thing you would do about it, or the line it
-      // must not cross. A complaint rate with no threshold beside it tells a
-      // member nothing: they cannot know whether 0.04% is fine or alarming.
-      wrap.appendChild(MR.h('div', { class: 'mr-figures' },
-        card('Campaigns sent', MR.number(sent.length),
-             MR.h('a', { href: 'campaign.html', text: 'Write a campaign' })),
-        card('Emails delivered', MR.number(sent.reduce(function (n, c) { return n + (c.delivered || 0); }, 0)),
-             'Across every campaign you have sent'),
-        card('Complaint rate', MR.percent(complaints, recipients),
-             'Sending is suspended above 0.3%')));
 
       // Anything the automatic checks flagged against this account, so the
       // member can fix it rather than wait to be told.
@@ -619,15 +628,31 @@
           flags.forEach(function (f) { ul.appendChild(MR.h('li', { text: MR.FLAG_TEXT[f.kind] || f.kind })); });
           var box = MR.h('div', { class: 'mr-aside' },
             MR.h('h2', { class: 'dr-h', text: 'Things to look at' }), ul);
-          wrap.insertBefore(box, wrap.children[3] || null);
+          wrap.insertBefore(box, wrap.querySelector('.mr-section-head') || null);
         }).catch(function () { /* not essential */ });
 
-      wrap.appendChild(MR.h('div', { class: 'dr-results-bar' },
-        MR.h('p', { class: 'dr-results-count', text: campaigns.length + ' campaigns' }),
-        MR.h('div', { class: 'dr-results-bar__tools' },
-          MR.h('a', { class: 'dr-button', href: 'campaign.html', text: 'Write a campaign' }), ' ',
-          MR.h('a', { class: 'dr-button dr-button--secondary', href: 'lists.html', text: 'Manage lists' }), ' ',
-          MR.h('a', { class: 'dr-button dr-button--secondary', href: 'brand.html', text: 'How your email looks' }))));
+      // The settings panels - reply addresses, timezone, plan, data - are built
+      // before the campaign list because they depend on values resolved earlier
+      // in this function. The mockup puts Recent campaigns directly under the
+      // figures, so the campaigns block is moved up at the end rather than
+      // reshuffling that logic.
+      function placeCampaigns() {
+        var figures = wrap.querySelector('.mr-figures--cards');
+        var head = wrap.querySelector('.mr-section-head');
+        if (!figures || !head) return;
+        var block = [], n = head;
+        while (n) { block.push(n); n = n.nextSibling; }
+        var at = figures.nextSibling;
+        block.forEach(function (el) { wrap.insertBefore(el, at); });
+      }
+
+      // "Recent campaigns" with a View all link, per the mockup. Write a
+      // campaign moved up to the heading row; Manage lists and How your email
+      // looks are both in the member navigation above, so the button strip
+      // that used to sit here was a third way to the same two pages.
+      wrap.appendChild(MR.h('div', { class: 'mr-section-head' },
+        MR.h('h2', { class: 'dr-h', text: 'Recent campaigns' }),
+        MR.h('a', { class: 'mr-section-head__all', href: 'campaign.html', text: 'View all' })));
 
       if (!lists.some(function (l) { return l.consent_status !== 'unconfirmed'; })) {
         MR.banner(wrap, 'No list is ready to mail',
@@ -636,30 +661,36 @@
 
       if (!campaigns.length) {
         wrap.appendChild(MR.h('p', { class: 'dr-empty', text: 'You have not written a campaign yet.' }));
+        wrap.appendChild(domainRow);
+        placeCampaigns();
         return;
       }
 
-      var tbody = MR.h('tbody');
+      // The six-column table became a list of rows on 14 October 2026, to the
+      // mockup. Each row says what it is, when it went or is going, how many
+      // it reached and how many clicked. Complaints are no longer per row:
+      // the account-wide rate is the figure that governs suspension and it is
+      // in the cards above.
+      var list = MR.h('ul', { class: 'mr-camps' });
       campaigns.forEach(function (c) {
-        tbody.appendChild(MR.h('tr', null,
-          MR.h('td', null, MR.h('a', { href: 'campaign.html?id=' + c.id, text: c.subject }),
-            MR.h('br'), MR.h('span', { class: 'dr-small', text: c.ref || 'not sent yet' })),
-          MR.h('td', null, MR.h('span', { class: 'dr-tag dr-tag--' + tagFor(c.status), text: MR.CAMPAIGN_STATUS[c.status] || c.status })),
-          MR.h('td', { text: c.sent_at ? MR.date(c.sent_at)
-            : c.scheduled_for ? MR.dateTimeInZone(c.scheduled_for, account.timezone) : '' }),
-          MR.h('td', { text: MR.number(c.recipients) }),
-          MR.h('td', { text: c.recipients ? MR.percent(c.clicked, c.recipients) : '' }),
-          MR.h('td', { text: c.recipients ? MR.percent(c.complained, c.recipients) : '' })));
+        var when = c.sent_at ? 'Sent ' + MR.date(c.sent_at)
+          : c.scheduled_for ? 'Scheduled for ' + MR.dateTimeInZone(c.scheduled_for, account.timezone)
+          : 'Not sent yet';
+        var stats = MR.h('div', { class: 'mr-camps__stats' });
+        stats.appendChild(MR.h('span', { text: c.recipients ? MR.number(c.recipients) + ' sent' : '\u2013 sent' }));
+        stats.appendChild(MR.h('span', { text: c.recipients ? MR.percent(c.clicked, c.recipients) + ' clicked' : '\u2013 clicked' }));
+        stats.appendChild(MR.h('span', { class: 'dr-tag dr-tag--' + tagFor(c.status),
+          text: MR.CAMPAIGN_STATUS[c.status] || c.status }));
+        list.appendChild(MR.h('li', { class: 'mr-camps__row' },
+          MR.h('div', null,
+            MR.h('p', { class: 'mr-camps__name' }, MR.h('a', { href: 'campaign.html?id=' + c.id, text: c.subject })),
+            MR.h('p', { class: 'mr-camps__sub', text: when + (c.ref ? ' \u00b7 ' + c.ref : '') })),
+          stats));
       });
-      wrap.appendChild(MR.h('div', { class: 'dr-table-wrap' },
-        MR.h('table', { class: 'dr-table' },
-          MR.h('caption', { class: 'dr-visually-hidden', text: 'Campaigns' }),
-          MR.h('thead', null, MR.h('tr', null,
-            MR.h('th', { scope: 'col', text: 'Campaign' }), MR.h('th', { scope: 'col', text: 'Status' }),
-            MR.h('th', { scope: 'col', text: 'Sent or due' }), MR.h('th', { scope: 'col', text: 'Recipients' }),
-            MR.h('th', { scope: 'col', text: 'Clicks' }), MR.h('th', { scope: 'col', text: 'Complaints' }))),
-          tbody)));
+      wrap.appendChild(list);
       wrap.appendChild(MR.h('p', { class: 'dr-small', text: 'Open rates are not shown. Mail privacy features make them unreliable, so clicks are the measure that means something.' }));
+      wrap.appendChild(domainRow);
+      placeCampaigns();
     }).catch(function (err) {
       return MR.loadFailed(wrap, err);
     });

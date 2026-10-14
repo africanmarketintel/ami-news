@@ -563,3 +563,87 @@ a:hover, .dr-link:hover { color: var(--brand-hover); text-decoration-thickness: 
 .mr-preview__frame { width: 100%; max-width: 100%; height: 520px; border: 1px solid #b1b4b6; border-radius: 4px; background: #fff; }
 .mr-preview__text { white-space: pre-wrap; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .9375rem; background: #f3f2f1; padding: 1rem; border-radius: 4px; max-height: 520px; overflow: auto; }
 @media (max-width: 699px) { .dr-card__visual { min-height: auto; padding: .5rem 1rem; } }
+
+/* ==========================================================================
+   Your mailroom – rebuilt 14 October 2026 to YO's mockup.
+   Heading row with the primary action opposite it, three separate figure
+   cards, then campaigns as bordered rows rather than a six-column table,
+   with the sending-domain note as a tinted row at the foot.
+   ========================================================================== */
+
+.mr-page-head {
+  display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between;
+  gap: .75rem 1.5rem; margin: 0 0 1.75rem;
+}
+.mr-page-head h1 { margin: 0 0 .35rem; }
+.mr-page-head .dr-lead { margin: 0; color: var(--secondary); }
+.mr-page-head__action { flex: none; }
+/* #0a1a10 under #ffffff is 18.4:1. */
+.mr-page-head__action .dr-button { margin: 0; background: var(--header); color: var(--white); }
+.mr-page-head__action .dr-button:hover { background: #16321f; color: var(--white); }
+
+/* Three cards with gaps, not one joined block. */
+.mr-figures--cards {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .9rem;
+  border: 0; background: none; border-radius: 0; margin: 0 0 2.25rem;
+}
+.mr-figures--cards .mr-figures__cell {
+  border: 1px solid var(--border-light); border-radius: 6px; background: var(--white);
+  padding: 1.1rem 1.25rem 1.15rem;
+}
+.mr-figures--cards .mr-figures__label {
+  font-family: 'DM Mono', ui-monospace, monospace; font-size: .6875rem; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--secondary); margin: 0 0 .5rem;
+}
+.mr-figures--cards .mr-figures__value { font-size: 2.5rem; letter-spacing: -.02em; }
+.mr-figures--cards .mr-figures__note { font-size: .8125rem; margin-top: .45rem; }
+@media (max-width: 860px) { .mr-figures--cards { grid-template-columns: 1fr; } }
+
+.mr-section-head {
+  display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between;
+  gap: .5rem 1rem; margin: 0 0 .9rem;
+}
+.mr-section-head h2 { margin: 0; }
+.mr-section-head__all {
+  font-family: 'DM Mono', ui-monospace, monospace; font-size: .6875rem; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--brand); text-decoration: none;
+}
+.mr-section-head__all:hover, .mr-section-head__all:focus-visible { text-decoration: underline; color: var(--brand-hover); }
+
+.mr-camps { list-style: none; margin: 0 0 1.25rem; padding: 0; display: grid; gap: .6rem; }
+.mr-camps__row {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .6rem 1.25rem;
+  border: 1px solid var(--border-light); border-radius: 6px; background: var(--white);
+  padding: .9rem 1.15rem;
+}
+.mr-camps__name { margin: 0; font-size: 1.125rem; font-weight: 700; line-height: 1.3; }
+.mr-camps__name a { color: var(--ink); text-decoration: none; }
+.mr-camps__name a:hover, .mr-camps__name a:focus-visible { color: var(--brand); text-decoration: underline; }
+.mr-camps__sub {
+  margin: .2rem 0 0; font-family: 'DM Mono', ui-monospace, monospace;
+  font-size: .6875rem; letter-spacing: .06em; color: var(--secondary);
+}
+.mr-camps__stats {
+  display: flex; align-items: center; gap: 1.1rem; flex-wrap: wrap;
+  font-family: 'DM Mono', ui-monospace, monospace; font-size: .6875rem;
+  letter-spacing: .06em; color: var(--secondary);
+}
+.mr-camps__stats .dr-tag {
+  font-family: 'DM Mono', ui-monospace, monospace; font-size: .6875rem;
+  letter-spacing: .08em; text-transform: uppercase; font-weight: 600;
+}
+
+/* Gold tint at 1px keeps the row distinct without shouting; text stays --ink,
+   which is 15.9:1 on #fdf6e3. */
+.mr-domain-row {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: .6rem 1.25rem; border: 1px solid var(--gold); border-radius: 6px;
+  background: #fdf6e3; padding: .95rem 1.15rem; margin: 0 0 1.25rem;
+}
+.mr-domain-row h2 { margin: 0 0 .25rem; font-size: 1.0625rem; }
+.mr-domain-row p { margin: 0; font-size: .9375rem; color: var(--ink); }
+.mr-domain-row__link {
+  font-family: 'DM Mono', ui-monospace, monospace; font-size: .6875rem; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--gold-dark); text-decoration: none; white-space: nowrap;
+}
+.mr-domain-row__link:hover, .mr-domain-row__link:focus-visible { text-decoration: underline; color: var(--ink); }

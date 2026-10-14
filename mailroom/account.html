@@ -17,9 +17,6 @@
 </head>
 <body>
 <a href="#main" class="dr-skip">Skip to main content</a>
-<div class="dr-review-banner" id="mr-preview-banner" hidden>
-  <div class="dr-width"><strong>Everything shown is invented sample data, no email is sent and nothing you enter is saved.</strong></div>
-</div>
 <header class="dr-header">
   <div class="dr-width dr-header__inner">
     <a class="dr-logo" href="index.html"><span>AMI Mailroom<span class="dr-logo__sub">African Business Trade Association</span></span></a>
@@ -40,32 +37,64 @@
 <main id="main">
 
 <div class="dr-width" id="mr-dashboard">
-  <h1>Your mailroom</h1>
-  <p class="dr-lead">Sample Member Ltd · <span class="dr-tag dr-tag--green">approved</span></p>
-  <div class="mr-figures">
-    <div class="mr-figures__cell"><h2 class="mr-figures__label">Campaigns sent</h2><p class="mr-figures__value">12</p><p class="mr-figures__note"><a href="campaign.html">Write a campaign</a></p></div>
-    <div class="mr-figures__cell"><h2 class="mr-figures__label">Emails delivered</h2><p class="mr-figures__value">28,406</p><p class="mr-figures__note">Across every campaign you have sent</p></div>
-    <div class="mr-figures__cell"><h2 class="mr-figures__label">Complaint rate</h2><p class="mr-figures__value">0.04%</p><p class="mr-figures__note">Sending is suspended above 0.3%</p></div>
-  </div>
-  <div class="dr-results-bar">
-    <p class="dr-results-count">3 campaigns</p>
-    <div class="dr-results-bar__tools">
-      <a class="dr-button" href="campaign.html">Write a campaign</a>
-      <a class="dr-button dr-button--secondary" href="lists.html">Manage lists</a>
+  <div class="mr-page-head">
+    <div>
+      <h1>Your mailroom</h1>
+      <p class="dr-lead">Everything you have sent, and what it did.</p>
     </div>
+    <div class="mr-page-head__action"><a class="dr-button" href="campaign.html">Write a campaign</a></div>
   </div>
-  <div class="dr-table-wrap">
-    <table class="dr-table">
-      <caption class="dr-visually-hidden">Campaigns</caption>
-      <thead><tr><th scope="col">Campaign</th><th scope="col">Status</th><th scope="col">Sent</th><th scope="col">Recipients</th><th scope="col">Clicks</th><th scope="col">Complaints</th></tr></thead>
-      <tbody>
-        <tr><td>Sample: March trade briefing<br><span class="dr-small">AMI-M1042</span></td><td><span class="dr-tag dr-tag--green">Sent</span></td><td>8 September 2026</td><td>2,411</td><td>17.1%</td><td>0.04%</td></tr>
-        <tr><td>Sample: April market outlook<br><span class="dr-small">not sent yet</span></td><td><span class="dr-tag dr-tag--yellow">Held for review</span></td><td></td><td></td><td></td><td></td></tr>
-        <tr><td>Sample: draft announcement<br><span class="dr-small">not sent yet</span></td><td><span class="dr-tag dr-tag--grey">Draft</span></td><td></td><td></td><td></td><td></td></tr>
-      </tbody>
-    </table>
+
+  <div class="mr-figures mr-figures--cards">
+    <div class="mr-figures__cell"><h2 class="mr-figures__label">Campaigns sent</h2><p class="mr-figures__value">22</p><p class="mr-figures__note">Across the last 12 months</p></div>
+    <div class="mr-figures__cell"><h2 class="mr-figures__label">Delivered</h2><p class="mr-figures__value">11,183</p><p class="mr-figures__note">99.2% of everything queued</p></div>
+    <div class="mr-figures__cell"><h2 class="mr-figures__label">Complaint rate</h2><p class="mr-figures__value">0.03%</p><p class="mr-figures__note">Sending is suspended above 0.3%</p></div>
   </div>
+
+  <div class="mr-section-head">
+    <h2 class="dr-h">Recent campaigns</h2>
+    <a class="mr-section-head__all" href="campaign.html">View all</a>
+  </div>
+
+  <ul class="mr-camps">
+    <li class="mr-camps__row">
+      <div>
+        <p class="mr-camps__name"><a href="campaign.html">Africa Week in Review, 7 October</a></p>
+        <p class="mr-camps__sub">Sent 7 October 2026 &middot; AMI-M1061</p>
+      </div>
+      <div class="mr-camps__stats"><span>2,932 sent</span><span>14.2% clicked</span><span class="dr-tag dr-tag--green">Sent</span></div>
+    </li>
+    <li class="mr-camps__row">
+      <div>
+        <p class="mr-camps__name"><a href="campaign.html">Africa Week in Review, 30 September</a></p>
+        <p class="mr-camps__sub">Sent 30 September 2026 &middot; AMI-M1058</p>
+      </div>
+      <div class="mr-camps__stats"><span>2,818 sent</span><span>12.7% clicked</span><span class="dr-tag dr-tag--green">Sent</span></div>
+    </li>
+    <li class="mr-camps__row">
+      <div>
+        <p class="mr-camps__name"><a href="campaign.html">Q4 member briefing</a></p>
+        <p class="mr-camps__sub">Scheduled for 21 October 2026, 08:00</p>
+      </div>
+      <div class="mr-camps__stats"><span>3,046 sent</span><span>&ndash; clicked</span><span class="dr-tag dr-tag--blue">Scheduled</span></div>
+    </li>
+    <li class="mr-camps__row">
+      <div>
+        <p class="mr-camps__name"><a href="campaign.html">Africa Week in Review, 14 October</a></p>
+        <p class="mr-camps__sub">Not sent yet</p>
+      </div>
+      <div class="mr-camps__stats"><span>&ndash; sent</span><span>&ndash; clicked</span><span class="dr-tag dr-tag--grey">Draft</span></div>
+    </li>
+  </ul>
   <p class="dr-small">Open rates are not shown. Mail privacy features make them unreliable, so clicks are the measure that means something.</p>
+
+  <div class="mr-domain-row">
+    <div>
+      <h2>news.abta.africa is verified</h2>
+      <p>Campaigns go out as ami@news.abta.africa. Four clean campaigns from this domain.</p>
+    </div>
+    <a class="mr-domain-row__link" href="domain.html">Sending domains</a>
+  </div>
 </div>
 
 </main>
