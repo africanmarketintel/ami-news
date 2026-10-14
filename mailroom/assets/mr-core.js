@@ -555,9 +555,13 @@
       out.hidden = !MR.auth.signedIn();
       out.addEventListener('click', function (e) { e.preventDefault(); MR.auth.signOut(); });
     }
-    // The preview banner is shown only while there is no back end configured.
+    // The Beta banner is always shown: this is a new service whoever is
+    // looking. Only the sample-data sentence inside it is conditional, and it
+    // appears when there is no back end configured. Hiding the whole banner in
+    // live mode, which is what this did before, left the Mailroom as the only
+    // one of the three products not telling anyone it was new.
     var preview = document.getElementById('mr-preview-banner');
-    if (preview && !MR.cfg.demo) preview.hidden = true;
+    if (preview) preview.hidden = !MR.cfg.demo;
   }
 
   if (document.readyState === 'loading') {
