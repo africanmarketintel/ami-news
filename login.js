@@ -819,7 +819,12 @@
       // NOTE: We don't auto-clear ami_subscriber here to avoid breaking
       // users who haven't set a password yet — they can still email-verify
     }
-    injectBetaBanner();
+    // Beta banner removed from the publication on 14 October 2026. The row sat
+    // between the ticker and the masthead and broke the three-tier header.
+    // injectBetaBanner() and the feedback modal are left in the file: the
+    // Dealroom and Mailroom carry their own Beta banner, and the feedback
+    // modal is still reachable from amiOpenFeedback().
+    // injectBetaBanner();
     injectLoginModal();
     injectLoginButton();
     updateMobileNav();
@@ -840,6 +845,10 @@
       window.location.href = '/?q=' + encodeURIComponent(val.trim());
     }
     function attachToInput(input) {
+      // The header search panel runs its own query against every published
+      // article. Redirecting it to /?q= would throw that away and send the
+      // reader to the front page to have its own list filtered instead.
+      if (input.closest && input.closest('.ami-search-panel')) return;
       // Remove any existing oninput handler so it doesn't call a local searchArticles
       input.removeAttribute('oninput');
       // Redirect on Enter key
