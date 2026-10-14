@@ -362,29 +362,43 @@
     setTimeout(function () { live.textContent = msg; }, 50);
   };
 
-  /* ---------------- Opportunity card ---------------- */
+  /* ---------------- Opportunity card ----------------
+     Rebuilt 14 October 2026 to YO's mockup. The sector tile, the large
+     capital line and the icon fact list are gone. What is left, in order:
+     a mono eyebrow carrying sector and region with the reference opposite,
+     the headline, the summary, then a row of tags against the save control
+     and a Register interest link.
+     The data has no country field, so the eyebrow's second half is the
+     region the listing is filed under, not the country in the mockup. */
   DR.card = function (deal, opts) {
     opts = opts || {};
     var sector = DR.sector(deal.sector);
     var ref = deal.published_ref || '';
     var href = 'opportunity.html' + DR.qs({ ref: ref });
     var title = deal.teaser_headline || (DR.label(DR.DEAL_TYPES, deal.deal_type) + ' in ' + sector.label.toLowerCase());
-    var visual = h('div', { class: 'dr-card__visual', 'data-sector': sector.icon, style: '--sector-bg:' + sector.bg },
-      DR.icon(sector.icon), h('span', { class: 'dr-card__visual-label', text: sector.label }));
-    var facts = h('ul', { class: 'dr-card__facts' },
-      h('li', null, DR.icon('tag'), h('span', { class: 'dr-visually-hidden', text: 'Deal type: ' }), DR.label(DR.DEAL_TYPES, deal.deal_type)),
-      h('li', null, DR.icon('pin'), h('span', { class: 'dr-visually-hidden', text: 'Region: ' }), DR.label(DR.REGIONS, deal.region)));
-    var body = h('div', { class: 'dr-card__body' },
-      h('p', { class: 'dr-card__price' }, deal.capital_range ? DR.label(DR.CAPITAL, deal.capital_range) : 'Capital range on request',
-        h('span', { class: 'dr-card__qualifier', text: 'capital sought' })),
+
+    var tags = h('div', { class: 'dr-card__tags' });
+    if (deal.capital_range) tags.appendChild(h('span', { class: 'dr-tag', text: DR.label(DR.CAPITAL, deal.capital_range) }));
+    if (deal.deal_type) tags.appendChild(h('span', { class: 'dr-tag', text: DR.label(DR.DEAL_TYPES, deal.deal_type) }));
+    tags.appendChild(h('span', { class: 'dr-tag dr-tag--green', text: 'ABTA screened' }));
+
+    var actions = h('div', { class: 'dr-card__actions' });
+    if (opts.saveButton !== false) actions.appendChild(DR.saveButton(ref, title, !!opts.saved));
+    actions.appendChild(h('a', {
+      class: 'dr-card__interest',
+      href: 'express-interest.html' + DR.qs({ ref: ref }),
+      text: 'Register interest'
+    }, h('span', { class: 'dr-visually-hidden', text: ' in ' + title })));
+
+    var card = h('article', { class: 'dr-card dr-card--flat' + (opts.compact ? ' dr-card--compact' : ''), 'aria-label': title },
+      h('p', { class: 'dr-card__eyebrow' },
+        h('span', { text: sector.label + (deal.region ? ' \u00b7 ' + DR.label(DR.REGIONS, deal.region) : '') }),
+        ref ? h('span', { text: ref }) : null),
       h(opts.headingLevel || 'h3', { class: 'dr-card__title' }, h('a', { href: href, text: title })),
-      facts,
       opts.compact ? null : h('p', { class: 'dr-card__snippet', text: deal.summary || '' }),
-      h('div', { class: 'dr-card__footer' },
-        h('span', null, deal.published_at ? 'Listed on ' + DR.formatDate(deal.published_at) : '', ref ? ' · Ref ' + ref : ''),
-        opts.saveButton === false ? h('span', { class: 'dr-tag dr-tag--green', text: 'ABTA screened' }) :
-          h('span', { class: 'dr-card__save' }, h('span', { class: 'dr-tag dr-tag--green', text: 'ABTA screened' }), ' ', DR.saveButton(ref, title, !!opts.saved))));
-    return h('li', null, h('article', { class: 'dr-card' + (opts.compact ? ' dr-card--compact' : ''), 'aria-label': title }, visual, body));
+      h('div', { class: 'dr-card__row' }, tags, actions));
+
+    return h('li', null, card);
   };
 
   /* ---------------- Header state and navigation ---------------- */
@@ -405,10 +419,8 @@
       var join = document.querySelector('.dr-nav a[href$="create-account.html"]');
       if (join) join.hidden = true;
     }
-    if (DR.demo) {
-      var banner = document.getElementById('dr-review-banner');
-      if (banner) banner.hidden = false;
-    }
+    // The sample-data strip was removed on 14 October 2026 at YO's request.
+    // Nothing unhides it any more; the markup is gone from the pages too.
   }
 
   /* ---------------- Session timeout warning ---------------- */

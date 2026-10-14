@@ -459,3 +459,59 @@ a:hover, .dr-link:hover { color: var(--brand-hover); text-decoration-thickness: 
   .dr-header nav, .dr-footer, .dr-filterbar, .dr-review-banner, .dr-button { display: none !important; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+/* ==========================================================================
+   Find opportunities – rebuilt 14 October 2026 to YO's mockup.
+   One keyword box, one region select, a dark Search button, a mono count
+   line, then a two-across grid of flat cards separated by hairlines rather
+   than the shadowed cards with sector tiles that were here before.
+   ========================================================================== */
+
+.dr-filterbar__grid--simple { grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 760px) {
+  .dr-filterbar__grid--simple { grid-template-columns: minmax(0, 2.2fr) minmax(0, 1fr) auto; align-items: end; }
+  .dr-filterbar__grid--simple .dr-form-group--keywords { grid-column: auto; }
+  .dr-filterbar__grid--simple .dr-filterbar__actions { grid-column: auto; }
+}
+
+/* #0a1a10 under #ffffff is 18.4:1. */
+.dr-button--dark { background: var(--header); color: var(--white); }
+.dr-button--dark:hover { background: #16321f; color: var(--white); }
+
+.dr-count {
+  font-family: 'DM Mono', ui-monospace, monospace;
+  font-size: .8125rem; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--secondary); margin: 0; padding: 1.1rem 0 .9rem;
+}
+
+/* Hairline grid: the container draws the top and left, each card the right
+   and bottom, so the rules never double up. */
+.dr-cards--grid { gap: 0; border-top: 1px solid var(--border-light); border-left: 1px solid var(--border-light); }
+@media (min-width: 760px) { .dr-cards--grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+.dr-card--flat {
+  display: block; background: transparent; border: 0; border-radius: 0; box-shadow: none;
+  border-right: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light);
+  padding: 1.15rem 1.25rem 1.05rem;
+}
+.dr-card--flat:hover { border-color: var(--border-light); box-shadow: none; background: rgba(0, 0, 0, .02); }
+
+.dr-card__eyebrow {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 1rem;
+  font-family: 'DM Mono', ui-monospace, monospace; font-size: .75rem; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--secondary); margin: 0 0 .55rem;
+}
+.dr-card--flat .dr-card__title { font-size: 1.25rem; line-height: 1.3; margin: 0 0 .45rem; }
+.dr-card--flat .dr-card__snippet { margin: 0 0 .95rem; font-size: 1rem; color: var(--ink); -webkit-line-clamp: 3; }
+.dr-card__row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .55rem 1rem; }
+.dr-card__tags { display: flex; flex-wrap: wrap; gap: .4rem; }
+.dr-card__tags .dr-tag {
+  font-family: 'DM Mono', ui-monospace, monospace; font-size: .6875rem;
+  letter-spacing: .06em; text-transform: uppercase; font-weight: 600;
+}
+.dr-card__actions { display: flex; align-items: center; gap: .9rem; position: relative; z-index: 2; }
+.dr-card__interest {
+  font-family: 'DM Mono', ui-monospace, monospace; font-size: .6875rem; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--brand); text-decoration: none; white-space: nowrap;
+}
+.dr-card__interest:hover, .dr-card__interest:focus-visible { text-decoration: underline; color: var(--brand-hover); }

@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://*.supabase.co; form-action 'self'; base-uri 'self'; object-src 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 
-<title>Investment opportunities – AMI Deal Room</title>
+<title>Find opportunities – AMI Deal Room</title>
 <link rel="stylesheet" href="assets/dr.css">
 <script src="../config.js"></script>
 <script src="../nav.js"></script>
@@ -16,9 +16,6 @@
 </head>
 <body>
 <a href="#main" class="dr-skip">Skip to main content</a>
-<div class="dr-review-banner" id="dr-review-banner" hidden>
-  <div class="dr-width"><strong>Sample data is shown and nothing you enter is sent.</strong></div>
-</div>
 <header class="dr-header">
   <div class="dr-width dr-header__inner">
     <a class="dr-logo" href="index.html"><span>AMI Deal Room<span class="dr-logo__sub">African Business Trade Association</span></span></a>
@@ -31,57 +28,33 @@
 </header>
 
 <div class="dr-width">
-  <nav class="dr-breadcrumbs" aria-label="Breadcrumb"><ol><li><a href="index.html">Dealroom</a></li><li>Investment opportunities</li></ol></nav>
+  <nav class="dr-breadcrumbs" aria-label="Breadcrumb"><ol><li><a href="index.html">Dealroom</a></li><li>Find opportunities</li></ol></nav>
 </div>
 <main id="main">
-  <div class="dr-width"><h1 style="margin:1rem 0 1.25rem">Investment opportunities</h1></div>
+  <div class="dr-width">
+    <h1 style="margin:1rem 0 .5rem">Find opportunities</h1>
+    <p class="dr-lead" style="margin:0 0 1.25rem;max-width:34em">Anonymised until ABTA makes a formal introduction. Registering interest costs nothing.</p>
+  </div>
   <section class="dr-filterbar" aria-label="Search and filter">
     <form class="dr-width dr-filterbar__form" id="filters" action="opportunities.html" method="get" role="search">
-      <div class="dr-filterbar__grid">
+      <div class="dr-filterbar__grid dr-filterbar__grid--simple">
         <div class="dr-form-group dr-form-group--keywords">
-          <label class="dr-label" for="f-keywords">Keywords</label>
+          <label class="dr-label" for="f-keywords">Sector, country or keyword</label>
           <input class="dr-input" id="f-keywords" name="keywords" type="search" autocomplete="off">
         </div>
         <div class="dr-form-group">
-          <label class="dr-label" for="f-type">Deal type</label>
-          <select class="dr-select" id="f-type" name="type"><option value="">Any</option><option value="Equity Investment">Equity investment</option><option value="Debt Financing">Debt financing</option><option value="Acquisition / Sale">Acquisition or sale</option><option value="Joint Venture">Joint venture</option><option value="Commercial Contract">Commercial contract</option><option value="Other">Other</option></select>
-        </div>
-        <div class="dr-form-group">
-          <label class="dr-label" for="f-sector">Sector</label>
-          <select class="dr-select" id="f-sector" name="sector"><option value="">Any</option><option value="Clean Energy">Clean energy</option><option value="Infrastructure">Infrastructure</option><option value="Financial Services">Financial services</option><option value="Agriculture & Food">Agriculture and food</option><option value="Technology & Digital">Technology and digital</option><option value="Healthcare">Healthcare</option><option value="Mining & Resources">Mining and resources</option><option value="Real Estate">Real estate</option><option value="Manufacturing">Manufacturing</option><option value="Other">Other</option></select>
-        </div>
-        <div class="dr-form-group">
           <label class="dr-label" for="f-region">Region</label>
-          <select class="dr-select" id="f-region" name="region"><option value="">Any</option><option value="West Africa">West Africa</option><option value="East Africa">East Africa</option><option value="North Africa">North Africa</option><option value="Southern Africa">Southern Africa</option><option value="Central Africa">Central Africa</option><option value="Pan-African">Pan-African</option></select>
+          <select class="dr-select" id="f-region" name="region"><option value="">Any region</option><option value="West Africa">West Africa</option><option value="East Africa">East Africa</option><option value="North Africa">North Africa</option><option value="Southern Africa">Southern Africa</option><option value="Central Africa">Central Africa</option><option value="Pan-African">Pan-African</option></select>
         </div>
-        <div class="dr-form-group">
-          <label class="dr-label" for="f-capital">Capital sought</label>
-          <select class="dr-select" id="f-capital" name="capital"><option value="">Any</option><option value="Under USD 5m">Under USD 5m</option><option value="USD 5m – 15m">USD 5m to 15m</option><option value="USD 15m – 50m">USD 15m to 50m</option><option value="USD 50m – 150m">USD 50m to 150m</option><option value="USD 150m+">USD 150m or more</option></select>
-        </div>
-        <div class="dr-filterbar__actions"><button class="dr-button" type="submit">Search</button></div>
+        <div class="dr-filterbar__actions"><button class="dr-button dr-button--dark" type="submit">Search</button></div>
       </div>
       <input type="hidden" name="sort" id="f-sort-hidden">
     </form>
   </section>
   <div class="dr-width">
-    <div class="dr-results-bar">
-      <p class="dr-results-count" id="results-count" role="status" aria-live="polite">Loading opportunities…</p>
-      <div class="dr-results-bar__tools">
-        <a class="dr-button dr-button--secondary" id="create-alert" href="account.html?section=alerts">Create alert</a>
-        <form class="dr-sort" id="sort-form" action="opportunities.html" method="get">
-          <label class="dr-label" for="sort">Sort by</label>
-          <select class="dr-select" id="sort" name="sort">
-            <option value="newest">Newest listed</option>
-            <option value="oldest">Oldest listed</option>
-            <option value="largest">Largest capital sought</option>
-            <option value="smallest">Smallest capital sought</option>
-          </select>
-          <button class="dr-button dr-button--secondary" type="submit" style="margin:0">Sort</button>
-        </form>
-      </div>
-    </div>
+    <p class="dr-count" id="results-count" role="status" aria-live="polite">Loading opportunities…</p>
     <ul class="dr-active-filters" id="active-filters" aria-label="Active filters"></ul>
-    <ul class="dr-cards" id="results"></ul>
+    <ul class="dr-cards dr-cards--grid" id="results"></ul>
     <nav class="dr-pagination" id="pagination" aria-label="Results pages" hidden></nav>
   </div>
 </main>

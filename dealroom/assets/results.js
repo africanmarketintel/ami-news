@@ -21,20 +21,16 @@
     [['f-keywords', 'keywords'], ['f-type', 'type'], ['f-sector', 'sector'], ['f-region', 'region'], ['f-capital', 'capital'], ['sort', 'sort']].forEach(function (pair) {
       var el = document.getElementById(pair[0]); if (el) el.value = filters[pair[1]];
     });
-    document.getElementById('f-sort-hidden').value = filters.sort === 'newest' ? '' : filters.sort;
-
-    // Carry filters into the sort form so sorting keeps them.
-    var sortForm = document.getElementById('sort-form');
-    ['keywords', 'type', 'sector', 'region', 'capital'].forEach(function (k) {
-      if (filters[k]) sortForm.appendChild(h('input', { type: 'hidden', name: k, value: filters[k] }));
-    });
+    // The filter bar was cut to a keyword box and a region select on
+    // 14 October 2026, so the sort control, the sort form and the Create
+    // alert link are no longer on the page. Deal type, sector and capital
+    // still work when they arrive in the URL, which is why the filters
+    // object and the chips below still carry them.
+    var sortHidden = document.getElementById('f-sort-hidden');
+    if (sortHidden) sortHidden.value = filters.sort === 'newest' ? '' : filters.sort;
 
     // Remember this search for "Back to results".
     DR.store.set('dr_results', 'opportunities.html' + location.search);
-
-    // Create alert link carries sector and region.
-    var alertLink = document.getElementById('create-alert');
-    alertLink.href = 'account.html' + DR.qs({ section: 'alerts', sector: filters.sector, region: filters.region });
 
     renderActiveFilters(filters);
 
@@ -48,13 +44,16 @@
         list.appendChild(h('li', { class: 'dr-empty' }, h('p', { text: 'Try again later. If the problem continues, email ami@abta.africa.' })));
         return;
       }
-      count.textContent = res.total + (res.total === 1 ? ' opportunity' : ' opportunities');
+      // Mono count line, to the mockup: "24 OPEN OPPORTUNITIES, PAGE 1 OF 3".
+      // The page clause is dropped when there is only one page.
+      var pages = Math.max(1, Math.ceil(res.total / PAGE_SIZE));
+      count.textContent = res.total + (res.total === 1 ? ' open opportunity' : ' open opportunities')
+        + (pages > 1 ? ', page ' + filters.page + ' of ' + pages : '');
       DR.setTitle('Investment opportunities' + (filters.page > 1 ? ' (page ' + filters.page + ')' : ''));
       if (!res.rows.length) {
         list.appendChild(h('li', { class: 'dr-empty' },
           h('h2', { class: 'dr-h3', style: 'margin-top:0', text: 'No opportunities match your search' }),
-          h('p', { text: 'Try removing a filter or searching for a different keyword. New opportunities are added on a rolling basis.' }),
-          h('p', null, h('a', { href: alertLink.href, text: 'Create an alert for new opportunities' }))));
+          h('p', { text: 'Try removing a filter or searching for a different keyword. New opportunities are added on a rolling basis.' })));
         return;
       }
       res.rows.forEach(function (d) { list.appendChild(DR.card(d, { saved: saved.indexOf(d.published_ref) !== -1, headingLevel: 'h2' })); });
