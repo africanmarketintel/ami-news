@@ -6,22 +6,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>African Market Intelligence</title>
 
-    <!-- Open Graph -->
+  <!-- Open Graph -->
   <meta property="og:type"        content="website">
   <meta property="og:site_name"   content="African Market Intelligence">
   <meta property="og:title"       content="African Market Intelligence">
   <meta property="og:description" content="What Africa's deal makers read first. Financial news and business intelligence across Africa's 54 markets.">
   <meta property="og:image"       content="https://ami.abta.africa/og-default.jpg">
   <meta property="og:url"         content="https://ami.abta.africa/">
-  
+
   <!-- Twitter / X -->
   <meta name="twitter:card"        content="summary_large_image">
   <meta name="twitter:site"        content="@AMI_Africa">
   <meta name="twitter:title"       content="African Market Intelligence">
   <meta name="twitter:description" content="What Africa's deal makers read first. Financial news and business intelligence across Africa's 54 markets.">
   <meta name="twitter:image"       content="https://ami.abta.africa/og-default.jpg">
-
-  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400;1,600&family=Spectral:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@400;500&display=swap"
@@ -29,7 +27,8 @@
 
   <!-- ✅ CREDENTIALS: Edit config.js once — applies to all pages -->
   <script src="config.js"></script>
-  <script src="login.js"></script>
+  <script src="nav.js"></script>
+<script src="login.js"></script>
 
   <style>
     :root {
@@ -332,16 +331,16 @@
 
     /* Section nav */
     .section-nav {
-      position: relative;      /* ← added */
-      z-index: 200;            /* ← added */
+      position: relative;
+      z-index: 200;
       border-bottom: 2px solid var(--gold);
       background: var(--surface);
       overflow: visible;
     }
 
     .section-nav-inner {
-      overflow-x: clip;        /* ← moved from .section-nav */
-      scrollbar-width: none;   /* ← moved from .section-nav */
+      overflow-x: auto;
+      scrollbar-width: none;
       display: flex;
       padding: 0 24px
     }
@@ -3409,6 +3408,8 @@
     }
     /* Section nav inner already has padding; just cap its width */
     .section-nav-inner {
+      overflow-x: auto;
+      scrollbar-width: none;
       max-width: var(--box);
       margin-left: auto;
       margin-right: auto;
@@ -4030,7 +4031,7 @@
 
   <nav class="section-nav" role="navigation" aria-label="Site sections">
     <div class="section-nav-inner">
-       <div class="section-tab-wrap">
+      <div class="section-tab-wrap">
         <span class="section-tab section-tab-has-dropdown">All Africa <span class="drop-arrow">▾</span></span>
         <div class="section-dropdown">
           <a href="west-africa.html">West Africa</a>
@@ -4224,9 +4225,9 @@
   <div class="paywall-overlay" id="paywallOverlay">
     <div class="paywall-box">
       <div class="paywall-logo">African Market <span>Intelligence</span></div>
-      <h2 class="paywall-headline">Subscribe to read this article</h2>
-      <p class="paywall-sub">Join 48,000+ investors and executives across Africa who rely on AMI for premium financial
-        intelligence.</p>
+      <p style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-soft);margin-bottom:10px">5 free articles per month</p>
+      <h2 class="paywall-headline">You're reading AMI for free</h2>
+      <p class="paywall-sub">Subscribe for unlimited access to financial news and intelligence across Africa's 54 markets.</p>
       <div class="paywall-plans">
         <div class="plan-card">
           <div class="plan-name">Digital</div>
@@ -4275,7 +4276,7 @@
         if (options.order) params.set('order', options.order);
         if (options.limit) params.set('limit', options.limit);
         const url = `${SUPABASE_URL}/rest/v1/${table}?${params}`;
-        const r = await fetch(url, { headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer '+SUPABASE_ANON } });
+        const r = await fetch(url, { headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer '+SUPABASE_ANON, 'Range-Unit': 'items', Range: '0-9999' } });
         if (!r.ok) throw new Error(await r.text());
         return r.json();
       },
@@ -6035,25 +6036,35 @@
             aria-label="Your email address">
           <button class="fv-btn" id="fvBtn" onclick="fvSubscribe()">Subscribe Free</button>
         </div>
-        <p class="fv-terms">By subscribing you agree to AMI's Privacy Policy</a>.
+        <p class="fv-terms">By subscribing you agree to AMI's <a href="privacy.html" target="_blank">Privacy Policy</a>.
           You can unsubscribe at any time.</p>
-        
       </div>
     </div>
   </div>
 
   <script>
     (function () {
-      // Show modal on first visit only — skip for paid subscribers
+      // Show modal on every visit until email is submitted — skip for paid subscribers and newsletter subscribers
       if (!localStorage.getItem('amiVisited') && !localStorage.getItem('ami_subscriber')) {
         setTimeout(function () { document.getElementById('fvOverlay').style.display = 'flex'; }, 800);
       }
     })();
 
+    // fvDismiss is only called on successful subscription — no skip allowed
     function fvDismiss() {
       localStorage.setItem('amiVisited', '1');
       document.getElementById('fvOverlay').style.display = 'none';
     }
+
+    // Prevent closing modal by clicking the backdrop
+    document.addEventListener('DOMContentLoaded', function () {
+      var overlay = document.getElementById('fvOverlay');
+      if (overlay) {
+        overlay.addEventListener('click', function (e) {
+          if (e.target === overlay) e.stopPropagation();
+        });
+      }
+    });
 
     async function fvSubscribe() {
       const input = document.getElementById('fvEmailInput');

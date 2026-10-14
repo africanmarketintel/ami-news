@@ -12,7 +12,8 @@
 
   <!-- ✅ CREDENTIALS: Edit config.js once — applies to all pages -->
   <script src="config.js"></script>
-  <script src="login.js"></script>  
+  <script src="nav.js"></script>
+<script src="login.js"></script>  
   <style>
     :root {
       --gold: #C9A84C;
@@ -314,13 +315,16 @@
 
     /* Section nav */
     .section-nav {
+      position: relative;
+      z-index: 200;
       border-bottom: 2px solid var(--gold);
       background: var(--surface);
-      overflow-x: auto;
-      scrollbar-width: none
+      overflow: visible;
     }
 
     .section-nav-inner {
+      overflow-x: auto;
+      scrollbar-width: none;
       display: flex;
       padding: 0 24px
     }
@@ -3309,7 +3313,7 @@
       background: var(--surface);
       border: 1px solid var(--divider);
       border-top: 2px solid var(--gold);
-      z-index: 500;
+      z-index: 1500;
       min-width: 170px;
       display: none;
       box-shadow: 0 6px 24px rgba(0,0,0,.15);
@@ -3409,6 +3413,8 @@
     }
     /* Section nav inner already has padding; just cap its width */
     .section-nav-inner {
+      overflow-x: auto;
+      scrollbar-width: none;
       max-width: var(--box);
       margin-left: auto;
       margin-right: auto;

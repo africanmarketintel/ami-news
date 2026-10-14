@@ -142,11 +142,12 @@ async function renderDeals(){
     const { deals } = await adminFetch('?action=pending_deals');
     dealsCache = deals;
     if(!deals.length){ panel.innerHTML = '<div class="empty">No deals awaiting review.</div>'; return; }
-    panel.innerHTML = '<table><thead><tr><th>Submitted</th><th>Type</th><th>Sector / Region</th><th>Summary</th><th>Submitter</th><th>Documents</th><th>AI</th><th>Action</th></tr></thead><tbody>' +
+    panel.innerHTML = '<table><thead><tr><th>Submitted</th><th>Type</th><th>Sector / Region</th><th>Capital Range</th><th>Summary</th><th>Submitter</th><th>Documents</th><th>AI</th><th>Action</th></tr></thead><tbody>' +
       deals.map(d => `<tr id="deal-row-${d.id}">
         <td>${new Date(d.created_at).toLocaleDateString('en-GB')}</td>
         <td>${d.deal_type||''}</td>
         <td>${d.sector||''}<br>${d.region||''}</td>
+        <td>${d.capital_range||'—'}</td>
         <td style="max-width:280px">${(d.summary||'').slice(0,220)}</td>
         <td>${d.organisation||''}<br>${d.contact_name||''}<br>${d.contact_email||''}</td>
         <td>${(d.document_paths||[]).map(p=>`<div style="margin-bottom:4px">${p.split('/').pop()} <button class="act" style="padding:2px 8px;font-size:10px" onclick="summariseDoc('${d.id}','${p.replace(/'/g,"\\'")}')">Summarise</button></div>`).join('') || 'None'}

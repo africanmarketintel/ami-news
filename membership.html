@@ -9,6 +9,7 @@
 
 <!-- ✅ CREDENTIALS: Edit config.js once — applies to all pages -->
 <script src="config.js"></script>
+<script src="nav.js"></script>
 <script src="login.js"></script>  
 <style>
 :root{--gold:#C9A84C;--gold-light:#F9C53D;--gold-pale:#FDF6E3;--terra:#B85C38;--terra-dark:#8C3A1F;--green:#1E6B3C;--green-mid:#2E9B5E;--ink:#1A1208;--ink-mid:#3D2B1F;--ink-soft:#6B5344;--cream:#FAF7F0;--cream-dark:#F0EAD9;--border:#D4C4A0;--bg:var(--cream);--surface:#fff;--text:var(--ink);--text-soft:var(--ink-soft);--nav-bg:#0A1A10;--nav-text:var(--cream);--header-bg:var(--cream-dark);--divider:var(--border);--card-bg:#fff}
@@ -45,8 +46,12 @@ a{color:inherit;text-decoration:none}button{cursor:pointer;border:none;backgroun
 .masthead-meta{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:12px;border-top:1px solid var(--divider);font-family:'DM Mono',monospace;font-size:10px;color:var(--text-soft);text-transform:uppercase;letter-spacing:.1em;position:relative}
 .edition-badge{background:var(--terra);color:white;padding:2px 10px;font-size:10px;letter-spacing:.15em}
 /* Section nav */
-.section-nav{border-bottom:2px solid var(--gold);background:var(--surface);overflow-x:auto;scrollbar-width:none}
-.section-nav-inner{display:flex;padding:0 24px}
+.section-nav{
+      position: relative;
+      z-index: 200;border-bottom:2px solid var(--gold);background:var(--surface);overflow: visible;}
+.section-nav-inner{
+      overflow-x: auto;
+      scrollbar-width: none;display:flex;padding:0 24px}
 .section-tab{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-soft);padding:12px 18px;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;cursor:pointer;transition:color .2s,border-color .2s}
 .section-tab:hover,.section-tab.active{color:var(--terra);border-bottom-color:var(--terra)}
 /* Layout */
@@ -618,13 +623,13 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
 .static-page a { color:var(--terra); }
 .static-page a:hover { color:var(--gold); }
 .cms-edit-hint { display:none; font-family:'DM Mono',monospace; font-size:10px; color:var(--text-soft); text-align:right; margin-bottom:16px; }
-.plan-grid { display:grid; grid-template-columns:1fr 1fr; gap:32px; margin:32px 0; max-width: 1100px; margin-left: auto; margin-right: auto;}
+.plan-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px; margin:32px 0; }
 @media(max-width:900px){ .plan-grid{grid-template-columns:1fr 1fr;} }
 @media(max-width:560px){ .plan-grid{grid-template-columns:1fr;} }
 .plan-box.free{border-top-color:var(--green)}
 .plan-box .free-cta{background:var(--green);color:white}
 .plan-box .free-cta:hover{background:var(--green-mid)}
-.plan-box { border:1px solid var(--divider); border-top:4px solid var(--gold); background:var(--card-bg); padding:40px 40px; }
+.plan-box { border:1px solid var(--divider); border-top:4px solid var(--gold); background:var(--card-bg); padding:32px 28px; }
 .plan-box.featured { border-top-color:var(--terra); }
 .plan-box .pname { font-family:'DM Mono',monospace; font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--text-soft); margin-bottom:8px; }
 .plan-box .pprice { font-family:'Playfair Display',serif; font-size:42px; font-weight:800; color:var(--text); line-height:1; }
@@ -698,7 +703,7 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
       background: var(--surface);
       border: 1px solid var(--divider);
       border-top: 2px solid var(--gold);
-      z-index: 500;
+      z-index: 1500;
       min-width: 170px;
       display: none;
       box-shadow: 0 6px 24px rgba(0,0,0,.15);
@@ -798,6 +803,8 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
     }
     /* Section nav inner already has padding; just cap its width */
     .section-nav-inner {
+      overflow-x: auto;
+      scrollbar-width: none;
       max-width: var(--box);
       margin-left: auto;
       margin-right: auto;
@@ -849,7 +856,7 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
 
 
 <div class="ticker-bar"><div class="ticker-inner" id="tickerInner">
-  <span class="ticker-item"><span class="sym"></span></span>
+  <span class="ticker-item"><span class="sym">Loading markets…</span></span>
 </div></div>
 <nav class="top-nav" aria-label="Main navigation">
   <button class="nav-hamburger" id="navHamburger" aria-expanded="false" aria-controls="navMobileDrawer" aria-label="Open navigation menu" onclick="toggleMobileNav()"><span></span><span></span><span></span></button><div class="nav-left">
@@ -905,7 +912,6 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
 <p>Then $39 per month. Full access to Africa's deal intelligence. Cancel anytime during your first month.</p>
 <div class="plan-grid">
 
-
   <div class="plan-box">
     <div class="pname">Deal Tracker Monthly</div>
     <div class="pprice">$39</div>
@@ -920,7 +926,7 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
       <li>Debt &amp; Mez · DFI · Exits · People</li>
       <li>Archive access</li>
     </ul>
-    <a href="https://buy.stripe.com/fZu7sE8lY4YieZ74z2aVa0e" class="plan-cta" target="_blank">Keep reading for $1.99</a>
+    <a href="https://buy.stripe.com/fZu7sE8lY4YieZ74z2aVa0e" class="plan-cta" target="_blank">Keep reading for $1.99 →</a>
   </div>
 
   <div class="plan-box featured">
@@ -933,15 +939,15 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
       <li>Annual Africa deals report (PDF)</li>
       <li>12-month rolling deal history</li>
     </ul>
-    <a href="https://buy.stripe.com/YOUR_DEAL_ANNUAL" class="plan-cta" style="background:var(--terra);color:white" target="_blank">Subscribe Annually</a>
+    <a href="https://buy.stripe.com/YOUR_DEAL_ANNUAL" class="plan-cta" style="background:var(--terra);color:white" target="_blank">Subscribe Annually →</a>
   </div>
 
 </div>
 <h2>Frequently Asked Questions</h2>
 <h2 style="font-size:16px;margin-top:20px">What is the AMI Deal Tracker?</h2>
-<p>A monthly curated database of private equity, venture capital, M&amp;A, infrastructure, debt, DFI and exit transactions across Africa's 54 markets. Subscribers get a full web dashboard and the AMI Weekly Brief newsletter.</p>
+<p>A curated database of private equity, venture capital, M&amp;A, infrastructure, debt, DFI and exit transactions across Africa's 54 markets. Subscribers get a full web dashboard and the AMI Weekly Brief newsletter.</p>
 <h2 style="font-size:16px;margin-top:20px">Can I cancel at any time?</h2>
-<p>Yes. Monthly plans cancel anytime. Annual plans are billed once and run for 12 months with auto-renewal, which you can choose to cancel anytime.</p>
+<p>Yes. Monthly plans cancel anytime. Annual plans are billed once and run for 12 months with auto-renewal, which you can cancel anytime.</p>
 <h2 style="font-size:16px;margin-top:20px">Do you offer corporate or team plans?</h2>
 <p>Yes — <a href="contact.html">contact us</a> for team and enterprise pricing for fund managers, advisers and institutional subscribers.</p>
 <p style="margin-top:40px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text-soft);text-align:center">🔒 Secure checkout powered by Stripe · Cancel anytime</p>
