@@ -463,6 +463,24 @@ a:hover, .dr-link:hover { color: var(--brand-hover); text-decoration-thickness: 
 
 /* ---------- AMI Mailroom additions ---------- */
 
+/* The figures on a member's mailroom.
+   One panel with hairline cells rather than three separate boxes: the same
+   information with less furniture around it. Each figure carries a line
+   saying what to do about it, or what it means, so a number is never only a
+   number - which is the difference between a dashboard and a scoreboard.
+   Every colour is an existing token. */
+.mr-figures { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--border-light); border-radius: 8px; background: var(--white); margin: 0 0 1.5rem; }
+.mr-figures__cell { padding: 1rem 1.25rem; border-left: 1px solid var(--border-light); }
+.mr-figures__cell:first-child { border-left: 0; }
+.mr-figures__label { margin: 0 0 .15rem; font-size: 1rem; font-weight: 600; color: var(--secondary); }
+.mr-figures__value { margin: 0; font-size: 2.25rem; font-weight: 700; line-height: 1.15; color: var(--ink); }
+.mr-figures__note { margin: .35rem 0 0; font-size: .875rem; color: var(--secondary); }
+@media (max-width: 699px) {
+  .mr-figures { grid-template-columns: 1fr; }
+  .mr-figures__cell { border-left: 0; border-top: 1px solid var(--border-light); }
+  .mr-figures__cell:first-child { border-top: 0; }
+}
+
 /* The member navigation. Structure only: every colour here is an existing
    token, so this adds a bar without changing how anything looks.
    The settings group is lighter in weight, not in colour, because weight

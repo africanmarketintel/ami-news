@@ -88,8 +88,7 @@
       if (campaign.id) return loadVersions().then(render);
       render();
     }).catch(function (err) {
-      if (err.message === 'signed out' || err.message === 'no account') return;
-      console.error(err);
+      return MR.loadFailed(wrap, err);
     });
 
     function loadVersions() {

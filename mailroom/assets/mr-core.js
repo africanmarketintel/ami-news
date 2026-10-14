@@ -182,6 +182,62 @@
     unconfirmed: 'Consent not recorded', declared: 'Consent recorded',
     repermission_sent: 'Re-permission sent', confirmed: 'Confirmed'
   };
+
+  /* ---------------- where a list came from ----------------
+     One vocabulary, used by the list page and the import page, so the same
+     question is not asked twice in two different shapes.
+
+     Why a named choice rather than a tick. Under PECR the electronic mail
+     marketing rule does not apply to corporate subscribers, so for most B2B
+     lists consent is not the legal test at all - it is for sole traders and
+     some partnerships, and for anyone you cannot tell apart. Either way the
+     platform has to know where the addresses came from, because it is ABTA's
+     sending reputation that pays for a bad list. A tick records only that
+     somebody ticked. A named answer records something that survives being
+     asked about.
+
+     Each option carries a default wording, which is a description of what
+     people were told rather than an invented quotation. The member can edit
+     it, and the website-form option deliberately starts blank, because in
+     that case real wording exists and only they have it.
+
+     'refused' is on the list so that the honest answer is available. Leaving
+     it off does not stop anyone importing a bought list, it just stops them
+     admitting to it. */
+  MR.CONSENT_SOURCES = [
+    {
+      id: 'signup_form',
+      label: 'They signed up through a form on our website',
+      hint: 'A newsletter box, a landing page or an event registration form.',
+      source: 'Signed up through a form on our own website or signup page',
+      wording: '',
+      wordingRequired: true
+    },
+    {
+      id: 'in_person',
+      label: 'They gave us their details in person',
+      hint: 'An event, a meeting, a business card or an introduction.',
+      source: 'Given to us in person at an event, a meeting or by introduction',
+      wording: 'Gave us their business contact details in person, and were told we would send them our updates by email.'
+    },
+    {
+      id: 'customers',
+      label: 'They are existing customers, members or clients',
+      hint: 'People you already do business with.',
+      source: 'Existing customers, members or clients',
+      wording: 'Became customers or members of ours, and were told we would send them updates about what we do.'
+    },
+    {
+      id: 'bought',
+      label: 'Bought, rented, scraped or appended from elsewhere',
+      hint: 'Including a list a supplier told you was opted in.',
+      refuse: true
+    }
+  ];
+
+  MR.consentSource = function (id) {
+    return MR.CONSENT_SOURCES.filter(function (o) { return o.id === id; })[0] || null;
+  };
   MR.number = function (n) { return Number(n || 0).toLocaleString('en-GB'); };
   MR.percent = function (part, whole) {
     if (!whole) return '0%';
@@ -415,6 +471,63 @@
     target.insertBefore(box, target.firstChild);
     box.scrollIntoView({ block: 'center', behavior: 'smooth' });
     return box;
+  };
+
+  /* ---------------- a page that could not load ----------------
+     Every member page fetches its data and then draws itself over a
+     "Loading…" placeholder. Until this existed, a query that failed left
+     that placeholder on screen indefinitely: the page looked busy, nothing
+     was happening, and the only record of it was in the browser console,
+     where no member looks.
+
+     Call it from the catch at the end of a page load and return. It returns
+     true in every case, so `return MR.loadFailed(wrap, err);` reads
+     correctly. A signed-out visitor is not a failure - requireAccount has
+     already drawn the sign-in prompt - so those two cases pass through
+     without touching the page. */
+  MR.loadFailed = function (wrap, err) {
+    if (err && (err.message === 'signed out' || err.message === 'no account')) return true;
+    if (err) console.error(err);
+    if (!wrap) return true;
+
+    var placeholder = wrap.querySelector('.dr-loading');
+    if (placeholder && placeholder.parentNode) placeholder.parentNode.removeChild(placeholder);
+    if (!wrap.querySelector('h1')) {
+      wrap.appendChild(MR.h('h1', { text: 'This page could not be loaded' }));
+    }
+
+    // Distinguishing the two matters: one is something the member can fix in
+    // a second, the other is not theirs to fix at all.
+    var offline = (typeof navigator !== 'undefined' && navigator.onLine === false);
+    var onDashboard = /account\.html$/.test(location.pathname);
+
+    var actions = MR.h('p', null,
+      MR.h('button', {
+        class: 'dr-button', type: 'button', text: 'Try again',
+        onclick: function () { location.reload(); }
+      }));
+    if (!onDashboard) {
+      actions.appendChild(document.createTextNode(' '));
+      actions.appendChild(MR.h('a', {
+        class: 'dr-button dr-button--secondary', href: 'account.html',
+        text: 'Back to your mailroom'
+      }));
+    }
+
+    wrap.appendChild(MR.h('div', { class: 'mr-aside', role: 'alert' },
+      MR.h('h2', { class: 'dr-h', text: offline ? 'You appear to be offline' : 'This did not load' }),
+      MR.h('p', {
+        text: offline
+          ? 'Your details could not be fetched because this device is not connected. Nothing has been changed, saved or sent.'
+          : 'Your details could not be fetched just now. Nothing has been changed, saved or sent, and nothing has gone out to anybody.'
+      }),
+      actions,
+      MR.h('p', { class: 'dr-small' }, 'If it keeps happening, tell us at ',
+        MR.h('a', { href: 'mailto:ami@abta.africa', text: 'ami@abta.africa' }),
+        ' and say which page you were on.')));
+
+    MR.announce('This page could not be loaded.');
+    return true;
   };
 
   /* ---------------- header state ---------------- */

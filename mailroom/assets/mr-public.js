@@ -329,7 +329,16 @@
       wrap.appendChild(MR.h('h1', { text: c.subject }));
       wrap.appendChild(MR.h('p', { class: 'dr-lead', text: c.sender_name + ' · ' + MR.date(c.sent_at) }));
       wrap.appendChild(emailFrame(c, { name: c.sender_name, postal_address: '' }, null));
-    }).catch(function (err) { console.error(err); });
+    }).catch(function (err) {
+      // An archived campaign is a public page, reached from a link somebody
+      // was given. Leaving "Loading…" on it tells the reader nothing and
+      // gives them nowhere to go.
+      wrap.textContent = '';
+      wrap.appendChild(MR.h('p', { class: 'dr-empty' },
+        'That campaign could not be loaded just now. ',
+        MR.h('a', { href: 'archive.html', text: 'See the archive' })));
+      console.error(err);
+    });
   }
 
   /* ---------------- a shared draft ----------------

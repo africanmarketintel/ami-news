@@ -45,8 +45,7 @@
       brand = (rows && rows[0]) || defaults();
       render();
     }).catch(function (err) {
-      if (err.message === 'signed out' || err.message === 'no account') return;
-      console.error(err);
+      return MR.loadFailed(wrap, err);
     });
 
     function defaults() {

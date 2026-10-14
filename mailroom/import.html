@@ -52,15 +52,11 @@
       <input class="dr-file-upload" id="i-file" type="file" accept=".csv,text/csv">
     </div>
     <div id="mr-import-preview"></div>
-    <div class="dr-form-group">
-      <label class="dr-label" for="i-source">Where did these addresses come from?</label>
-      <span class="dr-hint">For example: sign-up form on our website, collected 2024 to 2026.</span>
-      <input class="dr-input" id="i-source" type="text">
-    </div>
-    <div class="dr-choice dr-choice--checkbox">
-      <input class="dr-choice__input" id="i-declaration" type="checkbox">
-      <label class="dr-choice__label" for="i-declaration">I confirm none of these addresses were bought, scraped, appended or swapped</label>
-    </div>
+    <fieldset class="dr-form-group" id="mr-import-source">
+      <legend class="dr-label">How were these addresses collected?</legend>
+      <span class="dr-hint">The same question your list answers, asked again because a file can come from somewhere the rest of the list did not.</span>
+    </fieldset>
+    <p class="dr-small" id="mr-import-consent"></p>
     <button class="dr-button" type="submit">Import</button>
   </form>
 </div>

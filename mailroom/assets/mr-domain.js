@@ -48,8 +48,7 @@
       domains = rows || [];
       render();
     }).catch(function (err) {
-      if (err.message === 'signed out' || err.message === 'no account') return;
-      console.error(err);
+      return MR.loadFailed(wrap, err);
     });
 
     /* ---------------- page ---------------- */
@@ -110,7 +109,7 @@
       return MR.h('div', { class: 'mr-aside', id: 'mr-domain-move' },
         MR.h('h2', { class: 'dr-h', text: 'You are still on the shared address' }),
         MR.h('p', null, 'Your plan includes a sending domain of your own and you have not set one up yet. On the shared address your delivery depends partly on how everyone else on it behaves.'),
-        MR.h('p', { class: 'dr-small', text: 'Adding one takes a few DNS records, or ABTA can set up a subdomain for you with nothing to publish.' }));
+        MR.h('p', { class: 'dr-small', text: 'ABTA can set up a subdomain for you with nothing for you to publish, or you can use a domain of your own and publish a few DNS records.' }));
     }
 
     /* ---------------- one domain ---------------- */
@@ -217,27 +216,37 @@
       var form = MR.h('form', { id: 'mr-domain-form', novalidate: true });
       form.appendChild(MR.h('h2', { text: 'Add a sending domain' }));
 
-      var kind = 'own_domain';
+      // The ABTA subdomain is first and selected by default. Both routes end
+      // in the same place - a verified domain the member alone carries the
+      // record for - but one needs DNS records published by whoever runs the
+      // member's DNS and the other needs nothing at all. Presenting them as
+      // equal choices made the page read as DNS work with an alternative
+      // buried underneath it, and a member without a technical colleague has
+      // no way to tell from the form which one they can actually finish.
+      //
+      // Nothing is removed. A member who wants their own domain selects it
+      // and gets the same records as before.
+      var kind = 'abta_subdomain';
       var ownBox, abtaBox;
 
-      var ownRadio = MR.h('input', { class: 'dr-choice__input', id: 'd-own', type: 'radio', name: 'd-kind', value: 'own_domain', checked: true });
-      var abtaRadio = MR.h('input', { class: 'dr-choice__input', id: 'd-abta', type: 'radio', name: 'd-kind', value: 'abta_subdomain' });
+      var abtaRadio = MR.h('input', { class: 'dr-choice__input', id: 'd-abta', type: 'radio', name: 'd-kind', value: 'abta_subdomain', checked: true });
+      var ownRadio = MR.h('input', { class: 'dr-choice__input', id: 'd-own', type: 'radio', name: 'd-kind', value: 'own_domain' });
 
-      form.appendChild(MR.h('div', { class: 'dr-choice' }, ownRadio,
+      form.appendChild(MR.h('div', { class: 'dr-choice dr-choice--radio' }, abtaRadio,
+        MR.h('label', { class: 'dr-choice__label', for: 'd-abta' }, 'A subdomain ABTA sets up for you',
+          MR.h('span', { class: 'dr-choice__hint', text: 'Something like yourname.mail.abta.africa. ABTA publishes the records, so there is nothing for you to do and nobody to ask. Your delivery record is still your own. Readers see your organisation name, and the address after it reads as ABTA.' }))));
+      form.appendChild(MR.h('div', { class: 'dr-choice dr-choice--radio' }, ownRadio,
         MR.h('label', { class: 'dr-choice__label', for: 'd-own' }, 'Your own domain',
-          MR.h('span', { class: 'dr-choice__hint', text: 'Readers see your address. You need whoever runs your DNS to publish a few records.' }))));
-      form.appendChild(MR.h('div', { class: 'dr-choice' }, abtaRadio,
-        MR.h('label', { class: 'dr-choice__label', for: 'd-abta' }, 'A subdomain ABTA sets up',
-          MR.h('span', { class: 'dr-choice__hint', text: 'Something like yourname.mail.abta.africa. Nothing for you to publish, and your delivery record is still your own, but the address reads as ABTA.' }))));
+          MR.h('span', { class: 'dr-choice__hint', text: 'Readers see your own address. You will need whoever runs your DNS to publish three or four records, and verification takes up to 72 hours from the moment they appear.' }))));
 
       var domainInput = MR.h('input', { class: 'dr-input', id: 'd-domain', type: 'text', placeholder: 'news.example.com' });
-      ownBox = MR.h('div', { class: 'dr-form-group' },
+      ownBox = MR.h('div', { class: 'dr-form-group', hidden: true },
         MR.h('label', { class: 'dr-label', for: 'd-domain', text: 'Your domain' }),
         MR.h('span', { class: 'dr-hint', text: 'A subdomain such as news.example.com is better than the bare domain: a problem with marketing email then cannot touch your ordinary mail.' }),
         domainInput);
 
       var labelInput = MR.h('input', { class: 'dr-input', id: 'd-label', type: 'text', placeholder: 'yourname' });
-      abtaBox = MR.h('div', { class: 'dr-form-group', hidden: true },
+      abtaBox = MR.h('div', { class: 'dr-form-group' },
         MR.h('label', { class: 'dr-label', for: 'd-label', text: 'The name in front' }),
         MR.h('span', { class: 'dr-hint', text: 'Letters, numbers and hyphens. It becomes yourname.mail.abta.africa.' }),
         labelInput);
@@ -248,8 +257,8 @@
         MR.h('span', { class: 'dr-hint', text: 'For example hello, news or updates. Replies still go to your reply-to address.' }),
         localInput);
 
-      form.appendChild(ownBox);
       form.appendChild(abtaBox);
+      form.appendChild(ownBox);
       form.appendChild(localBox);
       form.appendChild(MR.h('button', { class: 'dr-button', type: 'submit', text: 'Add the domain' }));
 

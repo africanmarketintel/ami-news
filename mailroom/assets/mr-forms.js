@@ -41,8 +41,7 @@
       forms = r[0] || []; lists = r[1] || []; welcomes = r[2] || [];
       render();
     }).catch(function (err) {
-      if (err.message === 'signed out' || err.message === 'no account') return;
-      console.error(err);
+      return MR.loadFailed(wrap, err);
     });
 
     function listName(id) {

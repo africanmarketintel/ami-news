@@ -13,7 +13,7 @@
       wrap.appendChild(MR.h('p', { class: 'dr-lead', text: 'Sign in to manage your lists and campaigns.' }));
       wrap.appendChild(MR.h('p', null,
         MR.h('a', { class: 'dr-button', href: 'sign-in.html?next=account.html', text: 'Sign in' }), ' ',
-        MR.h('a', { class: 'dr-button dr-button--secondary', href: 'create-account.html', text: 'Apply to send' })));
+        MR.h('a', { class: 'dr-button dr-button--secondary', href: 'create-account.html', text: 'Create a sender account' })));
       return Promise.reject(new Error('signed out'));
     }
     return MR.api.select('mailroom_account_users?select=account_id,role,mailroom_accounts(*)')
@@ -22,7 +22,7 @@
           wrap.textContent = '';
           wrap.appendChild(MR.h('h1', { text: 'No sender account' }));
           wrap.appendChild(MR.h('p', { class: 'dr-lead', text: 'This sign in is not linked to a sender account yet.' }));
-          wrap.appendChild(MR.h('p', null, MR.h('a', { class: 'dr-button', href: 'create-account.html', text: 'Apply to send' })));
+          wrap.appendChild(MR.h('p', null, MR.h('a', { class: 'dr-button', href: 'create-account.html', text: 'Create a sender account' })));
           throw new Error('no account');
         }
         return rows[0].mailroom_accounts;
@@ -417,7 +417,7 @@
       if (MR.cfg.demo) {
         form.textContent = '';
         MR.banner(form.parentNode, 'Preview only',
-          'On the live service this would go to ABTA for approval, and you would be emailed a code to confirm your address.');
+          'On the live service you would be emailed a code to confirm your address, and the account would be ready to use. There is no approval queue.');
         return;
       }
 
@@ -598,10 +598,16 @@
       var sent = campaigns.filter(function (c) { return c.status === 'sent'; });
       var recipients = sent.reduce(function (n, c) { return n + (c.recipients || 0); }, 0);
       var complaints = sent.reduce(function (n, c) { return n + (c.complained || 0); }, 0);
-      wrap.appendChild(MR.h('div', { class: 'dr-grid dr-grid--thirds' },
-        card('Campaigns sent', MR.number(sent.length)),
-        card('Emails delivered', MR.number(sent.reduce(function (n, c) { return n + (c.delivered || 0); }, 0))),
-        card('Complaint rate', MR.percent(complaints, recipients))));
+      // Each figure carries the thing you would do about it, or the line it
+      // must not cross. A complaint rate with no threshold beside it tells a
+      // member nothing: they cannot know whether 0.04% is fine or alarming.
+      wrap.appendChild(MR.h('div', { class: 'mr-figures' },
+        card('Campaigns sent', MR.number(sent.length),
+             MR.h('a', { href: 'campaign.html', text: 'Write a campaign' })),
+        card('Emails delivered', MR.number(sent.reduce(function (n, c) { return n + (c.delivered || 0); }, 0)),
+             'Across every campaign you have sent'),
+        card('Complaint rate', MR.percent(complaints, recipients),
+             'Sending is suspended above 0.3%')));
 
       // Anything the automatic checks flagged against this account, so the
       // member can fix it rather than wait to be told.
@@ -655,14 +661,20 @@
           tbody)));
       wrap.appendChild(MR.h('p', { class: 'dr-small', text: 'Open rates are not shown. Mail privacy features make them unreliable, so clicks are the measure that means something.' }));
     }).catch(function (err) {
-      if (err.message === 'signed out' || err.message === 'no account') return;
-      console.error(err);
+      return MR.loadFailed(wrap, err);
     });
 
-    function card(title, value) {
-      return MR.h('div', { class: 'dr-status-card' },
-        MR.h('h2', { class: 'dr-h', text: title }),
-        MR.h('p', { class: 'dr-price-box__amount', text: String(value) }));
+    function card(title, value, note) {
+      var cell = MR.h('div', { class: 'mr-figures__cell' },
+        MR.h('h2', { class: 'mr-figures__label', text: title }),
+        MR.h('p', { class: 'mr-figures__value', text: String(value) }));
+      if (note) {
+        var p = MR.h('p', { class: 'mr-figures__note' });
+        if (typeof note === 'string') p.textContent = note;
+        else p.appendChild(note);
+        cell.appendChild(p);
+      }
+      return cell;
     }
     function tagFor(status) {
       return { sent: 'green', sending: 'blue', approved: 'blue', pending_approval: 'yellow',
@@ -680,14 +692,13 @@
         render(account, lists || []);
       });
     }).catch(function (err) {
-      if (err.message === 'signed out' || err.message === 'no account') return;
-      console.error(err);
+      return MR.loadFailed(wrap, err);
     });
 
     function render(account, lists) {
       wrap.textContent = '';
       wrap.appendChild(MR.h('h1', { text: 'Your lists' }));
-      wrap.appendChild(MR.h('p', { class: 'dr-lead', text: 'A list can only be mailed once you have recorded how its addresses were collected.' }));
+      wrap.appendChild(MR.h('p', { class: 'dr-lead', text: 'A list can only be mailed once you have said how its addresses were collected. One answer and a date, asked once per list, and they become the consent record you can show a subscriber who asks why you have their address.' }));
       wrap.appendChild(newListForm(account));
 
       if (!lists.length) {
@@ -723,15 +734,34 @@
           text: MR.CONSENT_STATUS[list.consent_status] || list.consent_status
         })));
 
+      // The element goes in now and gets its text later, so a slow count does
+      // not land underneath the buttons and shift the card as it arrives.
+      var count = MR.h('p', { class: 'dr-small', text: 'Counting\u2026' });
+      box.appendChild(count);
       MR.api.select('mailroom_subscribers?select=status&list_id=eq.' + list.id).then(function (rows) {
         var subscribed = (rows || []).filter(function (r) { return r.status === 'subscribed'; }).length;
-        box.appendChild(MR.h('p', { text: MR.number(subscribed) + ' subscribed, ' + MR.number((rows || []).length - subscribed) + ' not mailable' }));
-      }).catch(function () { /* counts are not essential */ });
+        count.textContent = MR.number(subscribed) + ' subscribed, ' +
+          MR.number((rows || []).length - subscribed) + ' not mailable';
+      }).catch(function () { count.textContent = 'The subscriber count could not be loaded.'; });
 
       if (list.consent_status === 'unconfirmed') {
         box.appendChild(consentForm(list));
       } else {
-        box.appendChild(MR.h('p', { class: 'dr-small', text: 'Recorded: ' + (list.consent_source || '') }));
+        // What was recorded, and when it covers, rather than the source alone.
+        // A member asked for their consent evidence by a subscriber or a
+        // regulator needs the dates, and reading them off this page is
+        // quicker than reading them out of an export.
+        var period = list.consent_from
+          ? MR.date(list.consent_from) + (list.consent_to ? ' to ' + MR.date(list.consent_to) : ' onwards')
+          : '';
+        box.appendChild(MR.h('p', { class: 'dr-small', text: 'How they were collected: ' + (list.consent_source || '') }));
+        if (list.consent_wording) {
+          box.appendChild(MR.h('p', { class: 'dr-small', text: 'What they agreed to: ' + list.consent_wording }));
+        }
+        if (period) {
+          box.appendChild(MR.h('p', { class: 'dr-small', text: 'Collected: ' + period }));
+        }
+        box.appendChild(MR.h('p', { class: 'dr-small', text: 'Every address on this list also carries its own record of where it came from and the date it was added, which is the evidence a subscriber or a regulator would be shown.' }));
       }
       box.appendChild(MR.h('p', null,
         MR.h('a', { class: 'dr-button dr-button--secondary', href: 'import.html?list=' + list.id, text: 'Import subscribers' })));
@@ -739,32 +769,101 @@
     }
 
     function consentForm(list) {
-      var source = MR.h('input', { class: 'dr-input', id: 'src-' + list.id, type: 'text' });
+      // A named choice plus a date, rather than four empty boxes. The schema
+      // only moves a list to 'declared' when consent_source, consent_wording
+      // and consent_from are all set, so the choice supplies the first two and
+      // the member supplies the third. The date is not guessed: it is the one
+      // fact here that only they have, and a made-up date would be a false
+      // record in the file that exists to be shown to somebody.
+      var form = MR.h('form', { novalidate: true });
+      var firstId = 'src-' + list.id + '-' + MR.CONSENT_SOURCES[0].id;
+      var chosen = null;
+
+      form.appendChild(MR.h('p', { class: 'dr-small', text: 'One answer and a date, and this list can be mailed. Together they are the consent record: if a subscriber or a regulator asks why you hold an address, this is the answer, and you can export it at any time.' }));
+
+      var group = MR.h('fieldset', { class: 'dr-form-group' },
+        MR.h('legend', { class: 'dr-label', text: 'How were these addresses collected?' }));
+
+      MR.CONSENT_SOURCES.forEach(function (opt) {
+        var id = 'src-' + list.id + '-' + opt.id;
+        var radio = MR.h('input', {
+          class: 'dr-choice__input', type: 'radio', id: id,
+          name: 'src-' + list.id, value: opt.id
+        });
+        radio.addEventListener('change', function () { pick(opt); });
+        group.appendChild(MR.h('div', { class: 'dr-choice dr-choice--radio' }, radio,
+          MR.h('label', { class: 'dr-choice__label', for: id }, opt.label,
+            MR.h('span', { class: 'dr-choice__hint', text: opt.hint }))));
+      });
+      form.appendChild(group);
+
+      // Shown only once a choice is made, so the page is one question wide
+      // until it needs to be more.
       var wording = MR.h('textarea', { class: 'dr-textarea', id: 'word-' + list.id, rows: '2' });
       var from = MR.h('input', { class: 'dr-input dr-input--w', id: 'from-' + list.id, type: 'date' });
       var to = MR.h('input', { class: 'dr-input dr-input--w', id: 'to-' + list.id, type: 'date' });
-      var form = MR.h('form', null,
-        MR.h('p', { class: 'dr-small', text: 'This list cannot be mailed until you record the following.' }),
+
+      var rest = MR.h('div', { hidden: true },
         MR.h('div', { class: 'dr-form-group' },
-          MR.h('label', { class: 'dr-label', for: 'src-' + list.id, text: 'How were these addresses collected?' }), source),
+          MR.h('label', { class: 'dr-label', for: 'from-' + list.id, text: 'Roughly when did you start collecting them?' }),
+          MR.h('span', { class: 'dr-hint', text: 'The first of the month is close enough. It is the start of the period this record covers.' }),
+          from),
         MR.h('div', { class: 'dr-form-group' },
-          MR.h('label', { class: 'dr-label', for: 'word-' + list.id, text: 'What did people agree to?' }), wording),
+          MR.h('label', { class: 'dr-label', for: 'to-' + list.id, text: 'And the last of them? (optional)' }),
+          MR.h('span', { class: 'dr-hint', text: 'Leave this empty if you are still collecting.' }),
+          to),
         MR.h('div', { class: 'dr-form-group' },
-          MR.h('label', { class: 'dr-label', for: 'from-' + list.id, text: 'Collected from' }), from),
-        MR.h('div', { class: 'dr-form-group' },
-          MR.h('label', { class: 'dr-label', for: 'to-' + list.id, text: 'Collected until' }), to),
-        MR.h('button', { class: 'dr-button', type: 'submit', text: 'Record consent evidence' }));
+          MR.h('label', { class: 'dr-label', for: 'word-' + list.id, text: 'What were they told?' }),
+          MR.h('span', { class: 'dr-hint', id: 'word-hint-' + list.id, text: '' }),
+          wording),
+        MR.h('button', { class: 'dr-button', type: 'submit', text: 'Record this and make the list mailable' }));
+      form.appendChild(rest);
+
+      var refused = MR.h('div', { class: 'mr-aside', hidden: true, role: 'alert' },
+        MR.h('h3', { class: 'dr-h', text: 'Those addresses cannot be mailed here' }),
+        MR.h('p', { text: 'A bought, rented, scraped or appended list cannot be sent through the Mailroom, whatever the supplier said about it being opted in. Complaints from a list like that land on the shared sending domain, which every other member is also using.' }),
+        MR.h('p', { class: 'dr-small' }, 'If some of these addresses were collected properly and the rest were not, separate them and record only the ones you can account for. ',
+          MR.h('a', { href: 'forms.html', text: 'A signup form' }), ' is the quickest way to start a list you can stand behind.'));
+      form.appendChild(refused);
+
+      function pick(opt) {
+        chosen = opt;
+        refused.hidden = !opt.refuse;
+        rest.hidden = !!opt.refuse;
+        if (opt.refuse) return;
+        var hint = document.getElementById('word-hint-' + list.id);
+        if (opt.wordingRequired) {
+          if (hint) hint.textContent = 'Copy the wording from the form itself, as they read it.';
+          if (!wording.value.trim()) wording.value = '';
+        } else {
+          if (hint) hint.textContent = 'Filled in from your answer above. Change it if it is not quite right.';
+          if (!wording.value.trim()) wording.value = opt.wording;
+        }
+      }
 
       form.addEventListener('submit', function (e) {
         e.preventDefault();
         var errors = [];
-        if (!source.value.trim()) errors.push({ id: 'src-' + list.id, message: 'Say how the addresses were collected' });
-        if (!wording.value.trim()) errors.push({ id: 'word-' + list.id, message: 'Give the wording people agreed to' });
-        if (!from.value) errors.push({ id: 'from-' + list.id, message: 'Give the date collection started' });
+        if (!chosen || chosen.refuse) {
+          errors.push({ id: firstId, message: 'Choose how these addresses were collected' });
+        }
+        if (!from.value) {
+          errors.push({ id: 'from-' + list.id, message: 'Give roughly when you started collecting them' });
+        }
+        if (chosen && !chosen.refuse && !wording.value.trim()) {
+          errors.push({ id: 'word-' + list.id, message: 'Say what people were told when you took their address' });
+        }
         if (MR.errors.show(form, errors)) return;
+
+        if (MR.cfg.demo) {
+          MR.banner(wrap, 'Preview only', 'On the live service this list would now be mailable.');
+          return;
+        }
         MR.api.update('mailroom_lists', 'id=eq.' + list.id, {
-          consent_source: source.value.trim(), consent_wording: wording.value.trim(),
-          consent_from: from.value, consent_to: to.value || null
+          consent_source: chosen.source,
+          consent_wording: wording.value.trim(),
+          consent_from: from.value,
+          consent_to: to.value || null
         }).then(function () { location.reload(); })
           .catch(function (err) { alert('That could not be saved.'); console.error(err); });
       });
@@ -780,6 +879,64 @@
     var fileField = form.querySelector('#i-file');
     var preview = document.getElementById('mr-import-preview');
     var parsed = [];
+
+    // The same choice as the list page, in the same words. A file can come
+    // from somewhere the rest of the list did not, so it is still asked per
+    // import - but the list's own answer is preselected, so the usual case is
+    // reading one line rather than answering a question twice.
+    //
+    // It matters that this is per-import: mailroom-import writes
+    // consent_source and consent_at against every row, so each subscriber
+    // ends up with evidence of their own rather than inheriting the list's.
+    // That per-person record is the stronger of the two, and the note says so.
+    var importChoice = null;
+    var importGroup = document.getElementById('mr-import-source');
+
+    function renderImportSources(preselect) {
+      if (!importGroup) return;
+      MR.CONSENT_SOURCES.forEach(function (opt) {
+        var id = 'i-src-' + opt.id;
+        var radio = MR.h('input', {
+          class: 'dr-choice__input', type: 'radio', id: id, name: 'i-source', value: opt.id
+        });
+        if (preselect && preselect === opt.id) { radio.checked = true; importChoice = opt; }
+        radio.addEventListener('change', function () {
+          importChoice = opt;
+          var warn = document.getElementById('mr-import-refused');
+          if (warn) warn.hidden = !opt.refuse;
+        });
+        importGroup.appendChild(MR.h('div', { class: 'dr-choice dr-choice--radio' }, radio,
+          MR.h('label', { class: 'dr-choice__label', for: id }, opt.label,
+            MR.h('span', { class: 'dr-choice__hint', text: opt.hint }))));
+      });
+      importGroup.appendChild(MR.h('p', {
+        class: 'dr-error-message', id: 'mr-import-refused', hidden: true,
+        text: 'A bought, rented, scraped or appended list cannot be imported, whatever the supplier said about it being opted in.'
+      }));
+    }
+
+    // Match the list's recorded answer back to one of the choices, so the
+    // member sees their own earlier answer rather than a blank set.
+    function sourceIdFor(recorded) {
+      var hit = MR.CONSENT_SOURCES.filter(function (o) { return o.source === recorded; })[0];
+      return hit ? hit.id : null;
+    }
+
+    if (listId && !MR.cfg.demo) {
+      MR.api.select('mailroom_lists?select=name,consent_source,consent_status&id=eq.' + encodeURIComponent(listId))
+        .then(function (rows) {
+          var list = (rows && rows[0]) || {};
+          renderImportSources(sourceIdFor(list.consent_source));
+          var note = document.getElementById('mr-import-consent');
+          if (!note) return;
+          note.textContent = list.consent_source
+            ? 'Preselected from what you recorded for ' + list.name + '. Change it if this file came from somewhere else. Your answer is saved against every address in the file, with today\u2019s date, so each person ends up with a record of their own.'
+            : 'Saved against every address in this file, with today\u2019s date, so each person ends up with a record of their own as well as the list.';
+        })
+        .catch(function () { renderImportSources(null); });
+    } else {
+      renderImportSources(null);
+    }
 
     function parseCsv(text) {
       var lines = text.split(/\r?\n/).filter(function (l) { return l.trim(); });
@@ -823,13 +980,15 @@
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
-      var source = form.querySelector('#i-source').value.trim();
-      var declared = form.querySelector('#i-declaration').checked;
       var errors = [];
       if (!parsed.length) errors.push({ id: 'i-file', message: 'Choose a CSV file with an email column' });
-      if (!source) errors.push({ id: 'i-source', message: 'Say where these addresses came from' });
-      if (!declared) errors.push({ id: 'i-declaration', message: 'You must confirm that none of these addresses were bought or scraped' });
+      if (!importChoice) {
+        errors.push({ id: 'i-src-' + MR.CONSENT_SOURCES[0].id, message: 'Choose how these addresses were collected' });
+      } else if (importChoice.refuse) {
+        errors.push({ id: 'i-src-' + MR.CONSENT_SOURCES[0].id, message: 'A bought, rented, scraped or appended list cannot be imported' });
+      }
       if (MR.errors.show(form, errors)) return;
+      var source = importChoice.source;
 
       if (MR.cfg.demo) {
         MR.banner(form.parentNode, 'Preview only',

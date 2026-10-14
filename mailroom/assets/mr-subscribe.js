@@ -58,7 +58,7 @@
           var id = 's-topic-' + i;
           var box = MR.h('input', { class: 'dr-choice__input', id: id, type: 'checkbox', value: t });
           topicBoxes.push(box);
-          group.appendChild(MR.h('div', { class: 'dr-choice' }, box,
+          group.appendChild(MR.h('div', { class: 'dr-choice dr-choice--checkbox' }, box,
             MR.h('label', { class: 'dr-choice__label', for: id, text: t })));
         });
         el.appendChild(group);
