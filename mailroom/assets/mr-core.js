@@ -555,11 +555,11 @@
       out.hidden = !MR.auth.signedIn();
       out.addEventListener('click', function (e) { e.preventDefault(); MR.auth.signOut(); });
     }
-    // The Beta banner is always shown: this is a new service whoever is
-    // looking. Only the sample-data sentence inside it is conditional, and it
-    // appears when there is no back end configured. Hiding the whole banner in
-    // live mode, which is what this did before, left the Mailroom as the only
-    // one of the three products not telling anyone it was new.
+    // The Beta row was removed on 14 October 2026: it sat above the masthead
+    // and broke the three-tier header, and the publication no longer has one
+    // either. What is left in that strip is the sample-data warning, which is
+    // not a Beta notice - it is the page saying nothing you do here is real.
+    // The id is now on the strip itself, so this line still governs it.
     var preview = document.getElementById('mr-preview-banner');
     if (preview) preview.hidden = !MR.cfg.demo;
   }
