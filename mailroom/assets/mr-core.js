@@ -414,6 +414,61 @@
     });
   };
 
+  /* ---------------- task finished ----------------
+     A completed task ends on a confirmation, not back on its own form. Added
+     14 October 2026: the import page reported its counts in a banner and then
+     re-presented "Import subscribers" with the CSV instructions and the gold
+     panel about what happens to your file, all of it guidance for a task
+     already done, and with no onward link. The same shape was on account
+     creation and on every campaign end state.
+
+     This is the GOV.UK confirmation page pattern, and .dr-panel - the green
+     centred panel it uses - was already in mr.css and unused.
+
+     opts: { title, detail, lead, next: [string], actions: [[href, label]] }
+     The first action is the primary one. Focus moves to the heading so a
+     screen reader lands on the confirmation rather than staying where the
+     button used to be. */
+  MR.done = function (target, opts) {
+    opts = opts || {};
+    MR.clear(target);
+
+    var head = MR.h('h1', { tabindex: '-1', text: opts.title || 'Done' });
+    var body = MR.h('div', { class: 'dr-panel__body' });
+    if (opts.lead) body.appendChild(document.createTextNode(opts.lead));
+    if (opts.detail) body.appendChild(MR.h('strong', { text: opts.detail }));
+    target.appendChild(MR.h('div', { class: 'dr-panel' }, head, body));
+
+    if (opts.next && opts.next.length) {
+      target.appendChild(MR.h('h2', { class: 'dr-h', text: 'What happens next' }));
+      var ul = MR.h('ul', { class: 'dr-list' });
+      opts.next.forEach(function (line) { ul.appendChild(MR.h('li', { text: line })); });
+      target.appendChild(ul);
+    }
+
+    if (opts.actions && opts.actions.length) {
+      var row = MR.h('p');
+      opts.actions.forEach(function (a, i) {
+        row.appendChild(MR.h('a', {
+          class: 'dr-button' + (i === 0 ? '' : ' dr-button--secondary'),
+          href: a[0], text: a[1]
+        }));
+        row.appendChild(document.createTextNode(' '));
+      });
+      target.appendChild(row);
+    }
+
+    if (opts.detailList && opts.detailList.length) {
+      var dl = MR.h('ul', { class: 'dr-list dr-small' });
+      opts.detailList.forEach(function (line) { dl.appendChild(MR.h('li', { text: line })); });
+      target.appendChild(dl);
+    }
+
+    head.focus();
+    target.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    return target;
+  };
+
   /* ---------------- error summary ---------------- */
   MR.errors = {
     clear: function (form) {

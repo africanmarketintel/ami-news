@@ -561,10 +561,18 @@
         });
       }).then(function (rows) {
         if (!rows) return;
-        wrap.textContent = '';
-        MR.banner(wrap, 'Campaign scheduled',
-          'It goes out on ' + MR.dateTimeInZone(iso, tz()) +
-          '. Until then it is locked, and you can unschedule it from your dashboard.');
+        // Confirmation page, not a cleared form. See MR.done in mr-core.js.
+        MR.done(wrap, {
+          title: 'Campaign scheduled',
+          lead: 'It goes out on',
+          detail: MR.dateTimeInZone(iso, tz()),
+          next: [
+            'Until then the campaign is locked, so it cannot be edited.',
+            'You can unschedule it from your mailroom if you need to change it.',
+            'Results appear on your mailroom as they come back.'
+          ],
+          actions: [['account.html', 'Go to your mailroom'], ['campaign.html', 'Write another campaign']]
+        });
       }).catch(function (err) {
         MR.errors.show(form, [{ id: 'c-date', message: message(err) }]);
         console.error(err);
@@ -636,16 +644,30 @@
       save('draft').then(function (saved) {
         if (!saved) return;
         return MR.fn('mailroom-send', { campaign_id: saved.id, mode: 'send' }).then(function (r) {
-          wrap.textContent = '';
-          MR.banner(wrap, 'Campaign sending',
-            MR.number(r.queued || 0) + ' emails are queued and going out now. A large list takes a few minutes. ' +
-            'Progress and results appear on your dashboard as they come back.');
+          MR.done(wrap, {
+            title: 'Campaign sending',
+            lead: 'Queued and going out now',
+            detail: MR.number(r.queued || 0) + (r.queued === 1 ? ' email' : ' emails'),
+            next: [
+              'A large list takes a few minutes to work through.',
+              'Delivery, bounces and complaints appear on your mailroom as they come back.',
+              'Nothing more is needed from you.'
+            ],
+            actions: [['account.html', 'Go to your mailroom'], ['archive.html', 'See the archive']]
+          });
         });
       }).catch(function (err) {
         if (/held_for_review/.test(String(err.message))) {
-          wrap.textContent = '';
-          MR.banner(wrap, 'Held for review',
-            'A check flagged this campaign, so it has not gone out. ABTA looks at held campaigns within one working day, and will tell you what to change.', 'important');
+          MR.done(wrap, {
+            title: 'Held for review',
+            lead: 'This campaign has not gone out',
+            next: [
+              'A check flagged it, so it is waiting for a person to look at it.',
+              'ABTA reviews held campaigns within one working day.',
+              'You will be told what to change, if anything.'
+            ],
+            actions: [['account.html', 'Go to your mailroom']]
+          });
           return;
         }
         MR.errors.show(form, [{ id: 'c-subject', message: message(err) }]);

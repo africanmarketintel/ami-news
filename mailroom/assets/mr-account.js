@@ -919,6 +919,7 @@
     var form = document.getElementById('mr-import-form');
     if (!form) return;
     var listId = MR.qs('list');
+    var listName = '';
     var fileField = form.querySelector('#i-file');
     var preview = document.getElementById('mr-import-preview');
     var parsed = [];
@@ -969,6 +970,7 @@
       MR.api.select('mailroom_lists?select=name,consent_source,consent_status&id=eq.' + encodeURIComponent(listId))
         .then(function (rows) {
           var list = (rows && rows[0]) || {};
+          listName = list.name || '';
           renderImportSources(sourceIdFor(list.consent_source));
           var note = document.getElementById('mr-import-consent');
           if (!note) return;
@@ -1041,10 +1043,29 @@
 
       MR.fn('mailroom-import', { list_id: listId, rows: parsed, consent_source: source })
         .then(function (r) {
-          form.textContent = '';
-          MR.banner(form.parentNode, 'Import finished',
-            r.added + ' added, ' + r.skipped_duplicate + ' already on the list, ' +
-            r.skipped_invalid + ' not valid addresses, ' + r.skipped_suppressed + ' skipped because they had unsubscribed or complained before.');
+          // Confirmation page, not a cleared form. See MR.done.
+          var main = document.getElementById('main') || form.parentNode;
+          MR.done(main, {
+            title: 'Import finished',
+            lead: r.added + (r.added === 1 ? ' address added to' : ' addresses added to'),
+            detail: listName || 'your list',
+            next: [
+              'The addresses are on the list now and can be mailed.',
+              'How you said they were collected is saved against each one, with today\u2019s date, so every person has a record of their own.',
+              'Anyone who had unsubscribed or complained before was left off, whichever sender they left.'
+            ],
+            actions: [
+              ['campaign.html', 'Write a campaign'],
+              ['lists.html', 'Back to your lists'],
+              ['import.html' + (listId ? '?list=' + encodeURIComponent(listId) : ''), 'Import another file']
+            ],
+            detailList: [
+              r.added + ' added',
+              r.skipped_duplicate + ' already on the list',
+              r.skipped_invalid + ' not valid addresses',
+              r.skipped_suppressed + ' skipped because they had unsubscribed or complained before'
+            ]
+          });
         })
         .catch(function (err) {
           MR.errors.show(form, [{ id: 'i-file', message: 'The import failed: ' + err.message }]);
