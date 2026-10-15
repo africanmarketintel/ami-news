@@ -682,7 +682,8 @@ html body .ami-strip[hidden]{display:none !important}
     const list = el.querySelector('.ami-strip__list');
     const items = STRIP_CCY.filter(function (c) { return d.rates && d.rates[c] > 0; });
     if (!items.length) { el.hidden = true; return; }
-    list.innerHTML = '<span class="ami-strip__lead">Per US$1</span>' + items.map(function (c) {
+    list.setAttribute('aria-label', 'Exchange rates per US dollar');
+    list.innerHTML = items.map(function (c) {
       return '<span class="ami-strip__i"><b>' + c + '</b>' + stripFmt(d.rates[c]) + '</span>';
     }).join('');
     let when = '';

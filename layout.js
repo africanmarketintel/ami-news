@@ -152,7 +152,18 @@
     '}',
 
     /* article page */
-    '.ami-art-wrap{display:grid;grid-template-columns:minmax(0,calc(760px + var(--art-gutter) + var(--art-rail-space) + 24px)) 300px;column-gap:24px;align-items:start}',
+    // The wrapper takes over the page gutter. article.html works the gutter out
+    // as a percentage of the parent, which inside this grid would be the column
+    // and not the window. So from 1201px the wrapper is centred at 1280px, the
+    // same as the header, and the article column keeps only its own 96px for the
+    // share rail.
+    '.ami-art-wrap{display:grid;grid-template-columns:minmax(0,1fr) 300px;column-gap:24px;align-items:start}',
+    // article.html has a rule for 1200px and below that centres the column, but
+    // a later rule in the same file cancels it, which left a 120px left margin
+    // on tablets and phones. This one comes after both.
+    '@media(max-width:1200px){.article-full{max-width:760px;margin:0 auto;padding:40px 24px 80px}}',
+    '@media(min-width:1201px){.ami-art-wrap{max-width:1280px;margin:0 auto;padding:0 24px;box-sizing:border-box}',
+    '.ami-art-wrap .article-full{max-width:880px;margin:0;padding:40px 24px 80px var(--art-rail-space);box-sizing:border-box}}',
     '.ami-art-side{align-self:stretch;padding-top:40px}',
     '.ami-art-side .ami-adwrap{position:sticky;top:16px}',
     '@media(max-width:1259px){.ami-art-wrap{display:block}.ami-art-side{padding:0 24px 32px}.ami-art-side .ami-adwrap{position:static}.ami-art-side .ami-ad--tall{height:250px}}',
