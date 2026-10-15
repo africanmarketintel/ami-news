@@ -817,9 +817,12 @@ html body .ami-strip[hidden]{display:none !important}
 
   function initBar() {
     if (!BAR_PAGES.test(barFile())) return;
-    if (!sbReady() || window.amiIsSubscriber || barSignedUp() || barSnoozed()) return;
+    // A link ending #newsletter (used by the newsletter advert) opens the bar
+    // after one second and ignores an earlier "Close".
+    const asked = window.location.hash === '#newsletter';
+    if (!sbReady() || window.amiIsSubscriber || barSignedUp() || (barSnoozed() && !asked)) return;
     const returning = barIsReturn();
-    const needSeconds = returning ? BAR_SECONDS_RETURN : BAR_SECONDS_FIRST;
+    const needSeconds = asked ? 1 : (returning ? BAR_SECONDS_RETURN : BAR_SECONDS_FIRST);
     let seen = 0;
     let shown = false;
     let bar = null;
@@ -859,7 +862,7 @@ html body .ami-strip[hidden]{display:none !important}
       const note = document.getElementById('amiCookieNote');
       if (note) bar.style.bottom = note.offsetHeight + 'px';
       document.body.style.paddingBottom = (bar.offsetHeight + (note ? note.offsetHeight : 0)) + 'px';
-      window.amiTrack('newsletter_bar_shown', { trigger: returning ? 'return_visit' : 'first_visit' });
+      window.amiTrack('newsletter_bar_shown', { trigger: asked ? 'advert_link' : (returning ? 'return_visit' : 'first_visit') });
 
       const form = bar.querySelector('form');
       const status = bar.querySelector('.ami-bar__status');
