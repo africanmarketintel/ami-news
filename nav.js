@@ -68,7 +68,7 @@
   // Login / Account button immediately after it.
   const navHTML = `
 <nav class="top-nav" aria-label="Main navigation">
-  <button class="nav-hamburger" aria-label="Open menu" onclick="if(typeof toggleMobileNav==='function') toggleMobileNav()">
+  <button class="nav-hamburger" aria-label="Open menu" data-ami-act="menu">
     <span></span><span></span><span></span>
   </button>
   <div class="nav-left"></div>
@@ -81,14 +81,14 @@
   const verifyModalHTML = `
 <div id="amiVerifyOverlay" style="display:none;position:fixed;inset:0;background:rgba(6,15,9,.85);z-index:9999;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(4px)">
   <div style="background:#FAF7F0;max-width:440px;width:100%;border-top:4px solid #C9A84C;box-shadow:0 24px 80px rgba(0,0,0,.5);padding:36px 32px;font-family:'Spectral',Georgia,serif;position:relative">
-    <button onclick="amiVerifyClose()" style="position:absolute;top:12px;right:14px;background:none;border:none;font-size:20px;color:#9A8070;cursor:pointer;line-height:1">×</button>
+    <button data-ami-act="verify-close" style="position:absolute;top:12px;right:14px;background:none;border:none;font-size:20px;color:#9A8070;cursor:pointer;line-height:1">×</button>
     <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:800;color:#1A1208;margin-bottom:4px">Verify Your Access</div>
     <p style="font-size:13px;color:#6B5344;margin-bottom:20px;line-height:1.6">Enter the email address you used when subscribing to unlock your premium access.</p>
     <div id="amiVerifyForm">
       <input id="amiVerifyEmail" type="email" placeholder="your@email.com" autocomplete="email"
         style="width:100%;background:#fff;border:1px solid #D4C4A0;color:#1A1208;font-family:'DM Mono',monospace;font-size:13px;padding:12px 14px;outline:none;margin-bottom:10px;box-sizing:border-box"
-        onkeydown="if(event.key==='Enter') amiVerifySubmit()">
-      <button id="amiVerifyBtn" onclick="amiVerifySubmit()"
+        data-ami-enter="verify-submit">
+      <button id="amiVerifyBtn" data-ami-act="verify-submit"
         style="width:100%;background:#C9A84C;color:#060F09;font-family:'DM Mono',monospace;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:13px;border:none;cursor:pointer;transition:background .2s"
         onmouseover="this.style.background='#D4B86A'" onmouseout="this.style.background='#C9A84C'">
         Verify Subscription →
@@ -195,10 +195,15 @@ footer.ami-foot p{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvet
   font-size:14px;line-height:1.55;margin:0 0 10px;color:#1A1208}
 footer.ami-foot .ami-foot__rule{height:1px;background:#D4C4A0;margin:28px 0 18px}
 footer.ami-foot .ami-foot__legal p{font-size:13px;color:#6B5344;margin-bottom:8px}
+footer.ami-foot .ami-foot__legal p.ami-foot__credit,footer.ami-foot .ami-foot__legal p.ami-foot__credit a{font-size:11px}
 footer.ami-foot .ami-foot__verify{background:none;border:1px solid #1A1208;color:#1A1208;
   font-family:'DM Mono',ui-monospace,monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;
   padding:7px 13px;cursor:pointer;margin-top:4px}
 footer.ami-foot .ami-foot__verify:hover{background:#FDF6E3}
+footer.ami-foot .ami-foot__linkbtn{background:none;border:0;padding:0;margin:0;cursor:pointer;
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:14px;
+  color:#1A1208;text-decoration:underline;text-underline-offset:2px;text-transform:none;letter-spacing:0}
+footer.ami-foot .ami-foot__linkbtn:hover,footer.ami-foot .ami-foot__linkbtn:focus{color:#8C3A1F}
 @media (max-width:860px){footer.ami-foot .ami-foot__cols{grid-template-columns:1fr 1fr;gap:28px}}
 @media (max-width:560px){footer.ami-foot .ami-foot__cols{grid-template-columns:1fr}}
 `;
@@ -238,19 +243,18 @@ footer.ami-foot .ami-foot__verify:hover{background:#FDF6E3}
       + '<p>We aim to reply within 2 business days.</p>'
       + '<p><a href="' + P('index.html') + '">African Market Intelligence home</a></p>'
       + '<p><a href="' + P('about.html') + '">About AMI</a></p>'
-      + '<p><button type="button" class="ami-foot__verify" onclick="if(typeof amiVerifyAccess===\'function\')amiVerifyAccess()">'
+      + '<p><button type="button" class="ami-foot__verify" data-ami-act="verify-open">'
       + 'Already a subscriber? Verify access &rarr;</button></p>'
       + '</div>'
       + '</div>'
       + '<div class="ami-foot__rule"></div>'
       + '<div class="ami-foot__legal">'
       + '<p>AMI is operated by African Business Trade Association Limited, a company registered in '
-      + 'England and Wales, United Kingdom. Company number 16401954.</p>'
+      + 'England and Wales, United Kingdom.</p>'
       + '<p>&copy; ' + new Date().getFullYear() + ' African Business Trade Association Limited. '
-      + '<a href="' + P('privacy.html') + '">Privacy</a>'
-      + (GA_MEASUREMENT_ID ? ' &middot; <button type="button" class="ami-foot__verify" onclick="amiCookieSettings()">Cookie settings</button>' : '')
+      + (GA_MEASUREMENT_ID ? '<button type="button" class="ami-foot__linkbtn" data-ami-act="cookies">Cookie settings</button>' : '')
       + '</p>'
-      + '<p><a href="https://www.exchangerate-api.com" target="_blank" rel="noopener">Rates by Exchange Rate API</a></p>'
+      + '<p class="ami-foot__credit"><a href="https://www.exchangerate-api.com" target="_blank" rel="noopener">Rates by Exchange Rate API</a></p>'
       + '</div>'
       + '</footer>';
   }
@@ -609,6 +613,25 @@ footer.ami-foot .ami-foot__verify:hover{background:#FDF6E3}
     document.body.appendChild(n);
     document.body.style.paddingBottom = n.offsetHeight + 'px';
   }
+
+  // Page buttons built here use data attributes, not inline onclick. The
+  // Dealroom and Mailroom pages carry a Content Security Policy that blocks
+  // inline handlers, so one listener on the document serves every page.
+  document.addEventListener('click', function (e) {
+    const t = e.target && e.target.closest ? e.target.closest('[data-ami-act]') : null;
+    if (!t) return;
+    const act = t.getAttribute('data-ami-act');
+    if (act === 'menu') { if (typeof toggleMobileNav === 'function') toggleMobileNav(); }
+    else if (act === 'verify-open') { if (typeof amiVerifyAccess === 'function') amiVerifyAccess(); }
+    else if (act === 'verify-close') { if (typeof amiVerifyClose === 'function') amiVerifyClose(); }
+    else if (act === 'verify-submit') { if (typeof amiVerifySubmit === 'function') amiVerifySubmit(); }
+    else if (act === 'cookies') { if (typeof window.amiCookieSettings === 'function') window.amiCookieSettings(); }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && e.target && e.target.getAttribute && e.target.getAttribute('data-ami-enter') === 'verify-submit') {
+      if (typeof amiVerifySubmit === 'function') amiVerifySubmit();
+    }
+  });
 
   window.amiCookieSettings = function () {
     try { localStorage.removeItem(GA_CHOICE_KEY); } catch (e) { /* ignore */ }

@@ -267,6 +267,13 @@
       var grid = $('#heroGrid');
       if (!grid) return;
       shown = {};
+      // A section page with nothing in it says so. It must not fall back to
+      // counting every article on the site under the section name.
+      if (sec && filtered && !filtered.length) {
+        grid.innerHTML = '<div class="lay-sechead"><h1>' + filterActive + '</h1><p>No stories yet</p></div>';
+        placeNewsletter(true);
+        return;
+      }
       var pool = (filtered && filtered.length) ? filtered : allArticles;
       if (!pool || !pool.length) { return; }
 
@@ -275,7 +282,7 @@
         shown[lead.id] = 1;
         window.__amiLead = lead;
         grid.innerHTML =
-          '<div class="lay-sechead"><h1>' + filterActive + '</h1><p>' + pool.length + ' ' + (pool.length === 1 ? 'story' : 'stories') + ' &middot; newest first</p></div>' +
+          '<div class="lay-sechead"><h1>' + filterActive + '</h1></div>' +
           '<div class="lay-first">' + img(lead, 220) + kick(lead) +
           '<h2>' + link(lead) + tag(lead) + '</h2><p class="lay-sf">' + (lead.standfirst || '') + '</p><p class="lay-meta">' + metaLine(lead) + '</p></div>';
         placeNewsletter(true);

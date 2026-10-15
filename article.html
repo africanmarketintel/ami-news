@@ -3790,13 +3790,18 @@
       color: var(--gold);
     }
 
+    /* The placeholder stays invisible for the first 1.5 seconds, so a normal load
+       never shows it. It appears only if the article is slow to arrive. */
     .loading-art {
       text-align: center;
       padding: 80px 24px;
       font-family: 'DM Mono', monospace;
       color: var(--text-soft);
       font-size: 12px;
+      opacity: 0;
+      animation: amiLoadShow .2s ease 1.5s forwards;
     }
+    @keyframes amiLoadShow { to { opacity: 1; } }
 
     /* ── Most Read items ──────────────────────────────────────── */
     .mr-item {
