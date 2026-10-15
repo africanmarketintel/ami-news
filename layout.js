@@ -7,6 +7,7 @@
    - Home and section pages: three-column lead, "Latest" band, text-led lists,
      section blocks on the home page, right-hand column on section pages.
    - Article pages: advert side panel, related-story card between paragraphs.
+   - Deals page: advert side panel beside the deal cards.
    - All three: a labelled advert banner above the header.
 
    What it does not touch: articles, editorial placements (hero, side1, side2,
@@ -33,7 +34,8 @@
 
   var isListing = !!$('#heroGrid');
   var isArticle = !!$('#articleFull');
-  if (!isListing && !isArticle) return;
+  var isDeals = !!$('#dealsGrid');
+  if (!isListing && !isArticle && !isDeals) return;
 
   var ADS = window.AMI_ADS || {};
   var SECTION_PAGES = {
@@ -165,6 +167,11 @@
     '@media(min-width:1201px){.ami-art-wrap{max-width:1280px;margin:0 auto;padding:0 24px;box-sizing:border-box}',
     '.ami-art-wrap .article-full{max-width:880px;margin:0;padding:40px 24px 80px var(--art-rail-space);box-sizing:border-box}}',
     '.ami-art-side{align-self:stretch;padding-top:40px}',
+    '.ami-deals-wrap{display:grid;grid-template-columns:minmax(0,1fr) 300px;column-gap:24px;max-width:1280px;margin:0 auto;padding:0 24px;box-sizing:border-box;align-items:start}',
+    '.ami-deals-wrap .container{max-width:none;padding:0 0 40px}',
+    '.ami-deals-wrap .deals-grid{grid-template-columns:repeat(2,minmax(0,1fr))}',
+    '@media(max-width:1259px){.ami-deals-wrap{display:block;padding:0}.ami-deals-wrap .container{padding:0 24px 40px}.ami-deals-wrap .ami-art-side{padding:0 24px 32px}.ami-deals-wrap .ami-adwrap{position:static}.ami-deals-wrap .ami-ad--tall{height:250px}}',
+    '@media(max-width:700px){.ami-deals-wrap .deals-grid{grid-template-columns:1fr}}',
     '.ami-art-side .ami-adwrap{position:sticky;top:16px}',
     '@media(max-width:1259px){.ami-art-wrap{display:block}.ami-art-side{padding:0 24px 32px}.ami-art-side .ami-adwrap{position:static}.ami-art-side .ami-ad--tall{height:250px}}',
     '.ami-rel{display:grid;grid-template-columns:1fr 96px;gap:14px;align-items:start;margin:26px 0;padding:12px 14px;border-left:4px solid var(--gold,#C9A84C);background:var(--gold-pale,#FDF6E3);clear:both}',
@@ -511,5 +518,21 @@
     build();
   }
 
-  if (isListing) initListing(); else initArticle();
+  /* ═══ DEALS PAGE ═════════════════════════════════════════════════════
+     The filters, the count and the deal cards are the page's own and are not
+     touched. The cards sit in a column with the tall advert beside them. */
+  function initDeals() {
+    var cont = $('#dealsGrid').closest('.container');
+    if (!cont) return;
+    var wrap = doc.createElement('div');
+    wrap.className = 'ami-deals-wrap';
+    cont.parentNode.insertBefore(wrap, cont);
+    wrap.appendChild(cont);
+    var side = doc.createElement('div');
+    side.className = 'ami-art-side';
+    side.appendChild(adSlot('tall'));
+    wrap.appendChild(side);
+  }
+
+  if (isListing) initListing(); else if (isArticle) initArticle(); else initDeals();
 })();

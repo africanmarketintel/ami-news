@@ -752,7 +752,7 @@ html body .ami-strip[hidden]{display:none !important}
   // 5 seconds. Never shown to anyone who has signed up, anyone who closed it
   // in the last 30 days, or when the sign-up could not be saved. Closing it
   // does not set any subscriber flag, so paywall behaviour is untouched.
-  const BAR_PAGES = /^(index|economy|markets|energy|politics|technology|opinion|east-africa|west-africa|north-africa|southern-africa|central-africa|article)$/;
+  const BAR_PAGES = /^(deals|index|economy|markets|energy|politics|technology|opinion|east-africa|west-africa|north-africa|southern-africa|central-africa|article)$/;
   const BAR_SECONDS_FIRST = 20;
   const BAR_SECONDS_RETURN = 5;
   const BAR_SCROLL_SHARE = 0.5;
