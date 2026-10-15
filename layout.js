@@ -17,7 +17,13 @@
    To go back to the earlier layout: delete the <script src="layout.js"> line
    from the page. Nothing else needs to change.
 
-   Adverts: slots show "Advertising space" until a creative is supplied. Set
+   Adverts from Supabase: the slots read the table ad_slots (see
+   docs/ad-slots.sql). An advert shows if it is switched on, inside its dates
+   and set for this kind of page. If the table is empty, missing or cannot be
+   read, the slots fall back to the setting below and then to "Advertising
+   space". The page only ever reads the table.
+
+   Adverts from a setting: slots show "Advertising space" until a creative is supplied. Set
    window.AMI_ADS before this script loads, for example
      window.AMI_ADS = { band:{img:'ads/band.jpg',href:'https://…',alt:'…'},
                         mpu:{…}, tall:{…} };
@@ -215,6 +221,94 @@
       : ph;
     return '<a class="lay-imglink" href="' + url(a) + '" tabindex="-1" aria-hidden="true">' + inner + '</a>';
   }
+  /* ── Adverts from Supabase (table ad_slots) ──────────────────────────── */
+  var PAGE_TYPE = isArticle ? 'article' : isDeals ? 'deals'
+    : ((location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '') || 'index') === 'index' ? 'home' : 'section';
+  var adRows = null;      // null until the table has been read, then a list (possibly empty)
+  var adChosen = {};      // slot kind -> the advert chosen for this page view
+  var adSeen = {};        // advert ids already counted as viewed
+
+  function httpsUrl(u) { return typeof u === 'string' && /^https:\/\//i.test(u); }
+
+  function pickAd(kind) {
+    if (Object.prototype.hasOwnProperty.call(adChosen, kind)) return adChosen[kind];
+    var now = Date.now();
+    var fit = (adRows || []).filter(function (r) {
+      if (!r || r.slot !== kind || r.active === false) return false;
+      if (!httpsUrl(r.image_url) || !httpsUrl(r.href)) return false;
+      var pg = (r.pages && r.pages.length) ? r.pages : ['all'];
+      if (pg.indexOf('all') < 0 && pg.indexOf(PAGE_TYPE) < 0) return false;
+      if (r.starts_at && Date.parse(r.starts_at) > now) return false;
+      if (r.ends_at && Date.parse(r.ends_at) < now) return false;
+      return true;
+    });
+    var chosen = null;
+    if (fit.length) {
+      var low = Math.min.apply(null, fit.map(function (r) { return r.sort || 0; }));
+      var top = fit.filter(function (r) { return (r.sort || 0) === low; });
+      chosen = top[Math.floor(Math.random() * top.length)];
+    }
+    adChosen[kind] = chosen;
+    return chosen;
+  }
+
+  function adParams(r, kind) { return { ad_id: r.id, ad_slot: kind, page_type: PAGE_TYPE }; }
+
+  function fillAd(el, kind) {
+    var r = pickAd(kind);
+    if (!r) return;
+    var a = doc.createElement('a');
+    a.href = r.href;
+    a.target = '_blank';
+    a.rel = 'sponsored noopener';
+    var img = doc.createElement('img');
+    img.alt = r.alt || 'Advertisement';
+    img.addEventListener('error', function () {
+      adChosen[kind] = null;                       // a broken image goes back to the placeholder
+      el.className = 'ami-ad ami-ad--' + kind;
+      el.innerHTML = '<span>Advertising space</span>';
+    });
+    img.src = r.image_url;
+    a.appendChild(img);
+    a.addEventListener('click', function () { track('ad_click', adParams(r, kind)); });
+    el.className = 'ami-ad ami-ad--filled ami-ad--' + kind;
+    el.textContent = '';
+    el.appendChild(a);
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (es) {
+        es.forEach(function (e) {
+          if (e.isIntersecting && e.intersectionRatio >= 0.5 && !adSeen[r.id]) {
+            adSeen[r.id] = 1;
+            track('ad_view', adParams(r, kind));
+            io.disconnect();
+          }
+        });
+      }, { threshold: 0.5 });
+      io.observe(el);
+    }
+  }
+
+  function loadAds() {
+    function done(rows) {
+      adRows = Array.isArray(rows) ? rows : [];
+      $$('.ami-ad').forEach(function (b) {
+        var m = /ami-ad--(band|mpu|tall)/.exec(b.className);
+        if (m) fillAd(b, m[1]);
+      });
+    }
+    // Read straight from Supabase so the same code works on every page,
+    // including the Deals page, which has no db helper of its own.
+    if (typeof SUPABASE_URL === 'undefined' || typeof SUPABASE_ANON === 'undefined' ||
+        !SUPABASE_URL || /PLACEHOLDER|YOUR_SUPABASE/.test(SUPABASE_URL + SUPABASE_ANON)) { adRows = []; return; }
+    try {
+      fetch(SUPABASE_URL + '/rest/v1/ad_slots?select=id,slot,pages,image_url,href,alt,starts_at,ends_at,active,sort&order=sort.asc', {
+        headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer ' + SUPABASE_ANON }
+      })
+        .then(function (r) { return r.ok ? r.json() : []; })
+        .then(done, function () { done([]); });
+    } catch (e) { done([]); }
+  }
+
   function adSlot(kind) {
     var c = ADS[kind];
     var box = doc.createElement('div');
@@ -230,6 +324,10 @@
     aside.setAttribute('aria-label', 'Advertisement');
     aside.className = 'ami-adwrap-outer';
     aside.appendChild(box);
+    if (adRows !== null) {                         // the table is already read: use it
+      var el = box.querySelector('.ami-ad');
+      if (el) fillAd(el, kind);
+    }
     return aside;
   }
   function track(name, params) { if (typeof window.amiTrack === 'function') window.amiTrack(name, params); }
@@ -243,6 +341,7 @@
     if (strip && strip.parentNode) strip.parentNode.insertBefore(band, strip);
     else doc.body.insertBefore(band, doc.body.firstChild);
   })();
+  loadAds();
 
   /* ═══ LISTING PAGES (home and the 11 section pages) ═══════════════════ */
   function initListing() {
