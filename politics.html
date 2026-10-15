@@ -1058,7 +1058,7 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
 </div>
 <header class="masthead" role="banner">
   <div class="masthead-header-row">
-    <div class="masthead-name" id="siteNameDisplay" data-editable="text" data-cms-type="setting" data-cms-key="site_name" onclick="handleLogoClick()" style="cursor:default" title="">African Market <span>Intelligence</span></div>
+    <div class="masthead-name" id="siteNameDisplay" data-editable="text" data-cms-type="setting" data-cms-key="site_name">African Market <span>Intelligence</span></div>
     <div class="masthead-cta">
       <a href="membership.html" class="btn-subscribe">Membership</a>
       <a href="deals.html" id="navSubscribeBtn" class="btn-subscribe" style="display:none">Deal Tracker</a>
@@ -1160,7 +1160,7 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
       <button class="nw-btn" id="nwBtnDisplay" onclick="handleNewsletterSignup()">Subscribe Free →</button>
     </div>
     <div class="sidebar-widget">
-      <div class="widget-title">Top Stories</div>
+      <div class="widget-title">Latest</div>
       <div id="topStoriesList"></div>
     </div>
     <!-- ═══ SPONSORED AD BANNER ═══════════════════════ -->
@@ -1228,7 +1228,7 @@ body.ami-edit-mode .article-card,.ami-edit-mode .hero-main,
   <div class="paywall-box">
     <div class="paywall-logo">African Market <span>Intelligence</span></div>
     <h2 class="paywall-headline">Subscribe to read this article</h2>
-    <p class="paywall-sub">Join 48,000+ investors and executives across Africa who rely on AMI for premium financial intelligence.</p>
+    <p class="paywall-sub">Subscribe to read AMI&rsquo;s premium reporting on African markets, deals and policy.</p>
     <div class="paywall-plans">
       <div class="plan-card"><div class="plan-name">Digital</div><div class="plan-price">$29</div><div class="plan-period">/ month</div>
         <ul class="plan-features"><li>Unlimited articles</li><li>Morning Brief</li><li>Market data</li><li>AI summaries</li></ul></div>
@@ -1643,13 +1643,6 @@ function applyFilters(preservePage=false) {
 // ════════════════════════════════════════════════════════════
 // ── Admin password gate ──────────────────────────────────────
 let AUTH_TOKEN = null; // set on successful Supabase login
-let logoClickCount = 0, logoClickTimer = null;
-function handleLogoClick() {
-  logoClickCount++;
-  clearTimeout(logoClickTimer);
-  logoClickTimer = setTimeout(()=>{ logoClickCount=0; }, 2000);
-  if(logoClickCount >= 5) { logoClickCount=0; promptAdmin(); }
-}
 function promptAdmin() {
   // show login modal instead of password prompt
   document.getElementById('amiLoginModal').style.display = 'flex';
@@ -2689,5 +2682,6 @@ async function amiDbUpdateArticle(id, fields) {
 }
 })(); // end IIFE
 </script>
+<script src="layout.js"></script>
 </body>
 </html>

@@ -250,6 +250,7 @@ footer.ami-foot .ami-foot__verify:hover{background:#FDF6E3}
       + '<a href="' + P('privacy.html') + '">Privacy</a>'
       + (GA_MEASUREMENT_ID ? ' &middot; <button type="button" class="ami-foot__verify" onclick="amiCookieSettings()">Cookie settings</button>' : '')
       + '</p>'
+      + '<p><a href="https://www.exchangerate-api.com" target="_blank" rel="noopener">Rates by Exchange Rate API</a></p>'
       + '</div>'
       + '</footer>';
   }
@@ -665,11 +666,10 @@ html body .ami-strip[hidden]{display:none !important}
     if (d.upd) {
       const t = new Date(d.upd);
       if (!isNaN(t)) {
-        when = ' · ' + t.toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'UTC' }) + ' UTC';
+        when = t.toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'UTC' }) + ' UTC';
       }
     }
-    const srcHtml = '<a href="https://www.exchangerate-api.com" target="_blank" rel="noopener">ExchangeRate-API</a>' + when;
-    list.insertAdjacentHTML('beforeend', '<span class="ami-strip__src">' + srcHtml + '</span>');
+    if (when) list.insertAdjacentHTML('beforeend', '<span class="ami-strip__src">' + when + '</span>');
     el.hidden = false;
   }
 
