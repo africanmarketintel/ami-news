@@ -4162,43 +4162,6 @@
     window.amiPaywallSuppressed = window.amiIsSubscriber;
 
     // ════════════════════════════════════════════════════════════
-    // METERED PAYWALL — 5 free articles per calendar month
-    // ════════════════════════════════════════════════════════════
-    const AMI_METER_LIMIT = 5;
-
-    function _meterKey() {
-      const d = new Date();
-      return 'ami_reads_' + d.getFullYear() + '_' + (d.getMonth() + 1);
-    }
-
-    function getMonthlyReads() {
-      try { return JSON.parse(localStorage.getItem(_meterKey()) || '[]'); }
-      catch(e) { return []; }
-    }
-
-    function recordArticleRead(articleId) {
-      const reads = getMonthlyReads();
-      if (!reads.includes(String(articleId))) {
-        reads.push(String(articleId));
-        localStorage.setItem(_meterKey(), JSON.stringify(reads));
-      }
-      return reads;
-    }
-
-    // Returns true if this article would exceed the free limit
-    function meterExceeded(articleId) {
-      const reads = getMonthlyReads();
-      if (reads.includes(String(articleId))) return false; // already counted
-      return reads.length >= AMI_METER_LIMIT;
-    }
-
-    function readsRemaining(articleId) {
-      const reads = getMonthlyReads();
-      if (reads.includes(String(articleId))) return AMI_METER_LIMIT - reads.length;
-      return Math.max(0, AMI_METER_LIMIT - reads.length);
-    }
-
-    // ════════════════════════════════════════════════════════════
     // ARTICLE PAGE
     // ════════════════════════════════════════════════════════════
     function toggleDark() {
@@ -4315,10 +4278,8 @@
       </div>
       <div class="af-body" id="articleBody" data-editable="richtext" data-cms-type="article" data-article-field="body" data-article-id="${a.id}">${a.body || '<p>Full article content coming soon.</p>'}</div>`;
 
-        // ── Paywall: locked articles always gate; metered gate after 5 free reads ──
-        const articleId = params.get('id');
-        const isMetered = !a.is_locked && meterExceeded(articleId);
-        const showPaywall = (a.is_locked || isMetered) && !window._amiAdminAuthed && !window.amiIsSubscriber;
+        // ── Paywall: only articles marked as locked are gated. Free articles have no read limit. ──
+        const showPaywall = a.is_locked && !window._amiAdminAuthed && !window.amiIsSubscriber;
 
         if (showPaywall) {
           const body = document.getElementById('articleBody');
@@ -4326,24 +4287,6 @@
 
           const ov = document.getElementById('paywallOverlay');
           const bl = document.getElementById('paywallBlur');
-
-          // Update paywall messaging for metered vs premium-locked
-          if (ov) {
-            const meterLabel = document.getElementById('paywallMeter');
-            if (isMetered) {
-              const h = ov.querySelector('.paywall-headline');
-              const sub = ov.querySelector('.paywall-sub');
-              if (h) h.textContent = "You've read your 5 free articles this month";
-              if (sub) sub.textContent = 'Subscribe for unlimited access to African market intelligence.';
-              if (meterLabel) meterLabel.textContent = '5 / 5 free articles read';
-            } else {
-              // Premium-locked article
-              if (meterLabel) {
-                const reads = getMonthlyReads();
-                meterLabel.textContent = reads.length + ' of 5 free articles used this month';
-              }
-            }
-          }
 
           if (ov) ov.style.display = 'flex';
           if (bl) bl.style.display = 'block';
@@ -4367,32 +4310,24 @@
           } catch (e) { /* fallback to static links in HTML */ }
 
         } else if (!window._amiAdminAuthed && !window.amiIsSubscriber && !window.amiIsFreeSubscriber) {
-          // Free article — gate behind free newsletter subscription
-          const body = document.getElementById('articleBody');
-          if (body) body.classList.add('free-gate-blur');
-          // Show the modal immediately (no delay)
-          const fvOv = document.getElementById('fvOverlay');
-          if (fvOv) fvOv.style.display = 'flex';
-          // Swap skip button to "Return to homepage"
-          const skipBtn = document.getElementById('fvSkipBtn');
-          if (skipBtn) {
-            skipBtn.textContent = '← Return to homepage';
-            skipBtn.onclick = function () { window.location.href = 'index.html'; };
+          // Free article — free to read. The email gate (blur plus pop-up) only
+          // runs when window.AMI_FIRST_VISIT_MODAL is set to true in nav.js.
+          if (window.AMI_FIRST_VISIT_MODAL === true) {
+            const body = document.getElementById('articleBody');
+            if (body) body.classList.add('free-gate-blur');
+            // Show the modal immediately (no delay)
+            const fvOv = document.getElementById('fvOverlay');
+            if (fvOv) fvOv.style.display = 'flex';
+            // Swap skip button to "Return to homepage"
+            const skipBtn = document.getElementById('fvSkipBtn');
+            if (skipBtn) {
+              skipBtn.textContent = '← Return to homepage';
+              skipBtn.onclick = function () { window.location.href = 'index.html'; };
+            }
           }
 
         } else if (!window._amiAdminAuthed && !window.amiIsSubscriber) {
-          // Free article, free subscriber — record read and show remaining count
-          const reads = recordArticleRead(articleId);
-          const remaining = AMI_METER_LIMIT - reads.length;
-          if (remaining > 0 && remaining <= 2) {
-            // Subtle reminder when down to last 1–2 free articles
-            const meterBanner = document.createElement('div');
-            meterBanner.style.cssText = 'font-family:"DM Mono",monospace;font-size:11px;letter-spacing:.08em;text-align:center;padding:10px 16px;background:var(--gold-pale);border-top:1px solid var(--border);color:var(--ink-soft);margin-top:24px';
-            meterBanner.innerHTML = `You have <strong>${remaining} free article${remaining === 1 ? '' : 's'}</strong> remaining this month. <a href="membership.html" style="color:var(--terra);text-decoration:underline">Subscribe for unlimited access →</a>`;
-            const bodyEl = document.getElementById('articleBody');
-            if (bodyEl) bodyEl.after(meterBanner);
-          }
-
+          // Free article, free subscriber
           // ── End-of-article FOMO strip ─────────────────────────────
           const fomo = document.createElement('div');
           fomo.className = 'ami-fomo-strip';
@@ -4489,7 +4424,7 @@
 
     // ── Email gate — show on every visit until subscribed ────────
     (function () {
-      if (!localStorage.getItem('amiVisited') && !localStorage.getItem('ami_subscriber')) {
+      if (window.AMI_FIRST_VISIT_MODAL === true && !localStorage.getItem('amiVisited') && !localStorage.getItem('ami_subscriber')) {
         setTimeout(function () {
           var ov = document.getElementById('fvOverlay');
           if (ov) ov.style.display = 'flex';
@@ -5144,9 +5079,8 @@
   <div id="paywallBlur" class="paywall-blur"></div>
   <div id="paywallOverlay" class="paywall-overlay" role="dialog" aria-modal="true" aria-label="Subscribe to read">
     <div class="paywall-box">
-      <p id="paywallMeter" style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-soft);margin-bottom:10px">5 free articles per month</p>
       <h2 class="paywall-headline">Subscribe to read this article</h2>
-      <p class="paywall-sub">Join 48,000+ investors and executives across Africa who rely on AMI for premium financial intelligence.</p>
+      <p class="paywall-sub">Subscribe to read AMI&rsquo;s premium reporting on African markets, deals and policy.</p>
       <div class="paywall-cta" style="grid-template-columns:1fr">
         <a href="https://buy.stripe.com/9B63co7hU1M69EN5D6aVa0i?prefilled_promo_code=FIRSTMONTH"
           class="btn-stripe">Get unlimited access — $1.99 first month</a>
@@ -5259,6 +5193,7 @@
     else build();
   })();
   </script>
+<script src="layout.js"></script>
 </body>
 
 </html>

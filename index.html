@@ -4017,7 +4017,7 @@
   <header class="masthead" role="banner">
     <div class="masthead-header-row">
     <div class="masthead-name" id="siteNameDisplay" data-editable="text" data-cms-type="setting"
-      data-cms-key="site_name" onclick="handleLogoClick()" style="cursor:default" title="">African Market
+      data-cms-key="site_name">African Market
       <span>Intelligence</span>
     </div>
     <div class="masthead-cta">
@@ -4142,7 +4142,7 @@
         <button class="nw-btn" id="nwBtnDisplay" onclick="handleNewsletterSignup()">Subscribe Free →</button>
       </div>
       <div class="sidebar-widget">
-        <div class="widget-title">Top Stories</div>
+        <div class="widget-title">Latest</div>
         <div id="topStoriesList"></div>
       </div>
       <!-- ═══ SPONSORED AD BANNER ═══════════════════════ -->
@@ -4225,7 +4225,6 @@
   <div class="paywall-overlay" id="paywallOverlay">
     <div class="paywall-box">
       <div class="paywall-logo">African Market <span>Intelligence</span></div>
-      <p style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-soft);margin-bottom:10px">5 free articles per month</p>
       <h2 class="paywall-headline">You're reading AMI for free</h2>
       <p class="paywall-sub">Subscribe for unlimited access to financial news and intelligence across Africa's 54 markets.</p>
       <div class="paywall-plans">
@@ -4891,14 +4890,6 @@
     // ════════════════════════════════════════════════════════════
     // ── Admin password gate ──────────────────────────────────────
     let AUTH_TOKEN = null; // set on successful Supabase login
-    let logoClickCount = 0, logoClickTimer = null;
-
-    function handleLogoClick() {
-      logoClickCount++;
-      clearTimeout(logoClickTimer);
-      logoClickTimer = setTimeout(() => { logoClickCount = 0; }, 2000);
-      if (logoClickCount >= 5) { logoClickCount = 0; promptAdmin(); }
-    }
 
     function promptAdmin() {
       // show login modal instead of password prompt
@@ -6045,7 +6036,7 @@
   <script>
     (function () {
       // Show modal on every visit until email is submitted — skip for paid subscribers and newsletter subscribers
-      if (!localStorage.getItem('amiVisited') && !localStorage.getItem('ami_subscriber')) {
+      if (window.AMI_FIRST_VISIT_MODAL === true && !localStorage.getItem('amiVisited') && !localStorage.getItem('ami_subscriber')) {
         setTimeout(function () { document.getElementById('fvOverlay').style.display = 'flex'; }, 800);
       }
     })();
@@ -6203,6 +6194,7 @@
     });
   </script>
 
+<script src="layout.js"></script>
 </body>
 
 </html>

@@ -58,6 +58,9 @@
 
   // ── Subscriber state (checked before anything renders) ─────
   window.amiIsSubscriber = localStorage.getItem('ami_subscriber') === 'true';
+  // The forced first-visit modal on index.html and article.html only runs when
+  // this is true. Off since the newsletter bar replaced it; set true to restore.
+  window.AMI_FIRST_VISIT_MODAL = false;
 
   // ── Nav HTML ───────────────────────────────────────────────
   // nav-left is intentionally empty; section links live in .section-nav below the masthead.
@@ -244,7 +247,9 @@ footer.ami-foot .ami-foot__verify:hover{background:#FDF6E3}
       + '<p>AMI is operated by African Business Trade Association Limited, a company registered in '
       + 'England and Wales, United Kingdom. Company number 16401954.</p>'
       + '<p>&copy; ' + new Date().getFullYear() + ' African Business Trade Association Limited. '
-      + '<a href="' + P('privacy.html') + '">Privacy</a></p>'
+      + '<a href="' + P('privacy.html') + '">Privacy</a>'
+      + (GA_MEASUREMENT_ID ? ' &middot; <button type="button" class="ami-foot__verify" onclick="amiCookieSettings()">Cookie settings</button>' : '')
+      + '</p>'
       + '</div>'
       + '</footer>';
   }
@@ -384,6 +389,31 @@ footer.ami-foot .ami-foot__verify:hover{background:#FDF6E3}
       st.textContent = MASTHEAD_CSS;
       document.head.appendChild(st);
     }
+    // Wordmark: the colours stay as each page sets them (dark text, gold second
+    // word). On hover or keyboard focus the first words turn green. The second
+    // word stays gold. In dark mode a lighter green is used so it stays legible.
+    if (!document.getElementById('amiLogoCSS')) {
+      const ls = document.createElement('style');
+      ls.id = 'amiLogoCSS';
+      ls.textContent = '.masthead-name{transition:color .15s}'
+        + '.masthead-name:hover,.masthead-name:focus-within{color:#10492A!important}'
+        + '[data-theme="dark"] .masthead-name:hover,[data-theme="dark"] .masthead-name:focus-within{color:#4DBA7F!important}'
+        + '.masthead-name span,.masthead-name:hover span{color:#C9A84C!important}'
+        + '.masthead-name[role="link"]{cursor:pointer}';
+      document.head.appendChild(ls);
+    }
+    // Home and section pages hold the wordmark as plain text. Make it a link to
+    // the home page, unless the page editor has made it editable.
+    const wm = head.querySelector('.masthead-name');
+    if (wm && wm.tagName !== 'A' && !wm.querySelector('a')) {
+      wm.setAttribute('role', 'link');
+      wm.setAttribute('tabindex', '0');
+      const goHome = function () { window.location.href = R + 'index.html'; };
+      wm.addEventListener('click', function () { if (!wm.isContentEditable) goHome(); });
+      wm.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' && !wm.isContentEditable) goHome();
+      });
+    }
     // Subscribe, not Membership. One gold box in the row.
     const sub = head.querySelector('a.btn-subscribe[href="membership.html"]');
     if (sub) sub.textContent = 'Subscribe';
@@ -454,52 +484,438 @@ footer.ami-foot .ami-foot__verify:hover{background:#FDF6E3}
     if (nav) nav.insertAdjacentHTML('afterend', row);
   }
 
-  // ── Ticker ─────────────────────────────────────────────────
-  // The publication builds its own ticker from the markets it has already
-  // loaded. The products never had one, and the agreed header has the same
-  // strip on every product, so nav.js builds it where there is none.
-  const TICKER_CSS = `
-.ami-ticker{background:#0A1A10;color:#C9A84C;font-family:'DM Mono',ui-monospace,monospace;font-size:11px;
-  padding:7px max(24px,calc((100% - 1280px)/2 + 24px));overflow:hidden;white-space:nowrap;letter-spacing:.04em;box-sizing:border-box}
-.ami-ticker span+span::before{content:'\\00a0\\00a0·\\00a0\\00a0';color:#6c7a70}`;
+  // ── Google Analytics (GA4) ─────────────────────────────────
+  // The GA4 Measurement ID (Admin > Data streams in Google Analytics). It is
+  // public by design. Set to '' to switch analytics off: nothing loads, no
+  // cookie notice is shown and no data is sent.
+  const GA_MEASUREMENT_ID = 'G-KJWPP1E5DY';
 
-  // deals.html has a .ticker-bar but none of the rules for it, so it rendered
-  // as 16px Spectral on no ground above the masthead. Same treatment as the
-  // footer: measured, and styled only where the page does not.
-  function fixBareTicker() {
-    const t = document.querySelector('.ticker-bar');
-    if (!t) return;
-    const bg = getComputedStyle(t).backgroundColor;
-    if (bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent') return;
-    if (!document.getElementById('amiTickerFixCSS')) {
+  // Analytics cookies need the visitor's agreement first (UK PECR). Google's
+  // script is therefore not requested at all until "Accept" is pressed, and
+  // the choice is remembered for 180 days. Advertising features are off.
+  // 'opt-in'  : nothing loads until Accept (safest; fewer visitors counted).
+  // 'notice'  : loads at once with a notice and a one-click "Turn off". Relies on
+  //             the 2025 UK analytics exemption; confirm with the lawyer first,
+  //             and visitors in other jurisdictions may still need opt-in.
+  const GA_CONSENT_MODEL = 'notice';
+  const GA_CHOICE_KEY = 'ami_analytics';
+  const GA_CHOICE_DAYS = 180;
+
+  function gaChoice() {
+    try {
+      const v = JSON.parse(localStorage.getItem(GA_CHOICE_KEY) || 'null');
+      if (v && v.until > Date.now() && (v.v === 'granted' || v.v === 'denied')) return v.v;
+    } catch (e) { /* storage unavailable */ }
+    return null;
+  }
+  // In 'opt-in' mode nothing may load until a choice is made. In 'notice' mode
+  // the notice is information with a way to object, so nothing waits for it.
+  function gaNeedsChoice() { return !!GA_MEASUREMENT_ID && GA_CONSENT_MODEL !== 'notice' && gaChoice() === null; }
+
+  function gaLoad() {
+    if (!GA_MEASUREMENT_ID || window.__amiGaLoaded) return;
+    window.__amiGaLoaded = true;
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function () { window.dataLayer.push(arguments); };
+    gtag('consent', 'default', {
+      analytics_storage: 'granted', ad_storage: 'denied',
+      ad_user_data: 'denied', ad_personalization: 'denied'
+    });
+    gtag('js', new Date());
+    const cfg = { allow_google_signals: false, allow_ad_personalization_signals: false };
+    // Dealroom and Mailroom hold member accounts and some links carry tokens in
+    // the query string or after the #. Google gets the page path only there.
+    if (/\/(dealroom|mailroom)\//.test(window.location.pathname)) {
+      cfg.page_location = window.location.origin + window.location.pathname;
+      try {
+        const ref = document.referrer ? new URL(document.referrer) : null;
+        cfg.page_referrer = ref ? ref.origin + ref.pathname : '';
+      } catch (e) { cfg.page_referrer = ''; }
+    }
+    gtag('config', GA_MEASUREMENT_ID, cfg);
+    const s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(GA_MEASUREMENT_ID);
+    document.head.appendChild(s);
+  }
+
+  // Safe to call anywhere: does nothing unless analytics was accepted.
+  window.amiTrack = function (name, params) {
+    if (window.__amiGaLoaded && typeof window.gtag === 'function') window.gtag('event', name, params || {});
+  };
+
+  function gaSetChoice(v) {
+    try {
+      localStorage.setItem(GA_CHOICE_KEY, JSON.stringify({ v: v, until: Date.now() + GA_CHOICE_DAYS * 864e5 }));
+    } catch (e) { /* ignore */ }
+    if (v === 'granted') gaLoad();
+    else {
+      if (window.__amiGaLoaded && typeof window.gtag === 'function') {
+        window.gtag('consent', 'update', { analytics_storage: 'denied' });
+      }
+      // Remove the Google Analytics cookies already set on this site.
+      const host = window.location.hostname;
+      const parts = host.split('.');
+      const doms = ['', host, '.' + host];
+      if (parts.length > 2) doms.push('.' + parts.slice(-2).join('.'));
+      document.cookie.split(';').forEach(function (c) {
+        const name = c.split('=')[0].trim();
+        if (/^_ga/.test(name)) doms.forEach(function (d) {
+          document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/' + (d ? '; domain=' + d : '');
+        });
+      });
+    }
+    const n = document.getElementById('amiCookieNote');
+    if (n) n.remove();
+    document.body.style.paddingBottom = '';
+    document.dispatchEvent(new CustomEvent('ami:consent'));
+  }
+
+  const GA_CSS = `
+.ami-cookie{position:fixed;left:0;right:0;bottom:0;z-index:950;background:#FAF7F0;color:#1A1208;
+  border-top:3px solid #C9A84C;box-shadow:0 -2px 12px rgba(0,0,0,.18);box-sizing:border-box;
+  padding:14px max(16px,calc((100% - 1280px)/2 + 24px));display:flex;gap:16px;align-items:center;flex-wrap:wrap;
+  font:15px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif}
+.ami-cookie p{margin:0;flex:1 1 360px;max-width:75ch}
+.ami-cookie a{color:#1E6B3C}
+.ami-cookie button{min-height:44px;padding:0 22px;border-radius:2px;cursor:pointer;
+  font:500 12px 'DM Mono',ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;border:2px solid #0A1A10}
+.ami-cookie .ok{background:#0A1A10;color:#FAF7F0}
+.ami-cookie .no{background:#fff;color:#0A1A10}`;
+
+  function showCookieNote() {
+    if (!GA_MEASUREMENT_ID || gaChoice() !== null || document.getElementById('amiCookieNote')) return;
+    if (!document.getElementById('amiCookieCSS')) {
       const st = document.createElement('style');
-      st.id = 'amiTickerFixCSS';
-      st.textContent = '.ticker-bar.ami-ticker--bare{background:#0A1A10;color:#C9A84C;'
-        + "font-family:'DM Mono',ui-monospace,monospace;font-size:11px;letter-spacing:.04em;"
-        + 'padding:7px max(24px,calc((100% - 1280px)/2 + 24px));overflow:hidden;white-space:nowrap;box-sizing:border-box}';
+      st.id = 'amiCookieCSS';
+      st.textContent = GA_CSS;
       document.head.appendChild(st);
     }
-    t.classList.add('ami-ticker--bare');
+    const n = document.createElement('div');
+    n.id = 'amiCookieNote';
+    n.className = 'ami-cookie';
+    n.setAttribute('role', 'region');
+    n.setAttribute('aria-label', 'Analytics cookies');
+    const notice = GA_CONSENT_MODEL === 'notice';
+    n.innerHTML = '<p>' + (notice
+        ? 'AMI uses analytics to help improve the site. '
+        : 'AMI would like to use analytics cookies to help improve the site. ')
+      + '<a href="' + R + 'privacy.html#analytics">Privacy</a></p>'
+      + '<button type="button" class="ok">' + (notice ? 'OK' : 'Accept') + '</button>'
+      + '<button type="button" class="no">' + (notice ? 'Turn off' : 'Decline') + '</button>';
+    n.querySelector('.ok').addEventListener('click', function () { gaSetChoice('granted'); });
+    n.querySelector('.no').addEventListener('click', function () { gaSetChoice('denied'); });
+    document.body.appendChild(n);
+    document.body.style.paddingBottom = n.offsetHeight + 'px';
+  }
+
+  window.amiCookieSettings = function () {
+    try { localStorage.removeItem(GA_CHOICE_KEY); } catch (e) { /* ignore */ }
+    showCookieNote();
+  };
+
+  function initAnalytics() {
+    if (!GA_MEASUREMENT_ID) return;
+    const c = gaChoice();
+    if (c === 'denied') return;
+    if (c === 'granted') { gaLoad(); return; }
+    if (GA_CONSENT_MODEL === 'notice') gaLoad();
+    showCookieNote();
+  }
+
+  // ── Market strip (one strip, every page) ───────────────────
+  // Every page carries the same strip: eight currencies against the US dollar
+  // from open.er-api.com, with the source and update time shown. Pages used to
+  // build their own (index markets from the database, then FX after 1.2 s;
+  // article and deals never filled in). A hidden #tickerInner is kept so those
+  // page scripts still find their element and write to nothing visible.
+  // The free ExchangeRate-API tier requires attribution, which the label gives.
+  const STRIP_CCY = ['UGX', 'ETB', 'NGN', 'ZAR', 'KES', 'EGP', 'GHS', 'TZS'];
+  const STRIP_KEY = 'ami_fx_v1';
+  const STRIP_FRESH = 6 * 36e5;
+  const STRIP_STALE = 48 * 36e5;
+
+  const STRIP_CSS = `
+html body .ami-strip{display:flex !important;align-items:center;gap:0;height:32px !important;box-sizing:border-box !important;
+  background:#0A1A10 !important;color:#C9A84C !important;border:0 !important;margin:0 !important;
+  padding:0 max(24px,calc((100% - 1280px)/2 + 24px)) !important;overflow:hidden !important;white-space:nowrap !important;
+  font:500 11.5px/1 'DM Mono',ui-monospace,monospace !important;letter-spacing:.03em !important}
+html body .ami-strip[hidden]{display:none !important}
+.ami-strip__list{display:flex;align-items:center;gap:22px;overflow-x:auto;scrollbar-width:none;flex:1 1 auto;min-width:0;height:100%}
+.ami-strip__list::-webkit-scrollbar{display:none}
+.ami-strip__i b{font-weight:600;color:#E3C677;margin-right:6px}
+.ami-strip__lead{flex:0 0 auto;color:#9aa89e;font-size:10px}
+.ami-strip__i{flex:0 0 auto}
+.ami-strip__src{flex:0 0 auto;margin-left:auto;color:#9aa89e;font-size:10px}
+.ami-strip__src a{color:#9aa89e;text-decoration:underline}
+@media (max-width:900px){html body .ami-strip{padding:0 16px !important}}`;
+
+  function stripFmt(n) {
+    return Number(n).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function stripRender(el, d) {
+    const list = el.querySelector('.ami-strip__list');
+    const items = STRIP_CCY.filter(function (c) { return d.rates && d.rates[c] > 0; });
+    if (!items.length) { el.hidden = true; return; }
+    list.innerHTML = '<span class="ami-strip__lead">Per US$1</span>' + items.map(function (c) {
+      return '<span class="ami-strip__i"><b>' + c + '</b>' + stripFmt(d.rates[c]) + '</span>';
+    }).join('');
+    let when = '';
+    if (d.upd) {
+      const t = new Date(d.upd);
+      if (!isNaN(t)) {
+        when = ' · ' + t.toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'UTC' }) + ' UTC';
+      }
+    }
+    const srcHtml = '<a href="https://www.exchangerate-api.com" target="_blank" rel="noopener">ExchangeRate-API</a>' + when;
+    list.insertAdjacentHTML('beforeend', '<span class="ami-strip__src">' + srcHtml + '</span>');
+    el.hidden = false;
+  }
+
+  function stripMount() {
+    if (!document.getElementById('amiStripCSS')) {
+      const st = document.createElement('style');
+      st.id = 'amiStripCSS';
+      st.textContent = STRIP_CSS;
+      document.head.appendChild(st);
+    }
+    const found = [].slice.call(document.querySelectorAll('.ticker-bar'));
+    let el = found.shift() || document.querySelector('.ami-ticker');
+    found.forEach(function (x) { x.parentNode && x.parentNode.removeChild(x); });
+    const created = !el;
+    if (created) {
+      el = document.createElement('div');
+      if (slot) slot.appendChild(el);
+      else document.body.insertAdjacentElement('afterbegin', el);
+    }
+    el.className = (created ? 'ami-ticker ' : 'ticker-bar ') + 'ami-strip';
+    el.removeAttribute('style');
+    el.setAttribute('role', 'region');
+    el.setAttribute('aria-label', 'Exchange rates against the US dollar');
+    el.innerHTML = '<span id="tickerInner" hidden aria-hidden="true"></span>'
+      + '<div class="ami-strip__list"></div>';
+    return el;
+  }
+
+  function stripLoad(el) {
+    let cached = null;
+    try { cached = JSON.parse(localStorage.getItem(STRIP_KEY) || 'null'); } catch (e) { /* ignore */ }
+    const age = cached ? Date.now() - cached.t : Infinity;
+    if (cached && age < STRIP_FRESH) { stripRender(el, cached); return; }
+    if (cached && age < STRIP_STALE) stripRender(el, cached);
+    else el.hidden = true;
+    fetch('https://open.er-api.com/v6/latest/USD', { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(new Error('HTTP ' + r.status)); })
+      .then(function (j) {
+        if (!j || j.result === 'error' || !j.rates) throw new Error('no rates');
+        const keep = { t: Date.now(), upd: j.time_last_update_utc || '', rates: {} };
+        STRIP_CCY.forEach(function (c) { if (j.rates[c] > 0) keep.rates[c] = j.rates[c]; });
+        try { localStorage.setItem(STRIP_KEY, JSON.stringify(keep)); } catch (e) { /* ignore */ }
+        stripRender(el, keep);
+      })
+      .catch(function () { /* keeps cached figures if under 48 hours old, otherwise stays hidden */ });
   }
 
   function ensureTicker() {
-    fixBareTicker();
-    if (document.querySelector('.ticker-bar') || document.querySelector('.ami-ticker')) return;
-    const st = document.createElement('style');
-    st.textContent = TICKER_CSS;
-    document.head.appendChild(st);
-    const bar = document.createElement('div');
-    bar.className = 'ami-ticker';
-    bar.setAttribute('aria-label', 'Market summary');
-    bar.textContent = ' ';
-    if (slot) slot.appendChild(bar);
-    else document.body.insertAdjacentElement('afterbegin', bar);
-    sb('markets', 'select=id,value,change,direction&limit=8').then(function (rows) {
-      if (!rows || !rows.length) { bar.remove(); return; }
-      bar.innerHTML = rows.map(function (m) {
-        return '<span>' + String(m.id).toUpperCase() + ' ' + m.value + '</span>';
-      }).join('');
-    }).catch(function () { bar.remove(); });
+    stripLoad(stripMount());
+  }
+
+  // ── Newsletter bar ─────────────────────────────────────────
+  // A slim, non-modal bar at the foot of the screen on editorial pages only.
+  // Shown on the first of: 50% of the page scrolled, or 20 seconds with the
+  // tab in view. On a return visit (a new browser session) it shows after
+  // 5 seconds. Never shown to anyone who has signed up, anyone who closed it
+  // in the last 30 days, or when the sign-up could not be saved. Closing it
+  // does not set any subscriber flag, so paywall behaviour is untouched.
+  const BAR_PAGES = /^(index|economy|markets|energy|politics|technology|opinion|east-africa|west-africa|north-africa|southern-africa|central-africa|article)$/;
+  const BAR_SECONDS_FIRST = 20;
+  const BAR_SECONDS_RETURN = 5;
+  const BAR_SCROLL_SHARE = 0.5;
+  const BAR_SNOOZE_DAYS = 30;
+  const BAR_REQUIRE_CONSENT = true;
+  const BAR_UNTIL_KEY = 'ami_bar_until';
+  const BAR_JOINED_KEY = 'ami_newsletter_joined';
+
+  const BAR_CSS = `
+.ami-bar{position:fixed;left:0;right:0;bottom:0;z-index:900;background:#0A1A10;color:#FAF7F0;
+  border-top:3px solid #C9A84C;box-sizing:border-box;padding:12px max(16px,calc((100% - 1280px)/2 + 24px));
+  font:15px/1.45 -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif}
+.ami-bar[hidden]{display:none}
+.ami-bar__row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.ami-bar__msg{flex:1 1 240px;margin:0;max-width:60ch}
+.ami-bar__msg b{font-family:'Playfair Display',Georgia,serif;font-size:17px}
+.ami-bar form{display:flex;gap:10px;align-items:center;flex-wrap:wrap;flex:1 1 420px;margin:0}
+.ami-bar input[type=email]{flex:1 1 220px;min-width:0;height:44px;border:2px solid #C9A84C;border-radius:2px;padding:0 12px;
+  font-size:16px;background:#fff;color:#1A1208}
+.ami-bar button[type=submit]{height:44px;padding:0 22px;border:0;border-radius:2px;background:#C9A84C;color:#0A1A10;cursor:pointer;
+  font:600 12px 'DM Mono',ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase}
+.ami-bar button[disabled]{opacity:.6;cursor:default}
+.ami-bar__consent{flex:1 0 100%;display:flex;gap:8px;align-items:flex-start;font-size:13px;color:#d9d3c3;margin:0}
+.ami-bar__consent input{width:20px;height:20px;margin:1px 0 0;accent-color:#C9A84C;flex:0 0 auto}
+.ami-bar__consent a,.ami-bar a{color:#E3C677}
+.ami-bar__close{background:none;border:0;color:#FAF7F0;cursor:pointer;min-width:44px;min-height:44px;padding:0 8px;
+  font-size:15px;text-decoration:underline}
+.ami-bar__status{flex:1 0 100%;margin:0;font-size:14px;min-height:0}
+.ami-bar__status:empty{display:none}
+.ami-bar__status.err{color:#ffb4a8}
+.ami-bar input:focus-visible,.ami-bar button:focus-visible,.ami-bar a:focus-visible{outline:3px solid #fff;outline-offset:2px}
+@media (max-width:620px){.ami-bar{padding:10px 16px}.ami-bar__msg b{font-size:16px}}`;
+
+  function barFile() {
+    const f = (window.location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
+    return f || 'index';
+  }
+
+  function barSignedUp() {
+    try {
+      return !!(localStorage.getItem('ami_subscriber') || localStorage.getItem('amiVisited')
+        || localStorage.getItem('ami_email') || localStorage.getItem(BAR_JOINED_KEY));
+    } catch (e) { return true; }
+  }
+
+  function barSnoozed() {
+    try { return Number(localStorage.getItem(BAR_UNTIL_KEY) || 0) > Date.now(); } catch (e) { return true; }
+  }
+
+  function barIsReturn() {
+    // A visit is a browser session. The first page of a session adds one.
+    try {
+      let n = Number(localStorage.getItem('ami_visits') || 0);
+      if (!sessionStorage.getItem('ami_visit_counted')) {
+        n += 1;
+        localStorage.setItem('ami_visits', String(n));
+        sessionStorage.setItem('ami_visit_counted', '1');
+      }
+      return n >= 2;
+    } catch (e) { return false; }
+  }
+
+  function initBar() {
+    if (!BAR_PAGES.test(barFile())) return;
+    if (!sbReady() || window.amiIsSubscriber || barSignedUp() || barSnoozed()) return;
+    const returning = barIsReturn();
+    const needSeconds = returning ? BAR_SECONDS_RETURN : BAR_SECONDS_FIRST;
+    let seen = 0;
+    let shown = false;
+    let bar = null;
+
+    function trySlow() {
+      if (shown || gaNeedsChoice()) return false;
+      if (document.getElementById('fvOverlay') && document.getElementById('fvOverlay').style.display === 'flex') return false;
+      return true;
+    }
+
+    function show() {
+      if (shown || !trySlow()) return;
+      shown = true;
+      stop();
+      const st = document.createElement('style');
+      st.textContent = BAR_CSS;
+      document.head.appendChild(st);
+      bar = document.createElement('div');
+      bar.className = 'ami-bar';
+      bar.setAttribute('role', 'region');
+      bar.setAttribute('aria-label', 'Newsletter sign-up');
+      bar.innerHTML = '<div class="ami-bar__row">'
+        + '<p class="ami-bar__msg"><b>The AMI newsletter.</b> African markets, trade and economic news by email.</p>'
+        + '<form novalidate>'
+        + '<label for="amiBarEmail" class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Email address</label>'
+        + '<input id="amiBarEmail" type="email" name="email" autocomplete="email" placeholder="Email address" required>'
+        + '<button type="submit">Subscribe</button>'
+        + (BAR_REQUIRE_CONSENT
+          ? '<label class="ami-bar__consent"><input type="checkbox" id="amiBarConsent"><span>I agree to receive the AMI newsletter by email. '
+            + 'See the <a href="' + R + 'privacy.html">privacy policy</a>. You can unsubscribe at any time.</span></label>'
+          : '')
+        + '<p class="ami-bar__status" role="status" aria-live="polite"></p>'
+        + '</form>'
+        + '<button type="button" class="ami-bar__close" aria-label="Close newsletter sign-up">Close</button>'
+        + '</div>';
+      document.body.appendChild(bar);
+      const note = document.getElementById('amiCookieNote');
+      if (note) bar.style.bottom = note.offsetHeight + 'px';
+      document.body.style.paddingBottom = (bar.offsetHeight + (note ? note.offsetHeight : 0)) + 'px';
+      window.amiTrack('newsletter_bar_shown', { trigger: returning ? 'return_visit' : 'first_visit' });
+
+      const form = bar.querySelector('form');
+      const status = bar.querySelector('.ami-bar__status');
+      bar.querySelector('.ami-bar__close').addEventListener('click', function () { close(true); });
+      bar.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(true); });
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const email = form.email.value.trim();
+        status.className = 'ami-bar__status';
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+          status.className = 'ami-bar__status err';
+          status.textContent = 'Enter a valid email address.';
+          form.email.focus();
+          return;
+        }
+        if (BAR_REQUIRE_CONSENT && !bar.querySelector('#amiBarConsent').checked) {
+          status.className = 'ami-bar__status err';
+          status.textContent = 'Tick the box to agree to receive the newsletter.';
+          return;
+        }
+        const btn = form.querySelector('button[type=submit]');
+        btn.disabled = true;
+        status.textContent = 'Subscribing…';
+        const token = (typeof AUTH_TOKEN === 'string' && AUTH_TOKEN) ? AUTH_TOKEN : SUPABASE_ANON;
+        fetch(SUPABASE_URL + '/rest/v1/subscribers', {
+          method: 'POST',
+          headers: {
+            apikey: SUPABASE_ANON, Authorization: 'Bearer ' + token,
+            'Content-Type': 'application/json', Prefer: 'return=minimal'
+          },
+          body: JSON.stringify({ email: email, source: 'slim_bar', subscribed_at: new Date().toISOString() })
+        }).then(function (r) {
+          return r.ok ? '' : r.text();
+        }).then(function (err) {
+          if (err && err.indexOf('23505') === -1) throw new Error(err);
+          try { localStorage.setItem(BAR_JOINED_KEY, '1'); } catch (x) { /* ignore */ }
+          window.amiTrack('newsletter_signup', { method: 'slim_bar' });
+          status.textContent = err ? 'This address is already subscribed.' : 'Thank you. You are subscribed.';
+          form.querySelectorAll('input,button').forEach(function (x) { x.disabled = true; });
+          setTimeout(function () { close(false); }, 4000);
+        }).catch(function () {
+          btn.disabled = false;
+          status.className = 'ami-bar__status err';
+          status.textContent = 'The sign-up could not be saved. Try again in a moment.';
+        });
+      });
+    }
+
+    function close(remember) {
+      if (!bar) return;
+      if (remember) {
+        try { localStorage.setItem(BAR_UNTIL_KEY, String(Date.now() + BAR_SNOOZE_DAYS * 864e5)); } catch (e) { /* ignore */ }
+        window.amiTrack('newsletter_bar_closed');
+      }
+      bar.remove();
+      bar = null;
+      document.body.style.paddingBottom = '';
+    }
+
+    // Time counts only while the tab is in view.
+    const timer = setInterval(function () {
+      if (document.visibilityState === 'visible') seen += 1;
+      if (seen >= needSeconds) show();
+    }, 1000);
+
+    function onScroll() {
+      const h = document.documentElement.scrollHeight;
+      if (h < window.innerHeight * 1.5) return; // short page: scroll share means nothing
+      if ((window.scrollY + window.innerHeight) / h >= BAR_SCROLL_SHARE) show();
+    }
+    function stop() {
+      clearInterval(timer);
+      window.removeEventListener('scroll', onScroll);
+    }
+    if (!returning) window.addEventListener('scroll', onScroll, { passive: true });
+    // If the cookie choice is made after a trigger already passed, show then.
+    document.addEventListener('ami:consent', function () {
+      if (bar) { bar.style.bottom = '0'; document.body.style.paddingBottom = bar.offsetHeight + 'px'; }
+      else if (!shown && seen >= needSeconds) show();
+    });
   }
 
   // ── Supabase ───────────────────────────────────────────────
@@ -972,6 +1388,8 @@ footer.ami-foot .ami-foot__verify:hover{background:#FDF6E3}
     injectFooter();
     injectVerifyModal();
     applySubscriberUI();
+    initAnalytics();
+    initBar();
   }
 
 })();
