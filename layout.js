@@ -214,10 +214,12 @@
   function tag(a) { return a.is_locked ? '<span class="lay-tag">Premium</span>' : ''; }
   function kick(a) { return a.section ? '<p class="lay-kick">' + a.section + '</p>' : ''; }
   function link(a, txt) { return '<a class="lay-a" href="' + url(a) + '">' + (txt || a.headline) + '</a>'; }
-  function img(a, h) {
+  // The main picture at the top of the page (the largest thing on screen) loads straight away
+  // with high priority. Pictures further down wait until the reader scrolls near them.
+  function img(a, h, first) {
     var ph = '<div class="lay-img-ph" style="height:' + h + 'px"></div>';
     var inner = a.hero_image
-      ? '<img class="lay-img" src="' + a.hero_image + '" alt="" loading="lazy" style="height:' + h + 'px" onerror="this.outerHTML=\'<div class=lay-img-ph style=height:' + h + 'px></div>\'">'
+      ? '<img class="lay-img" src="' + a.hero_image + '" alt="" ' + (first ? 'loading="eager" fetchpriority="high"' : 'loading="lazy" decoding="async"') + ' style="height:' + h + 'px" onerror="this.outerHTML=\'<div class=lay-img-ph style=height:' + h + 'px></div>\'">'
       : ph;
     return '<a class="lay-imglink" href="' + url(a) + '" tabindex="-1" aria-hidden="true">' + inner + '</a>';
   }
@@ -400,7 +402,7 @@
         window.__amiLead = lead;
         grid.innerHTML =
           '<div class="lay-sechead"><h1>' + filterActive + '</h1></div>' +
-          '<div class="lay-first">' + img(lead, 220) + kick(lead) +
+          '<div class="lay-first">' + img(lead, 220, true) + kick(lead) +
           '<h2>' + link(lead) + tag(lead) + '</h2><p class="lay-sf">' + (lead.standfirst || '') + '</p><p class="lay-meta">' + metaLine(lead) + '</p></div>';
         placeNewsletter(true);
         return;
@@ -428,7 +430,7 @@
         '<p class="lay-sf">' + (hero.standfirst || '') + '</p><p class="lay-meta">' + metaLine(hero) + '</p>' +
         (subs.length ? '<div class="lay-sub">' + subs.map(function (a) { return '<h3>' + link(a) + '</h3>'; }).join('') + '</div>' : '');
       var colB = s1
-        ? img(s1, 300) + '<div class="lay-cap">' + kick(s1) + '<h2>' + link(s1) + tag(s1) + '</h2><p class="lay-meta">' + metaLine(s1) + '</p></div>'
+        ? img(s1, 300, true) + '<div class="lay-cap">' + kick(s1) + '<h2>' + link(s1) + tag(s1) + '</h2><p class="lay-meta">' + metaLine(s1) + '</p></div>'
         : '';
       var colC = '<h3 class="lay-rail__h">More from AMI</h3>' + rail.map(function (a) {
         return '<div class="lay-it">' + kick(a) + '<h2>' + link(a) + tag(a) + '</h2><p class="lay-sf">' + (a.standfirst || '') + '</p><p class="lay-meta">' + metaLine(a) + '</p></div>';

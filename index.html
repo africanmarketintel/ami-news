@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>African Market Intelligence</title>
+  <meta name="description" content="What Africa's deal makers read first. Financial news and business intelligence across Africa's 54 markets.">
 
   <!-- Open Graph -->
   <meta property="og:type"        content="website">
@@ -489,7 +490,7 @@
     .hero-headline {
       font-family: 'Source Serif 4', Georgia, serif;
       font-size: clamp(20px, 3vw, 34px);
-      font-weight: 700;
+      font-weight: 600;
       line-height: 1.2;
       color: var(--text);
       margin-bottom: 14px;
@@ -692,7 +693,7 @@
     .sri-title {
       font-family: 'Source Serif 4', Georgia, serif;
       font-size: 19px;
-      font-weight: 700;
+      font-weight: 600;
       color: var(--terra, #B85C38);
       line-height: 1.3;
       margin-bottom: 6px
@@ -1049,7 +1050,7 @@
     .section-title {
       font-family: 'Source Serif 4', Georgia, serif;
       font-size: 20px;
-      font-weight: 700;
+      font-weight: 600;
       white-space: nowrap
     }
 
@@ -1197,7 +1198,7 @@
     .paywall-headline {
       font-family: 'Source Serif 4', Georgia, serif;
       font-size: 24px;
-      font-weight: 700;
+      font-weight: 600;
       margin-bottom: 10px;
       line-height: 1.3
     }
@@ -4314,9 +4315,28 @@
         return true;
       },
       async uploadImage(file, path) {
+        // Large photos are shrunk before upload: no wider than 1600 pixels, saved as JPEG.
+        // Pictures were being uploaded at full camera size, which made the pages slow.
+        // GIF, SVG and files already under 250 KB are left alone.
+        try {
+          if (file && /^image\/(jpeg|png|webp)$/.test(file.type) && file.size > 250 * 1024 && window.createImageBitmap) {
+            const bmp = await createImageBitmap(file);
+            const scale = Math.min(1, 1600 / bmp.width);
+            const cv = document.createElement('canvas');
+            cv.width = Math.round(bmp.width * scale); cv.height = Math.round(bmp.height * scale);
+            const cx = cv.getContext('2d');
+            cx.fillStyle = '#fff'; cx.fillRect(0, 0, cv.width, cv.height);   // flatten transparent PNGs onto white
+            cx.drawImage(bmp, 0, 0, cv.width, cv.height);
+            const blob = await new Promise(function (res) { cv.toBlob(res, 'image/jpeg', 0.82); });
+            if (blob && blob.size < file.size) {
+              file = blob;
+              path = path.replace(/\.[A-Za-z0-9]+$/, '') + '.jpg';
+            }
+          }
+        } catch (e) { /* if resizing fails, upload the original */ }
         const r = await fetch(`${SUPABASE_URL}/storage/v1/object/ami-images/${path}`, {
           method: 'POST',
-          headers: { apikey: SUPABASE_ANON, Authorization:'Bearer '+(AUTH_TOKEN||SUPABASE_ANON), 'Content-Type': file.type },
+          headers: { apikey: SUPABASE_ANON, Authorization:'Bearer '+(AUTH_TOKEN||SUPABASE_ANON), 'Content-Type': file.type, 'cache-control': 'max-age=31536000' },
           body: file
         });
         if (!r.ok) throw new Error(await r.text());
@@ -4367,7 +4387,7 @@
 
       try {
         const [articles, markets, settings, breaking] = await Promise.all([
-          db.query('articles', { select: '*', eq: { is_published: 'true' }, order: 'created_at.desc' }),
+          db.query('articles', { select: 'id,headline,standfirst,section,placement,hero_image,published_date,read_time,is_locked,is_published,is_most_read,author_name,tags,created_at', eq: { is_published: 'true' }, order: 'created_at.desc' }).catch(function () { return db.query('articles', { select: '*', eq: { is_published: 'true' }, order: 'created_at.desc' }); }),
           db.query('markets', { select: '*' }),
           db.query('site_settings', { select: '*' }),
           db.query('breaking_news', { select: '*', eq: { is_active: 'true' }, limit: '1' })
@@ -5411,7 +5431,7 @@
     function showConfigBanner() {
       document.getElementById('heroGrid').innerHTML = `
     <div style="grid-column:1/-1;background:var(--card-bg);padding:48px;text-align:center;border:2px dashed var(--gold)">
-      <div style="font-family:'Source Serif 4', Georgia, serif;font-size:28px;font-weight:700;margin-bottom:12px;color:var(--gold)">⚙ Configure Supabase</div>
+      <div style="font-family:'Source Serif 4', Georgia, serif;font-size:28px;font-weight:600;margin-bottom:12px;color:var(--gold)">⚙ Configure Supabase</div>
       <p style="font-size:15px;color:var(--text-soft);max-width:500px;margin:0 auto 20px;line-height:1.7">Open <code style="background:var(--divider);padding:2px 8px;border-radius:2px">config.js</code> and replace <code style="background:var(--divider);padding:2px 8px;border-radius:2px">YOUR_SUPABASE_URL</code> and <code style="background:var(--divider);padding:2px 8px;border-radius:2px">YOUR_SUPABASE_ANON_KEY</code> with your credentials from Supabase → Project Settings → API.</p>
       <div style="font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;font-size:11px;color:var(--text-soft)">See the included <strong>supabase-setup.sql</strong> file for full setup instructions.</div>
     </div>`;
