@@ -787,6 +787,7 @@ html body .ami-strip[hidden]{display:none !important}
 @media (max-width:620px){.ami-bar{padding:10px 16px}.ami-bar__msg b{font-size:16px}}`;
 
   function barFile() {
+    if (window.AMI_ARTICLE_ID) return 'article';
     const f = (window.location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '');
     return f || 'index';
   }

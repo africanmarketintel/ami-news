@@ -579,7 +579,7 @@
       var paras = [].slice.call(body.children).filter(function (n) { return n.tagName === 'P'; });
       if (paras.length < 4) return;                 // too short to carry a card
       if (typeof db === 'undefined' || !db.query) return;
-      var id = new URLSearchParams(location.search).get('id');
+      var id = window.AMI_ARTICLE_ID || new URLSearchParams(location.search).get('id');
       var kEl = $('.af-kicker', full);
       var section = kEl ? kEl.childNodes[0].textContent.trim() : '';
       body.setAttribute('data-ami-related-pending', '1');

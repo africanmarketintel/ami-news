@@ -2,6 +2,38 @@
 <html lang="en" data-theme="light">
 
 <head>
+<script>window.AMI_ARTICLE_ID = window.AMI_ARTICLE_ID || new URLSearchParams(window.location.search).get('id');</script>
+<script>
+// Headline address for this article. /articles/slugs.json is written by the workflow
+// (scripts/generate-og-pages.js) and maps article id -> slug.
+(function () {
+  var slug = null;
+  window.amiShareUrl = function () {
+    var id = window.AMI_ARTICLE_ID;
+    if (!id) return window.location.href;
+    return window.location.origin + (slug ? '/' + slug : '/articles/' + encodeURIComponent(id) + '.html');
+  };
+  window.amiSlug = function () { return slug; };
+  function go() {
+    var id = window.AMI_ARTICLE_ID;
+    if (!id || !window.fetch) return;
+    fetch('/articles/slugs.json', { credentials: 'same-origin' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (map) {
+        if (!map || !map[id]) return;
+        slug = map[id];
+        // Show the headline address in the address bar. The page sits at the site root,
+        // so relative links keep working. Reloading serves the pre-built page for that address.
+        if (/\/article\.html$/.test(window.location.pathname) && window.history && history.replaceState) {
+          try { history.replaceState(null, '', '/' + slug + window.location.hash); } catch (e) {}
+        }
+        document.dispatchEvent(new Event('ami:slug'));
+      })
+      .catch(function () {});
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go); else go();
+})();
+</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <base href="/">
@@ -4249,8 +4281,7 @@
     function searchArticles(q) { if (q) window.location.href = 'index.html?q=' + encodeURIComponent(q); }
 
     async function loadArticle() {
-      const params = new URLSearchParams(window.location.search);
-      const id = params.get('id');
+      const id = window.AMI_ARTICLE_ID;
       if (!id) { document.getElementById('articleFull').innerHTML = '<p style="color:var(--text-soft);padding:24px;font-family:Inter,-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif">No article ID provided.</p>'; return; }
       if (SUPABASE_URL === 'YOUR_SUPABASE_URL') { document.getElementById('articleFull').innerHTML = '<p style="color:var(--text-soft);padding:24px;font-family:Inter,-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif">Configure Supabase credentials to view articles.</p>'; return; }
       try {
@@ -4382,11 +4413,7 @@
     // ── Share modal ──────────────────────────────────────────────
     function openShareModal() {
       // Use the static /articles/<id>.html URL so shared links carry OG preview tags
-      const params = new URLSearchParams(window.location.search);
-      const articleId = params.get('id');
-      const url = articleId
-        ? window.location.origin + '/articles/' + articleId + '.html'
-        : window.location.href;
+      const url = window.amiShareUrl ? window.amiShareUrl() : window.location.href;
       const titleEl = document.getElementById('articleHeadline');
       const title = titleEl ? titleEl.textContent.trim() : document.title;
       document.getElementById('shareUrlInput').value = url;
@@ -5110,7 +5137,7 @@
       var wrap = document.getElementById('moreFrom');
       if (!grid || !wrap) return;
       if (typeof SUPABASE_URL !== 'string' || SUPABASE_URL.indexOf('http') !== 0) return;
-      var here = new URLSearchParams(window.location.search).get('id');
+      var here = window.AMI_ARTICLE_ID;
       var url = SUPABASE_URL + '/rest/v1/articles'
         + '?select=id,headline,section,hero_image'
         + '&is_published=eq.true&order=created_at.desc&limit=9';
@@ -5164,13 +5191,11 @@
     function build() {
       var rail = document.getElementById('shareRail');
       if (!rail) return;
-      // Share the pre-built /articles/<id>.html page: it carries the headline,
-      // standfirst and image that WhatsApp, LinkedIn, Facebook, Telegram and X
-      // read for the link preview. The plain article.html?id= address does not.
-      var shareId = new URLSearchParams(window.location.search).get('id');
-      var shareHref = shareId
-        ? window.location.origin + '/articles/' + encodeURIComponent(shareId) + '.html'
-        : window.location.href;
+      // Share the headline address (for example /south-africas-competition-regulator...).
+      // The workflow builds one small page per article with the headline, standfirst and
+      // image written into the HTML, which is what WhatsApp, LinkedIn, Facebook, Telegram
+      // and X read for the link preview. Until that page exists, fall back to /articles/<id>.html.
+      var shareHref = window.amiShareUrl ? window.amiShareUrl() : window.location.href;
       var u = encodeURIComponent(shareHref);
       var t = encodeURIComponent(document.title.replace(/\s*\|.*$/, ''));
       var html = '<span class="share-rail__label">Share</span>';
@@ -5185,17 +5210,19 @@
         + ' aria-label="Copy link to this article" title="Copy link">'
         + '<i class="fa-solid fa-link" aria-hidden="true"></i></button>';
       rail.innerHTML = html;
-      // The headline arrives after the page loads, so refresh the share text when the title changes.
-      var titleEl = document.querySelector('title');
-      if (titleEl && window.MutationObserver) {
-        new MutationObserver(function () {
-          var t2 = encodeURIComponent(document.title.replace(/\s*\|.*$/, ''));
-          var links = rail.querySelectorAll('a.share-rail__btn');
-          NETS.forEach(function (n, i) {
-            if (links[i]) links[i].href = n.url.split('{u}').join(u).split('{t}').join(t2);
-          });
-        }).observe(titleEl, { childList: true });
+      // The headline and the address arrive after the page loads, so refresh the links then.
+      function refreshLinks() {
+        shareHref = window.amiShareUrl ? window.amiShareUrl() : shareHref;
+        u = encodeURIComponent(shareHref);
+        t = encodeURIComponent(document.title.replace(/\s*\|.*$/, ''));
+        var links = rail.querySelectorAll('a.share-rail__btn');
+        NETS.forEach(function (n, i) {
+          if (links[i]) links[i].href = n.url.split('{u}').join(u).split('{t}').join(t);
+        });
       }
+      var titleEl = document.querySelector('title');
+      if (titleEl && window.MutationObserver) new MutationObserver(refreshLinks).observe(titleEl, { childList: true });
+      document.addEventListener('ami:slug', refreshLinks);
       var copy = document.getElementById('shareRailCopy');
       copy.addEventListener('click', function () {
         var done = function () {
