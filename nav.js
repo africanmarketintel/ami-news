@@ -80,26 +80,26 @@
 
   const verifyModalHTML = `
 <div id="amiVerifyOverlay" style="display:none;position:fixed;inset:0;background:rgba(6,15,9,.85);z-index:9999;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(4px)">
-  <div style="background:#FAF7F0;max-width:440px;width:100%;border-top:4px solid #C9A84C;box-shadow:0 24px 80px rgba(0,0,0,.5);padding:36px 32px;font-family:'Spectral',Georgia,serif;position:relative">
+  <div style="background:#FAF7F0;max-width:440px;width:100%;border-top:4px solid #C9A84C;box-shadow:0 24px 80px rgba(0,0,0,.5);padding:36px 32px;font-family:'Source Serif 4',Georgia,serif;position:relative">
     <button data-ami-act="verify-close" style="position:absolute;top:12px;right:14px;background:none;border:none;font-size:20px;color:#9A8070;cursor:pointer;line-height:1">×</button>
-    <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:800;color:#1A1208;margin-bottom:4px">Verify Your Access</div>
+    <div style="font-family:'Source Serif 4',Georgia,serif;font-size:22px;font-weight:800;color:#1A1208;margin-bottom:4px">Verify Your Access</div>
     <p style="font-size:13px;color:#6B5344;margin-bottom:20px;line-height:1.6">Enter the email address you used when subscribing to unlock your premium access.</p>
     <div id="amiVerifyForm">
       <input id="amiVerifyEmail" type="email" placeholder="your@email.com" autocomplete="email"
-        style="width:100%;background:#fff;border:1px solid #D4C4A0;color:#1A1208;font-family:'DM Mono',monospace;font-size:13px;padding:12px 14px;outline:none;margin-bottom:10px;box-sizing:border-box"
+        style="width:100%;background:#fff;border:1px solid #D4C4A0;color:#1A1208;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;padding:12px 14px;outline:none;margin-bottom:10px;box-sizing:border-box"
         data-ami-enter="verify-submit">
       <button id="amiVerifyBtn" data-ami-act="verify-submit"
-        style="width:100%;background:#C9A84C;color:#060F09;font-family:'DM Mono',monospace;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:13px;border:none;cursor:pointer;transition:background .2s"
+        style="width:100%;background:#C9A84C;color:#060F09;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:13px;border:none;cursor:pointer;transition:background .2s"
         onmouseover="this.style.background='#D4B86A'" onmouseout="this.style.background='#C9A84C'">
         Verify Subscription →
       </button>
     </div>
     <div id="amiVerifySuccess" style="display:none;text-align:center;padding:12px 0">
       <div style="font-size:32px;margin-bottom:10px">✓</div>
-      <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1A1208;margin-bottom:6px">Access Confirmed</div>
+      <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:700;color:#1A1208;margin-bottom:6px">Access Confirmed</div>
       <p style="font-size:13px;color:#6B5344">Welcome back. The page will reload with your subscriber access.</p>
     </div>
-    <div id="amiVerifyError" style="display:none;background:#FFF0ED;border-left:3px solid #B85C38;padding:10px 14px;margin-top:10px;font-family:'DM Mono',monospace;font-size:11px;color:#8C3A1F"></div>
+    <div id="amiVerifyError" style="display:none;background:#FFF0ED;border-left:3px solid #B85C38;padding:10px 14px;margin-top:10px;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:11px;color:#8C3A1F"></div>
   </div>
 </div>`;
 
@@ -129,7 +129,7 @@
   align-items:center!important;gap:18px!important;flex-shrink:0}
 .masthead-cta a.dr-nav__account,
 .masthead-cta #amiNavLoginBtn{background:none!important;border:none!important;padding:0!important;border-radius:0!important;
-  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif!important;font-size:15px!important;
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif!important;font-size:15px!important;
   font-weight:400!important;letter-spacing:0!important;text-transform:none!important;color:#1A1208!important;cursor:pointer}
 .masthead-cta a.dr-nav__account{text-decoration:none!important}
 .masthead-cta a.dr-nav__account:hover,.masthead-cta #amiNavLoginBtn:hover{text-decoration:underline!important}
@@ -184,24 +184,24 @@ footer.ami-foot{background:#F0EAD9;color:#1A1208;margin-top:48px;
   padding:40px max(24px,calc((100% - 1280px)/2 + 24px)) 26px;box-sizing:border-box;text-align:left}
 footer.ami-foot *{box-sizing:border-box}
 footer.ami-foot .ami-foot__cols{display:grid;grid-template-columns:repeat(3,1fr);gap:48px}
-footer.ami-foot h2{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+footer.ami-foot h2{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
   font-size:15px;font-weight:700;color:#1A1208;margin:0 0 12px;letter-spacing:0;text-transform:none}
 footer.ami-foot ul{list-style:none;margin:0;padding:0;border:0}
 footer.ami-foot li{margin:0 0 9px;padding:0;border:0}
-footer.ami-foot a{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+footer.ami-foot a{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
   font-size:14px;color:#1A1208;text-decoration:underline;text-underline-offset:2px}
 footer.ami-foot a:hover,footer.ami-foot a:focus{color:#8C3A1F}
-footer.ami-foot p{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+footer.ami-foot p{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
   font-size:14px;line-height:1.55;margin:0 0 10px;color:#1A1208}
 footer.ami-foot .ami-foot__rule{height:1px;background:#D4C4A0;margin:28px 0 18px}
 footer.ami-foot .ami-foot__legal p{font-size:13px;color:#6B5344;margin-bottom:8px}
 footer.ami-foot .ami-foot__legal p.ami-foot__credit,footer.ami-foot .ami-foot__legal p.ami-foot__credit a{font-size:11px}
 footer.ami-foot .ami-foot__verify{background:none;border:1px solid #1A1208;color:#1A1208;
-  font-family:'DM Mono',ui-monospace,monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:10px;letter-spacing:.08em;text-transform:uppercase;
   padding:7px 13px;cursor:pointer;margin-top:4px}
 footer.ami-foot .ami-foot__verify:hover{background:#FDF6E3}
 footer.ami-foot .ami-foot__linkbtn{background:none;border:0;padding:0;margin:0;cursor:pointer;
-  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:14px;
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:14px;
   color:#1A1208;text-decoration:underline;text-underline-offset:2px;text-transform:none;letter-spacing:0}
 footer.ami-foot .ami-foot__linkbtn:hover,footer.ami-foot .ami-foot__linkbtn:focus{color:#8C3A1F}
 @media (max-width:860px){footer.ami-foot .ami-foot__cols{grid-template-columns:1fr 1fr;gap:28px}}
@@ -327,7 +327,7 @@ footer.ami-foot .ami-foot__linkbtn:hover,footer.ami-foot .ami-foot__linkbtn:focu
 .masthead{background:#F0EAD9;border-bottom:1px solid #D4C4A0}
 .masthead-name{font-family:'Playfair Display',Georgia,serif;font-weight:800;letter-spacing:-.02em;color:#1A1208;line-height:1}
 .masthead-name span{color:#C9A84C}
-.btn-subscribe{background:#C9A84C;color:#1A1208;font-family:'DM Mono',monospace;font-size:11px;font-weight:500;
+.btn-subscribe{background:#C9A84C;color:#1A1208;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:11px;font-weight:500;
   letter-spacing:.08em;text-transform:uppercase;padding:8px 16px;border-radius:2px;text-decoration:none;display:inline-block}
 `;
 
@@ -580,11 +580,11 @@ footer.ami-foot .ami-foot__linkbtn:hover,footer.ami-foot .ami-foot__linkbtn:focu
 .ami-cookie{position:fixed;left:0;right:0;bottom:0;z-index:950;background:#FAF7F0;color:#1A1208;
   border-top:3px solid #C9A84C;box-shadow:0 -2px 12px rgba(0,0,0,.18);box-sizing:border-box;
   padding:14px max(16px,calc((100% - 1280px)/2 + 24px));display:flex;gap:16px;align-items:center;flex-wrap:wrap;
-  font:15px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif}
+  font:15px/1.5 'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif}
 .ami-cookie p{margin:0;flex:1 1 360px;max-width:75ch}
 .ami-cookie a{color:#1E6B3C}
 .ami-cookie button{min-height:44px;padding:0 22px;border-radius:2px;cursor:pointer;
-  font:500 12px 'DM Mono',ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;border:2px solid #0A1A10}
+  font:500 12px 'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;border:2px solid #0A1A10}
 .ami-cookie .ok{background:#0A1A10;color:#FAF7F0}
 .ami-cookie .no{background:#fff;color:#0A1A10}`;
 
@@ -663,7 +663,7 @@ footer.ami-foot .ami-foot__linkbtn:hover,footer.ami-foot .ami-foot__linkbtn:focu
 html body .ami-strip{display:flex !important;align-items:center;gap:0;height:32px !important;box-sizing:border-box !important;
   background:#0A1A10 !important;color:#C9A84C !important;border:0 !important;margin:0 !important;
   padding:0 max(24px,calc((100% - 1280px)/2 + 24px)) !important;overflow:hidden !important;white-space:nowrap !important;
-  font:500 11.5px/1 'DM Mono',ui-monospace,monospace !important;letter-spacing:.03em !important}
+  font:500 11.5px/1 'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif !important;letter-spacing:.03em !important}
 html body .ami-strip[hidden]{display:none !important}
 .ami-strip__list{display:flex;align-items:center;gap:22px;overflow-x:auto;scrollbar-width:none;flex:1 1 auto;min-width:0;height:100%}
 .ami-strip__list::-webkit-scrollbar{display:none}
@@ -764,16 +764,16 @@ html body .ami-strip[hidden]{display:none !important}
   const BAR_CSS = `
 .ami-bar{position:fixed;left:0;right:0;bottom:0;z-index:900;background:#0A1A10;color:#FAF7F0;
   border-top:3px solid #C9A84C;box-sizing:border-box;padding:12px max(16px,calc((100% - 1280px)/2 + 24px));
-  font:15px/1.45 -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif}
+  font:15px/1.45 'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif}
 .ami-bar[hidden]{display:none}
 .ami-bar__row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .ami-bar__msg{flex:1 1 240px;margin:0;max-width:60ch}
-.ami-bar__msg b{font-family:'Playfair Display',Georgia,serif;font-size:17px}
+.ami-bar__msg b{font-family:'Source Serif 4',Georgia,serif;font-size:17px}
 .ami-bar form{display:flex;gap:10px;align-items:center;flex-wrap:wrap;flex:1 1 420px;margin:0}
 .ami-bar input[type=email]{flex:1 1 220px;min-width:0;height:44px;border:2px solid #C9A84C;border-radius:2px;padding:0 12px;
   font-size:16px;background:#fff;color:#1A1208}
 .ami-bar button[type=submit]{height:44px;padding:0 22px;border:0;border-radius:2px;background:#C9A84C;color:#0A1A10;cursor:pointer;
-  font:600 12px 'DM Mono',ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase}
+  font:600 12px 'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase}
 .ami-bar button[disabled]{opacity:.6;cursor:default}
 .ami-bar__consent{flex:1 0 100%;display:flex;gap:8px;align-items:flex-start;font-size:13px;color:#d9d3c3;margin:0}
 .ami-bar__consent input{width:20px;height:20px;margin:1px 0 0;accent-color:#C9A84C;flex:0 0 auto}
@@ -974,19 +974,19 @@ html body .ami-strip[hidden]{display:none !important}
 .ami-search-panel[data-open="1"]{display:block}
 .ami-search-row{display:flex;align-items:center;gap:14px}
 .ami-search-row input{flex:1;min-width:0;height:44px;background:#fff;border:2px solid #1A1208;padding:0 14px;
-  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;color:#1A1208}
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;color:#1A1208}
 .ami-search-row button.ami-go{height:44px;background:#0A1A10;color:#FAF7F0;border:0;border-radius:2px;padding:0 22px;
-  font-family:'DM Mono',ui-monospace,monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
 .ami-search-row button.ami-close{background:none;border:0;padding:0;cursor:pointer;color:#1E6B3C;
-  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;text-decoration:underline}
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:15px;text-decoration:underline}
 .ami-search-results{margin:14px 0 0;padding:0;list-style:none;max-height:58vh;overflow:auto}
 .ami-search-results li{border-top:1px solid #D4C4A0}
 .ami-search-results a{display:block;padding:11px 0;text-decoration:none;color:#1A1208}
 .ami-search-results a:hover,.ami-search-results a:focus{background:#F0EAD9}
-.ami-search-results .h{display:block;font-family:'Playfair Display',Georgia,serif;font-size:17px;font-weight:700;line-height:1.3}
-.ami-search-results .m{display:block;font-family:'DM Mono',ui-monospace,monospace;font-size:10px;letter-spacing:.08em;
+.ami-search-results .h{display:block;font-family:'Source Serif 4',Georgia,serif;font-size:17px;font-weight:700;line-height:1.3}
+.ami-search-results .m{display:block;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:10px;letter-spacing:.08em;
   text-transform:uppercase;color:#6B5344;margin-top:4px}
-.ami-search-note{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+.ami-search-note{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
   font-size:14px;color:#6B5344;margin:14px 0 0}
 .ami-search-panel .sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;
   clip:rect(0 0 0 0);white-space:nowrap;border:0}
@@ -1157,11 +1157,11 @@ html body .ami-strip[hidden]{display:none !important}
 .ami-band__inner{display:flex;align-items:center;gap:20px;min-height:42px}
 .ami-band__name{margin:0;font-family:'Playfair Display',Georgia,serif;font-size:19px;font-weight:600;color:#FAF7F0;white-space:nowrap}
 .ami-band__nav{margin-left:auto;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
-.ami-band__nav a{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:14px;color:#EDE5D5;text-decoration:none;padding:11px 0}
+.ami-band__nav a{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:14px;color:#EDE5D5;text-decoration:none;padding:11px 0}
 .ami-band__nav a:hover,.ami-band__nav a:focus{color:#C9A84C}
 .ami-band__nav a[aria-current="page"]{color:#C9A84C;box-shadow:inset 0 -2px 0 #C9A84C}
 .ami-band__drop{position:relative}
-.ami-band__drop>button{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:14px;color:#EDE5D5;background:none;border:0;padding:11px 0;cursor:pointer}
+.ami-band__drop>button{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:14px;color:#EDE5D5;background:none;border:0;padding:11px 0;cursor:pointer}
 .ami-band__drop>button:hover{color:#C9A84C}
 .ami-band__menu{display:none;position:absolute;right:0;top:100%;background:#0A1A10;border:1px solid #1A3020;min-width:170px;z-index:60}
 .ami-band__drop:hover .ami-band__menu,.ami-band__drop:focus-within .ami-band__menu{display:block}
