@@ -185,7 +185,7 @@ footer.ami-foot{background:#F0EAD9;color:#1A1208;margin-top:48px;
 footer.ami-foot *{box-sizing:border-box}
 footer.ami-foot .ami-foot__cols{display:grid;grid-template-columns:repeat(3,1fr);gap:48px}
 footer.ami-foot h2{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
-  font-size:15px;font-weight:700;color:#1A1208;margin:0 0 12px;letter-spacing:0;text-transform:none}
+  font-size:15px;font-weight:600;color:#1A1208;margin:0 0 12px;letter-spacing:0;text-transform:none}
 footer.ami-foot ul{list-style:none;margin:0;padding:0;border:0}
 footer.ami-foot li{margin:0 0 9px;padding:0;border:0}
 footer.ami-foot a{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
@@ -984,7 +984,7 @@ html body .ami-strip[hidden]{display:none !important}
 .ami-search-results li{border-top:1px solid #D4C4A0}
 .ami-search-results a{display:block;padding:11px 0;text-decoration:none;color:#1A1208}
 .ami-search-results a:hover,.ami-search-results a:focus{background:#F0EAD9}
-.ami-search-results .h{display:block;font-family:'Source Serif 4',Georgia,serif;font-size:17px;font-weight:700;line-height:1.3}
+.ami-search-results .h{display:block;font-family:'Source Serif 4',Georgia,serif;font-size:17px;font-weight:600;line-height:1.3}
 .ami-search-results .m{display:block;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:10px;letter-spacing:.08em;
   text-transform:uppercase;color:#6B5344;margin-top:4px}
 .ami-search-note{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
