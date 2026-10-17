@@ -1533,6 +1533,81 @@ html body .ami-strip[hidden]{display:none !important}
     }
   }
 
+  // ── First paint ────────────────────────────────────────────
+  // The pages inline their own old header, and run() only replaces it on
+  // DOMContentLoaded, which on the larger pages comes well after the first
+  // paint. Readers saw the old centred masthead, the dark bar and the old
+  // section row for a moment before the new header appeared.
+  //
+  // So the final masthead styling goes in now, while this script is still in
+  // <head>, and the pieces run() will replace are hidden - holding their
+  // height, so nothing jumps when the new row arrives. A timer lifts the
+  // hiding after four seconds in case run() never completes.
+  (function earlyChrome() {
+    try {
+      if (document.getElementById('amiPreCSS') || !document.head) return;
+      const s = document.createElement('style');
+      s.id = 'amiPreCSS';
+      s.textContent = '.section-nav{visibility:hidden!important;height:46px!important;overflow:hidden!important;margin:0!important;padding:0!important;border:0!important}'
+        + '.dr-header,.ami-header{visibility:hidden!important;height:110px!important;overflow:hidden!important}'
+        + '.ticker-bar:not(.ami-strip){display:none!important}'
+        + '@media (max-width:768px){.top-nav{display:none!important}}';
+      document.head.appendChild(s);
+      // A copy of the masthead rules with more weight. They are added now,
+      // before the page's own styles exist, so at equal weight the page would
+      // win. initMasthead still adds the normal copy last, and this one goes.
+      const m = document.createElement('style');
+      m.id = 'amiPreMast';
+      m.textContent = MASTHEAD_CSS.replace(/(^|\})\s*([^{}@]+)\{/g, function (all, a, sel) {
+        return a + sel.split(',').map(function (x) { return 'html body ' + x.trim(); }).join(',') + '{';
+      });
+      document.head.appendChild(m);
+      setTimeout(liftPreCSS, 4000);
+    } catch (e) { /* the header still arrives on DOMContentLoaded */ }
+  })();
+
+  // The home and section pages draw their own layout in layout.js, which
+  // hides the old right-hand column (the AMI Morning Brief box among it) only
+  // once the articles have arrived. Until then the old two-column page showed.
+  // These rules hold the old column back until layout.js has chosen a layout.
+  // They stay until then rather than until DOMContentLoaded, and a timer
+  // lifts them after six seconds if the articles never arrive.
+  (function earlyLayout() {
+    try {
+      if (document.getElementById('amiPreLay') || !document.head) return;
+      const path = window.location.pathname;
+      if (path.indexOf('/dealroom') > -1 || path.indexOf('/mailroom') > -1) return;
+      const f = path.split('/').pop() || 'index.html';
+      const home = /^(index\.html)?$/.test(f);
+      const section = /^(markets|politics|economy|energy|technology|opinion|west-africa|east-africa|central-africa|southern-africa|north-africa)\.html$/.test(f);
+      if (!home && !section) return;
+      const idle = 'body:not(.ami-lay--home):not(.ami-lay--section) ';
+      const s = document.createElement('style');
+      s.id = 'amiPreLay';
+      // The page's own loading boxes, its Latest News block and the rest of
+      // the old template belong to the layout that layout.js replaces, and
+      // showed for a moment before it did. The whole content area stays out
+      // of sight until a layout is chosen. The space is held so the page does
+      // not jump when the stories arrive.
+      const quiet = idle + '.main-wrapper{visibility:hidden!important;min-height:480px}';
+      s.textContent = quiet + (home
+        ? idle + '.main-wrapper{display:block!important}' + idle + '.main-wrapper>aside{display:none!important}'
+        : idle + '.main-wrapper>aside{visibility:hidden!important}');
+      document.head.appendChild(s);
+      setTimeout(function () {
+        const e = document.getElementById('amiPreLay');
+        if (e && e.parentNode) e.parentNode.removeChild(e);
+      }, 6000);
+    } catch (e) { /* the old column shows, as before */ }
+  })();
+
+  function liftPreCSS() {
+    ['amiPreCSS', 'amiPreMast'].forEach(function (id) {
+      const e = document.getElementById(id);
+      if (e && e.parentNode) e.parentNode.removeChild(e);
+    });
+  }
+
   // ── Run on DOMContentLoaded ────────────────────────────────
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', run);
@@ -1575,6 +1650,7 @@ html body .ami-strip[hidden]{display:none !important}
     applySubscriberUI();
     initAnalytics();
     initBar();
+    liftPreCSS();
   }
 
 })();
