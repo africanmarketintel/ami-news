@@ -311,6 +311,9 @@
     } catch (e) { done([]); }
   }
 
+  // Below 1260 pixels the side advert sits under the article in a 300 x 250 box, so it uses the
+  // 300 x 250 advert. Using the tall one there cut it down to a thin strip from its middle.
+  function sideKind() { return (window.matchMedia && window.matchMedia('(max-width:1259px)').matches) ? 'mpu' : 'tall'; }
   function adSlot(kind) {
     var c = ADS[kind];
     var box = doc.createElement('div');
@@ -553,7 +556,7 @@
     wrap.appendChild(full);
     var side = doc.createElement('div');
     side.className = 'ami-art-side';
-    side.appendChild(adSlot('tall'));
+    side.appendChild(adSlot(sideKind()));
     wrap.appendChild(side);
 
     var removed = null;
@@ -631,7 +634,7 @@
     wrap.appendChild(cont);
     var side = doc.createElement('div');
     side.className = 'ami-art-side';
-    side.appendChild(adSlot('tall'));
+    side.appendChild(adSlot(sideKind()));
     wrap.appendChild(side);
   }
 
