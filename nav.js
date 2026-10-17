@@ -491,6 +491,11 @@ footer.ami-foot .ami-foot__linkbtn:hover,footer.ami-foot .ami-foot__linkbtn:focu
 
   // Before the section row where there is one, after the masthead otherwise.
   function injectProducts() {
+    // The publication has one row of its own (see newsBand), so the product
+    // row only appears on the Dealroom and the Mailroom, to lead back to News.
+    // Every product now has its row in the band (see sectionBand), so this
+    // separate row is no longer injected.
+    return;
     if (document.querySelector('.ami-product-row')) return;
     const row = productRow();
     const section = document.querySelector('.section-nav');
@@ -1094,7 +1099,7 @@ html body .ami-strip[hidden]{display:none !important}
   }
 
   function initSearch() {
-    const row = document.querySelector('.ami-product-row');
+    const row = document.querySelector('.ami-product-row') || document.querySelector('.ami-band__inner');
     if (!row || document.getElementById('amiSearchPanel')) return;
     const st = document.createElement('style');
     st.textContent = SEARCH_CSS;
@@ -1155,7 +1160,7 @@ html body .ami-strip[hidden]{display:none !important}
     { href: 'economy.html',    label: 'Economy'    },
     { href: 'energy.html',     label: 'Energy'     },
     { href: 'technology.html', label: 'Tech'       },
-    { href: 'deals.html',      label: 'Deals'      }
+    { href: 'deals.html',      label: 'Deal Tracker' }
   ];
   const REGIONS = [
     { href: 'west-africa.html',     label: 'West Africa'     },
@@ -1166,50 +1171,125 @@ html body .ami-strip[hidden]{display:none !important}
   ];
 
   const bandCSS = `
-.ami-band{background:#0A1A10;padding:0 max(24px,calc((100% - 1280px)/2 + 24px));box-sizing:border-box}
-.ami-band__inner{display:flex;align-items:center;gap:20px;min-height:42px}
-.ami-band__name{margin:0;font-family:'Playfair Display',Georgia,serif;font-size:19px;font-weight:600;color:#FAF7F0;white-space:nowrap}
-.ami-band__nav{margin-left:auto;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
-.ami-band__nav a{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:14px;color:#EDE5D5;text-decoration:none;padding:11px 0}
-.ami-band__nav a:hover,.ami-band__nav a:focus{color:#C9A84C}
-.ami-band__nav a[aria-current="page"]{color:#C9A84C;box-shadow:inset 0 -2px 0 #C9A84C}
+.ami-band{position:relative;background:#F0EAD9;border-top:1px solid #D4C4A0;border-bottom:1px solid #D4C4A0;padding:0 max(24px,calc((100% - 1280px)/2 + 24px));box-sizing:border-box}
+.ami-band__inner{display:flex;align-items:center;gap:20px;min-height:44px}
+.ami-band__name{margin:0;font-family:'Playfair Display',Georgia,serif;font-size:19px;font-weight:600;color:#1A1208;white-space:nowrap}
+.ami-band__nav,.ami-band__switch{display:flex;align-items:center;gap:26px;flex-wrap:nowrap}
+.ami-band__nav a,.ami-band__switch a{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#1A1208;text-decoration:none;padding:14px 0 12px;white-space:nowrap;box-shadow:inset 0 -2px 0 transparent}
+.ami-band__nav a:hover,.ami-band__nav a:focus,.ami-band__switch a:hover,.ami-band__switch a:focus{color:#1E6B3C}
+.ami-band__nav a[aria-current="page"],.ami-band__switch a[aria-current="page"]{box-shadow:inset 0 -2px 0 #1A1208}
+.ami-band__sep{width:1px;align-self:stretch;margin:10px 0;background:#D4C4A0}
 .ami-band__drop{position:relative}
-.ami-band__drop>button{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:14px;color:#EDE5D5;background:none;border:0;padding:11px 0;cursor:pointer}
-.ami-band__drop>button:hover{color:#C9A84C}
-.ami-band__menu{display:none;position:absolute;right:0;top:100%;background:#0A1A10;border:1px solid #1A3020;min-width:170px;z-index:60}
+.ami-band__drop>button{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#1A1208;background:none;border:0;padding:14px 0 12px;cursor:pointer}
+.ami-band__drop>button:hover{color:#1E6B3C}
+.ami-band__menu{display:none;position:absolute;right:0;top:100%;background:#F0EAD9;border:1px solid #D4C4A0;min-width:190px;z-index:60}
 .ami-band__drop:hover .ami-band__menu,.ami-band__drop:focus-within .ami-band__menu{display:block}
-.ami-band__menu a{display:block;padding:9px 14px}
-@media (max-width:860px){.ami-band__inner{flex-wrap:wrap;padding:6px 0}.ami-band__nav{margin-left:0;width:100%}}`;
+.ami-band__menu a{display:block;padding:10px 14px}
+.ami-menu-btn{display:none;margin-left:auto;align-items:center;gap:8px;background:none;border:0;padding:14px 0 12px;cursor:pointer;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#1A1208}
+.ami-menu-btn i{display:block;width:18px;height:2px;background:#1A1208;box-shadow:0 5px 0 #1A1208,0 -5px 0 #1A1208}
+.ami-menu-btn[aria-expanded="true"] i{background:transparent;box-shadow:none}
+.ami-menu-btn[aria-expanded="true"] i::before,.ami-menu-btn[aria-expanded="true"] i::after{content:"";position:absolute;left:0;top:0;width:18px;height:2px;background:#1A1208}
+.ami-menu-btn[aria-expanded="true"] i{position:relative}
+.ami-menu-btn[aria-expanded="true"] i::before{transform:rotate(45deg)}
+.ami-menu-btn[aria-expanded="true"] i::after{transform:rotate(-45deg)}
+.ami-menu-backdrop{position:fixed;top:0;right:0;bottom:0;left:0;background:rgba(0,0,0,.5);opacity:0;visibility:hidden;transition:opacity .25s ease,visibility 0s linear .25s;z-index:9998}
+.ami-menu-backdrop[data-open="1"]{opacity:1;visibility:visible;transition:opacity .25s ease}
+.ami-menu{position:fixed;top:0;left:0;bottom:0;width:min(85vw,340px);box-sizing:border-box;background:#0A1A10;z-index:9999;overflow-y:auto;overscroll-behavior:contain;padding:0 20px 28px;transform:translateX(-100%);visibility:hidden;transition:transform .25s ease,visibility 0s linear .25s}
+.ami-menu[data-open="1"]{transform:none;visibility:visible;transition:transform .25s ease}
+@media (prefers-reduced-motion:reduce){.ami-menu,.ami-menu-backdrop{transition:none!important}}
+.ami-menu__head{display:flex;align-items:center;justify-content:space-between;min-height:56px;border-bottom:1px solid #1A3020}
+.ami-menu__title{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#C9A84C}
+.ami-menu__close{background:none;border:0;color:#FAF7F0;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:30px;line-height:1;padding:6px 4px 6px 12px;cursor:pointer}
+.ami-menu h3{margin:0;padding:18px 0 4px;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#C9A84C}
+.ami-menu a,.ami-menu button.ami-menu-search{display:block;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid #1A3020;padding:13px 0;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;font-weight:500;color:#FAF7F0;text-decoration:none;cursor:pointer}
+.ami-menu a[aria-current="page"]{font-weight:600;box-shadow:inset 3px 0 0 #C9A84C;padding-left:12px}
+.ami-menu a:hover,.ami-menu a:focus,.ami-menu button.ami-menu-search:hover{color:#C9A84C}
+@media (max-width:768px){
+  .ami-band{padding:0 16px}
+  .ami-band__inner{gap:16px}
+  .ami-band__nav{gap:18px}
+  .ami-band .ami-hide-sm,.ami-band__sep,.ami-band__switch,.ami-band__drop,.ami-band .ami-search-btn{display:none}
+  .ami-menu-btn{display:inline-flex}
+  .top-nav{display:none!important}
+}
+@media (min-width:769px){.ami-menu,.ami-menu-backdrop{display:none!important}}`;
 
   function here(href) {
     const f = window.location.pathname.split('/').pop() || 'index.html';
     return f === href;
   }
 
-  function newsBand() {
-    const links = SECTIONS.map(function (x) {
-      return '<a href="' + P(x.href) + '"' + (here(x.href) ? ' aria-current="page"' : '') + '>' + x.label + '</a>';
-    }).join('');
-    const regions = REGIONS.map(function (x) {
-      return '<a href="' + P(x.href) + '"' + (here(x.href) ? ' aria-current="page"' : '') + '>' + x.label + '</a>';
-    }).join('');
-    const onRegion = REGIONS.some(function (x) { return here(x.href); });
-    return links
-      + '<span class="ami-band__drop"><button type="button" aria-haspopup="true" aria-expanded="false"'
-      + (onRegion ? ' style="color:#C9A84C"' : '') + '>All Africa ▾</button>'
-      + '<div class="ami-band__menu">' + regions + '</div></span>';
+  // ── One header for every product ───────────────────────────
+  // News, the Dealroom and the Mailroom share one row and one phone menu.
+  // The row holds the product's own links, a divider, then links to the other
+  // two products. Under 769px the row keeps three links (News) or only the
+  // product name (Dealroom, Mailroom) beside a Menu button, and the drawer
+  // carries everything.
+
+  // A link as {href, label, on}. href is already resolved for this page.
+  function newsLinks() {
+    return SECTIONS.map(function (x) { return { href: P(x.href), label: x.label, on: here(x.href) }; });
   }
 
-  // A product's band links are the product's own nav, read off the page rather
-  // than listed here. The Dealroom and the Mailroom both use .dr-header, and
-  // their nav is the authority on what pages exist - a hard-coded list here
-  // would be a second copy to keep in step, and a chance to invent a link that
-  // has no page behind it.
-  function productBandLinks() {
-    if (!harvested) return '';
-    return harvested.links.map(function (x) {
-      return '<a href="' + x.href + '"' + (x.on ? ' aria-current="page"' : '') + '>' + x.label + '</a>';
+  // A product's own links are read off the page rather than listed here. The
+  // Dealroom and the Mailroom both use .dr-header, and their nav is the
+  // authority on what pages exist - a hard-coded list would be a second copy
+  // to keep in step, and a chance to invent a link that has no page behind it.
+  function productLinks() {
+    return harvested ? harvested.links : [];
+  }
+
+  function ownLinks() {
+    return currentProduct() === 'news' ? newsLinks() : productLinks();
+  }
+
+  function linkHTML(l, cls) {
+    return '<a href="' + l.href + '"' + (cls ? ' class="' + cls + '"' : '')
+      + (l.on ? ' aria-current="page"' : '') + '>' + l.label + '</a>';
+  }
+
+  // Row links. News keeps its first three on a phone; the products keep none.
+  function rowLinksHTML(links) {
+    const keep = currentProduct() === 'news' ? 3 : 0;
+    return links.map(function (l, i) { return linkHTML(l, i >= keep ? 'ami-hide-sm' : ''); }).join('');
+  }
+
+  // The other two products.
+  function otherProducts() {
+    const who = currentProduct();
+    return PRODUCTS.filter(function (p) { return p.key !== who; })
+      .map(function (p) { return { href: P(p.href), label: p.label, on: false }; });
+  }
+
+  function regionsHTML(cls) {
+    return REGIONS.map(function (x) {
+      return linkHTML({ href: P(x.href), label: x.label, on: here(x.href) }, cls);
     }).join('');
+  }
+
+  function dropHTML() {
+    const onRegion = REGIONS.some(function (x) { return here(x.href); });
+    return '<span class="ami-band__drop"><button type="button" aria-haspopup="true" aria-expanded="false"'
+      + (onRegion ? ' style="color:#1E6B3C"' : '') + '>All Africa ▾</button>'
+      + '<div class="ami-band__menu">' + regionsHTML('') + '</div></span>';
+  }
+
+  // The drawer behind the Menu button on phones. The product's own group has
+  // an id so a signed-in Mailroom member's links can replace it later.
+  function menuPanel() {
+    const who = currentProduct();
+    const product = PRODUCTS.filter(function (x) { return x.key === who; })[0];
+    const name = product ? product.label : 'News';
+    return '<div class="ami-menu" id="amiMenu" data-open="0" role="dialog" aria-modal="true" aria-label="Menu">'
+      + '<div class="ami-menu__head"><span class="ami-menu__title">Menu</span>'
+      + '<button type="button" class="ami-menu__close" id="amiMenuClose" aria-label="Close menu">×</button></div>'
+      + '<button type="button" class="ami-menu-search" id="amiMenuSearch">Search</button>'
+      + '<h3>' + name + '</h3>'
+      + '<div id="amiMenuOwn">' + ownLinks().map(function (l) { return linkHTML(l, ''); }).join('') + '</div>'
+      + (who === 'news' ? '<h3>Regions</h3>' + regionsHTML('') : '')
+      + '<h3>More from AMI</h3>'
+      + otherProducts().map(function (l) { return linkHTML(l, ''); }).join('')
+      + '</div>';
   }
 
   // dr-core.js already decides what a signed-in member should see: the account
@@ -1225,18 +1305,21 @@ html body .ami-strip[hidden]{display:none !important}
   function syncProductNav() {
     const nav = document.querySelector('.ami-band__nav');
     if (!nav) return;
-    syncDealroomNav(nav);
+    syncDealroomNav([nav, document.getElementById('amiMenuOwn')]);
     syncMailroomNav(nav);
   }
 
-  function syncDealroomNav(nav) {
+  function syncDealroomNav(containers) {
     let active = false;
     try { active = !!(window.DR && DR.session && DR.session.active()); } catch (e) { active = false; }
     if (!active) return;
-    const join = nav.querySelector('a[href$="create-account.html"]');
-    if (!join) return;
-    join.textContent = 'Your interests';
-    join.setAttribute('href', join.getAttribute('href').replace('create-account.html', 'account.html'));
+    containers.forEach(function (c) {
+      if (!c) return;
+      const join = c.querySelector('a[href$="create-account.html"]');
+      if (!join) return;
+      join.textContent = 'Your interests';
+      join.setAttribute('href', join.getAttribute('href').replace('create-account.html', 'account.html'));
+    });
   }
 
   // The Mailroom's member pages carry a second navigation, #mr-member-nav,
@@ -1246,19 +1329,23 @@ html body .ami-strip[hidden]{display:none !important}
   // after the first visit - and the member bar underneath it.
   //
   // The agreed design has one row. So when the member bar is showing, its links
-  // become the band and the bar itself goes. mr-core.js stays the only thing
-  // that decides whether a member is signed in; this reads its answer.
+  // become the band and the drawer's own group, and the bar itself goes.
+  // mr-core.js stays the only thing that decides whether a member is signed in;
+  // this reads its answer.
   function syncMailroomNav(nav) {
     const bar = document.getElementById('mr-member-nav');
     if (!bar || bar.hidden) return;
-    const links = [].slice.call(bar.querySelectorAll('a'));
-    if (!links.length) return;
-    const here = window.location.pathname.split('/').pop() || 'index.html';
-    nav.innerHTML = links.map(function (a) {
+    const found = [].slice.call(bar.querySelectorAll('a'));
+    if (!found.length) return;
+    const here_ = window.location.pathname.split('/').pop() || 'index.html';
+    const links = found.map(function (a) {
       const h = a.getAttribute('href') || '';
-      const on = h.split('/').pop() === here || a.getAttribute('aria-current') === 'page';
-      return '<a href="' + h + '"' + (on ? ' aria-current="page"' : '') + '>' + a.textContent.trim() + '</a>';
-    }).join('');
+      return { href: h, label: a.textContent.trim(),
+        on: h.split('/').pop() === here_ || a.getAttribute('aria-current') === 'page' };
+    });
+    nav.innerHTML = rowLinksHTML(links);
+    const own = document.getElementById('amiMenuOwn');
+    if (own) own.innerHTML = links.map(function (l) { return linkHTML(l, ''); }).join('');
     bar.hidden = true;
   }
 
@@ -1266,11 +1353,64 @@ html body .ami-strip[hidden]{display:none !important}
     const who = currentProduct();
     const product = PRODUCTS.filter(function (x) { return x.key === who; })[0];
     const name = product ? product.label : 'News';
-    const inner = who === 'news' ? newsBand() : productBandLinks();
-    return '<div class="ami-band"><div class="ami-band__inner">'
-      + '<p class="ami-band__name">' + name + '</p>'
-      + '<nav class="ami-band__nav" aria-label="' + name + ' navigation">' + inner + '</nav>'
-      + '</div></div>';
+    return '<div class="ami-band ami-band--' + who + '"><div class="ami-band__inner">'
+      + (who === 'news' ? '' : '<p class="ami-band__name">' + name + '</p>')
+      + '<nav class="ami-band__nav" aria-label="' + name + ' navigation">'
+      + rowLinksHTML(ownLinks()) + (who === 'news' ? dropHTML() : '') + '</nav>'
+      + '<span class="ami-band__sep" aria-hidden="true"></span>'
+      + '<nav class="ami-band__switch" aria-label="Other AMI services">'
+      + otherProducts().map(function (l) { return linkHTML(l, ''); }).join('') + '</nav>'
+      + '<button type="button" class="ami-menu-btn" id="amiMenuBtn" aria-expanded="false" aria-controls="amiMenu"><i></i>Menu</button>'
+      + '</div>' + menuPanel() + '</div>';
+  }
+
+  function initMenu() {
+    const btn = document.getElementById('amiMenuBtn');
+    const panel = document.getElementById('amiMenu');
+    if (!btn || !panel || btn.getAttribute('data-bound')) return;
+    btn.setAttribute('data-bound', '1');
+    // The drawer and its backdrop sit on <body> so no parent can clip or
+    // re-stack them.
+    const back = document.createElement('div');
+    back.className = 'ami-menu-backdrop';
+    back.id = 'amiMenuBackdrop';
+    back.setAttribute('data-open', '0');
+    document.body.appendChild(back);
+    document.body.appendChild(panel);
+    const close = document.getElementById('amiMenuClose');
+    let open = false;
+    function focusables() {
+      return [].slice.call(panel.querySelectorAll('a[href],button'));
+    }
+    function set(next) {
+      if (next === open) return;
+      open = next;
+      panel.setAttribute('data-open', open ? '1' : '0');
+      back.setAttribute('data-open', open ? '1' : '0');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      document.documentElement.style.overflow = open ? 'hidden' : '';
+      if (open) close.focus(); else btn.focus();
+    }
+    btn.addEventListener('click', function () { set(true); });
+    close.addEventListener('click', function () { set(false); });
+    back.addEventListener('click', function () { set(false); });
+    document.addEventListener('keydown', function (e) {
+      if (!open) return;
+      if (e.key === 'Escape') { set(false); return; }
+      if (e.key !== 'Tab') return;
+      const f = focusables();
+      if (!f.length) return;
+      const first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    });
+    window.addEventListener('resize', function () { if (open && window.innerWidth > 768) set(false); });
+    const s = document.getElementById('amiMenuSearch');
+    if (s) s.addEventListener('click', function () {
+      set(false);
+      const sb = document.getElementById('amiSearchBtn');
+      if (sb) sb.click();
+    });
   }
 
   function injectBand() {
@@ -1284,7 +1424,11 @@ html body .ami-strip[hidden]{display:none !important}
     const existing = document.querySelector('.section-nav');
     if (existing) { existing.outerHTML = sectionBand(); return; }
     const row = document.querySelector('.ami-product-row');
-    if (row) row.insertAdjacentHTML('afterend', sectionBand());
+    if (row) { row.insertAdjacentHTML('afterend', sectionBand()); return; }
+    const mast = document.querySelector('.masthead');
+    if (mast) { mast.insertAdjacentHTML('afterend', sectionBand()); return; }
+    const top = document.querySelector('.top-nav');
+    if (top) top.insertAdjacentHTML('afterend', sectionBand());
   }
 
   // ── Inject nav: replace existing .top-nav or prepend to body ──
@@ -1416,6 +1560,7 @@ html body .ami-strip[hidden]{display:none !important}
     initMasthead();
     injectProducts();
     injectBand();
+    initMenu();
     liftTicker();
     initSearch();
     setTimeout(syncProductNav, 0);
