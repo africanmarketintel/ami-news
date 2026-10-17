@@ -1548,7 +1548,11 @@ html body .ami-strip[hidden]{display:none !important}
       if (document.getElementById('amiPreCSS') || !document.head) return;
       const s = document.createElement('style');
       s.id = 'amiPreCSS';
-      s.textContent = '.section-nav{visibility:hidden!important;height:46px!important;overflow:hidden!important;margin:0!important;padding:0!important;border:0!important}'
+      // The logo row is in the page's own HTML, so it paints as soon as it is
+      // parsed - on its own, with the menu row still to come. It waits and
+      // appears with the rest of the header.
+      s.textContent = '.masthead{visibility:hidden!important}'
+        + '.section-nav{visibility:hidden!important;height:46px!important;overflow:hidden!important;margin:0!important;padding:0!important;border:0!important}'
         + '.dr-header,.ami-header{visibility:hidden!important;height:110px!important;overflow:hidden!important}'
         + '.ticker-bar:not(.ami-strip){display:none!important}'
         + '@media (max-width:768px){.top-nav{display:none!important}}';
