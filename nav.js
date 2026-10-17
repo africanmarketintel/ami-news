@@ -1,3 +1,15 @@
+// Open the connection to the database host (articles and pictures) as early as possible,
+// so it is ready when the page asks for data. One for data requests, one for pictures.
+try {
+  if (typeof SUPABASE_URL === 'string' && SUPABASE_URL.indexOf('https://') === 0 && !document.querySelector('link[rel=preconnect][href^="' + SUPABASE_URL + '"]')) {
+    [true, false].forEach(function (cors) {
+      var l = document.createElement('link');
+      l.rel = 'preconnect'; l.href = SUPABASE_URL;
+      if (cors) l.crossOrigin = 'anonymous';
+      document.head.appendChild(l);
+    });
+  }
+} catch (e) { /* not essential */ }
 // ═══════════════════════════════════════════════════════════
 // AMI SHARED NAVIGATION — nav.js
 // Add <script src="nav.js"></script> to any AMI page and

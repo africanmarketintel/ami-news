@@ -4152,7 +4152,7 @@
       <!-- ═══ SPONSORED AD BANNER ═══════════════════════ -->
       <div class="sidebar-widget" style="padding:0;overflow:hidden;border-top:3px solid var(--terra)">
         <a href="membership.html" id="sidebarAdLink" style="display:block;position:relative;text-decoration:none">
-          <img id="sidebarAdImg"
+          <img loading="lazy" id="sidebarAdImg"
             src="https://images.pexels.com/photos/8655018/pexels-photo-8655018.jpeg?auto=compress&cs=tinysrgb&w=400&h=250"
             alt="AMI — Africa's Trade Intelligence" style="width:100%;height:400px;object-fit:cover;display:card">
           <div
@@ -4664,6 +4664,10 @@
     // Key Economic Data: World Bank open API (no key, annual official figures)
     // African Markets ticker: open.er-api.com (free, no key, daily FX rates)
     async function loadLiveEconomicData() {
+      // The Key Economic Data box is not part of the home layout, so skip the four World Bank requests
+      // unless the box is on the page and visible.
+      const ecoBox = document.getElementById('eco-ng-inf');
+      if (!ecoBox || ecoBox.offsetParent === null) return;
       const wb = async (iso2, indicator) => {
         try {
           const r = await fetch(`https://api.worldbank.org/v2/country/${iso2}/indicator/${indicator}?format=json&mrv=1`, { cache: 'no-store' });
@@ -4705,6 +4709,10 @@
 
     // African Markets at a Glance: live FX rates (vs USD)
     async function loadLiveFxRates() {
+      // Only fetch when one of the places that shows these rates is visible. The rates strip in the
+      // header (nav.js) fetches its own copy and caches it.
+      const fxHosts = ['marketsDisplay', 'tickerInner'].map(function (i) { return document.getElementById(i); });
+      if (!fxHosts.some(function (e) { return e && e.offsetParent !== null; })) return;
       try {
         const r = await fetch('https://open.er-api.com/v6/latest/USD', { cache: 'no-store' });
         if (!r.ok) return;
