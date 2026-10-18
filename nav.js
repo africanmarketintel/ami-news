@@ -1595,7 +1595,7 @@ html body .ami-strip[hidden]{display:none !important}
         return a + sel.split(',').map(function (x) { return 'html body ' + x.trim(); }).join(',') + '{';
       });
       document.head.appendChild(m);
-      setTimeout(liftPreCSS, 4000);
+      setTimeout(liftPreCSS, /\/(dealroom|mailroom)/.test(window.location.pathname) ? 12000 : 4000);
     } catch (e) { /* the header still arrives on DOMContentLoaded */ }
   })();
 
