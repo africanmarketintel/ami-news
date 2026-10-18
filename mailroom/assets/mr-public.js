@@ -353,7 +353,7 @@
       show({
         subject: 'Sample: April market outlook', preheader: 'A shared draft',
         font_family: 'sans', status: 'draft', account_name: 'Sample Member Ltd',
-        postal_address: '12 Example Road, Lagos, Nigeria',
+        postal_address: '12 Example Road, London, EC1A 1AA, United Kingdom',
         body_blocks: [
           { type: 'heading', text: 'A shared draft' },
           { type: 'text', text: 'This is what the sender sees, and what would arrive.' }
@@ -387,7 +387,8 @@
       wrap.appendChild(emailFrame(c, { name: c.account_name, postal_address: c.postal_address }, {
         logo_url: c.logo_url, logo_alt: c.logo_alt, logo_width: c.logo_width,
         accent_colour: c.accent_colour, button_colour: c.button_colour,
-        button_text: c.button_text, footer_note: c.footer_note, social_links: c.social_links
+        button_text: c.button_text, footer_note: c.footer_note, footer_credit: c.footer_credit,
+        social_links: c.social_links
       }));
     }
   }

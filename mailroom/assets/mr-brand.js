@@ -52,8 +52,8 @@
       var d = MR.DEFAULT_BRAND || {};
       return {
         account_id: account.id, logo_url: '', logo_alt: '', logo_width: d.logo_width || 180,
-        accent_colour: d.accent_colour || '#1e6b3c', button_colour: d.button_colour || '#f9c53d',
-        button_text: d.button_text || '#1a1208', font_family: 'sans', footer_note: '',
+        accent_colour: d.accent_colour || '#6b7280', button_colour: d.button_colour || '#222222',
+        button_text: d.button_text || '#ffffff', font_family: 'sans', footer_note: '', footer_credit: '',
         social_links: []
       };
     }
@@ -132,7 +132,24 @@
       form.appendChild(MR.h('h2', { text: 'Footer' }));
       form.appendChild(text('b-footer', 'A line in the footer', brand.footer_note,
         function (v) { brand.footer_note = v; refresh(); },
-        'For example a company number, or a charity registration. Your postal address is added automatically.').group);
+        'For example: Registered in England and Wales, number 00000000. Or a charity registration. Your postal address is added automatically.').group);
+
+      /* the credit line: the platform's own, or the account's if its plan allows */
+      var DEFAULT_CREDIT = 'Sent through AMI Mailroom, operated by African Business Trade Association Limited.';
+      var canCredit = !!account.allows_custom_footer;
+      form.appendChild(MR.h('h3', { class: 'dr-h', text: 'Credit line' }));
+      if (canCredit) {
+        form.appendChild(text('b-credit', 'The credit line at the very bottom of every email', brand.footer_credit,
+          function (v) { brand.footer_credit = v; refresh(); },
+          'Leave this empty to keep the standard line: "' + DEFAULT_CREDIT + '" Up to 160 characters, plain text.').group);
+        form.querySelector('#b-credit').setAttribute('maxlength', '160');
+      } else {
+        brand.footer_credit = '';
+        form.appendChild(MR.h('p', { class: 'dr-body', text: DEFAULT_CREDIT }));
+        form.appendChild(MR.h('p', { class: 'dr-hint' },
+          'You can change this line with any paid plan. ',
+          MR.h('a', { href: 'pricing.html', text: 'See the plans' }), '.'));
+      }
 
       form.appendChild(MR.h('h3', { class: 'dr-h', text: 'Links in the footer' }));
       var linksBox = MR.h('div');
@@ -216,11 +233,14 @@
       var errors = [];
       ['accent_colour', 'button_colour', 'button_text'].forEach(function (k, i) {
         if (!/^#[0-9a-fA-F]{6}$/.test(brand[k] || '')) {
-          errors.push({ id: ['b-accent', 'b-button', 'b-button-text'][i] + '-hex', message: 'Enter a colour as six characters, such as #1e6b3c' });
+          errors.push({ id: ['b-accent', 'b-button', 'b-button-text'][i] + '-hex', message: 'Enter a colour as six characters, such as #222222' });
         }
       });
       if (brand.logo_url && !String(brand.logo_alt || '').trim()) {
         errors.push({ id: 'b-logo-alt', message: 'Say what the logo says, for readers who cannot see it' });
+      }
+      if (account.allows_custom_footer && String(brand.footer_credit || '').trim().length > 160) {
+        errors.push({ id: 'b-credit', message: 'Keep the credit line to 160 characters or fewer' });
       }
       var w = parseInt(brand.logo_width, 10);
       if (!(w >= 60 && w <= 552)) errors.push({ id: 'b-logo-width', message: 'Enter a width between 60 and 552' });
@@ -238,6 +258,9 @@
         social_links: (brand.social_links || []).filter(function (l) { return l.label && l.url; }),
         updated_at: new Date().toISOString()
       };
+      // Only sent when the plan allows it. Sending nothing leaves whatever is
+      // stored alone, so a downgraded account can still save the rest.
+      if (account.allows_custom_footer) patch.footer_credit = String(brand.footer_credit || '').trim() || null;
       MR.api.insert('mailroom_brand', patch, { query: '?on_conflict=account_id', upsert: true })
         .then(function () { MR.banner(wrap, 'Saved', 'New campaigns will use this.'); })
         .catch(function (err) {

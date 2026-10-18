@@ -1,5 +1,5 @@
 /* ==========================================================================
-   AMI Mailroom – writing and sending a campaign (campaign.html)
+   Writing and sending a campaign (campaign.html)
    The editor and the previews live in mr-editor.js, the markup in
    mr-render.js, the starter layouts in mr-templates.js and the image library
    in mr-images.js. This file is the page: choose a layout, load, validate,
@@ -48,10 +48,12 @@
     var versions = [];
     var preview = null;
     var editorApi = null;
+    var studio = null;          // the full-screen editor, when it is in use
 
     if (MR.cfg.demo) {
       account = MR.sampleAccount;
       brand = MR.sampleBrand || null;
+      if (brand && !account.allows_custom_footer) brand.footer_credit = '';
       campaign = JSON.parse(JSON.stringify(DEMO_CAMPAIGN));
       lists = (MR.sampleLists || []).map(function (l) { return { id: l.id, name: l.name, consent_status: l.consent_status }; });
       domains = (MR.sampleDomains || []).filter(function (d) { return d.status === 'verified'; });
@@ -75,6 +77,9 @@
       lists = res[0] || [];
       domains = (res[2] || []).filter(function (d) { return d.sending_status === 'active'; });
       brand = (res[3] || [])[0] || null;
+      // The credit line is only the account's own while its plan allows that,
+      // so the preview shows what will really be sent.
+      if (brand && !account.allows_custom_footer) brand.footer_credit = '';
       savedBlocks = res[4] || [];
       replyAddresses = (res[5] || []).map(function (r) { return r.email; });
       if (res[1] && res[1][0]) campaign = res[1][0];
@@ -136,29 +141,11 @@
       wrap.appendChild(grid);
     }
 
-    /* ---- the editor ---- */
-    function renderEditor() {
-      wrap.textContent = '';
-      wrap.appendChild(MR.h('h1', { text: campaignId ? 'Edit campaign' : 'Write a campaign' }));
-
-      if (campaign.status === 'held') {
-        MR.banner(wrap, 'Held for review',
-          (campaign.held_reason || 'A check flagged this campaign.') +
-          ' ABTA looks at held campaigns within one working day. Fix the problem and it will be released.', 'important');
-      }
-      if (campaign.status === 'sent') {
-        MR.banner(wrap, 'Already sent', 'This campaign has been sent, so it can no longer be edited.');
-      }
-      if (account && account.status === 'suspended') {
-        MR.banner(wrap, 'Sending suspended', account.suspension_reason || 'Contact ami@abta.africa.', 'important');
-      }
-      if (!brand && !MR.cfg.demo) {
-        MR.banner(wrap, 'Set up your look once',
-          'Your logo, colours and footer can be saved on the brand page and applied to every campaign after this one.');
-      }
-
-      var form = MR.h('form', { id: 'mr-campaign-form', novalidate: true });
-
+    /* ---------------- the settings fields ----------------
+       Subject, sender, list: shared by the studio (in its Send panel) and by
+       the simple editor. withStyle adds typeface, header strip and browser
+       link, which the studio keeps on its Style panel instead. */
+    function buildSettings(form, refresh, withStyle) {
       form.appendChild(field('c-subject', 'Subject line', campaign.subject, function (v) { campaign.subject = v; refresh(); },
         'Say what is in the email. Capitals and rows of exclamation marks get flagged.'));
       form.appendChild(field('c-preheader', 'Preview text', campaign.preheader, function (v) { campaign.preheader = v; refresh(); },
@@ -169,7 +156,7 @@
       var domainSelect = MR.h('select', { class: 'dr-select', id: 'c-domain' },
         MR.h('option', {
           value: '', selected: !campaign.sending_domain_id,
-          text: 'The shared AMI Mailroom address'
+          text: 'The shared sending address'
         }));
       domains.forEach(function (d) {
         domainSelect.appendChild(MR.h('option', {
@@ -206,58 +193,60 @@
         replySelect.addEventListener('change', function () { campaign.reply_to = replySelect.value; });
         form.appendChild(MR.h('div', { class: 'dr-form-group' },
           MR.h('label', { class: 'dr-label', for: 'c-reply', text: 'Replies go to' }),
-          MR.h('span', { class: 'dr-hint' }, 'Replies come to you, not to ABTA. ',
+          MR.h('span', { class: 'dr-hint' }, 'Replies come to you, not to ACME Limited. ',
             MR.h('a', { href: 'account.html', text: 'Add another address' })),
           replySelect));
       } else {
         form.appendChild(field('c-reply', 'Replies go to', campaign.reply_to, function (v) { campaign.reply_to = v; },
-          'Replies come to you, not to ABTA. This address has to be confirmed on your account page before you can send.'));
+          'Replies come to you, not to ACME Limited. This address has to be confirmed on your account page before you can send.'));
       }
 
-      var fontSelect = MR.h('select', { class: 'dr-select dr-input--w', id: 'c-font' },
-        MR.h('option', { value: 'sans', text: 'Sans serif (Arial, Helvetica)', selected: campaign.font_family === 'sans' }),
-        MR.h('option', { value: 'serif', text: 'Serif (Georgia, Times)', selected: campaign.font_family === 'serif' }),
-        MR.h('option', { value: 'system', text: 'System font', selected: campaign.font_family === 'system' }));
-      fontSelect.addEventListener('change', function () { campaign.font_family = fontSelect.value; refresh(); });
-      form.appendChild(MR.h('div', { class: 'dr-form-group' },
-        MR.h('label', { class: 'dr-label', for: 'c-font', text: 'Typeface' }),
-        MR.h('span', { class: 'dr-hint', text: 'Only fonts that exist on every device. A downloaded brand font silently falls back in Outlook, so the Mailroom does not offer one.' }),
-        fontSelect));
+      if (withStyle) {
+        var fontSelect = MR.h('select', { class: 'dr-select dr-input--w', id: 'c-font' },
+          MR.h('option', { value: 'sans', text: 'Sans serif (Arial, Helvetica)', selected: campaign.font_family === 'sans' }),
+          MR.h('option', { value: 'serif', text: 'Serif (Georgia, Times)', selected: campaign.font_family === 'serif' }),
+          MR.h('option', { value: 'system', text: 'System font', selected: campaign.font_family === 'system' }));
+        fontSelect.addEventListener('change', function () { campaign.font_family = fontSelect.value; refresh(); });
+        form.appendChild(MR.h('div', { class: 'dr-form-group' },
+          MR.h('label', { class: 'dr-label', for: 'c-font', text: 'Typeface' }),
+          MR.h('span', { class: 'dr-hint', text: 'Only fonts that exist on every device. A downloaded brand font silently falls back in Outlook, so the Mailroom does not offer one.' }),
+          fontSelect));
 
-      // The strip behind the logo, and the line above the email.
-      var headerOn = MR.h('input', {
-        class: 'dr-choice__input', id: 'c-header-on', type: 'checkbox',
-        checked: !!campaign.header_colour
-      });
-      var headerHex = MR.h('input', {
-        class: 'dr-input dr-input--w', id: 'c-header-colour', type: 'text',
-        value: campaign.header_colour || '#f3ead9', hidden: !campaign.header_colour
-      });
-      headerOn.addEventListener('change', function () {
-        headerHex.hidden = !headerOn.checked;
-        campaign.header_colour = headerOn.checked ? headerHex.value : null;
-        refresh();
-      });
-      headerHex.addEventListener('input', function () {
-        if (/^#[0-9a-fA-F]{6}$/.test(headerHex.value)) { campaign.header_colour = headerHex.value; refresh(); }
-      });
-      form.appendChild(MR.h('div', { class: 'dr-choice dr-choice--checkbox' }, headerOn,
-        MR.h('label', { class: 'dr-choice__label', for: 'c-header-on' }, 'Put a colour strip behind the logo',
-          MR.h('span', { class: 'dr-choice__hint', text: 'Otherwise the header is a rule in your accent colour.' }))));
-      form.appendChild(MR.h('div', { class: 'dr-form-group' },
-        MR.h('label', { class: 'dr-label', for: 'c-header-colour', text: 'Strip colour' }), headerHex));
+        // The strip behind the logo, and the line above the email.
+        var headerOn = MR.h('input', {
+          class: 'dr-choice__input', id: 'c-header-on', type: 'checkbox',
+          checked: !!campaign.header_colour
+        });
+        var headerHex = MR.h('input', {
+          class: 'dr-input dr-input--w', id: 'c-header-colour', type: 'text',
+          value: campaign.header_colour || '#f3ead9', hidden: !campaign.header_colour
+        });
+        headerOn.addEventListener('change', function () {
+          headerHex.hidden = !headerOn.checked;
+          campaign.header_colour = headerOn.checked ? headerHex.value : null;
+          refresh();
+        });
+        headerHex.addEventListener('input', function () {
+          if (/^#[0-9a-fA-F]{6}$/.test(headerHex.value)) { campaign.header_colour = headerHex.value; refresh(); }
+        });
+        form.appendChild(MR.h('div', { class: 'dr-choice dr-choice--checkbox' }, headerOn,
+          MR.h('label', { class: 'dr-choice__label', for: 'c-header-on' }, 'Put a colour strip behind the logo',
+            MR.h('span', { class: 'dr-choice__hint', text: 'Otherwise the header is a rule in your accent colour.' }))));
+        form.appendChild(MR.h('div', { class: 'dr-form-group' },
+          MR.h('label', { class: 'dr-label', for: 'c-header-colour', text: 'Strip colour' }), headerHex));
 
-      var browserOn = MR.h('input', {
-        class: 'dr-choice__input', id: 'c-browser', type: 'checkbox',
-        checked: !!campaign.show_browser_link
-      });
-      browserOn.addEventListener('change', function () {
-        campaign.show_browser_link = browserOn.checked; refresh();
-      });
-      form.appendChild(MR.h('div', { class: 'dr-choice dr-choice--checkbox' }, browserOn,
-        MR.h('label', { class: 'dr-choice__label', for: 'c-browser' }, 'Show a "View in browser" link',
-          MR.h('span', { class: 'dr-choice__hint', text: 'It points at the archive copy, so it only works if this campaign is public in the archive.' }))));
+        var browserOn = MR.h('input', {
+          class: 'dr-choice__input', id: 'c-browser', type: 'checkbox',
+          checked: !!campaign.show_browser_link
+        });
+        browserOn.addEventListener('change', function () {
+          campaign.show_browser_link = browserOn.checked; refresh();
+        });
+        form.appendChild(MR.h('div', { class: 'dr-choice dr-choice--checkbox' }, browserOn,
+          MR.h('label', { class: 'dr-choice__label', for: 'c-browser' }, 'Show a "View in browser" link',
+            MR.h('span', { class: 'dr-choice__hint', text: 'It points at the archive copy, so it only works if this campaign is public in the archive.' }))));
 
+      }
       var listSelect = MR.h('select', { class: 'dr-select', id: 'c-list' },
         MR.h('option', { value: '', text: 'Choose a list' }));
       lists.forEach(function (l) {
@@ -270,6 +259,41 @@
       listSelect.addEventListener('change', function () { campaign.list_id = listSelect.value; });
       form.appendChild(MR.h('div', { class: 'dr-form-group' },
         MR.h('label', { class: 'dr-label', for: 'c-list', text: 'Send to' }), listSelect));
+
+      function field(id, labelText, value, onInput, hint) {
+        var input = MR.h('input', { class: 'dr-input', id: id, type: 'text', value: value || '' });
+        input.addEventListener('input', function () { onInput(input.value); });
+        return MR.h('div', { class: 'dr-form-group' },
+          MR.h('label', { class: 'dr-label', for: id, text: labelText }),
+          hint ? MR.h('span', { class: 'dr-hint', text: hint }) : null, input);
+      }
+    }
+
+    /* ---- the editor ---- */
+    function renderEditor() {
+      if (studioWanted()) { renderStudio(); return; }
+      wrap.textContent = '';
+      wrap.appendChild(MR.h('h1', { text: campaignId ? 'Edit campaign' : 'Write a campaign' }));
+
+      if (campaign.status === 'held') {
+        MR.banner(wrap, 'Held for review',
+          (campaign.held_reason || 'A check flagged this campaign.') +
+          ' ACME Limited looks at held campaigns within one working day. Fix the problem and it will be released.', 'important');
+      }
+      if (campaign.status === 'sent') {
+        MR.banner(wrap, 'Already sent', 'This campaign has been sent, so it can no longer be edited.');
+      }
+      if (account && account.status === 'suspended') {
+        MR.banner(wrap, 'Sending suspended', account.suspension_reason || 'Contact ami@abta.africa.', 'important');
+      }
+      if (!brand && !MR.cfg.demo) {
+        MR.banner(wrap, 'Set up your look once',
+          'Your logo, colours and footer can be saved on the brand page and applied to every campaign after this one.');
+      }
+
+      var form = MR.h('form', { id: 'mr-campaign-form', novalidate: true });
+
+      buildSettings(form, refresh, true);
 
       form.appendChild(MR.h('h2', { text: 'Content' }));
       var editorBox = MR.h('div', { id: 'mr-editor' });
@@ -312,6 +336,105 @@
       }
     }
 
+    /* ---------------- the studio ----------------
+       The full-screen editor (mr-studio.js). It needs room: a panel, the
+       email and a bar. On a narrow screen, or with ?classic=1 on the address,
+       the stacked editor above is used instead. */
+    function studioWanted() {
+      return !!(MR.studio && MR.editorParts && !MR.qs('classic') && window.innerWidth >= 900);
+    }
+
+    // Where a message goes: the studio's own space when it is open, because
+    // the page behind it is hidden.
+    function notes() {
+      if (studio) {
+        // A new message replaces the last one. The ones marked data-keep, which
+        // say what state the campaign is in, stay.
+        var n = studio.notes();
+        Array.prototype.slice.call(n.children).forEach(function (c) { if (!c.hasAttribute('data-keep')) c.remove(); });
+        return n;
+      }
+      var form = document.getElementById('mr-campaign-form');
+      return (form && form.parentNode) || wrap;
+    }
+
+    // Leave the studio before a confirmation page replaces the page.
+    function leaveStudio() {
+      if (studio) { studio.destroy(); studio = null; }
+    }
+
+    // Show the error summary on the Send panel, and make a link to a block
+    // select that block, since its fields are only on screen when it is selected.
+    function showErrors(form, errors) {
+      if (studio && errors.length) studio.openSend();
+      var shown = MR.errors.show(form, errors);
+      if (shown && studio) {
+        var links = form.querySelectorAll('.dr-error-summary a');
+        errors.forEach(function (err, i) {
+          if (err.path && links[i]) {
+            links[i].addEventListener('click', function () {
+              studio.select(err.path);
+              setTimeout(function () {
+                var t = document.getElementById(err.id);
+                if (t) t.focus();
+              }, 60);
+            });
+          }
+        });
+      }
+      return shown;
+    }
+
+    function renderStudio() {
+      leaveStudio();
+      wrap.textContent = '';
+      var form = MR.h('form', { id: 'mr-campaign-form', novalidate: true });
+
+      buildSettings(form, function () { if (studio) studio.touch(); }, false);
+      form.appendChild(scheduleBox());
+      form.appendChild(MR.h('div', { class: 'dr-button-group' },
+        MR.h('button', { class: 'dr-button dr-button--secondary', type: 'button', text: 'Save draft', onclick: function () { save('draft', true); } }),
+        MR.h('button', { class: 'dr-button', type: 'submit', text: 'Send campaign' })));
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        sendNow(form);
+      });
+      var panel = MR.h('div', null, form, versionBox());
+
+      studio = MR.studio.mount({
+        campaign: campaign,
+        getAccount: function () { return account; },
+        getBrand: function () { return brand; },
+        saved: savedBlocks,
+        images: MR.cfg.demo ? null : function (onPick) { MR.pickImage(account.id, onPick); },
+        onSaveBlock: function (blocks, done) { saveBlock(blocks, done); },
+        sendPanel: panel,
+        save: function (announce) { return save('draft', announce); },
+        testSend: testSend,
+        shareLink: shareLink,
+        home: 'account.html',
+        classicUrl: 'campaign.html?classic=1' + (campaign.id ? '&id=' + campaign.id : ''),
+        demo: !!MR.cfg.demo
+      });
+
+      if (campaign.status === 'held') {
+        keep(MR.banner(studio.notes(), 'Held for review',
+          (campaign.held_reason || 'A check flagged this campaign.') +
+          ' Held campaigns are looked at within one working day. Fix the problem and it will be released.', 'important'));
+      }
+      if (campaign.status === 'sent') {
+        keep(MR.banner(studio.notes(), 'Already sent', 'This campaign has been sent, so it can no longer be edited.'));
+      }
+      if (account && account.status === 'suspended') {
+        keep(MR.banner(studio.notes(), 'Sending suspended', account.suspension_reason || 'Contact support to find out why.', 'important'));
+      }
+      if (!brand && !MR.cfg.demo) {
+        keep(MR.banner(studio.notes(), 'Set up your look once',
+          'Your logo, colours and footer can be saved on the brand page and applied to every campaign after this one.'));
+      }
+      function keep(box) { box.setAttribute('data-keep', ''); return box; }
+    }
+
     /* ---------------- earlier drafts ---------------- */
     function versionBox() {
       var box = MR.h('div', { class: 'mr-aside', id: 'mr-versions' },
@@ -349,7 +472,7 @@
           MR.announce('Earlier draft restored');
         });
       }).catch(function (err) {
-        MR.banner(wrap, 'Could not restore that draft', message(err), 'important');
+        MR.banner(notes(), 'Could not restore that draft', message(err), 'important');
       });
     }
 
@@ -374,7 +497,7 @@
     /* ---------------- share a preview ---------------- */
     function shareLink() {
       if (MR.cfg.demo) {
-        MR.banner(wrap, 'Preview only', 'On the live service this gives you a link anyone can open, without a Mailroom account.');
+        MR.banner(notes(), 'Preview only', 'On the live service this gives you a link anyone can open, without a Mailroom account.');
         return;
       }
       save('draft').then(function (saved) {
@@ -383,7 +506,7 @@
       }).then(function (token) {
         if (!token) return;
         var url = location.origin + location.pathname.replace(/campaign\.html$/, 'preview.html') + '?t=' + token;
-        var box = MR.banner(wrap, 'Anyone with this link can read the draft', url);
+        var box = MR.banner(notes(), 'Anyone with this link can read the draft', url);
         box.appendChild(MR.h('p', null, MR.h('button', {
           class: 'dr-button dr-button--secondary', type: 'button', text: 'Copy the link',
           onclick: function () {
@@ -399,7 +522,7 @@
           }
         })));
       }).catch(function (err) {
-        MR.banner(wrap, 'Could not make a link', message(err), 'important');
+        MR.banner(notes(), 'Could not make a link', message(err), 'important');
       });
     }
 
@@ -414,24 +537,56 @@
       if (forSend && !campaign.list_id) errors.push({ id: 'c-list', message: 'Choose a list to send to' });
       var hasContent = campaign.body_blocks.some(function (b) {
         return (b.text && b.text.trim()) || (b.left && b.left.trim()) ||
-               (b.right && b.right.trim()) || (b.url && b.url.trim());
+               (b.right && b.right.trim()) || (b.url && b.url.trim()) ||
+               (b.html && b.html.trim()) || (b.name && b.name.trim());
       });
       if (!hasContent) errors.push({ id: 'c-subject', message: 'Add some content before sending' });
       campaign.body_blocks.forEach(function (b, i) {
         var needsImage = b.type === 'image' || b.type === 'imagetext';
         if (needsImage && !String(b.alt || '').trim()) {
-          errors.push({ id: 'b' + i + '-alt', message: 'Describe image ' + (i + 1) + ', or readers who block images see nothing' });
+          errors.push({ id: 'b' + i + '-alt', path: String(i), message: 'Describe image ' + (i + 1) + ', or readers who block images see nothing' });
         }
         if (needsImage && !String(b.url || '').trim()) {
-          errors.push({ id: 'b' + i + '-url', message: 'Choose or upload image ' + (i + 1) });
+          errors.push({ id: 'b' + i + '-url', path: String(i), message: 'Choose or upload image ' + (i + 1) });
         }
         if (b.type === 'button' && !String(b.url || '').trim()) {
-          errors.push({ id: 'b' + i + '-url', message: 'Give the link for button ' + (i + 1) });
+          errors.push({ id: 'b' + i + '-url', path: String(i), message: 'Give the link for button ' + (i + 1) });
+        }
+        if (b.type === 'video') {
+          if (!String(b.url || '').trim()) {
+            errors.push({ id: 'b' + i + '-url', path: String(i), message: 'Give the link for video ' + (i + 1) });
+          }
+          if ((String(b.thumb || '').trim() || String(b.url || '').trim()) && !String(b.alt || '').trim()) {
+            errors.push({ id: 'b' + i + '-alt', path: String(i), message: 'Describe the thumbnail of video ' + (i + 1) });
+          }
+        }
+        if (b.type === 'logo') {
+          if (!String(b.url || '').trim() && !(brand && brand.logo_url)) {
+            errors.push({ id: 'b' + i + '-url', path: String(i), message: 'Choose a logo for block ' + (i + 1) + ', or save one in your brand settings' });
+          }
+          if (String(b.url || '').trim() && !String(b.alt || '').trim()) {
+            errors.push({ id: 'b' + i + '-alt', path: String(i), message: 'Describe the logo in block ' + (i + 1) });
+          }
+        }
+        if (b.type === 'product') {
+          if (!String(b.name || '').trim()) {
+            errors.push({ id: 'b' + i + '-name', path: String(i), message: 'Give product ' + (i + 1) + ' a name' });
+          }
+          if (String(b.url || '').trim() && !String(b.alt || '').trim()) {
+            errors.push({ id: 'b' + i + '-alt', path: String(i), message: 'Describe the image of product ' + (i + 1) });
+          }
+        }
+        if (b.type === 'navigation') {
+          (b.links || []).forEach(function (l, j) {
+            if (String(l.label || '').trim() && !String(l.url || '').trim()) {
+              errors.push({ id: 'b' + i + '-l' + j + '-url', path: String(i), message: 'Give the link for ' + l.label });
+            }
+          });
         }
         if (b.type === 'social') {
           (b.links || []).forEach(function (l, j) {
             if (String(l.label || '').trim() && !String(l.url || '').trim()) {
-              errors.push({ id: 'b' + i + '-l' + j + '-url', message: 'Give the link for ' + l.label });
+              errors.push({ id: 'b' + i + '-l' + j + '-url', path: String(i), message: 'Give the link for ' + l.label });
             }
           });
         }
@@ -440,7 +595,7 @@
     }
 
     function row(status) {
-      return {
+      var r = {
         account_id: account.id, list_id: campaign.list_id || null,
         sending_domain_id: campaign.sending_domain_id || null, subject: campaign.subject,
         preheader: campaign.preheader || null, from_name: campaign.from_name,
@@ -450,14 +605,18 @@
         show_browser_link: !!campaign.show_browser_link,
         status: status, created_by: MR.auth.userId()
       };
+      // Only sent once there is something to send, so a campaign that was
+      // never styled saves the same way it always did.
+      if (campaign.style) r.style = campaign.style;
+      return r;
     }
 
     function save(status, announce) {
       var form = document.getElementById('mr-campaign-form');
       var errors = status === 'draft' ? [] : validate(true);
-      if (MR.errors.show(form, errors)) return Promise.resolve(null);
+      if (showErrors(form, errors)) return Promise.resolve(null);
       if (MR.cfg.demo) {
-        if (announce) MR.banner(form.parentNode, 'Preview only', 'Nothing was saved.');
+        if (announce) MR.banner(notes(), 'Preview only', 'Nothing was saved.');
         return Promise.resolve({ id: 'demo' });
       }
       var p = campaign.id
@@ -466,6 +625,7 @@
       return p.then(function (rows) {
         campaign.id = rows[0].id;
         campaign.status = rows[0].status;
+        if (studio) studio.markSaved();
         if (announce) {
           MR.announce('Draft saved');
           loadVersions().then(function () {
@@ -545,10 +705,10 @@
       else if (new Date(iso) <= new Date()) {
         errors.push({ id: 'c-date', message: 'That time has already passed. Choose a time in the future.' });
       }
-      if (MR.errors.show(form, errors)) return;
+      if (showErrors(form, errors)) return;
 
       if (MR.cfg.demo) {
-        MR.banner(form.parentNode, 'Preview only',
+        MR.banner(notes(), 'Preview only',
           'On the live service this would be queued for ' + MR.dateTimeInZone(iso, tz()) + '.');
         return;
       }
@@ -562,6 +722,7 @@
       }).then(function (rows) {
         if (!rows) return;
         // Confirmation page, not a cleared form. See MR.done in mr-core.js.
+        leaveStudio();
         MR.done(wrap, {
           title: 'Campaign scheduled',
           lead: 'It goes out on',
@@ -574,7 +735,7 @@
           actions: [['account.html', 'Go to your mailroom'], ['campaign.html', 'Write another campaign']]
         });
       }).catch(function (err) {
-        MR.errors.show(form, [{ id: 'c-date', message: message(err) }]);
+        showErrors(form, [{ id: 'c-date', message: message(err) }]);
         console.error(err);
       });
     }
@@ -616,26 +777,26 @@
     function testSend() {
       var form = document.getElementById('mr-campaign-form');
       if (MR.cfg.demo) {
-        MR.banner(form.parentNode, 'Preview only', 'On the live service a test goes to everyone on your account.');
+        MR.banner(notes(), 'Preview only', 'On the live service a test goes to everyone on your account.');
         return;
       }
       save('draft').then(function (saved) {
         if (!saved) return;
         return MR.fn('mailroom-send', { campaign_id: saved.id, mode: 'test' }).then(function (r) {
-          MR.banner(form.parentNode, 'Test on its way',
+          MR.banner(notes(), 'Test on its way',
             'A test is going to the ' + (r.queued || 0) + ' addresses on your account, usually within a minute. Open it on a phone as well as a laptop, and try it with images turned off.');
         });
       }).catch(function (err) {
-        MR.banner(form.parentNode, 'Test not sent', message(err), 'important');
+        MR.banner(notes(), 'Test not sent', message(err), 'important');
         console.error(err);
       });
     }
 
     function sendNow(form) {
       var errors = validate(true);
-      if (MR.errors.show(form, errors)) return;
+      if (showErrors(form, errors)) return;
       if (MR.cfg.demo) {
-        MR.banner(form.parentNode, 'Preview only',
+        MR.banner(notes(), 'Preview only',
           'Your campaign passed every check. On the live service it would send now, with no approval step.');
         return;
       }
@@ -644,6 +805,7 @@
       save('draft').then(function (saved) {
         if (!saved) return;
         return MR.fn('mailroom-send', { campaign_id: saved.id, mode: 'send' }).then(function (r) {
+          leaveStudio();
           MR.done(wrap, {
             title: 'Campaign sending',
             lead: 'Queued and going out now',
@@ -658,19 +820,20 @@
         });
       }).catch(function (err) {
         if (/held_for_review/.test(String(err.message))) {
+          leaveStudio();
           MR.done(wrap, {
             title: 'Held for review',
             lead: 'This campaign has not gone out',
             next: [
               'A check flagged it, so it is waiting for a person to look at it.',
-              'ABTA reviews held campaigns within one working day.',
+              'ACME Limited reviews held campaigns within one working day.',
               'You will be told what to change, if anything.'
             ],
             actions: [['account.html', 'Go to your mailroom']]
           });
           return;
         }
-        MR.errors.show(form, [{ id: 'c-subject', message: message(err) }]);
+        showErrors(form, [{ id: 'c-subject', message: message(err) }]);
         console.error(err);
       });
     }

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   AMI Mailroom – drag and drop editor
+   Campaign editor – drag and drop
    Drag a block from the palette into the campaign, drag a block to reorder it,
    or do the same with the keyboard: every block has Move up and Move down
    buttons, and the palette items are ordinary buttons that add to the end.
@@ -15,25 +15,31 @@
   if (!MR) return;
 
   var TYPES = [
-    { value: 'heading', label: 'Heading', hint: 'A short line that breaks up the email' },
-    { value: 'text', label: 'Paragraph', hint: 'Body text' },
-    { value: 'story', label: 'Story', hint: 'A headline with one line underneath' },
-    { value: 'list', label: 'Bullet list', hint: 'One point per line' },
-    { value: 'button', label: 'Button', hint: 'A link that stands out' },
+    { value: 'heading', label: 'Title', hint: 'A short line that breaks up the email' },
+    { value: 'text', label: 'Text', hint: 'Body text' },
     { value: 'image', label: 'Image', hint: 'Needs a description' },
-    { value: 'imagetext', label: 'Image and text', hint: 'Side by side, stacking on a phone' },
-    { value: 'columns', label: 'Two columns', hint: 'Text side by side, stacking on a phone' },
-    { value: 'social', label: 'Social links', hint: 'A row of links' },
-    { value: 'panel', label: 'Colour panel', hint: 'A block of colour with other blocks inside it' },
+    { value: 'video', label: 'Video', hint: 'A picture that opens a video page' },
+    { value: 'button', label: 'Button', hint: 'A link that stands out' },
+    { value: 'dynamic', label: 'Dynamic content', hint: 'Text with each reader\'s details filled in' },
+    { value: 'logo', label: 'Logo', hint: 'Your logo, from your brand settings or chosen here' },
+    { value: 'social', label: 'Social', hint: 'A row of links' },
+    { value: 'html', label: 'HTML', hint: 'Your own markup. Only safe tags are kept' },
     { value: 'divider', label: 'Divider', hint: 'A horizontal rule' },
-    { value: 'spacer', label: 'Space', hint: 'A gap between blocks' }
+    { value: 'product', label: 'Product', hint: 'Picture, name, price and a button' },
+    { value: 'navigation', label: 'Navigation', hint: 'A row of page links' },
+    { value: 'spacer', label: 'Spacer', hint: 'A gap between blocks' },
+    { value: 'story', label: 'Story', hint: 'A headline with one line underneath', more: true },
+    { value: 'list', label: 'Bullet list', hint: 'One point per line', more: true },
+    { value: 'imagetext', label: 'Image and text', hint: 'Side by side, stacking on a phone', more: true },
+    { value: 'columns', label: 'Two columns', hint: 'Text side by side, stacking on a phone', more: true },
+    { value: 'panel', label: 'Colour panel', hint: 'A block of colour with other blocks inside it', more: true }
   ];
   MR.BLOCK_TYPES = TYPES;
 
   // Everything except a panel, which cannot go inside another panel.
   var INNER_TYPES = TYPES.filter(function (t) { return t.value !== 'panel'; });
 
-  var ALIGNABLE = ['heading', 'text', 'story', 'list', 'button', 'image', 'social'];
+  var ALIGNABLE = ['heading', 'text', 'story', 'list', 'button', 'image', 'social', 'video', 'logo', 'product', 'navigation', 'dynamic'];
 
   function blank(type) {
     if (type === 'button') return { type: 'button', label: 'Read more', url: '', align: 'left' };
@@ -42,19 +48,29 @@
     if (type === 'columns') return { type: 'columns', left: '', right: '' };
     if (type === 'social') return { type: 'social', style: 'text', align: 'center', links: [{ label: '', url: '' }] };
     if (type === 'divider') return { type: 'divider' };
+    if (type === 'video') return { type: 'video', url: '', thumb: '', alt: '', label: 'Watch the video', align: 'center' };
+    if (type === 'logo') return { type: 'logo', url: '', alt: '', width: 180, link: '', align: 'center' };
+    if (type === 'html') return { type: 'html', html: '' };
+    if (type === 'product') return { type: 'product', url: '', alt: '', name: '', price: '', description: '', label: 'Buy now', link: '', align: 'left' };
+    if (type === 'navigation') return { type: 'navigation', align: 'center', links: [{ label: '', url: '' }, { label: '', url: '' }] };
+    if (type === 'dynamic') return { type: 'dynamic', text: 'Hello {{first_name|there}},', align: 'left' };
     if (type === 'spacer') return { type: 'spacer', size: 'medium' };
     if (type === 'list') return { type: 'list', text: '' };
     if (type === 'heading') return { type: 'heading', text: '', level: 'large', align: 'left' };
     if (type === 'story') return { type: 'story', text: '', detail: '', url: '', align: 'left' };
     if (type === 'panel') {
       return {
-        type: 'panel', background: '#1e6b3c', text_colour: '#ffffff',
-        link_colour: '#f9c53d', blocks: [{ type: 'heading', text: '', level: 'large', align: 'left' }]
+        type: 'panel', background: '#1b4332', text_colour: '#ffffff',
+        link_colour: '#b7e4c7', blocks: [{ type: 'heading', text: '', level: 'large', align: 'left' }]
       };
     }
     return { type: 'text', text: '', align: 'left' };
   }
   MR.blankBlock = blank;
+
+  // The studio (mr-studio.js) draws a block's settings with the same field
+  // builders as this editor, so a change to a field is made once.
+  MR.editorParts = { fields: fields, colourField: colourField, label: label, types: TYPES, innerTypes: INNER_TYPES };
 
   function label(block) {
     var t = TYPES.filter(function (x) { return x.value === block.type; })[0];
@@ -223,10 +239,115 @@
       return wrap;
     }
 
+    if (block.type === 'video') {
+      wrap.appendChild(field(id + '-url', 'Video link', 'url', block.url,
+        function (v) { block.url = v; api.changed(); },
+        'The web address of the video. Email cannot play video, so readers see a picture that opens it.'));
+      wrap.appendChild(imageField(block, id, api, 'thumb', 'Thumbnail address',
+        'Leave this empty for a YouTube link and its own thumbnail is used. A thumbnail with a play symbol on it works best.'));
+      wrap.appendChild(field(id + '-alt', 'Description of the thumbnail', 'text', block.alt,
+        function (v) { block.alt = v; api.changed(); },
+        'Required. Many readers block images, and some use a screen reader.'));
+      wrap.appendChild(field(id + '-label', 'Link text under the thumbnail', 'text', block.label,
+        function (v) { block.label = v; api.changed(); }));
+      wrap.appendChild(alignField(id, block, api));
+      return wrap;
+    }
+
+    if (block.type === 'logo') {
+      wrap.appendChild(imageField(block, id, api, 'url', 'Logo address',
+        'Leave this empty to use the logo saved in your brand settings.'));
+      wrap.appendChild(field(id + '-alt', 'Description of the logo', 'text', block.alt,
+        function (v) { block.alt = v; api.changed(); },
+        'Leave this empty to use the description saved in your brand settings.'));
+      wrap.appendChild(field(id + '-link', 'Link, if the logo should be one', 'url', block.link,
+        function (v) { block.link = v; api.changed(); }));
+      wrap.appendChild(field(id + '-width', 'Width in pixels, from 40 to 552', 'number', block.width,
+        function (v) { block.width = parseInt(v, 10) || 180; api.changed(); }));
+      wrap.appendChild(alignField(id, block, api));
+      return wrap;
+    }
+
+    if (block.type === 'html') {
+      wrap.appendChild(textArea(id + '-html', 'HTML', block.html, 10,
+        function (v) { block.html = v; api.changed(); },
+        'Paragraphs, headings, links, lists, bold, italic, underline and images are kept. Scripts, styles, forms and every other tag are removed, because email apps block or ignore them.'));
+      return wrap;
+    }
+
+    if (block.type === 'product') {
+      wrap.appendChild(imageField(block, id, api, 'url', 'Product image address'));
+      wrap.appendChild(field(id + '-alt', 'Description of the image', 'text', block.alt,
+        function (v) { block.alt = v; api.changed(); },
+        'Required when there is an image.'));
+      wrap.appendChild(field(id + '-name', 'Name', 'text', block.name, function (v) { block.name = v; api.changed(); }));
+      wrap.appendChild(field(id + '-price', 'Price', 'text', block.price, function (v) { block.price = v; api.changed(); },
+        'Written as you want it shown, with the currency.'));
+      wrap.appendChild(textArea(id + '-description', 'Description', block.description, 3,
+        function (v) { block.description = v; api.changed(); }, LINK_HINT));
+      wrap.appendChild(field(id + '-label', 'Button text', 'text', block.label, function (v) { block.label = v; api.changed(); }));
+      wrap.appendChild(field(id + '-link', 'Button link', 'url', block.link, function (v) { block.link = v; api.changed(); },
+        'Leave this empty for no button.'));
+      wrap.appendChild(alignField(id, block, api));
+      wrap.appendChild(optColourField(id + '-fill', 'Button colour', block, 'colour', api,
+        'Empty uses the button colour from the Style tab.'));
+      wrap.appendChild(optColourField(id + '-text', 'Button text colour', block, 'text_colour', api));
+      return wrap;
+    }
+
+    if (block.type === 'navigation') {
+      if (!Array.isArray(block.links)) block.links = [];
+      block.links.forEach(function (link, i) {
+        var row = MR.h('div', { class: 'mr-social-row' },
+          field(id + '-l' + i + '-label', 'Name', 'text', link.label, function (v) { link.label = v; api.changed(); }),
+          field(id + '-l' + i + '-url', 'Link', 'url', link.url, function (v) { link.url = v; api.changed(); }));
+        row.appendChild(MR.h('button', {
+          type: 'button', class: 'dr-button dr-button--warning', text: 'Remove',
+          onclick: function () { block.links.splice(i, 1); api.redraw(); }
+        }));
+        wrap.appendChild(row);
+      });
+      wrap.appendChild(MR.h('button', {
+        type: 'button', class: 'dr-button dr-button--secondary', text: 'Add another link',
+        onclick: function () { block.links.push({ label: '', url: '' }); api.redraw(); }
+      }));
+      wrap.appendChild(alignField(id, block, api));
+      return wrap;
+    }
+
+    if (block.type === 'dynamic') {
+      var area = textArea(id + '-text', 'Text', block.text, 5,
+        function (v) { block.text = v; api.changed(); },
+        'Fields are filled in for each reader from their record. Add a fallback after a bar, as in {{first_name|there}}, for readers who have none. The preview shows the fallback.');
+      var box = area.querySelector('textarea');
+      var bar = MR.h('div', { class: 'dr-button-group' });
+      [['First name', '{{first_name|there}}'], ['Full name', '{{full_name}}'],
+       ['Organisation', '{{organisation}}'], ['Country', '{{country}}']].forEach(function (f) {
+        bar.appendChild(MR.h('button', {
+          type: 'button', class: 'dr-button dr-button--secondary', text: 'Add ' + f[0].toLowerCase(),
+          onclick: function () {
+            var at = box.selectionStart == null ? box.value.length : box.selectionStart;
+            var to = box.selectionEnd == null ? at : box.selectionEnd;
+            box.value = box.value.slice(0, at) + f[1] + box.value.slice(to);
+            box.focus();
+            box.setSelectionRange(at + f[1].length, at + f[1].length);
+            block.text = box.value; api.changed();
+          }
+        }));
+      });
+      wrap.appendChild(area);
+      wrap.appendChild(bar);
+      wrap.appendChild(alignField(id, block, api));
+      return wrap;
+    }
+
     if (block.type === 'button') {
       wrap.appendChild(field(id + '-label', 'Button text', 'text', block.label, function (v) { block.label = v; api.changed(); }));
       wrap.appendChild(field(id + '-url', 'Link', 'url', block.url, function (v) { block.url = v; api.changed(); }));
       wrap.appendChild(alignField(id, block, api));
+      wrap.appendChild(optColourField(id + '-fill', 'Button colour', block, 'colour', api,
+        'Empty uses the button colour from the Style tab.'));
+      wrap.appendChild(optColourField(id + '-text', 'Button text colour', block, 'text_colour', api));
       return wrap;
     }
 
@@ -286,7 +407,7 @@
     }
 
     if (block.type === 'heading') {
-      wrap.appendChild(textArea(id + '-text', 'Heading', block.text, 2,
+      wrap.appendChild(textArea(id + '-text', 'Title', block.text, 2,
         function (v) { block.text = v; api.changed(); }));
       var level = MR.h('select', { class: 'dr-select dr-input--w', id: id + '-level' },
         MR.h('option', { value: 'large', text: 'Large', selected: block.level !== 'small' }),
@@ -328,14 +449,15 @@
         MR.h('label', { class: 'dr-choice__label', for: fid, text: labelText }));
     }
 
-    function imageField(b, fid, a) {
+    function imageField(b, fid, a, key, labelText, hint) {
+      key = key || 'url';
       var preview = MR.h('div', { class: 'mr-image-field__preview' });
       function drawPreview() {
         preview.textContent = '';
-        if (b.url) preview.appendChild(MR.h('img', { src: b.url, alt: b.alt || '', class: 'mr-thumb' }));
+        if (b[key]) preview.appendChild(MR.h('img', { src: b[key], alt: b.alt || '', class: 'mr-thumb' }));
       }
-      var input = MR.h('input', { class: 'dr-input', id: fid + '-url', type: 'url', value: b.url || '' });
-      input.addEventListener('input', function () { b.url = input.value; drawPreview(); a.changed(); });
+      var input = MR.h('input', { class: 'dr-input', id: fid + '-' + key, type: 'url', value: b[key] || '' });
+      input.addEventListener('input', function () { b[key] = input.value; drawPreview(); a.changed(); });
       drawPreview();
 
       var buttons = MR.h('div', { class: 'dr-button-group' });
@@ -344,7 +466,7 @@
           type: 'button', class: 'dr-button dr-button--secondary', text: 'Choose or upload an image',
           onclick: function () {
             a.images(function (picked) {
-              b.url = picked.url;
+              b[key] = picked.url;
               if (!b.alt) b.alt = picked.alt || '';
               a.redraw();
             });
@@ -353,8 +475,8 @@
       }
       return MR.h('div', { class: 'mr-image-field' },
         MR.h('div', { class: 'dr-form-group' },
-          MR.h('label', { class: 'dr-label', for: fid + '-url', text: 'Image address' }),
-          MR.h('span', { class: 'dr-hint', text: 'Upload one, or paste the address of an image already online. Keep it under 200KB: readers on mobile data pay for every one.' }),
+          MR.h('label', { class: 'dr-label', for: fid + '-' + key, text: labelText || 'Image address' }),
+          MR.h('span', { class: 'dr-hint', text: hint || 'Upload one, or paste the address of an image already online. Keep it under 200KB: readers on mobile data pay for every one.' }),
           input),
         buttons, preview);
     }
@@ -387,6 +509,29 @@
       MR.h('label', { class: 'dr-label', for: id, text: labelText }),
       hint ? MR.h('span', { class: 'dr-hint', text: hint }) : null,
       MR.h('div', { class: 'mr-colour-row' }, swatch, hex));
+  }
+
+  // A colour that may be left unset, in which case the campaign's own choice
+  // applies. "Use default" takes the setting off the block again.
+  function optColourField(id, labelText, block, key, api, hint) {
+    var cur = block[key] || '';
+    var swatch = MR.h('input', { class: 'mr-colour', id: id, type: 'color', value: cur || '#000000' });
+    var hex = MR.h('input', { class: 'dr-input dr-input--w', id: id + '-hex', type: 'text', value: cur,
+      placeholder: 'Default', maxlength: 7, 'aria-label': labelText + ', as a colour code' });
+    var reset = MR.h('button', { type: 'button', class: 'dr-button dr-button--secondary', text: 'Use default', hidden: !cur });
+    swatch.addEventListener('input', function () {
+      block[key] = swatch.value; hex.value = swatch.value; reset.hidden = false; api.changed();
+    });
+    hex.addEventListener('input', function () {
+      if (/^#[0-9a-fA-F]{6}$/.test(hex.value)) { block[key] = hex.value; swatch.value = hex.value; reset.hidden = false; api.changed(); }
+      else if (hex.value === '') { delete block[key]; reset.hidden = true; api.changed(); }
+    });
+    hex.addEventListener('blur', function () { hex.value = block[key] || ''; });
+    reset.addEventListener('click', function () { delete block[key]; hex.value = ''; reset.hidden = true; api.changed(); });
+    return MR.h('div', { class: 'dr-form-group' },
+      MR.h('label', { class: 'dr-label', for: id, text: labelText }),
+      hint ? MR.h('span', { class: 'dr-hint', text: hint }) : null,
+      MR.h('div', { class: 'mr-colour-row' }, swatch, hex, reset));
   }
 
   // A panel's own Add row, so the keyboard reaches inside it too.
@@ -600,11 +745,11 @@
 
   /* ---------------- previews ---------------- */
   var VIEWS = [
-    { value: 'desktop', label: 'Desktop', width: 620 },
+    { value: 'desktop', label: 'Desktop', width: 660 },
     { value: 'phone', label: 'Phone', width: 390 },
-    { value: 'outlook', label: 'Outlook', width: 620 },
-    { value: 'dark', label: 'Dark mode', width: 620 },
-    { value: 'text', label: 'Plain text', width: 620 }
+    { value: 'outlook', label: 'Outlook', width: 660 },
+    { value: 'dark', label: 'Dark mode', width: 660 },
+    { value: 'text', label: 'Plain text', width: 660 }
   ];
 
   MR.preview = function (target, getCampaign, getAccount, getBrand) {

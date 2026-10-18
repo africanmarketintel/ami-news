@@ -19,11 +19,12 @@
   MR.sampleAccount = {
     id: 'sample', name: 'Sample Member Ltd', status: 'active', trust_level: 2,
     sender_local: 'sample-member', timezone: 'Africa/Lagos',
-    postal_address: '12 Example Road, Lagos, Nigeria',
+    postal_address: '12 Example Road, London, EC1A 1AA, United Kingdom',
     max_subscribers: 500, monthly_send_limit: 1000,
     trial_ends_at: previewFree ? null : days(9),
     plan_code: previewFree ? 'free' : 'starter',
-    allows_own_domain: !previewFree
+    allows_own_domain: !previewFree,
+    allows_custom_footer: !previewFree
   };
 
   MR.sampleDomains = previewFree ? [] : [
@@ -42,8 +43,8 @@
 
   MR.sampleBrand = {
     logo_url: '', logo_alt: 'Sample Member Ltd', logo_width: 180,
-    accent_colour: '#1e6b3c', button_colour: '#f9c53d', button_text: '#1a1208',
-    font_family: 'sans', footer_note: 'Registered in Lagos, number 000000.',
+    accent_colour: '#6b7280', button_colour: '#222222', button_text: '#ffffff',
+    font_family: 'sans', footer_note: 'Registered in England and Wales, number 00000000.', footer_credit: '',
     social_links: [{ label: 'LinkedIn', url: 'https://example.com' }]
   };
 
