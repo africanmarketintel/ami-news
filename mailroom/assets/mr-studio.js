@@ -709,8 +709,162 @@
 
       if (block.type === 'panel') pBlock.appendChild(panelSettings(block, path));
       else pBlock.appendChild(PARTS.fields(block, path, fieldsApi));
+      pBlock.appendChild(designPanel(block));
     }
 
+    /* ---------------- block design ----------------
+       Layout, spacing, background, rounded corners, borders and who sees the
+       block. Kept in block.design, one key each, and a key is removed when it
+       goes back to its default. mr-render.js checks every value again. */
+    function dget(block, key) { return block.design ? block.design[key] : undefined; }
+    function dset(block, key, v) {
+      if (v === '' || v === null || v === undefined) {
+        if (block.design) { delete block.design[key]; if (!Object.keys(block.design).length) delete block.design; }
+      } else {
+        if (!block.design) block.design = {};
+        block.design[key] = v;
+      }
+      changed(true);
+    }
+    function dnum(block, id, text, key, min, max, def, unit) {
+      var cur = dget(block, key);
+      var input = h('input', { class: 'dr-input', id: id, type: 'number', min: String(min), max: String(max), step: '1',
+        inputmode: 'numeric', value: cur === undefined ? '' : String(cur), placeholder: String(def), 'aria-label': text });
+      input.addEventListener('input', function () {
+        var v = input.value.trim();
+        if (v === '') { dset(block, key, ''); return; }
+        var n = parseInt(v, 10);
+        if (isFinite(n)) dset(block, key, Math.max(min, Math.min(max, n)));
+      });
+      input.addEventListener('blur', function () { var v = dget(block, key); input.value = v === undefined ? '' : String(v); });
+      return unit ? h('div', { class: 'mr-studio__unit' }, input, h('span', { text: unit })) : input;
+    }
+    function dseg(block, text, key, options, def) {
+      var cur = dget(block, key) || def;
+      var wrap = h('div', { class: 'mr-studio__pills', role: 'group', 'aria-label': text });
+      options.forEach(function (op) {
+        var b = h('button', { type: 'button', class: 'mr-studio__pill', 'aria-pressed': cur === op[0] ? 'true' : 'false', text: op[1] });
+        b.addEventListener('click', function () {
+          dset(block, key, op[0] === def ? '' : op[0]);
+          Array.prototype.forEach.call(wrap.children, function (c) { c.setAttribute('aria-pressed', c === b ? 'true' : 'false'); });
+        });
+        wrap.appendChild(b);
+      });
+      return wrap;
+    }
+    // Four sides, or one value for all four while "Group sides" is ticked.
+    function dsides(block, id, text, keys, max) {
+      var vals = keys.map(function (k) { return dget(block, k); });
+      var grouped = vals.every(function (v) { return String(v === undefined ? '' : v) === String(vals[0] === undefined ? '' : vals[0]); });
+      var holder = h('div');
+      var box = h('input', { class: 'dr-choice__input', id: id + '-group', type: 'checkbox', checked: grouped });
+      function draw() {
+        holder.textContent = '';
+        if (box.checked) {
+          var one = h('input', { class: 'dr-input', id: id + '-all', type: 'number', min: '0', max: String(max), step: '1',
+            inputmode: 'numeric', value: dget(block, keys[0]) === undefined ? '' : String(dget(block, keys[0])), placeholder: '0', 'aria-label': text + ', all sides' });
+          one.addEventListener('input', function () {
+            var v = one.value.trim();
+            var n = v === '' ? '' : Math.max(0, Math.min(max, parseInt(v, 10) || 0));
+            keys.forEach(function (k) { if (n === '') { if (block.design) delete block.design[k]; } else { (block.design = block.design || {})[k] = n; } });
+            if (block.design && !Object.keys(block.design).length) delete block.design;
+            changed(true);
+          });
+          holder.appendChild(h('div', { class: 'mr-studio__unit' }, one, h('span', { text: 'px' })));
+        } else {
+          var g = h('div', { class: 'mr-studio__sides' });
+          [['Top', 0], ['Right', 1], ['Bottom', 2], ['Left', 3]].forEach(function (s2) {
+            g.appendChild(h('label', { class: 'mr-studio__side' }, h('span', { text: s2[0] }),
+              dnum(block, id + '-' + s2[1], text + ', ' + s2[0].toLowerCase(), keys[s2[1]], 0, max, 0)));
+          });
+          holder.appendChild(g);
+        }
+      }
+      box.addEventListener('change', draw);
+      draw();
+      return h('div', { class: 'dr-form-group' },
+        h('div', { class: 'mr-studio__row2' }, h('span', { class: 'dr-label', text: text + ' (px)' }),
+          h('span', { class: 'dr-choice dr-choice--checkbox' }, box, h('label', { class: 'dr-choice__label', for: id + '-group', text: 'Group sides' }))),
+        holder);
+    }
+    function dfield(id, text, control, hint) {
+      return h('div', { class: 'dr-form-group' },
+        h('label', { class: 'dr-label', for: id, text: text }), hint ? h('span', { class: 'dr-hint', text: hint }) : null, control);
+    }
+    function dcolour(block, id, text, key, fallback) {
+      var cur = dget(block, key) || '';
+      var ok = function (v) { return /^#[0-9a-fA-F]{6}$/.test(v || ''); };
+      var swatch = h('input', { class: 'mr-colour', id: id, type: 'color', value: ok(cur) ? cur : fallback });
+      var hex = h('input', { class: 'dr-input dr-input--w', id: id + '-hex', type: 'text', value: cur, placeholder: 'None', maxlength: 7,
+        'aria-label': text + ', as a colour code' });
+      var reset = h('button', { type: 'button', class: 'mr-studio__linkbtn', text: 'Clear', hidden: !cur });
+      swatch.addEventListener('input', function () { hex.value = swatch.value; reset.hidden = false; dset(block, key, swatch.value); });
+      hex.addEventListener('input', function () {
+        if (ok(hex.value)) { swatch.value = hex.value; reset.hidden = false; dset(block, key, hex.value); }
+        else if (hex.value === '') { reset.hidden = true; dset(block, key, ''); }
+      });
+      hex.addEventListener('blur', function () { hex.value = dget(block, key) || ''; });
+      reset.addEventListener('click', function () { hex.value = ''; swatch.value = fallback; reset.hidden = true; dset(block, key, ''); });
+      return dfield(id, text, h('div', { class: 'mr-colour-row' }, swatch, hex, reset));
+    }
+    function dfold(key, title, build) {
+      var d = h('details', { class: 'mr-studio__fold' });
+      d.open = !!styleUi.open['d-' + key];
+      d.addEventListener('toggle', function () { styleUi.open['d-' + key] = d.open; });
+      d.appendChild(h('summary', { class: 'mr-studio__foldhead', text: title }));
+      var inner = h('div', { class: 'mr-studio__foldbody' });
+      build(inner);
+      d.appendChild(inner);
+      return d;
+    }
+
+    function designPanel(block) {
+      var id = 'dz' + String(state.sel).replace(/\./g, '-');
+      var wrap = h('div', { class: 'mr-studio__design' });
+      wrap.appendChild(h('h3', { class: 'mr-studio__h3', text: 'Block design' }));
+      wrap.appendChild(h('p', { class: 'mr-studio__hint', text: 'Leave a setting empty to keep the email’s own style.' }));
+
+      wrap.appendChild(dfold('layout', 'Layout', function (b) {
+        b.appendChild(dfield(id + '-w', 'Width', dnum(block, id + '-w', 'Width', 'width', 10, 100, 100, '%')));
+        b.appendChild(dfield(id + '-a', 'Block alignment',
+          dseg(block, 'Block alignment', 'block_align', [['left', 'Left'], ['center', 'Centre'], ['right', 'Right']], 'left'),
+          'Where a block narrower than 100% sits.'));
+      }));
+      wrap.appendChild(dfold('spacing', 'Spacing', function (b) {
+        b.appendChild(dsides(block, id + '-pad', 'Padding', ['pad_t', 'pad_r', 'pad_b', 'pad_l'], 80));
+        b.appendChild(dsides(block, id + '-mar', 'Margin', ['mar_t', 'mar_r', 'mar_b', 'mar_l'], 80));
+      }));
+      wrap.appendChild(dfold('bg', 'Background', function (b) {
+        b.appendChild(dcolour(block, id + '-bgc', 'Colour', 'bg', '#ffffff'));
+        var url = h('input', { class: 'dr-input', id: id + '-bgi', type: 'url', placeholder: 'https://', value: dget(block, 'bg_image') || '' });
+        url.addEventListener('input', function () { dset(block, 'bg_image', /^https?:\/\//i.test(url.value.trim()) ? url.value.trim() : ''); });
+        b.appendChild(dfield(id + '-bgi', 'Image address', url, 'A web address starting https://. Some email apps do not show background images.'));
+      }));
+      wrap.appendChild(dfold('radius', 'Rounded corners', function (b) {
+        b.appendChild(dfield(id + '-r', 'Radius', dnum(block, id + '-r', 'Radius', 'radius', 0, 40, 0, 'px'), 'Outlook for Windows shows square corners.'));
+      }));
+      wrap.appendChild(dfold('border', 'Borders', function (b) {
+        b.appendChild(dfield(id + '-bs', 'Size', dnum(block, id + '-bs', 'Border size', 'border_size', 0, 10, 0, 'px')));
+        b.appendChild(dcolour(block, id + '-bc', 'Colour', 'border_colour', '#cccccc'));
+        var cur = String(dget(block, 'border_sides') || 'trbl');
+        var sides = h('div', { class: 'mr-studio__sidechecks' });
+        [['t', 'Top'], ['r', 'Right'], ['b', 'Bottom'], ['l', 'Left']].forEach(function (sd) {
+          var cb = h('input', { class: 'dr-choice__input', id: id + '-s' + sd[0], type: 'checkbox', checked: cur.indexOf(sd[0]) > -1 });
+          cb.addEventListener('change', function () {
+            var now = ['t', 'r', 'b', 'l'].filter(function (k) { return k === sd[0] ? cb.checked : cur.indexOf(k) > -1; }).join('');
+            cur = now;
+            dset(block, 'border_sides', now === 'trbl' ? '' : (now || 'x'));
+          });
+          sides.appendChild(h('span', { class: 'dr-choice dr-choice--checkbox' }, cb, h('label', { class: 'dr-choice__label', for: id + '-s' + sd[0], text: sd[1] })));
+        });
+        b.appendChild(dfield(id + '-sides', 'Apply to', sides));
+      }));
+      wrap.appendChild(dfold('show', 'Content visibility', function (b) {
+        b.appendChild(h('p', { class: 'mr-studio__hint', text: 'Show this block on:' }));
+        b.appendChild(dseg(block, 'Show on', 'show', [['all', 'All devices'], ['desktop', 'Only on desktop'], ['mobile', 'Only on mobile']], 'all'));
+      }));
+      return wrap;
+    }
     function smallBtn(text, ic, disabled, fn, focusKey, warn) {
       return h('button', {
         type: 'button', class: 'mr-studio__small' + (warn ? ' is-warn' : ''), disabled: disabled, 'data-focus': focusKey,
@@ -1034,7 +1188,7 @@
         byRow.set(tr, entry);
         map.push(entry);
         if (b.type === 'panel') {
-          var inner = tr.querySelector('table');
+          var inner = tr.querySelector('table:not(.rc-dsn)');   // a designed block has two wrapper tables of its own
           var innerRows = inner ? Array.prototype.slice.call(inner.rows) : [];
           var k = 1;                                 // row 0 is the top spacer
           (b.blocks || []).forEach(function (c, j) {

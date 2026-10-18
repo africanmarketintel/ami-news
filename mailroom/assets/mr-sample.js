@@ -50,8 +50,8 @@
 
   MR.sampleImages = [
     { id: 'i1', url: 'data:image/svg+xml;utf8,' + encodeURIComponent(
-        '<svg xmlns="http://www.w3.org/2000/svg" width="320" height="200"><rect width="320" height="200" fill="#e8f1ec"/>' +
-        '<text x="160" y="105" font-family="Arial" font-size="18" text-anchor="middle" fill="#1e6b3c">Sample image</text></svg>'),
+        '<svg xmlns="http://www.w3.org/2000/svg" width="320" height="200"><rect width="320" height="200" fill="#e5e7eb"/>' +
+        '<text x="160" y="105" font-family="Arial" font-size="18" text-anchor="middle" fill="#4b5563">Sample image</text></svg>'),
       alt: 'A placeholder standing in for one of your own images', bytes: 1200 }
   ];
 

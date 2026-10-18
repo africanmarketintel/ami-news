@@ -234,6 +234,8 @@
 '  @media screen and (max-width:' + (ST.width + 20) + 'px){\n' +
 '    .rc-wrap{width:100% !important}\n' +
 '    .rc-pad{padding-left:16px !important;padding-right:16px !important}\n' +
+'    .rc-only-d{display:none !important}\n' +
+'    .rc-only-m{display:table-cell !important}\n' +
 '    .rc-col{display:block !important;width:100% !important;max-width:100% !important;padding-left:0 !important;padding-right:0 !important}\n' +
 '    .rc-col-gap{display:block !important;width:100% !important;height:16px !important}\n' +
 '    .rc-col img{width:100% !important;max-width:100% !important}\n' +
@@ -302,7 +304,60 @@ footer(account, font, unsubscribe, preferences, brand) +
   }
 
   /* ---------------- blocks ---------------- */
+  /* ---------------- block design ----------------
+     Optional settings a member can put on any block, kept in b.design:
+       width (10 to 100, per cent), block_align, pad_t/r/b/l, mar_t/r/b/l,
+       bg, bg_image, radius, border_size, border_colour, border_sides
+       (letters t, r, b, l) and show (all, desktop or mobile).
+     A block with none of them renders exactly as before. With any of them the
+     block's own row is wrapped in two more tables, still inside one row, so the
+     editor's one-row-per-block rule holds. Every value is checked here. */
+  function applyDesign(rowHtml, b) {
+    var d = b && b.design;
+    if (!d || typeof d !== 'object') return rowHtml;
+    var width = num(d.width, 10, 100, 100);
+    var ba = rawAlign(d.block_align);
+    var padT = num(d.pad_t, 0, 80, 0), padR = num(d.pad_r, 0, 80, 0), padB = num(d.pad_b, 0, 80, 0), padL = num(d.pad_l, 0, 80, 0);
+    var marT = num(d.mar_t, 0, 80, 0), marR = num(d.mar_r, 0, 80, 0), marB = num(d.mar_b, 0, 80, 0), marL = num(d.mar_l, 0, 80, 0);
+    var bg = colour(d.bg, '');
+    var bgImage = /^https?:/i.test(String(d.bg_image || '').trim()) ? String(d.bg_image).trim() : '';
+    var radius = num(d.radius, 0, 40, 0);
+    var bSize = num(d.border_size, 0, 10, 0);
+    var bColour = colour(d.border_colour, '#cccccc');
+    var sides = String(d.border_sides || 'trbl').toLowerCase().replace(/[^trbl]/g, '');
+    var show = d.show === 'desktop' || d.show === 'mobile' ? d.show : 'all';
+    var plain = width === 100 && ba === 'left' && !(padT || padR || padB || padL || marT || marR || marB || marL) &&
+      !bg && !bgImage && !radius && !bSize && show === 'all';
+    if (plain) return rowHtml;
+
+    var box = 'width:' + width + '%;border-collapse:separate';
+    if (ba === 'center') box += ';margin:0 auto';
+    else if (ba === 'right') box += ';margin:0 0 0 auto';
+    if (bg) box += ';background-color:' + bg;
+    if (bgImage) box += ';background-image:url(' + esc(bgImage) + ');background-repeat:no-repeat;background-position:center;background-size:cover';
+    if (radius) box += ';border-radius:' + radius + 'px;overflow:hidden';
+    if (bSize) {
+      ['t', 'r', 'b', 'l'].forEach(function (k) {
+        if (sides.indexOf(k) > -1) {
+          box += ';border-' + { t: 'top', r: 'right', b: 'bottom', l: 'left' }[k] + ':' + bSize + 'px solid ' + bColour;
+        }
+      });
+    }
+    var cls = 'rc-dsn' + (show === 'desktop' ? ' rc-only-d' : (show === 'mobile' ? ' rc-only-m' : ''));
+    var hide = show === 'mobile' ? ';display:none;mso-hide:all' : '';
+    var table = ' role="presentation" class="rc-dsn" cellpadding="0" cellspacing="0" border="0"';
+    return '<tr><td class="' + cls + '" style="padding:' + marT + 'px ' + marR + 'px ' + marB + 'px ' + marL + 'px' + hide + '">' +
+      '<table' + table + ' width="' + width + '%" align="' + ba + '" style="' + box + '"><tr>' +
+      '<td class="rc-dsn" style="padding:' + padT + 'px ' + padR + 'px ' + padB + 'px ' + padL + 'px">' +
+      '<table' + table + ' width="100%" style="width:100%">' + rowHtml + '</table>' +
+      '</td></tr></table></td></tr>';
+  }
+
   function renderBlock(b, font, outlook, brand, ctx) {
+    return applyDesign(renderBlockCore(b, font, outlook, brand, ctx), b);
+  }
+
+  function renderBlockCore(b, font, outlook, brand, ctx) {
     switch (b.type) {
       case 'panel':
         return panel(b, font, outlook, brand, ctx);

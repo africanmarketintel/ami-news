@@ -283,3 +283,26 @@ html.mr-studio-on body > *:not(.mr-studio):not(dialog) { display: none !importan
 /* Block tiles: a green outline and a pale green fill, as on the block library elsewhere */
 .mr-studio__tile .mr-studio__icon svg { fill: var(--mrs-tint); }
 .mr-studio__tile:hover .mr-studio__icon svg { fill: #d3e9da; }
+
+
+/* Block design: width, spacing, background, corners, borders, visibility */
+.mr-studio__design { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--mrs-line); }
+.mr-studio__unit { display: flex; align-items: center; gap: .4rem; }
+.mr-studio__unit .dr-input { max-width: 7rem; }
+.mr-studio__unit span { color: var(--mrs-soft); font-size: .875rem; }
+.mr-studio__row2 { display: flex; align-items: center; justify-content: space-between; gap: .5rem; margin-bottom: .4rem; }
+.mr-studio__row2 .dr-choice { margin: 0; display: inline-flex; align-items: center; gap: .35rem; }
+.mr-studio__sides { display: grid; grid-template-columns: repeat(4, 1fr); gap: .4rem; }
+.mr-studio__side { display: flex; flex-direction: column; gap: .15rem; font-size: .75rem; color: var(--mrs-soft); }
+.mr-studio__side .dr-input { padding-left: .4rem; padding-right: .4rem; }
+.mr-studio__sidechecks { display: flex; flex-wrap: wrap; gap: .25rem 1rem; }
+.mr-studio__pills { display: flex; flex-wrap: wrap; gap: .4rem; }
+.mr-studio__pill {
+  padding: .4rem .8rem; border: 1px solid #c8cacb; border-radius: 999px; background: #fff; color: var(--mrs-ink);
+  font-size: .8125rem; font-weight: 600; cursor: pointer;
+}
+.mr-studio__pill:hover { background: #f4f4f1; }
+.mr-studio__pill[aria-pressed="true"] { background: #374151; border-color: #374151; color: #fff; }
+
+/* Placeholders (hint text in empty fields, stand-in pictures) are neutral dark grey, not a brand colour */
+.mr-studio ::placeholder { color: #6b7280; opacity: 1; }

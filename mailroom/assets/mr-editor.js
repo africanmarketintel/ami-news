@@ -70,7 +70,7 @@
 
   // The studio (mr-studio.js) draws a block's settings with the same field
   // builders as this editor, so a change to a field is made once.
-  MR.editorParts = { fields: fields, colourField: colourField, label: label, types: TYPES, innerTypes: INNER_TYPES };
+  MR.editorParts = { fields: fields, colourField: colourField, optColourField: optColourField, label: label, types: TYPES, innerTypes: INNER_TYPES };
 
   function label(block) {
     var t = TYPES.filter(function (x) { return x.value === block.type; })[0];
