@@ -254,25 +254,148 @@
     setTimeout(function () { live.textContent = msg; }, 50);
   };
 
-  /* ---------------- session ---------------- */
-  var STORE = 'amiMailroomSession';
+  /* ---------------- session ----------------
+     One sign-in for the whole of AMI. The news site, the Dealroom, the Mailroom and
+     Recruiter all keep the same four values (the same keys login.js and the Dealroom
+     already use), so signing in on one product signs you in on the others, and signing
+     out signs you out of all of them. "Keep me signed in" puts them in localStorage
+     (survives closing the browser); without it they go in sessionStorage (this tab only). */
+  var LEGACY = 'amiMailroomSession';
+  function area() {
+    try { if (sessionStorage.getItem('ami_auth_token')) return sessionStorage; } catch (e) { /* ignore */ }
+    return localStorage;
+  }
+  // Session limit (the free Supabase plan cannot set one, so the site applies it).
+  // Signed out after this many days in total, or after this many days without a visit.
+  // The same two numbers sit at the top of login.js, dr-core.js and the other product's core file: change all four together.
+  var CAP_TOTAL_DAYS = 30;
+  var CAP_IDLE_DAYS = 14;
+  // Returns true (and signs out here) when the limit has passed. Otherwise notes this visit.
+  function enforceCap() {
+    try {
+      var a = area();
+      var refresh = a.getItem('ami_refresh_token') || '';
+      if (!a.getItem('ami_auth_token') && !refresh) return false;
+      var now = Date.now(), day = 86400000;
+      var since = parseInt(a.getItem('ami_signed_in_at') || '0', 10);
+      var last = parseInt(a.getItem('ami_last_active') || '0', 10);
+      if (!since) { since = now; a.setItem('ami_signed_in_at', String(now)); } // signed in before the limit existed
+      if (!last) last = now;
+      if (now - since > CAP_TOTAL_DAYS * day || now - last > CAP_IDLE_DAYS * day) {
+        wipe();
+        if (refresh) revokeQuietly(refresh);
+        return true;
+      }
+      if (now - last > 60000) a.setItem('ami_last_active', String(now));
+    } catch (e) { /* storage blocked: nothing to enforce */ }
+    return false;
+  }
+  // Ends the session at Supabase as well, where the browser can still do so.
+  function revokeQuietly(refresh) {
+    var base = MR.cfg.url + '/auth/v1/';
+    return fetch(base + 'token?grant_type=refresh_token', {
+      method: 'POST', headers: { apikey: MR.cfg.key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refresh_token: refresh })
+    }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+      if (d && d.access_token) return fetch(base + 'logout', { method: 'POST', headers: { apikey: MR.cfg.key, Authorization: 'Bearer ' + d.access_token } });
+    }).catch(function () { /* best-effort */ });
+  }
+  function claims(t) {
+    try { return JSON.parse(atob(String(t).split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))); } catch (e) { return {}; }
+  }
+  function wipe() {
+    ['ami_auth_token', 'ami_refresh_token', 'ami_user_email', 'ami_token_expires', 'ami_signed_in_at', 'ami_last_active', 'ami_subscriber', 'ami_email', 'ami_sub_check'].forEach(function (k) {
+      try { localStorage.removeItem(k); } catch (e) { /* ignore */ }
+      try { sessionStorage.removeItem(k); } catch (e) { /* ignore */ }
+    });
+    try { localStorage.removeItem(LEGACY); } catch (e) { /* ignore */ }
+  }
 
   MR.auth = {
     session: function () {
-      try { return JSON.parse(localStorage.getItem(STORE) || 'null'); } catch (e) { return null; }
+      try {
+        enforceCap();
+        var a = area(), t = a.getItem('ami_auth_token');
+        if (!t) {
+          // A session saved by an earlier version of this product: move it to the shared place once.
+          var old = JSON.parse(localStorage.getItem(LEGACY) || 'null');
+          if (old && old.access_token) { localStorage.removeItem(LEGACY); MR.auth.save(old, true); a = localStorage; t = a.getItem('ami_auth_token'); }
+          if (!t) return null;
+        }
+        var c = claims(t);
+        return {
+          access_token: t,
+          refresh_token: a.getItem('ami_refresh_token') || '',
+          expires_at: Math.floor(parseInt(a.getItem('ami_token_expires') || '0', 10) / 1000),
+          user: { id: c.sub || '', email: a.getItem('ami_user_email') || c.email || '' }
+        };
+      } catch (e) { return null; }
     },
-    save: function (s) {
-      try { localStorage.setItem(STORE, JSON.stringify(s)); } catch (e) { /* private mode */ }
+    // remember: true = keep me signed in, false = this tab only, undefined = leave as it is
+    save: function (s, remember) {
+      try {
+        var cur = area();
+        var target = remember === true ? localStorage : (remember === false ? sessionStorage : cur);
+        var other = target === localStorage ? sessionStorage : localStorage;
+        var c = claims(s.access_token);
+        var email = (s.user && s.user.email) || c.email || cur.getItem('ami_user_email') || '';
+        var exp = s.expires_at ? s.expires_at * 1000 : Date.now() + (s.expires_in || 3600) * 1000;
+        target.setItem('ami_auth_token', s.access_token || '');
+        target.setItem('ami_refresh_token', s.refresh_token || '');
+        target.setItem('ami_user_email', email);
+        target.setItem('ami_token_expires', String(exp));
+        // A new sign-in starts the clock; a refresh (remember not given) keeps the original start.
+        var since = remember === undefined ? parseInt(cur.getItem('ami_signed_in_at') || '0', 10) : 0;
+        target.setItem('ami_signed_in_at', String(since || Date.now()));
+        target.setItem('ami_last_active', String(Date.now()));
+        ['ami_auth_token', 'ami_refresh_token', 'ami_user_email', 'ami_token_expires', 'ami_signed_in_at', 'ami_last_active'].forEach(function (k) { other.removeItem(k); });
+      } catch (e) { /* private mode */ }
     },
-    clear: function () {
-      try { localStorage.removeItem(STORE); } catch (e) { /* ignore */ }
-    },
+    clear: function () { wipe(); },
     signedIn: function () {
       var s = MR.auth.session();
       return !!(s && s.access_token && (!s.expires_at || s.expires_at * 1000 > Date.now()));
     },
     email: function () { var s = MR.auth.session(); return s && s.user && s.user.email; },
     userId: function () { var s = MR.auth.session(); return s && s.user && s.user.id; },
+
+    // Email and password.
+    signIn: function (email, password, remember) {
+      return fetch(MR.cfg.url + '/auth/v1/token?grant_type=password', {
+        method: 'POST',
+        headers: { apikey: MR.cfg.key, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, password: password })
+      }).then(function (r) {
+        return r.json().catch(function () { return {}; }).then(function (b) {
+          if (!r.ok) { var e = new Error(b.msg || b.error_description || 'Sign in failed'); e.status = r.status; e.code = b.error_code || b.code || ''; throw e; }
+          MR.auth.save(b, remember !== false);
+          return b;
+        });
+      });
+    },
+
+    // Set a password (PUT /auth/v1/user with the new session), so the next sign-in needs no code.
+    setPassword: function (password) {
+      var s = MR.auth.session();
+      if (!s || !s.access_token) return Promise.reject(new Error('no session'));
+      return fetch(MR.cfg.url + '/auth/v1/user', {
+        method: 'PUT',
+        headers: { apikey: MR.cfg.key, Authorization: 'Bearer ' + s.access_token, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: password })
+      }).then(function (r) {
+        if (!r.ok) return r.json().catch(function () { return {}; }).then(function (b) { throw new Error(b.msg || b.error_description || 'Could not set the password'); });
+        return true;
+      });
+    },
+
+    // Send a link to set a new password.
+    recover: function (email) {
+      return fetch(MR.cfg.url + '/auth/v1/recover', {
+        method: 'POST',
+        headers: { apikey: MR.cfg.key, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email })
+      }).then(function (r) { if (!r.ok) throw new Error('Could not send the link'); return true; });
+    },
 
     // Send a one-time code to an email address.
     sendCode: function (email) {
@@ -281,13 +404,17 @@
         headers: { apikey: MR.cfg.key, 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email, create_user: true })
       }).then(function (r) {
-        if (!r.ok) return r.json().then(function (b) { throw new Error(b.msg || b.error_description || 'Could not send the code'); });
+        if (!r.ok) return r.json().catch(function () { return {}; }).then(function (b) {
+          var e = new Error(b.msg || b.error_description || 'Could not send the code');
+          e.status = r.status; e.code = b.error_code || b.code || '';
+          throw e;
+        });
         return true;
       });
     },
 
     // Exchange the code for a session.
-    verifyCode: function (email, token) {
+    verifyCode: function (email, token, remember) {
       return fetch(MR.cfg.url + '/auth/v1/verify', {
         method: 'POST',
         headers: { apikey: MR.cfg.key, 'Content-Type': 'application/json' },
@@ -295,7 +422,7 @@
       }).then(function (r) {
         return r.json().then(function (b) {
           if (!r.ok) throw new Error(b.msg || b.error_description || 'That code was not accepted');
-          MR.auth.save(b);
+          MR.auth.save(b, remember !== false);
           return b;
         });
       });
