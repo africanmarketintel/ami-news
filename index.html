@@ -5107,6 +5107,7 @@
       ]);
       allArticles = arts.filter(a => a.is_published);
       allMarkets = mkts;
+      if (window.amiHydrateLockedBodies && AUTH_TOKEN) await window.amiHydrateLockedBodies(arts, AUTH_TOKEN);
       renderAdminArticleList(arts);
       renderMarketEditor(mkts);
       if (brk && brk[0]) {

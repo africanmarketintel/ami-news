@@ -10,6 +10,32 @@ try {
     });
   }
 } catch (e) { /* not essential */ }
+
+// Every button on every product is a pill. One rule here rather than one per
+// page: the pages each carry their own copy of these styles, and a new button
+// that is added to the list below is a pill on all of them at once. Text links
+// (Sign in, skip links, footer links) are not buttons and are left alone.
+try {
+  if (!document.getElementById('ami-pill-css')) {
+    var pillSel = [
+      '.btn-subscribe', '.mob-subscribe', '.admin-btn', '.nw-btn', '.btn-stripe', '.btn-stripe-alt',
+      '.btn-save', '.btn-danger', '.btn-primary', '.ami-save-btn', '.ami-exit-btn', '.ami-rte-btn',
+      '.ami-img-apply', '.card-edit-overlay', '.plan-box .plan-cta', '.plan-box .free-cta',
+      '.contact-form .cf-submit', '.careers-card .cj-apply', '.cta-button', '.pricing-cta',
+      '.filter-btn', '.page-btn', '.dir-btn', '.aec-btn', '.aec-cta-btn', '.share-cta-subscribe',
+      '.share-cta-login', '.share-copy-btn', '.share-native-btn', '.share-rail__btn', '.fv-btn',
+      '.ami-fomo-btn', '.ami-cookie button', '.ami-bar button[type=submit]',
+      '.ami-search-row button.ami-go', '.gate button', 'button.act',
+      '#amiVerifyForm button', '.ami-verify-btn', '.ami-foot__verify', '.ami-skip', '.dr-skip'
+    ].join(',');
+    var pillCss = document.createElement('style');
+    pillCss.id = 'ami-pill-css';
+    // Where you type an email address or a password is a pill too.
+    pillCss.textContent = pillSel + '{border-radius:999px!important}'
+      + 'input[type=email],input[type=password],#amiVerifyEmail{border-radius:999px!important;padding-left:20px!important;padding-right:20px!important}';
+    (document.head || document.documentElement).appendChild(pillCss);
+  }
+} catch (e) { /* not essential */ }
 // ═══════════════════════════════════════════════════════════
 // AMI SHARED NAVIGATION — nav.js
 // Add <script src="nav.js"></script> to any AMI page and
@@ -340,7 +366,7 @@ footer.ami-foot .ami-foot__linkbtn:hover,footer.ami-foot .ami-foot__linkbtn:focu
 .masthead-name{font-family:'Playfair Display',Georgia,serif;font-weight:800;letter-spacing:-.02em;color:#1A1208;line-height:1}
 .masthead-name span{color:#C9A84C}
 .btn-subscribe{background:#C9A84C;color:#1A1208;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:11px;font-weight:500;
-  letter-spacing:.08em;text-transform:uppercase;padding:8px 16px;border-radius:2px;text-decoration:none;display:inline-block}
+  letter-spacing:.08em;text-transform:uppercase;padding:8px 16px;border-radius:999px;text-decoration:none;display:inline-block}
 `;
 
   // The Dealroom and the Mailroom carry .dr-header: a white bar with the
@@ -1734,25 +1760,23 @@ async function amiVerifySubmit() {
     var isPaid = await res.json();
 
     if (isPaid === true) {
-      localStorage.setItem('ami_subscriber', 'true');
-      localStorage.setItem('ami_email',      email);
-      localStorage.setItem('amiVisited',     '1');
-      window.amiIsSubscriber      = true;
-      window.amiPaywallSuppressed = true;
-
-      var pw = document.getElementById('paywallOverlay');
-      if (pw) pw.style.display = 'none';
-      var pb = document.getElementById('paywallBlur');
-      if (pb) pb.style.display = 'none';
-      var fv = document.getElementById('fvOverlay');
-      if (fv) fv.style.display = 'none';
-
-      var form    = document.getElementById('amiVerifyForm');
-      var success = document.getElementById('amiVerifySuccess');
-      if (form)    form.style.display    = 'none';
-      if (success) success.style.display = 'block';
-
-      setTimeout(function(){ window.location.reload(); }, 2000);
+      // The email is on the subscribers list, but typing an email address does not prove
+      // it is yours, and premium text is no longer sent to the browser. So this confirms
+      // the subscription exists and takes them to sign in, where the account proves it.
+      localStorage.setItem('ami_email', email);
+      amiVerifyClose();
+      if (typeof window.amiOpenLogin === 'function') {
+        window.amiOpenLogin('signin');
+        setTimeout(function () {
+          var f = document.getElementById('amiSubEmail');
+          if (f) { f.value = email; var p = document.getElementById('amiSubPassword'); if (p) p.focus(); }
+          var er = document.getElementById('amiSignInError');
+          if (er) {
+            er.style.cssText = 'display:block;background:#F0FFF5;border-left:3px solid #2E7D4F;padding:10px 14px;margin-top:12px;font-family:\'DM Mono\',monospace;font-size:11px;color:#1A4D2E;line-height:1.5';
+            er.textContent = 'We found your subscription. Sign in to read. First time here? Use \u201cSet up your account\u201d below.';
+          }
+        }, 120);
+      }
 
     } else {
       if (error) {

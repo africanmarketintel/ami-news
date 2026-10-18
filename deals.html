@@ -1298,7 +1298,7 @@
                 return;
             }
             try {
-                const url = `${SUPABASE_URL}/rest/v1/articles?section=eq.Deals&is_published=eq.true&order=published_date.desc&select=*`;
+                const url = `${SUPABASE_URL}/rest/v1/articles?section=eq.Deals&is_published=eq.true&order=published_date.desc&select=id,headline,standfirst,section,placement,hero_image,published_date,read_time,is_locked,is_published,tags,created_at`;
                 const r = await fetch(url, {
                     headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer '+SUPABASE_ANON }
                 });

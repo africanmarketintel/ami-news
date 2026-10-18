@@ -1372,20 +1372,24 @@ const db = {
   },
   async uploadImage(file, path) {
     // Large photos are shrunk before upload: no wider than 1600 pixels, saved as JPEG.
-    // GIF, SVG and files already under 250 KB are left alone.
-    try {
-      if (file && /^image\/(jpeg|png|webp)$/.test(file.type) && file.size > 250 * 1024 && window.createImageBitmap) {
-        const bmp = await createImageBitmap(file);
-        const scale = Math.min(1, 1600 / bmp.width);
-        const cv = document.createElement('canvas');
-        cv.width = Math.round(bmp.width * scale); cv.height = Math.round(bmp.height * scale);
-        const cx = cv.getContext('2d');
-        cx.fillStyle = '#fff'; cx.fillRect(0, 0, cv.width, cv.height);
-        cx.drawImage(bmp, 0, 0, cv.width, cv.height);
-        const blob = await new Promise(function (res) { cv.toBlob(res, 'image/jpeg', 0.82); });
-        if (blob && blob.size < file.size) { file = blob; path = path.replace(/\.[A-Za-z0-9]+$/, '') + '.jpg'; }
-      }
-    } catch (e) { /* if resizing fails, upload the original */ }
+        // Pictures were being uploaded at full camera size, which made the pages slow.
+        // GIF, SVG and files already under 250 KB are left alone.
+        try {
+          if (file && /^image\/(jpeg|png|webp)$/.test(file.type) && file.size > 250 * 1024 && window.createImageBitmap) {
+            const bmp = await createImageBitmap(file);
+            const scale = Math.min(1, 1600 / bmp.width);
+            const cv = document.createElement('canvas');
+            cv.width = Math.round(bmp.width * scale); cv.height = Math.round(bmp.height * scale);
+            const cx = cv.getContext('2d');
+            cx.fillStyle = '#fff'; cx.fillRect(0, 0, cv.width, cv.height);   // flatten transparent PNGs onto white
+            cx.drawImage(bmp, 0, 0, cv.width, cv.height);
+            const blob = await new Promise(function (res) { cv.toBlob(res, 'image/jpeg', 0.82); });
+            if (blob && blob.size < file.size) {
+              file = blob;
+              path = path.replace(/\.[A-Za-z0-9]+$/, '') + '.jpg';
+            }
+          }
+        } catch (e) { /* if resizing fails, upload the original */ }
     const r = await fetch(`${SUPABASE_URL}/storage/v1/object/ami-images/${path}`, {
       method:'POST',
       headers:{ apikey: SUPABASE_ANON, Authorization:'Bearer '+(AUTH_TOKEN||SUPABASE_ANON), 'Content-Type': file.type, 'cache-control': 'max-age=31536000' },
@@ -1966,6 +1970,7 @@ async function loadAdminData() {
   ]);
   allArticles = arts.filter(a=>a.is_published);
   allMarkets  = mkts;
+  if (window.amiHydrateLockedBodies && AUTH_TOKEN) await window.amiHydrateLockedBodies(arts, AUTH_TOKEN);
   renderAdminArticleList(arts);
   renderMarketEditor(mkts);
   if(brk && brk[0]){

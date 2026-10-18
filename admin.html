@@ -16,7 +16,7 @@
   .wrap{max-width:1100px;margin:0 auto;padding:24px}
   .gate{max-width:360px;margin:80px auto;background:#fff;border:1px solid var(--border);border-radius:4px;padding:28px}
   .gate input{width:100%;padding:10px 12px;margin-bottom:10px;border:1px solid var(--border);border-radius:3px;font-size:14px}
-  .gate button{width:100%;padding:10px;background:var(--gold);border:none;border-radius:3px;font-weight:600;cursor:pointer}
+  .gate button{width:100%;padding:10px;background:var(--gold);border:none;border-radius:999px;font-weight:600;cursor:pointer}
   .tabs{display:flex;gap:4px;margin-bottom:16px;border-bottom:1px solid var(--border)}
   .tab{padding:10px 16px;font-size:12px;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;border-bottom:2px solid transparent;color:var(--ink-soft)}
   .tab.active{color:var(--gold);border-bottom-color:var(--gold)}
@@ -27,7 +27,7 @@
   .pill-active{background:rgba(30,107,60,.12);color:var(--green)}
   .pill-revoked,.pill-rejected{background:rgba(184,92,56,.12);color:var(--terra)}
   .pill-pending{background:rgba(201,168,76,.15);color:#8A6A1A}
-  button.act{font-size:11px;padding:6px 12px;border:1px solid var(--border);border-radius:3px;background:#fff;cursor:pointer;margin-right:4px}
+  button.act{font-size:11px;padding:6px 12px;border:1px solid var(--border);border-radius:999px;background:#fff;cursor:pointer;margin-right:4px}
   button.act.primary{background:var(--gold);border-color:var(--gold)}
   button.act.danger{color:var(--terra);border-color:var(--terra)}
   .empty{padding:40px;text-align:center;color:var(--ink-soft)}
@@ -44,7 +44,7 @@
 </header>
 
 <div id="gateWrap" class="gate">
-  <p style="font-size:13px;color:var(--ink-soft);margin-bottom:14px">Sign in with your AMI account. Access requires a row in <code>admin_users</code> — see docs/deal-room-phase2-qa-admin-schema.sql.</p>
+  <p style="font-size:13px;color:var(--ink-soft);margin-bottom:14px">Sign in with your AMI administrator account.</p>
   <input type="email" id="adminEmail" placeholder="you@abta.africa">
   <input type="password" id="adminPassword" placeholder="Password">
   <button onclick="adminSignIn()">Sign in</button>
@@ -119,7 +119,7 @@ async function boot(){
     document.getElementById('whoami').textContent = localStorage.getItem('ami_user_email') || '';
     switchTab('deals');
   }catch(err){
-    document.getElementById('gateError').textContent = 'Signed in, but this account is not in admin_users.';
+    document.getElementById('gateError').textContent = 'Signed in, but this account does not have administrator access.';
     document.getElementById('gateError').style.display = 'block';
   }
 }

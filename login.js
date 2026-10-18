@@ -17,28 +17,82 @@
   function sbUrl()  { return (typeof SUPABASE_URL  !== 'undefined' ? SUPABASE_URL  : '').replace(/\/$/, ''); }
   function sbAnon() { return (typeof SUPABASE_ANON !== 'undefined' ? SUPABASE_ANON : ''); }
   // ── Session helpers ─────────────────────────────────────────────
+  // One sign-in for the whole of AMI. The Dealroom, the Mailroom and Recruiter keep the
+  // same four values, so a session started on any of them is a session here.
+  // "Keep me signed in" keeps them in localStorage; without it they live in sessionStorage.
+  var SESSION_KEYS = ['ami_auth_token', 'ami_refresh_token', 'ami_user_email', 'ami_token_expires', 'ami_signed_in_at', 'ami_last_active'];
+  // Session limit (the free Supabase plan cannot set one, so the site applies it).
+  // Signed out after this many days in total, or after this many days without a visit.
+  // The same two numbers sit at the top of dr-core.js, mr-core.js and rc-core.js: change all four together.
+  var CAP_TOTAL_DAYS = 30;
+  var CAP_IDLE_DAYS  = 14;
+  function area() {
+    try { if (sessionStorage.getItem('ami_auth_token')) return sessionStorage; } catch (e) { /* ignore */ }
+    return localStorage;
+  }
+  // Returns true (and signs out here) when the limit has passed. Otherwise notes this visit.
+  function enforceCap() {
+    try {
+      var a = area();
+      var refresh = a.getItem('ami_refresh_token') || '';
+      if (!a.getItem('ami_auth_token') && !refresh) return false;
+      var now = Date.now(), day = 86400000;
+      var since = parseInt(a.getItem('ami_signed_in_at') || '0', 10);
+      var last  = parseInt(a.getItem('ami_last_active') || '0', 10);
+      if (!since) { since = now; a.setItem('ami_signed_in_at', String(now)); } // signed in before the limit existed
+      if (!last) last = now;
+      if (now - since > CAP_TOTAL_DAYS * day || now - last > CAP_IDLE_DAYS * day) {
+        clearSession();
+        if (refresh) revokeQuietly(refresh);
+        return true;
+      }
+      if (now - last > 60000) a.setItem('ami_last_active', String(now));
+    } catch (e) { /* storage blocked: nothing to enforce */ }
+    return false;
+  }
+  // Ends the session at Supabase as well, where the browser can still do so.
+  async function revokeQuietly(refresh) {
+    try { var d = await sbRefresh(refresh); await sbSignOut(d.access_token); } catch (e) { /* best-effort */ }
+  }
   function getSession() {
+    enforceCap();
+    var a = area();
     return {
-      token:   localStorage.getItem('ami_auth_token')    || '',
-      refresh: localStorage.getItem('ami_refresh_token') || '',
-      email:   localStorage.getItem('ami_user_email')    || '',
-      expires: parseInt(localStorage.getItem('ami_token_expires') || '0', 10),
+      token:   a.getItem('ami_auth_token')    || '',
+      refresh: a.getItem('ami_refresh_token') || '',
+      email:   a.getItem('ami_user_email')    || '',
+      expires: parseInt(a.getItem('ami_token_expires') || '0', 10),
     };
   }
-  function saveSession(data) {
-    const email = (data.user && data.user.email) ? data.user.email : getSession().email;
-    localStorage.setItem('ami_auth_token',    data.access_token  || '');
-    localStorage.setItem('ami_refresh_token', data.refresh_token || '');
-    localStorage.setItem('ami_user_email',    email);
-    localStorage.setItem('ami_token_expires', String(Date.now() + (data.expires_in || 3600) * 1000));
-    localStorage.setItem('ami_subscriber',    'true');
-    localStorage.setItem('ami_email',         email);
-    window.amiIsSubscriber      = true;
-    window.amiPaywallSuppressed = true;
+  // remember: true = keep me signed in, false = this tab only, undefined = leave as it is.
+  // paid: true only once the email has been checked against the subscribers list.
+  function saveSession(data, remember, paid) {
+    var cur = area();
+    var target = remember === true ? localStorage : (remember === false ? sessionStorage : cur);
+    var other = target === localStorage ? sessionStorage : localStorage;
+    var email = (data.user && data.user.email) ? data.user.email : (cur.getItem('ami_user_email') || '');
+    target.setItem('ami_auth_token',    data.access_token  || '');
+    target.setItem('ami_refresh_token', data.refresh_token || '');
+    target.setItem('ami_user_email',    email);
+    target.setItem('ami_token_expires', String(Date.now() + (data.expires_in || 3600) * 1000));
+    // A new sign-in starts the clock; a refresh (remember not given) keeps the original start.
+    var since = remember === undefined ? parseInt(cur.getItem('ami_signed_in_at') || '0', 10) : 0;
+    target.setItem('ami_signed_in_at', String(since || Date.now()));
+    target.setItem('ami_last_active',  String(Date.now()));
+    SESSION_KEYS.forEach(function (k) { other.removeItem(k); });
+    if (paid) {
+      localStorage.setItem('ami_subscriber', 'true');
+      localStorage.setItem('ami_email',      email);
+      localStorage.setItem('ami_sub_check', JSON.stringify({ e: email, ok: true, t: Date.now() }));
+      window.amiIsSubscriber      = true;
+      window.amiPaywallSuppressed = true;
+    }
   }
   function clearSession() {
-    ['ami_auth_token', 'ami_refresh_token', 'ami_user_email', 'ami_token_expires',
-     'ami_subscriber', 'ami_email'].forEach(function (k) { localStorage.removeItem(k); });
+    SESSION_KEYS.concat(['ami_subscriber', 'ami_email', 'ami_sub_check']).forEach(function (k) {
+      localStorage.removeItem(k);
+      try { sessionStorage.removeItem(k); } catch (e) { /* ignore */ }
+    });
     window.amiIsSubscriber      = false;
     window.amiPaywallSuppressed = false;
   }
@@ -127,6 +181,24 @@
     if (!r.ok) return false;
     return await r.json(); // true or false
   }
+  // A signed-in account is not the same as a paid subscription: someone who signed in
+  // on the Dealroom, the Mailroom or Recruiter has an AMI account but may not be a
+  // subscriber. The paywall only lifts for a paid email, checked against the
+  // subscribers list. A yes is remembered for one hour, so a lapsed subscription stops
+  // working within the hour; a no for one minute, so someone who has just paid is let in
+  // on their next page load.
+  async function resolvePaid() {
+    var s = getSession();
+    try {
+      var c = JSON.parse(localStorage.getItem('ami_sub_check') || 'null');
+      if (c && c.e === s.email && Date.now() - c.t < (c.ok ? 3600 * 1000 : 60 * 1000)) return !!c.ok;
+    } catch (e) { /* ignore */ }
+    var ok;
+    try { ok = (await checkSubscriberStatus(s.email, s.token)) === true; }
+    catch (e) { return localStorage.getItem('ami_subscriber') === 'true' && localStorage.getItem('ami_email') === s.email; }
+    localStorage.setItem('ami_sub_check', JSON.stringify({ e: s.email, ok: ok, t: Date.now() }));
+    return ok;
+  }
   // ── Refresh expired session ─────────────────────────────────────
   async function tryRefreshSession() {
     var s = getSession();
@@ -166,16 +238,17 @@
     '<div id="amiPanelSignIn" style="padding:24px 32px 32px">',
       '<div style="margin-bottom:14px">',
         '<label style="font-family:\'DM Mono\',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#6B5344;display:block;margin-bottom:6px">Email Address</label>',
-        '<input id="amiSubEmail" type="email" placeholder="your@email.com" autocomplete="email" style="width:100%;background:#fff;border:1px solid #D4C4A0;color:#1A1208;font-family:\'DM Mono\',monospace;font-size:13px;padding:12px 14px;outline:none;box-sizing:border-box;transition:border-color .2s" onkeydown="if(event.key===\'Enter\')document.getElementById(\'amiSubPassword\').focus()" onfocus="this.style.borderColor=\'#C9A84C\'" onblur="this.style.borderColor=\'#D4C4A0\'">',
+        '<input id="amiSubEmail" type="email" placeholder="your@email.com" autocomplete="email" style="width:100%;background:#fff;border:1px solid #D4C4A0;color:#1A1208;font-family:\'DM Mono\',monospace;font-size:13px;padding:12px 20px;border-radius:999px;outline:none;box-sizing:border-box;transition:border-color .2s" onkeydown="if(event.key===\'Enter\')document.getElementById(\'amiSubPassword\').focus()" onfocus="this.style.borderColor=\'#C9A84C\'" onblur="this.style.borderColor=\'#D4C4A0\'">',
       '</div>',
       '<div style="margin-bottom:6px">',
         '<label style="font-family:\'DM Mono\',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#6B5344;display:block;margin-bottom:6px">Password</label>',
-        '<input id="amiSubPassword" type="password" placeholder="••••••••" autocomplete="current-password" style="width:100%;background:#fff;border:1px solid #D4C4A0;color:#1A1208;font-family:\'DM Mono\',monospace;font-size:13px;padding:12px 14px;outline:none;box-sizing:border-box;transition:border-color .2s" onkeydown="if(event.key===\'Enter\')window.amiDoSignIn()" onfocus="this.style.borderColor=\'#C9A84C\'" onblur="this.style.borderColor=\'#D4C4A0\'">',
+        '<input id="amiSubPassword" type="password" placeholder="••••••••" autocomplete="current-password" style="width:100%;background:#fff;border:1px solid #D4C4A0;color:#1A1208;font-family:\'DM Mono\',monospace;font-size:13px;padding:12px 20px;border-radius:999px;outline:none;box-sizing:border-box;transition:border-color .2s" onkeydown="if(event.key===\'Enter\')window.amiDoSignIn()" onfocus="this.style.borderColor=\'#C9A84C\'" onblur="this.style.borderColor=\'#D4C4A0\'">',
       '</div>',
+      '<label style="display:flex;align-items:center;gap:8px;margin:10px 0 0 4px;font-family:\'DM Mono\',monospace;font-size:11px;letter-spacing:.04em;color:#6B5344;cursor:pointer"><input id="amiSubRemember" type="checkbox" checked style="width:16px;height:16px;accent-color:#2E7D4F;margin:0"> Keep me signed in on this device</label>',
       '<div style="text-align:right;margin-bottom:18px;margin-top:6px">',
         '<button onclick="window.amiSwitchTab(\'reset\')" style="background:none;border:none;font-family:\'DM Mono\',monospace;font-size:10px;letter-spacing:.06em;color:#C9A84C;cursor:pointer;padding:0;text-decoration:underline">Forgot password?</button>',
       '</div>',
-      '<button id="amiSignInBtn" onclick="window.amiDoSignIn()" style="width:100%;background:#C9A84C;color:#060F09;font-family:\'DM Mono\',monospace;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:13px;border:none;cursor:pointer;transition:background .2s" onmouseover="this.style.background=\'#D4B86A\'" onmouseout="this.style.background=\'#C9A84C\'">Sign In →</button>',
+      '<button id="amiSignInBtn" onclick="window.amiDoSignIn()" style="width:100%;background:#C9A84C;color:#060F09;font-family:\'DM Mono\',monospace;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:13px;border:none;border-radius:999px;cursor:pointer;transition:background .2s" onmouseover="this.style.background=\'#D4B86A\'" onmouseout="this.style.background=\'#C9A84C\'">Sign In →</button>',
       '<div id="amiSignInError" style="display:none;background:#FFF0ED;border-left:3px solid #B85C38;padding:10px 14px;margin-top:12px;font-family:\'DM Mono\',monospace;font-size:11px;color:#8C3A1F;line-height:1.5"></div>',
       '<p style="text-align:center;margin-top:16px;font-size:12px;color:#9A8070;font-family:\'DM Mono\',monospace">First time here? <button onclick="window.amiSwitchTab(\'setup\')" style="background:none;border:none;font-family:\'DM Mono\',monospace;font-size:12px;color:#C9A84C;cursor:pointer;padding:0;text-decoration:underline">Set up your account →</button></p>',
     '</div>',
@@ -189,17 +262,17 @@
       '<div id="amiSetupInfoBanner" style="background:#F5F0E8;border-left:3px solid #C9A84C;padding:10px 14px;margin-bottom:18px;font-family:\'DM Mono\',monospace;font-size:11px;color:#6B5344;line-height:1.5">Use the email address you used to pay via Stripe. If you haven\'t subscribed yet, <a href="membership.html" style="color:#C9A84C">get membership here →</a></div>',
       '<div style="margin-bottom:14px">',
         '<label style="font-family:\'DM Mono\',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#6B5344;display:block;margin-bottom:6px">Subscription Email</label>',
-        '<input id="amiSetupEmail" type="email" placeholder="your@email.com" autocomplete="email" style="width:100%;background:#fff;border:1px solid #D4C4A0;color:#1A1208;font-family:\'DM Mono\',monospace;font-size:13px;padding:12px 14px;outline:none;box-sizing:border-box;transition:border-color .2s" onfocus="this.style.borderColor=\'#C9A84C\'" onblur="this.style.borderColor=\'#D4C4A0\'">',
+        '<input id="amiSetupEmail" type="email" placeholder="your@email.com" autocomplete="email" style="width:100%;background:#fff;border:1px solid #D4C4A0;color:#1A1208;font-family:\'DM Mono\',monospace;font-size:13px;padding:12px 20px;border-radius:999px;outline:none;box-sizing:border-box;transition:border-color .2s" onfocus="this.style.borderColor=\'#C9A84C\'" onblur="this.style.borderColor=\'#D4C4A0\'">',
       '</div>',
       '<div style="margin-bottom:14px">',
         '<label style="font-family:\'DM Mono\',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#6B5344;display:block;margin-bottom:6px">Choose Password</label>',
-        '<input id="amiSetupPassword" type="password" placeholder="Min. 8 characters" autocomplete="new-password" style="width:100%;background:#fff;border:1px solid #D4C4A0;color:#1A1208;font-family:\'DM Mono\',monospace;font-size:13px;padding:12px 14px;outline:none;box-sizing:border-box;transition:border-color .2s" onfocus="this.style.borderColor=\'#C9A84C\'" onblur="this.style.borderColor=\'#D4C4A0\'">',
+        '<input id="amiSetupPassword" type="password" placeholder="Min. 8 characters" autocomplete="new-password" style="width:100%;background:#fff;border:1px solid #D4C4A0;color:#1A1208;font-family:\'DM Mono\',monospace;font-size:13px;padding:12px 20px;border-radius:999px;outline:none;box-sizing:border-box;transition:border-color .2s" onfocus="this.style.borderColor=\'#C9A84C\'" onblur="this.style.borderColor=\'#D4C4A0\'">',
       '</div>',
       '<div style="margin-bottom:20px">',
         '<label style="font-family:\'DM Mono\',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#6B5344;display:block;margin-bottom:6px">Confirm Password</label>',
-        '<input id="amiSetupConfirm" type="password" placeholder="Repeat password" autocomplete="new-password" style="width:100%;background:#fff;border:1px solid #D4C4A0;color:#1A1208;font-family:\'DM Mono\',monospace;font-size:13px;padding:12px 14px;outline:none;box-sizing:border-box;transition:border-color .2s" onkeydown="if(event.key===\'Enter\')window.amiDoSetup()" onfocus="this.style.borderColor=\'#C9A84C\'" onblur="this.style.borderColor=\'#D4C4A0\'">',
+        '<input id="amiSetupConfirm" type="password" placeholder="Repeat password" autocomplete="new-password" style="width:100%;background:#fff;border:1px solid #D4C4A0;color:#1A1208;font-family:\'DM Mono\',monospace;font-size:13px;padding:12px 20px;border-radius:999px;outline:none;box-sizing:border-box;transition:border-color .2s" onkeydown="if(event.key===\'Enter\')window.amiDoSetup()" onfocus="this.style.borderColor=\'#C9A84C\'" onblur="this.style.borderColor=\'#D4C4A0\'">',
       '</div>',
-      '<button id="amiSetupBtn" onclick="window.amiDoSetup()" style="width:100%;background:#C9A84C;color:#060F09;font-family:\'DM Mono\',monospace;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:13px;border:none;cursor:pointer;transition:background .2s" onmouseover="this.style.background=\'#D4B86A\'" onmouseout="this.style.background=\'#C9A84C\'">Create Account →</button>',
+      '<button id="amiSetupBtn" onclick="window.amiDoSetup()" style="width:100%;background:#C9A84C;color:#060F09;font-family:\'DM Mono\',monospace;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:13px;border:none;border-radius:999px;cursor:pointer;transition:background .2s" onmouseover="this.style.background=\'#D4B86A\'" onmouseout="this.style.background=\'#C9A84C\'">Create Account →</button>',
       '<div id="amiSetupError"   style="display:none;background:#FFF0ED;border-left:3px solid #B85C38;padding:10px 14px;margin-top:12px;font-family:\'DM Mono\',monospace;font-size:11px;color:#8C3A1F;line-height:1.5"></div>',
       '<div id="amiSetupSuccess" style="display:none;background:#F0FFF5;border-left:3px solid #2E7D4F;padding:10px 14px;margin-top:12px;font-family:\'DM Mono\',monospace;font-size:11px;color:#1A4D2E;line-height:1.5"></div>',
     '</div>',
@@ -208,9 +281,9 @@
       '<p style="font-size:13px;color:#6B5344;line-height:1.6;margin-bottom:18px">Enter your subscription email and we\'ll send you a link to set a new password.</p>',
       '<div style="margin-bottom:18px">',
         '<label style="font-family:\'DM Mono\',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#6B5344;display:block;margin-bottom:6px">Email Address</label>',
-        '<input id="amiResetEmail" type="email" placeholder="your@email.com" autocomplete="email" style="width:100%;background:#fff;border:1px solid #D4C4A0;color:#1A1208;font-family:\'DM Mono\',monospace;font-size:13px;padding:12px 14px;outline:none;box-sizing:border-box;transition:border-color .2s" onkeydown="if(event.key===\'Enter\')window.amiDoReset()" onfocus="this.style.borderColor=\'#C9A84C\'" onblur="this.style.borderColor=\'#D4C4A0\'">',
+        '<input id="amiResetEmail" type="email" placeholder="your@email.com" autocomplete="email" style="width:100%;background:#fff;border:1px solid #D4C4A0;color:#1A1208;font-family:\'DM Mono\',monospace;font-size:13px;padding:12px 20px;border-radius:999px;outline:none;box-sizing:border-box;transition:border-color .2s" onkeydown="if(event.key===\'Enter\')window.amiDoReset()" onfocus="this.style.borderColor=\'#C9A84C\'" onblur="this.style.borderColor=\'#D4C4A0\'">',
       '</div>',
-      '<button id="amiResetBtn" onclick="window.amiDoReset()" style="width:100%;background:#C9A84C;color:#060F09;font-family:\'DM Mono\',monospace;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:13px;border:none;cursor:pointer;transition:background .2s" onmouseover="this.style.background=\'#D4B86A\'" onmouseout="this.style.background=\'#C9A84C\'">Send Reset Link →</button>',
+      '<button id="amiResetBtn" onclick="window.amiDoReset()" style="width:100%;background:#C9A84C;color:#060F09;font-family:\'DM Mono\',monospace;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:13px;border:none;border-radius:999px;cursor:pointer;transition:background .2s" onmouseover="this.style.background=\'#D4B86A\'" onmouseout="this.style.background=\'#C9A84C\'">Send Reset Link →</button>',
       '<button onclick="window.amiSwitchTab(\'signin\')" style="display:block;margin:12px auto 0;background:none;border:none;font-family:\'DM Mono\',monospace;font-size:11px;letter-spacing:.06em;color:#9A8070;cursor:pointer;text-decoration:underline">← Back to Sign In</button>',
       '<div id="amiResetError"   style="display:none;background:#FFF0ED;border-left:3px solid #B85C38;padding:10px 14px;margin-top:12px;font-family:\'DM Mono\',monospace;font-size:11px;color:#8C3A1F;line-height:1.5"></div>',
       '<div id="amiResetSuccess" style="display:none;background:#F0FFF5;border-left:3px solid #2E7D4F;padding:10px 14px;margin-top:12px;font-family:\'DM Mono\',monospace;font-size:11px;color:#1A4D2E;line-height:1.5"></div>',
@@ -236,7 +309,7 @@
       wrapper.innerHTML = [
         '<button id="amiAccountBtn" onclick="window.amiToggleAccountMenu(event)" aria-haspopup="true" aria-expanded="false"',
         ' style="background:#2E7D4F;color:#fff;font-family:\'DM Mono\',monospace;font-size:11px;font-weight:600;',
-        'letter-spacing:.08em;text-transform:uppercase;padding:7px 13px;border-radius:2px;border:none;cursor:pointer;',
+        'letter-spacing:.08em;text-transform:uppercase;padding:7px 13px;border-radius:999px;border:none;cursor:pointer;',
         'display:flex;align-items:center;gap:8px;transition:background .2s;white-space:nowrap"',
         ' onmouseover="this.style.background=\'#3E9D5F\'" onmouseout="this.style.background=\'#2E7D4F\'">',
           '<span style="width:22px;height:22px;background:rgba(255,255,255,.22);border-radius:50%;display:inline-flex;',
@@ -251,7 +324,7 @@
             'color:#9A8070;margin-bottom:3px">Signed in as</div>',
             '<div style="font-size:12px;color:#1A1208;word-break:break-all;font-family:\'DM Mono\',monospace">' + shortMail + '</div>',
             '<div style="font-family:\'DM Mono\',monospace;font-size:9px;letter-spacing:.06em;color:#2E7D4F;margin-top:4px">',
-            '✓ Premium Subscriber</div>',
+            (window.__amiPaid ? '✓ Premium Subscriber' : 'AMI account · <a href="membership.html" style="color:#2E7D4F">Subscribe</a>') + '</div>',
           '</div>',
           '<a href="dealroom.html?join=1" role="menuitem" style="display:flex;align-items:center;gap:8px;padding:11px 16px;',
           'font-family:\'DM Mono\',monospace;font-size:11px;letter-spacing:.06em;color:#1A1208;text-decoration:none;',
@@ -415,7 +488,8 @@
         if (btn) { btn.textContent = 'Sign In →'; btn.disabled = false; }
         return;
       }
-      saveSession(data);
+      var keepEl = document.getElementById('amiSubRemember');
+      saveSession(data, keepEl ? keepEl.checked : true, true);
       window.amiCloseLogin();
       window.location.reload();
     } catch (err) {
@@ -479,7 +553,7 @@
       if (btn) btn.textContent = 'Signing in…';
       try {
         var data = await sbSignIn(email, password);
-        saveSession(data);
+        saveSession(data, true, true);
         if (successEl) {
           successEl.textContent = '✓ Account created! Signing you in now…';
           successEl.style.display = 'block';
@@ -794,13 +868,71 @@
     if (b) b.style.display = 'none';
   };
   // ═══════════════════════════════════════════════════════════════
+  // PREMIUM TEXT — asked of the server, never held in the page
+  // The full text of a locked article is not sent to the browser. The
+  // article-body function returns it only to a signed-in paid subscriber
+  // or an administrator (see docs/article-paywall.sql).
+  // ═══════════════════════════════════════════════════════════════
+  // A sign-in token that is still valid, refreshed first if it is about to expire.
+  window.amiGetToken = async function () {
+    await tryRefreshSession();
+    var s = getSession();
+    return (s.token && s.expires > Date.now()) ? s.token : '';
+  };
+  // Full text of one premium article: { status: 200, body } or { status: 401 | 403 | ... }.
+  window.amiFetchPremiumBody = async function (id) {
+    var token = await window.amiGetToken();
+    if (!token) return { status: 401 };
+    var r = await fetch(sbUrl() + '/functions/v1/article-body?id=' + encodeURIComponent(id), {
+      headers: { apikey: sbAnon(), Authorization: 'Bearer ' + token }
+    });
+    if (!r.ok) return { status: r.status };
+    var d = await r.json();
+    return { status: 200, body: d.body };
+  };
+  // For the editors' panels: put the full text back on locked articles, so the
+  // edit form shows the whole article and not the teaser. Administrators only.
+  window.amiHydrateLockedBodies = async function (articles, token) {
+    try {
+      var ids = (articles || []).filter(function (a) { return a && a.is_locked; }).map(function (a) { return String(a.id); });
+      if (!ids.length || !token) return;
+      var r = await fetch(sbUrl() + '/functions/v1/article-body', {
+        method: 'POST',
+        headers: { apikey: sbAnon(), Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: ids })
+      });
+      if (!r.ok) return;
+      var map = (await r.json()).bodies || {};
+      articles.forEach(function (a) { if (a && map[String(a.id)]) a.body = map[String(a.id)]; });
+    } catch (e) { /* the form falls back to the teaser */ }
+  };
+  // ═══════════════════════════════════════════════════════════════
   // INITIALISE
   // ═══════════════════════════════════════════════════════════════
   async function init() {
+    try { await initInner(); }
+    finally {
+      // Tell the page that the sign-in and subscription check has finished.
+      window.__amiReady = true;
+      try { document.dispatchEvent(new CustomEvent('ami:auth-ready')); } catch (e) { /* ignore */ }
+    }
+  }
+  async function initInner() {
     // Refresh token if near expiry
     await tryRefreshSession();
     // Sync subscriber state with login state
-    if (isLoggedIn()) {
+    window.__amiPaid = false;
+    if (isLoggedIn()) window.__amiPaid = await resolvePaid();
+    if (isLoggedIn() && !window.__amiPaid) {
+      // Signed in to AMI (for example through the Dealroom or the Mailroom) but no paid
+      // subscription on record: they keep their sign-in, the paywall stays.
+      if (localStorage.getItem('ami_email') === getSession().email) {
+        localStorage.removeItem('ami_subscriber');
+        localStorage.removeItem('ami_email');
+        window.amiIsSubscriber = false;
+      }
+    }
+    if (isLoggedIn() && window.__amiPaid) {
       window.amiIsSubscriber      = true;
       window.amiPaywallSuppressed = true;
       localStorage.setItem('ami_subscriber', 'true');

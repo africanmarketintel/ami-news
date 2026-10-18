@@ -3302,6 +3302,8 @@
     /* ── Inline fade paywall ─────────────────── */
     .af-body.paywall-locked {
       position: relative;
+      /* Every premium preview is the same size: about three lines, fading out. */
+      min-height: 100px;
       max-height: 150px;
       overflow: hidden;
     }
@@ -3312,7 +3314,9 @@
       bottom: 0;
       left: 0;
       right: 0;
-      height: 130px;
+      /* Fade the lower part of the preview, whatever its length: a one-line
+         preview still shows its first words clearly, a three-line one fades out. */
+      height: min(130px, 70%);
       background: linear-gradient(to bottom, transparent 0%, var(--bg) 100%);
       pointer-events: none;
     }
@@ -4315,10 +4319,29 @@
         <span>${a.read_time || ''}</span>
         ${a.tags ? `<span>${a.tags}</span>` : ''}
       </div>
-      <div class="af-body" id="articleBody" data-editable="richtext" data-cms-type="article" data-article-field="body" data-article-id="${a.id}">${a.body || '<p>Full article content coming soon.</p>'}</div>`;
+      <div class="af-body" id="articleBody" data-editable="richtext" data-cms-type="article" data-article-field="body" data-article-id="${a.id}">${a.body || '<p>Full article content coming soon.</p>'}</div>
+      ${a.is_locked ? '' : `<div id="amiFreeNote" hidden><div style="margin-top:48px;border-top:1px solid #D4C4A0">
+  <div style="background:#0A1A10;padding:28px 32px;position:relative;overflow:hidden">
+    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(237,229,213,.45);margin-bottom:10px">This article is free. Not all of them are.</div>
+    <p style="font-family:'Spectral',Georgia,serif;font-size:16px;line-height:1.7;color:#EDE5D5;margin-bottom:20px;font-style:italic;font-weight:300">Some of our reporting on deals, capital and policy across Africa is for paid members only.</p>
+    <a href="https://ami.abta.africa/membership.html" style="display:inline-block;background:#C9A84C;color:#060F09;font-family:'DM Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:11px 22px;text-decoration:none;border-radius:999px">Unlock premium reporting →</a>
+  </div>
+</div></div>`}`;
 
         // ── Paywall: only articles marked as locked are gated. Free articles have no read limit. ──
-        const showPaywall = a.is_locked && !window._amiAdminAuthed && !window.amiIsSubscriber;
+        // The public copy of a locked article holds only the teaser. The full text comes
+        // from the server, and only for a signed-in paid subscriber or an administrator.
+        let showPaywall = !!a.is_locked;
+        if (a.is_locked) {
+          try {
+            const got = window.amiFetchPremiumBody ? await window.amiFetchPremiumBody(a.id) : { status: 0 };
+            if (got.status === 200 && typeof got.body === 'string' && got.body) {
+              const bodyEl0 = document.getElementById('articleBody');
+              if (bodyEl0) bodyEl0.innerHTML = got.body;
+              showPaywall = false;
+            }
+          } catch (e) { /* stay on the paywall */ }
+        }
 
         if (showPaywall) {
           const body = document.getElementById('articleBody');
@@ -4348,7 +4371,7 @@
             }
           } catch (e) { /* fallback to static links in HTML */ }
 
-        } else if (!window._amiAdminAuthed && !window.amiIsSubscriber && !window.amiIsFreeSubscriber) {
+        } else if (!a.is_locked && !window._amiAdminAuthed && !window.amiIsSubscriber && !window.amiIsFreeSubscriber) {
           // Free article — free to read. The email gate (blur plus pop-up) only
           // runs when window.AMI_FIRST_VISIT_MODAL is set to true in nav.js.
           if (window.AMI_FIRST_VISIT_MODAL === true) {
@@ -4365,26 +4388,26 @@
             }
           }
 
-        } else if (!window._amiAdminAuthed && !window.amiIsSubscriber) {
-          // Free article, free subscriber
-          // ── End-of-article FOMO strip ─────────────────────────────
-          const fomo = document.createElement('div');
-          fomo.className = 'ami-fomo-strip';
-          fomo.innerHTML = `
-            <div class="ami-fomo-inner">
-              <div class="ami-fomo-label">This article is free. Not all of them are.</div>
-              <p class="ami-fomo-text">Some of our reporting — on deals, capital and policy across Africa — is for members only.</p>
-              <a href="membership.html" class="ami-fomo-btn">Unlock premium reporting →</a>
-            </div>`;
-          const bodyEl2 = document.getElementById('articleBody');
-          if (bodyEl2) bodyEl2.after(fomo);
         }
 
       } catch (e) {
         document.getElementById('articleFull').innerHTML = `<p style="color:var(--text-soft);padding:24px;font-family:DM Mono,monospace">Error loading article: ${e.message}</p>`;
       }
     }
-    loadArticle().then(function () { if (typeof amiShowEditFab === 'function' && window._amiAdminAuthed) amiShowEditFab(); });
+    // End-of-article note for free articles: shown only to readers who have not paid.
+    // login.js says when it has checked the subscription (event 'ami:auth-ready').
+    function amiUpdateFreeNote() {
+      var n = document.getElementById('amiFreeNote');
+      if (!n) return;
+      var paid = window.__amiReady ? !!window.__amiPaid : !!window.amiIsSubscriber;
+      n.hidden = !!(paid || window._amiAdminAuthed);
+    }
+    document.addEventListener('ami:auth-ready', amiUpdateFreeNote);
+    setTimeout(amiUpdateFreeNote, 4000); // if the check never reports, fall back to the stored state
+    loadArticle().then(function () {
+      if (window.__amiReady) amiUpdateFreeNote();
+      if (typeof amiShowEditFab === 'function' && window._amiAdminAuthed) amiShowEditFab();
+    });
 
     async function aecSubscribe() {
       const input = document.getElementById('aecEmail');
