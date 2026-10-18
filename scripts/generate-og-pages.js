@@ -16,8 +16,12 @@ const fs   = require('fs');
 const path = require('path');
 const https = require('https');
 
-const SUPABASE_URL  = process.env.SUPABASE_URL  || 'https://ucpjwyghwxjalkfvmbro.supabase.co';
-const SUPABASE_ANON = process.env.SUPABASE_ANON || 'sb_publishable_7cI4RoxyLr88DhwDWRC1vg_DSpczsHt';
+const SUPABASE_URL  = process.env.SUPABASE_URL;
+const SUPABASE_ANON = process.env.SUPABASE_ANON;
+if (!SUPABASE_URL || !SUPABASE_ANON) {
+  console.error('SUPABASE_URL and SUPABASE_ANON must be set (GitHub: Settings > Secrets and variables > Actions).');
+  process.exit(1);
+}
 const SITE_BASE     = 'https://ami.abta.africa';
 const OUTPUT_DIR    = path.join(__dirname, '..', 'articles');
 const DEFAULT_IMAGE = `${SITE_BASE}/og-default.jpg`;
