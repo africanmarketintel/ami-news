@@ -9,6 +9,7 @@
 <meta name="description" content="Your campaigns and results.">
 <title>Your mailroom – AMI Mailroom</title>
 <link rel="stylesheet" href="assets/mr.css">
+<style>#mr-dashboard > .mr-loading:not(:only-child){display:none}</style>
 <script src="../config.js"></script>
 <script src="../nav.js"></script>
 <script src="assets/mr-core.js"></script>
@@ -37,65 +38,9 @@
 <main id="main">
 
 <div class="dr-width" id="mr-dashboard">
-  <div class="mr-page-head">
-    <div>
-      <h1>Your mailroom</h1>
-      <p class="dr-lead">Everything you have sent, and what it did.</p>
-    </div>
-    <div class="mr-page-head__action"><a class="dr-button" href="campaign.html">Write a campaign</a></div>
-  </div>
-
-  <div class="mr-figures mr-figures--cards">
-    <div class="mr-figures__cell"><h2 class="mr-figures__label">Campaigns sent</h2><p class="mr-figures__value">22</p><p class="mr-figures__note">Across the last 12 months</p></div>
-    <div class="mr-figures__cell"><h2 class="mr-figures__label">Delivered</h2><p class="mr-figures__value">11,183</p><p class="mr-figures__note">99.2% of everything queued</p></div>
-    <div class="mr-figures__cell"><h2 class="mr-figures__label">Complaint rate</h2><p class="mr-figures__value">0.03%</p><p class="mr-figures__note">Sending is suspended above 0.3%</p></div>
-  </div>
-
-  <div class="mr-section-head">
-    <h2 class="dr-h">Recent campaigns</h2>
-    <a class="mr-section-head__all" href="campaign.html">View all</a>
-  </div>
-
-  <ul class="mr-camps">
-    <li class="mr-camps__row">
-      <div>
-        <p class="mr-camps__name"><a href="campaign.html">Africa Week in Review, 7 October</a></p>
-        <p class="mr-camps__sub">Sent 7 October 2026 &middot; AMI-M1061</p>
-      </div>
-      <div class="mr-camps__stats"><span>2,932 sent</span><span>14.2% clicked</span><span class="dr-tag dr-tag--green">Sent</span></div>
-    </li>
-    <li class="mr-camps__row">
-      <div>
-        <p class="mr-camps__name"><a href="campaign.html">Africa Week in Review, 30 September</a></p>
-        <p class="mr-camps__sub">Sent 30 September 2026 &middot; AMI-M1058</p>
-      </div>
-      <div class="mr-camps__stats"><span>2,818 sent</span><span>12.7% clicked</span><span class="dr-tag dr-tag--green">Sent</span></div>
-    </li>
-    <li class="mr-camps__row">
-      <div>
-        <p class="mr-camps__name"><a href="campaign.html">Q4 member briefing</a></p>
-        <p class="mr-camps__sub">Scheduled for 21 October 2026, 08:00</p>
-      </div>
-      <div class="mr-camps__stats"><span>3,046 sent</span><span>&ndash; clicked</span><span class="dr-tag dr-tag--blue">Scheduled</span></div>
-    </li>
-    <li class="mr-camps__row">
-      <div>
-        <p class="mr-camps__name"><a href="campaign.html">Africa Week in Review, 14 October</a></p>
-        <p class="mr-camps__sub">Not sent yet</p>
-      </div>
-      <div class="mr-camps__stats"><span>&ndash; sent</span><span>&ndash; clicked</span><span class="dr-tag dr-tag--grey">Draft</span></div>
-    </li>
-  </ul>
-  <p class="dr-small">Open rates are not shown. Mail privacy features make them unreliable, so clicks are the measure that means something.</p>
-
-  <div class="mr-domain-row">
-    <div>
-      <h2>news.abta.africa is verified</h2>
-      <p>Campaigns go out as ami@news.abta.africa. Four clean campaigns from this domain.</p>
-    </div>
-    <a class="mr-domain-row__link" href="domain.html">Sending domains</a>
-  </div>
+  <p class="dr-lead mr-loading" role="status">Loading your mailroom.</p>
 </div>
+<noscript><div class="dr-width"><p class="dr-lead">The Mailroom needs JavaScript. Turn it on in your browser settings and reload this page.</p></div></noscript>
 
 </main>
 <footer class="dr-footer">
