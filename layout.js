@@ -44,6 +44,32 @@
   if (!isListing && !isArticle && !isDeals) return;
 
   var ADS = window.AMI_ADS || {};
+  // Region membership (African Union regions). A story tagged with a country
+  // also counts for that country's region page, so it appears there without the
+  // region name having to be in its tags. Done in the browser only.
+  var REGION_COUNTRIES = {
+    'West Africa': ['benin','burkina faso','cabo verde','cape verde','c\u00f4te d\u2019ivoire',"c\u00f4te d'ivoire","cote d'ivoire",'ivory coast','gambia','ghana','guinea','guinea-bissau','liberia','mali','niger','nigeria','senegal','sierra leone','togo','ecowas','waemu'],
+    'East Africa': ['comoros','djibouti','eritrea','ethiopia','kenya','madagascar','mauritius','rwanda','seychelles','somalia','somaliland','south sudan','sudan','tanzania','uganda','eac','igad'],
+    'Central Africa': ['burundi','cameroon','central african republic','chad','congo','congo republic','republic of the congo','dr congo','drc','democratic republic of congo','democratic republic of the congo','equatorial guinea','gabon','s\u00e3o tom\u00e9 and pr\u00edncipe','sao tome and principe','eccas','cemac'],
+    'Southern Africa': ['angola','botswana','eswatini','swaziland','lesotho','malawi','mozambique','namibia','south africa','zambia','zimbabwe','sadc'],
+    'North Africa': ['algeria','egypt','libya','mauritania','morocco','sahrawi republic','western sahara','tunisia']
+  };
+  function addRegionTags() {
+    if (typeof allArticles === 'undefined' || !allArticles) return;
+    allArticles.forEach(function (a) {
+      if (a.__regionTagged) return;
+      a.__regionTagged = true;
+      var tags = String(a.tags || '');
+      var list = tags.split(/[,;|]/).map(function (t) { return t.trim().toLowerCase(); }).filter(Boolean);
+      var add = [];
+      Object.keys(REGION_COUNTRIES).forEach(function (r) {
+        if (tags.toLowerCase().indexOf(r.toLowerCase()) > -1 || String(a.section || '').indexOf(r) > -1) return;
+        if (REGION_COUNTRIES[r].some(function (c) { return list.indexOf(c) > -1; })) add.push(r);
+      });
+      if (add.length) a.tags = tags ? tags + ', ' + add.join(', ') : add.join(', ');
+    });
+  }
+
   var SECTION_PAGES = {
     'Markets': 'markets.html', 'Politics': 'politics.html', 'Economy': 'economy.html',
     'Energy': 'energy.html', 'Technology': 'technology.html', 'Opinion': 'opinion.html',
@@ -386,6 +412,10 @@
     // ── Lead ────────────────────────────────────────────────────────────
     function renderHeroNew(filtered) {
       var sec = setMode();
+      addRegionTags();
+      // Section and region pages call this with no list. Without one, the lead was taken from
+      // every article on the site, so the newest story showed on every region page.
+      if (sec && !filtered) { filtered = allArticles.filter(function (x) { return (x.section || '').indexOf(filterActive) > -1 || (x.tags || '').indexOf(filterActive) > -1; }); }
       var grid = $('#heroGrid');
       if (!grid) return;
       shown = {};
@@ -533,6 +563,11 @@
       if (anchor && anchor.parentNode) anchor.parentNode.insertBefore(host, anchor.nextSibling);
     }
 
+    var origApply = window.applyFilters;
+    if (typeof origApply === 'function') {
+      window.applyFilters = function () { addRegionTags(); return origApply.apply(this, arguments); };
+      try { applyFilters = window.applyFilters; } catch (e) { /* window.* is enough */ }
+    }
     window.renderHero = renderHeroNew;
     window.renderCards = renderCardsNew;
     // function declarations in the page script are global properties; the
