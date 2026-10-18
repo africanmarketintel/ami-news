@@ -11,8 +11,8 @@
 <link rel="stylesheet" href="assets/dr.css">
 <script src="../config.js"></script>
 <script src="../nav.js"></script>
-<script src="assets/dr-core.js"></script>
-<script src="assets/dr-demo.js"></script>
+<script src="assets/dr-core.js" defer></script>
+<script src="assets/dr-demo.js" defer></script>
 </head>
 <body>
 <a href="#main" class="dr-skip">Skip to main content</a>
@@ -62,7 +62,7 @@
   <section class="dr-width" aria-labelledby="latest-title" style="padding-block:2.5rem 1rem">
     <h2 id="latest-title" style="margin-top:0">Latest opportunities</h2>
     <p id="latest-status" class="dr-loading" role="status">Loading opportunities…</p>
-    <ul class="dr-cards" id="latest"></ul>
+    <ul class="dr-cards" id="latest" style="min-height:360px"></ul>
     <p style="margin-top:1.5rem"><a href="opportunities.html">View all opportunities</a></p>
   </section>
 
