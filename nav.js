@@ -158,6 +158,9 @@ try {
   const MASTHEAD_CSS = `
 @media (min-width:768px){.top-nav{display:none!important}}
 .masthead{text-align:left!important;padding:14px max(24px,calc((100% - 1280px)/2 + 24px))!important;box-sizing:border-box}
+/* The Account menu hangs below the masthead. The pages' own CSS clips the masthead
+   (overflow:hidden) and the rows below paint over it, so the menu was cut to a thin line. */
+.masthead{overflow:visible!important;position:relative;z-index:300}
 .masthead-header-row{display:flex!important;grid-template-columns:none!important;align-items:center!important;
   justify-content:space-between!important;gap:24px!important;margin-bottom:0!important}
 .masthead-name{grid-column:auto!important;text-align:left!important;margin-bottom:0!important;
