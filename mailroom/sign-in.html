@@ -33,18 +33,30 @@
 
 <div class="dr-width dr-narrow">
   <h1>Sign in</h1>
-  <p class="dr-lead">We send a six-digit code to your work email address.</p>
+  <p class="dr-lead" id="mr-lead">Use your AMI email address and password. The same sign-in works on AMI News, the Dealroom, the Mailroom and Recruiter.</p>
   <form id="mr-signin-form" novalidate>
     <div class="dr-form-group">
       <label class="dr-label" for="si-email">Email address</label>
-      <input class="dr-input" id="si-email" type="email" autocomplete="email">
+      <input class="dr-input" id="si-email" type="email" autocomplete="email" spellcheck="false">
+    </div>
+    <div class="dr-form-group" id="mr-password-group">
+      <label class="dr-label" for="si-password">Password</label>
+      <input class="dr-input" id="si-password" type="password" autocomplete="current-password">
+      <button type="button" class="dr-button dr-button--secondary" id="si-show" aria-controls="si-password" style="margin-top:.6rem">Show password</button>
     </div>
     <div class="dr-form-group" id="mr-code-group" hidden>
       <label class="dr-label" for="si-code">Code from the email</label>
+      <span class="dr-hint">It arrives within a minute. Check your spam folder if it does not.</span>
       <input class="dr-input dr-input--w" id="si-code" inputmode="numeric" autocomplete="one-time-code">
     </div>
-    <button class="dr-button" type="submit">Send me a code</button>
+    <div class="dr-choice dr-choice--checkbox">
+      <input class="dr-choice__input" id="si-remember" type="checkbox" checked>
+      <label class="dr-choice__label" for="si-remember">Keep me signed in on this device</label>
+      <span class="dr-choice__hint">You stay signed in across AMI News, the Dealroom, the Mailroom and Recruiter until you sign out. Untick this on a shared computer.</span>
+    </div>
+    <button class="dr-button" type="submit" id="si-submit">Sign in</button>
   </form>
+  <p class="dr-small"><a href="#" id="si-forgot">Forgotten your password?</a> &middot; <a href="#" id="si-mode">Email me a code instead</a></p>
   <p class="dr-small">Not a sender yet? <a href="create-account.html">Create a sender account</a>.</p>
 </div>
 
