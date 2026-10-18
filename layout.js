@@ -385,8 +385,11 @@
 
     // ── Lead ────────────────────────────────────────────────────────────
     function renderHeroNew(filtered) {
-      var sec = setMode();
-      var grid = $('#heroGrid');
+        var sec = setMode();
+        // Section and region pages call this with no list. Without one, the lead was taken from
+        // every article on the site, so the newest story showed on every region page.
+        if (sec && !filtered) { filtered = allArticles.filter(function (x) { return (x.section || '').indexOf(filterActive) > -1 || (x.tags || '').indexOf(filterActive) > -1; }); }
+        var grid = $('#heroGrid');
       if (!grid) return;
       shown = {};
       // A section page with nothing in it says so. It must not fall back to
