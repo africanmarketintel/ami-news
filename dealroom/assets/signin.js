@@ -53,11 +53,15 @@
     if (reason === 'save') w.appendChild(h('div', { class: 'dr-inset' }, h('p', { text: 'Sign in to save opportunities to Your Deal Room.' })));
 
     w.appendChild(h('h1', { text: 'Sign in to the Deal Room' }));
-    w.appendChild(h('p', { text: 'Use the email address and password for your Deal Room or African Market Intelligence account.' }));
+    w.appendChild(h('p', { text: 'Use the email address and password for your AMI account. The same sign-in works on AMI News, the Dealroom, the Mailroom and Recruiter.' }));
     var err = function (id) { var e = errors.filter(function (x) { return x.id === id; })[0]; return e ? e.message : null; };
     var form = h('form', { novalidate: true },
       input('email', 'Email address', 'email', { autocomplete: 'email', value: values.email }, err('email')),
       input('password', 'Password', 'password', { autocomplete: 'current-password' }, err('password')),
+      h('div', { class: 'dr-choice dr-choice--checkbox' },
+        h('input', { class: 'dr-choice__input', id: 'remember', name: 'remember', type: 'checkbox', checked: 'checked' }),
+        h('label', { class: 'dr-choice__label', for: 'remember', text: 'Keep me signed in on this device' }),
+        h('span', { class: 'dr-choice__hint', text: 'You stay signed in across AMI News, the Dealroom, the Mailroom and Recruiter until you sign out. Untick this on a shared computer.' })),
       h('button', { type: 'submit', class: 'dr-button', text: 'Sign in' }));
     w.appendChild(form);
     w.appendChild(h('p', null, h('a', { href: 'sign-in.html?view=forgot', text: 'Forgotten your password?' })));
@@ -83,7 +87,7 @@
           var msg = res.status === 429 ? 'You have tried to sign in too many times. Wait a few minutes and try again' : 'Enter a correct email address and password';
           return signIn(app, [{ id: 'email', message: msg }], { email: email }, ret);
         }
-        DR.session.save(res.data, email);
+        DR.session.save(res.data, email, form.remember.checked);
         location.href = ret;
       });
     });

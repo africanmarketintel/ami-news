@@ -170,29 +170,83 @@
 
   /* ---------------- Session (shared with AMI login.js) ---------------- */
   DR.session = {
+    // The same four values the news site, the Mailroom and Recruiter use: one sign-in for all of AMI.
+    // "Keep me signed in" keeps them in localStorage; without it they live in sessionStorage (this tab only).
+    area: function () {
+      try { if (sessionStorage.getItem('ami_auth_token')) return sessionStorage; } catch (e) {}
+      return localStorage;
+    },
+    // Session limit (the free Supabase plan cannot set one, so the site applies it).
+    // Signed out after CAP_TOTAL_DAYS in total, or CAP_IDLE_DAYS without a visit.
+    // The same two numbers sit at the top of login.js, mr-core.js and rc-core.js: change all four together.
+    CAP_TOTAL_DAYS: 30,
+    CAP_IDLE_DAYS: 14,
+    capped: false,
+    enforceCap: function () {
+      try {
+        var a = DR.session.area();
+        var refresh = a.getItem('ami_refresh_token') || '';
+        if (!a.getItem('ami_auth_token') && !refresh) return false;
+        var now = Date.now(), day = 86400000;
+        var since = parseInt(a.getItem('ami_signed_in_at') || '0', 10);
+        var last = parseInt(a.getItem('ami_last_active') || '0', 10);
+        if (!since) { since = now; a.setItem('ami_signed_in_at', String(now)); } // signed in before the limit existed
+        if (!last) last = now;
+        if (now - since > DR.session.CAP_TOTAL_DAYS * day || now - last > DR.session.CAP_IDLE_DAYS * day) {
+          DR.session.clear();
+          DR.session.capped = true;
+          if (refresh) {
+            // End the session at Supabase as well, where the browser can still do so.
+            DR.auth.request('token?grant_type=refresh_token', 'POST', { refresh_token: refresh })
+              .then(function (res) { if (res.ok && res.data && res.data.access_token) return DR.auth.request('logout', 'POST', {}, res.data.access_token); })
+              .catch(function () {});
+          }
+          return true;
+        }
+        if (now - last > 60000) a.setItem('ami_last_active', String(now));
+      } catch (e) {}
+      return false;
+    },
     get: function () {
       if (DR.demo) {
         var d = DR.store.get('dr_demo_session', null);
         return d || { token: '', refresh: '', email: '', expires: 0 };
       }
+      DR.session.enforceCap();
+      var a = DR.session.area();
+      var g = function (k) { try { return a.getItem(k) || ''; } catch (e) { return ''; } };
       return {
-        token: lsGet('ami_auth_token'),
-        refresh: lsGet('ami_refresh_token'),
-        email: lsGet('ami_user_email'),
-        expires: parseInt(lsGet('ami_token_expires') || '0', 10)
+        token: g('ami_auth_token'),
+        refresh: g('ami_refresh_token'),
+        email: g('ami_user_email'),
+        expires: parseInt(g('ami_token_expires') || '0', 10)
       };
     },
-    save: function (data, email) {
+    // remember: true = keep me signed in, false = this tab only, undefined = leave as it is
+    save: function (data, email, remember) {
       var expires = Date.now() + (data.expires_in || 3600) * 1000;
       if (DR.demo) { DR.store.set('dr_demo_session', { token: 'demo', refresh: 'demo', email: email, expires: expires }); return; }
-      lsSet('ami_auth_token', data.access_token || '');
-      lsSet('ami_refresh_token', data.refresh_token || '');
-      lsSet('ami_user_email', email || '');
-      lsSet('ami_token_expires', String(expires));
+      var cur = DR.session.area();
+      var target = remember === true ? localStorage : (remember === false ? sessionStorage : cur);
+      var other = target === localStorage ? sessionStorage : localStorage;
+      try {
+        target.setItem('ami_auth_token', data.access_token || '');
+        target.setItem('ami_refresh_token', data.refresh_token || '');
+        target.setItem('ami_user_email', email || (data.user && data.user.email) || '');
+        target.setItem('ami_token_expires', String(expires));
+        // A new sign-in starts the clock; a refresh (remember not given) keeps the original start.
+        var since = remember === undefined ? parseInt(cur.getItem('ami_signed_in_at') || '0', 10) : 0;
+        target.setItem('ami_signed_in_at', String(since || Date.now()));
+        target.setItem('ami_last_active', String(Date.now()));
+        ['ami_auth_token', 'ami_refresh_token', 'ami_user_email', 'ami_token_expires', 'ami_signed_in_at', 'ami_last_active'].forEach(function (k) { other.removeItem(k); });
+      } catch (e) {}
     },
     clear: function () {
       if (DR.demo) { DR.store.remove('dr_demo_session'); return; }
-      ['ami_auth_token', 'ami_refresh_token', 'ami_user_email', 'ami_token_expires', 'dr_member', 'dr_email', 'dr_name', 'dr_org', 'dr_bookmarks'].forEach(lsRemove);
+      ['ami_auth_token', 'ami_refresh_token', 'ami_user_email', 'ami_token_expires', 'ami_signed_in_at', 'ami_last_active', 'ami_subscriber', 'ami_email', 'ami_sub_check'].forEach(function (k) {
+        lsRemove(k); try { sessionStorage.removeItem(k); } catch (e) {}
+      });
+      ['dr_member', 'dr_email', 'dr_name', 'dr_org', 'dr_bookmarks'].forEach(lsRemove);
     },
     active: function () { var s = DR.session.get(); return !!(s.token && s.expires > Date.now()); }
   };
@@ -529,7 +583,7 @@
 
   DR.requireSignIn = function () {
     if (DR.session.active()) return true;
-    location.replace('sign-in.html' + DR.qs({ return: location.pathname.split('/').pop() + location.search }));
+    location.replace('sign-in.html' + DR.qs({ return: location.pathname.split('/').pop() + location.search, reason: DR.session.capped ? 'timeout' : '' }));
     return false;
   };
 
