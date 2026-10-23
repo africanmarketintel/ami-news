@@ -632,7 +632,12 @@ footer.ami-foot .ami-foot__linkbtn:hover,footer.ami-foot .ami-foot__linkbtn:focu
 .ami-cookie button{min-height:44px;padding:0 22px;border-radius:2px;cursor:pointer;
   font:500 12px 'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;border:2px solid #0A1A10}
 .ami-cookie .ok{background:#0A1A10;color:#FAF7F0}
-.ami-cookie .no{background:#fff;color:#0A1A10}`;
+.ami-cookie .no{background:#fff;color:#0A1A10}
+@media (max-width:600px){
+  .ami-cookie{padding:10px 16px;gap:8px;font-size:14px;line-height:1.4}
+  .ami-cookie p{flex:1 1 100%}
+  .ami-cookie button{flex:1 1 0;padding:0 12px}
+}`;
 
   function showCookieNote() {
     if (!GA_MEASUREMENT_ID || gaChoice() !== null || document.getElementById('amiCookieNote')) return;
