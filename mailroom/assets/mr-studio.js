@@ -135,7 +135,21 @@
     root.appendChild(pageHeading);
 
     // top bar
-    var titleEl = h('span', { class: 'mr-studio__title' });
+    // The campaign's name in the bar is its subject line, and it can be typed
+    // over here. The subject is also on the Send panel; the two are kept the
+    // same, so there is one name to find a draft by in the lists.
+    var titleEl = h('input', {
+      type: 'text', class: 'mr-studio__title', placeholder: 'Add a subject line', spellcheck: 'true',
+      'aria-label': 'Subject line. This is also the name of the campaign in your lists.'
+    });
+    titleEl.addEventListener('input', function () {
+      campaign.subject = titleEl.value;
+      var box = document.getElementById('c-subject');
+      if (box && box !== titleEl) box.value = titleEl.value;
+      pageHeading.textContent = 'Campaign editor: ' + (titleEl.value.trim() || 'Untitled campaign');
+      markDirty();
+    });
+    titleEl.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); titleEl.blur(); } });
     var undoBtn = h('button', { type: 'button', class: 'mr-studio__iconbtn', 'aria-label': 'Undo', title: 'Undo', onclick: undo }, icon('undo'));
     var redoBtn = h('button', { type: 'button', class: 'mr-studio__iconbtn', 'aria-label': 'Redo', title: 'Redo', onclick: redo }, icon('redo'));
     var statusEl = h('span', { class: 'mr-studio__status', role: 'status', 'aria-live': 'polite' });
@@ -401,9 +415,10 @@
       statusEl.className = 'mr-studio__status' + cls;
     }
     function updateTitle() {
-      titleEl.textContent = campaign.subject ? campaign.subject : 'Untitled campaign';
-      titleEl.title = titleEl.textContent;
-      pageHeading.textContent = 'Campaign editor: ' + titleEl.textContent;
+      // Not while it is being typed in, or the cursor would jump.
+      if (document.activeElement !== titleEl) titleEl.value = campaign.subject || '';
+      titleEl.title = titleEl.value || 'Add a subject line';
+      pageHeading.textContent = 'Campaign editor: ' + ((campaign.subject || '').trim() || 'Untitled campaign');
     }
 
     /* ---------------- automatic saving ----------------

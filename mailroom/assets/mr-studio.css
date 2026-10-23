@@ -40,9 +40,13 @@ html.mr-studio-on body > *:not(.mr-studio):not(dialog) { display: none !importan
 }
 .mr-studio__home:hover { background: var(--mrs-tint); color: var(--mrs-brand); }
 .mr-studio__title {
-  max-width: 22rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  font-weight: 600; padding: 0 .5rem; border-left: 1px solid var(--mrs-line); margin-left: .25rem;
+  width: 22rem; max-width: 30vw; min-width: 8rem; height: 40px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font: inherit; font-weight: 600; color: var(--mrs-ink); padding: 0 .6rem; margin-left: .25rem;
+  background: transparent; border: 1px solid transparent; border-radius: 8px;
 }
+.mr-studio__title::placeholder { color: var(--mrs-soft); font-weight: 400; }
+.mr-studio__title:hover { border-color: #c8cacb; }
+.mr-studio__title:focus { background: #fff; border-color: var(--mrs-brand); }
 .mr-studio__status { font-size: .875rem; color: var(--mrs-soft); margin-left: .5rem; white-space: nowrap; }
 .mr-studio__status.is-dirty { color: var(--mrs-brand); font-weight: 600; }
 .mr-studio__grow { flex: 1; }

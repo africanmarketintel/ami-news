@@ -490,6 +490,12 @@
           ]);
         });
 
+    // Untitled drafts are named by what they start with, so two started on the
+    // same day can be told apart.
+    load = load.then(function (res) {
+      return MR.loadSnippets(res[1] || []).then(function () { return res; });
+    });
+
     load.then(function (res) {
       var account = res[0], campaigns = (res[1] || []).slice().sort(function (a, b) {
         return String(b.updated_at || b.created_at || '').localeCompare(String(a.updated_at || a.created_at || ''));
@@ -689,7 +695,7 @@
       campaigns.forEach(function (c) {
         var when = c.sent_at ? 'Sent ' + MR.date(c.sent_at)
           : c.scheduled_for ? 'Scheduled for ' + MR.dateTimeInZone(c.scheduled_for, account.timezone)
-          : c.updated_at || c.created_at ? 'Edited ' + MR.date(c.updated_at || c.created_at) : 'Not sent yet';
+          : c.updated_at || c.created_at ? 'Edited ' + MR.dateTimeInZone(c.updated_at || c.created_at, account.timezone) : 'Not sent yet';
         var stats = MR.h('div', { class: 'mr-camps__stats' });
         stats.appendChild(MR.h('span', { text: c.recipients ? MR.number(c.recipients) + ' sent' : '\u2013 sent' }));
         stats.appendChild(MR.h('span', { text: c.recipients ? MR.percent(c.clicked, c.recipients) + ' clicked' : '\u2013 clicked' }));

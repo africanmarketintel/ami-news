@@ -96,6 +96,8 @@
       state.loading = true;
       if (fresh) { state.rows = []; draw(); status.textContent = 'Loading campaigns.'; }
       fetchRows(state.rows.length).then(function (rows) {
+        return MR.loadSnippets(rows || []);
+      }).then(function (rows) {
         if (mine !== state.seq) return;
         rows = rows || [];
         state.rows = state.rows.concat(rows);
@@ -114,7 +116,7 @@
       state.rows.forEach(function (c) {
         var when = c.sent_at ? 'Sent ' + MR.date(c.sent_at)
           : c.scheduled_for ? 'Scheduled for ' + MR.dateTimeInZone(c.scheduled_for, state.tz)
-          : 'Edited ' + MR.date(c.updated_at || c.created_at);
+          : 'Edited ' + MR.dateTimeInZone(c.updated_at || c.created_at, state.tz);
         var stats = MR.h('div', { class: 'mr-camps__stats' });
         if (c.recipients) {
           stats.appendChild(MR.h('span', { text: MR.number(c.recipients) + ' sent' }));

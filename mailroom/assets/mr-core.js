@@ -80,8 +80,48 @@
   MR.campaignName = function (c) {
     var s = String((c && c.subject) || '').trim();
     if (s) return s;
+    // Two drafts started on the same day look identical by date, so an
+    // untitled one is named by what it starts with.
+    if (c && c._snippet) return 'Untitled draft: \u201c' + c._snippet + '\u201d';
     var when = MR.date((c && (c.created_at || c.updated_at)) || '');
     return 'Untitled draft' + (when ? ', started ' + when : '');
+  };
+
+  // The first words in a campaign's content: the first block that has any.
+  MR.snippet = function (blocks) {
+    var found = '';
+    (function walk(list) {
+      (Array.isArray(list) ? list : []).forEach(function (b) {
+        if (found || !b || typeof b !== 'object') return;
+        ['text', 'headline', 'title', 'name', 'label'].some(function (k) {
+          var v = typeof b[k] === 'string' ? b[k] : '';
+          v = v.replace(/\[([^\]]*)\]\([^)]*\)/g, '$1').replace(/\s+/g, ' ').trim();
+          if (v && !/^(Sample paragraph|Your weekly update)/i.test(v)) { found = v; return true; }
+          return false;
+        });
+        if (!found && Array.isArray(b.blocks)) walk(b.blocks);
+      });
+    })(blocks);
+    return found.length > 48 ? found.slice(0, 47).replace(/\s+\S*$/, '') + '\u2026' : found;
+  };
+
+  // Fills in the first words of every untitled draft in a list of campaigns.
+  // The lists do not load whole campaigns, so this asks for the content of
+  // just the untitled ones, in one request.
+  MR.loadSnippets = function (rows) {
+    var bare = (rows || []).filter(function (c) { return !String(c.subject || '').trim() && !c._snippet; });
+    if (!bare.length) return Promise.resolve(rows);
+    if (MR.cfg.demo) {
+      bare.forEach(function (c) { c._snippet = MR.snippet(c.body_blocks); });
+      return Promise.resolve(rows);
+    }
+    var ids = bare.map(function (c) { return c.id; }).join(',');
+    return MR.api.select('mailroom_campaigns?select=id,body_blocks&id=in.(' + ids + ')').then(function (full) {
+      var byId = {};
+      (full || []).forEach(function (f) { byId[f.id] = f.body_blocks; });
+      bare.forEach(function (c) { c._snippet = MR.snippet(byId[c.id]); });
+      return rows;
+    }).catch(function () { return rows; });   // the name falls back to the date
   };
 
   /* ---------------- timezones ----------------

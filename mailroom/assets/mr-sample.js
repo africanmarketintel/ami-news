@@ -120,7 +120,12 @@
       bounced: 0, complained: 0, clicked: 0, unsubscribed: 0 },
     { id: 'c5', ref: null, subject: '', status: 'draft',
       created_at: days(-2), updated_at: days(-2), recipients: 0, delivered: 0,
-      bounced: 0, complained: 0, clicked: 0, unsubscribed: 0 }
+      bounced: 0, complained: 0, clicked: 0, unsubscribed: 0,
+      body_blocks: [{ type: 'heading', text: 'Annual meeting 2027: save the date' }] },
+    { id: 'c6', ref: null, subject: '', status: 'draft',
+      created_at: days(-2), updated_at: days(-1), recipients: 0, delivered: 0,
+      bounced: 0, complained: 0, clicked: 0, unsubscribed: 0,
+      body_blocks: [{ type: 'heading', text: 'Trade mission to Nairobi' }] }
   ];
 
   MR.sampleArchive = [
