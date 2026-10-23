@@ -170,9 +170,43 @@
   }
 
   /* ---------------- the fields for one block ---------------- */
+  // In the campaign studio the words and links of these blocks are typed on the
+  // email itself, so the panel leaves those boxes out. The classic editor does
+  // not set api.inline and keeps every box.
+  var INLINE_HIDE = {
+    text: ['text'], heading: ['text'], list: ['text'], columns: ['left', 'right'], imagetext: ['text'],
+    story: ['text', 'detail', 'url'], button: ['label', 'url'],
+    product: ['name', 'price', 'description', 'label', 'link']
+  };
+  var INLINE_HINT = {
+    text: 'Type straight into the email. Select words and a link box appears.',
+    heading: 'Type straight into the email.',
+    list: 'Type straight into the email. Press Enter for a new point.',
+    columns: 'Type straight into the email. Select words and a link box appears.',
+    imagetext: 'Type beside the picture in the email. Click the grey box to add a picture, or double-click a picture to change it.',
+    story: 'Type straight into the email. Click the headline to set where it links to.',
+    button: 'Type the words on the button in the email. Click the button to set where it goes.',
+    product: 'Type straight into the email. Click the grey box to add a picture. Click the button to set where it goes.',
+    image: 'Click the grey box in the email to add a picture, or double-click a picture to change it.'
+  };
+
   function fields(block, path, api) {
+    var wrap = fieldsCore(block, path, api);
+    var hint = api.inline ? INLINE_HINT[block.type] : '';
+    if (hint) wrap.insertBefore(MR.h('p', { class: 'dr-small mr-studio__inlinehint', text: hint }), wrap.firstChild);
+    return wrap;
+  }
+
+  function fieldsCore(block, path, api) {
     var wrap = MR.h('div');
     var id = 'b' + path.replace(/\./g, '-');
+
+    // True for a box whose job the email itself now does.
+    function inlined(fid) {
+      if (!api.inline) return false;
+      var list = INLINE_HIDE[block.type];
+      return !!list && list.indexOf(fid.slice(id.length + 1)) > -1;
+    }
 
     if (block.type === 'panel') {
       wrap.appendChild(colourField(id + '-bg', 'Background', block, 'background', api,
@@ -426,6 +460,7 @@
 
     /* ---- small field builders ---- */
     function field(fid, labelText, type, value, onInput, hint) {
+      if (inlined(fid)) return document.createDocumentFragment();
       var input = MR.h('input', { class: 'dr-input', id: fid, type: type, value: value || '' });
       input.addEventListener('input', function () { onInput(input.value); });
       return MR.h('div', { class: 'dr-form-group' },
@@ -434,6 +469,7 @@
     }
 
     function textArea(fid, labelText, value, rows, onInput, hint) {
+      if (inlined(fid)) return document.createDocumentFragment();
       var area = MR.h('textarea', { class: 'dr-textarea', id: fid, rows: String(rows) });
       area.value = value || '';
       area.addEventListener('input', function () { onInput(area.value); });

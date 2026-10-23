@@ -306,3 +306,24 @@ html.mr-studio-on body > *:not(.mr-studio):not(dialog) { display: none !importan
 
 /* Placeholders (hint text in empty fields, stand-in pictures) are neutral dark grey, not a brand colour */
 .mr-studio ::placeholder { color: #6b7280; opacity: 1; }
+
+/* ---- the link box shown over the email while editing ---- */
+.mr-studio__linkdock { position: sticky; top: 0; height: 0; z-index: 6; text-align: center; pointer-events: none; }
+.mr-studio__linkbar {
+  position: relative; top: 8px; pointer-events: auto; display: inline-flex; align-items: center; gap: .5rem; padding: .4rem .5rem;
+  background: var(--mrs-ink); color: #fff; border-radius: 10px; box-shadow: 0 4px 16px rgba(0,0,0,.28); max-width: 100%;
+}
+.mr-studio__linkbar[hidden] { display: none; }
+.mr-studio__linklabel { font-size: .8125rem; font-weight: 600; white-space: nowrap; }
+.mr-studio__linkinput {
+  width: 17rem; max-width: 60vw; height: 36px; padding: 0 .6rem; border: 1px solid #c8cacb; border-radius: 8px;
+  background: #fff; color: var(--mrs-ink); font-size: .9375rem;
+}
+.mr-studio__linkinput[aria-invalid="true"] { border-color: #d4351c; box-shadow: 0 0 0 2px #f4c7c0; }
+.mr-studio__linkbtn {
+  height: 36px; padding: 0 .85rem; border: 0; border-radius: 8px; background: #fff; color: var(--mrs-ink);
+  font-size: .875rem; font-weight: 600; cursor: pointer;
+}
+.mr-studio__linkbtn[hidden] { display: none; }
+.mr-studio__linkbtn--quiet { background: transparent; color: #fff; text-decoration: underline; padding: 0 .4rem; }
+.mr-studio__inlinehint { margin: 0 0 1rem; color: var(--mrs-soft); }

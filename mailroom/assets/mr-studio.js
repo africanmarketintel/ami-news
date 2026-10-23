@@ -182,8 +182,17 @@
     var selBox = h('div', { class: 'mr-studio__box mr-studio__box--sel', hidden: true });
     var dropLine = h('div', { class: 'mr-studio__dropline', hidden: true });
     var tools = h('div', { class: 'mr-studio__tools', role: 'toolbar', 'aria-label': 'Selected block', hidden: true });
+    // The box that appears when words are selected, or a button or story is clicked, to set where it goes.
+    var lbLabel = h('label', { class: 'mr-studio__linklabel', for: 'mrs-linkinput', text: 'Link' });
+    var lbInput = h('input', { type: 'text', id: 'mrs-linkinput', class: 'mr-studio__linkinput', placeholder: 'https://', autocomplete: 'off', spellcheck: 'false' });
+    var lbApply = h('button', { type: 'button', class: 'mr-studio__linkbtn', text: 'Add link' });
+    var lbRemove = h('button', { type: 'button', class: 'mr-studio__linkbtn mr-studio__linkbtn--quiet', text: 'Remove' });
+    var linkBar = h('div', { class: 'mr-studio__linkbar', role: 'group', 'aria-label': 'Link', hidden: true }, lbLabel, lbInput, lbApply, lbRemove);
     var stage = h('div', { class: 'mr-studio__stage' }, frame, hoverBox, selBox, dropLine, tools);
-    var main = h('main', { class: 'mr-studio__main' }, notes, stage);
+    // The link box sits at the top of the editing area, in a dock with no height of its own,
+    // so it never covers the words being edited and the email does not move when it appears.
+    var linkDock = h('div', { class: 'mr-studio__linkdock' }, linkBar);
+    var main = h('main', { class: 'mr-studio__main' }, notes, linkDock, stage);
 
     root.appendChild(bar);
     root.appendChild(h('div', { class: 'mr-studio__body' }, rail, panel, main));
@@ -683,6 +692,7 @@
     var fieldsApi = {
       canSave: false,
       images: o.images || null,
+      inline: true,                     // words and links are edited on the email itself
       changed: function () { changed(); },
       redraw: function () { flush(); record(); markDirty(); paint(); renderPanels(); drawOutline(); placeSel(); }
     };
@@ -1143,7 +1153,7 @@
     }
 
     /* ---------------- the email in the middle ---------------- */
-    function html() { return MR.renderEmail(campaign, account(), { brand: brandNow() }); }
+    function html() { return MR.renderEmail(campaign, account(), { brand: brandNow(), editing: true }); }
 
     function paint() {
       clearTimeout(timers.paint);
@@ -1241,6 +1251,7 @@
     }
 
     function placeSel() {
+      placeLinkBar();
       var e = entryByPath(state.sel);
       placeBox(selBox, e && e.tr);
       if (!e) { tools.hidden = true; return; }
@@ -1301,14 +1312,14 @@
       return h('button', { type: 'button', class: 'mr-studio__toolbtn', 'aria-label': label, title: label, disabled: disabled, onclick: fn }, icon(ic, 18));
     }
 
-    function select(path) {
+    function select(path, quiet) {
       state.sel = (path === undefined) ? null : path;
       if (state.sel !== null) state.rail = 'content';
       renderRail();
       renderPanels();
       drawOutline();
       placeSel();
-      if (state.sel !== null) scrollToSel();
+      if (state.sel !== null && !quiet) scrollToSel();
     }
 
     /* ---------------- events inside the frame ---------------- */
@@ -1322,12 +1333,20 @@
       doc.addEventListener('mouseleave', function () { hoverBox.hidden = true; });
       doc.addEventListener('click', function (e) {
         e.preventDefault();                          // a link in the email must not take the editor away
+        var f = fieldEl(e.target);
+        if (f) {                                     // words, a button or a picture: edited where it stands
+          if (f.getAttribute('data-mr-k') === 'image') {
+            select(f.getAttribute('data-mr-b'), true);
+            if (f.classList.contains('mr-ph-img')) chooseImage(f);
+          }
+          return;
+        }
         var en = entryAt(e.target);
         if (!en) { select(null); return; }
         select(en.path);
-        var first = pBlock.querySelector('textarea, input[type="text"], input[type="url"]');
-        if (first) first.focus();
+        focusFirst(en);
       });
+      wireInline(doc);
       doc.addEventListener('dragover', function (e) {
         if (!dragging) return;
         e.preventDefault();
@@ -1398,6 +1417,341 @@
       perform({ path: String(campaign.body_blocks.length) });
     });
     document.addEventListener('dragend', endDrag);
+
+
+    /* ---------------- editing on the email ----------------
+       MR.renderEmail(..., { editing: true }) marks every editable element with
+       data-mr-b (which block), data-mr-f (which field of it) and data-mr-k (what
+       kind: text, line, list or image), and makes it editable. Typing changes the
+       campaign straight away and the page is not redrawn while someone types, so
+       the cursor stays where it is. The next redraw, whatever causes it, draws the
+       same words from the campaign. */
+    var lb = null;        // what the link box is set to: { mode, key, el, range, anchor }
+
+    function fieldEl(target) {
+      var el = target && target.nodeType === 3 ? target.parentNode : target;
+      return el && el.closest ? el.closest('[data-mr-f]') : null;
+    }
+
+    function setIn(block, field, value) {
+      var parts = field.split('.');
+      var o = block;
+      for (var i = 0; i < parts.length - 1; i++) o = o ? o[parts[i]] : null;
+      if (!o) return false;
+      o[parts[parts.length - 1]] = value;
+      return true;
+    }
+
+    function getIn(block, field) {
+      var o = block;
+      field.split('.').forEach(function (k) { o = o ? o[k] : undefined; });
+      return o === undefined || o === null ? '' : o;
+    }
+
+    // What an element shows, written the way the campaign stores it:
+    // line breaks as new lines and links as [words](address).
+    function readField(el) {
+      var kind = el.getAttribute('data-mr-k');
+      if (kind === 'list') {
+        var items = el.querySelectorAll('li');
+        if (items.length) {
+          return Array.prototype.map.call(items, function (li) {
+            return li.textContent.replace(/[ ​]/g, ' ').trim();
+          }).filter(Boolean).join('\n');
+        }
+      }
+      var out = '';
+      (function walk(node) {
+        Array.prototype.forEach.call(node.childNodes, function (c) {
+          if (c.nodeType === 3) { out += c.nodeValue.replace(/ /g, ' ').replace(/​/g, ''); return; }
+          if (c.nodeType !== 1) return;
+          var tag = c.tagName;
+          if (tag === 'BR') { out += '\n'; return; }
+          if (tag === 'A' && kind === 'text') {
+            var url = (c.getAttribute('data-mr-url') || c.getAttribute('href') || '').replace(/\s/g, '').replace(/\)/g, '%29');
+            var words = c.textContent.replace(/ /g, ' ').replace(/[\[\]\n]/g, ' ');
+            var core = words.trim();
+            if (url && url !== '#' && core) {
+              out += /^\s*/.exec(words)[0] + '[' + core + '](' + url + ')' + /\s*$/.exec(words)[0];
+            } else {
+              out += words;
+            }
+            return;
+          }
+          if (tag === 'DIV' || tag === 'P') {
+            if (out && out.charAt(out.length - 1) !== '\n') out += '\n';
+            walk(c);
+            return;
+          }
+          walk(c);
+        });
+      })(el);
+      // A line break at the very end is only the browser's marker for the cursor.
+      if (el.lastChild && el.lastChild.nodeName === 'BR' && out.slice(-1) === '\n') out = out.slice(0, -1);
+      if (kind === 'line') out = out.replace(/\s*\n\s*/g, ' ');
+      return out;
+    }
+
+    function inlineChanged() {
+      markDirty();
+      clearTimeout(timers.rec);
+      timers.rec = setTimeout(record, 700);
+      clearTimeout(timers.outline);
+      timers.outline = setTimeout(drawOutline, 250);
+    }
+
+    function fieldChanged(el) {
+      var block = byPath(el.getAttribute('data-mr-b'));
+      if (!block) return;
+      var v = readField(el);
+      if (v === '' && el.childNodes.length) {              // an empty field shows its prompt again
+        el.textContent = '';
+        var d = el.ownerDocument, r = d.createRange();
+        r.setStart(el, 0); r.collapse(true);
+        var s = d.getSelection(); s.removeAllRanges(); s.addRange(r);
+      }
+      if (setIn(block, el.getAttribute('data-mr-f'), v)) inlineChanged();
+    }
+
+    function caretToEnd(el) {
+      var d = el.ownerDocument, r = d.createRange();
+      r.selectNodeContents(el); r.collapse(false);
+      var s = d.getSelection(); s.removeAllRanges(); s.addRange(r);
+    }
+
+    // A click on the padding of a block puts the cursor in its first piece of text.
+    function focusFirst(en) {
+      var t = en.block.type === 'panel' ? null : en.tr.querySelector('[data-mr-f]:not([data-mr-k="image"])');
+      if (t) { t.focus(); caretToEnd(t); return; }
+      var first = pBlock.querySelector('textarea, input[type="text"], input[type="url"], select');
+      if (first) first.focus();
+    }
+
+    function chooseImage(el) {
+      var path = el.getAttribute('data-mr-b'), field = el.getAttribute('data-mr-f');
+      if (!fieldsApi.images) {                             // no image library here: the address box in the panel is the way in
+        var addr = pBlock.querySelector('input[type="url"]');
+        if (addr) addr.focus();
+        return;
+      }
+      fieldsApi.images(function (picked) {
+        var b = byPath(path);
+        if (!b) return;
+        setIn(b, field, picked.url);
+        if (!b.alt && picked.alt && (b.type === 'image' || b.type === 'imagetext' || b.type === 'product')) b.alt = picked.alt;
+        fieldsApi.redraw();
+      });
+    }
+
+    function wireInline(doc) {
+      doc.addEventListener('input', function (e) {
+        var el = fieldEl(e.target);
+        if (el && el.getAttribute('data-mr-k') !== 'image') fieldChanged(el);
+      });
+      doc.addEventListener('focusin', function (e) {
+        var el = fieldEl(e.target);
+        if (!el || el.getAttribute('data-mr-k') === 'image') return;
+        var path = el.getAttribute('data-mr-b');
+        if (state.sel !== path) select(path, true);
+        syncLinkBar(el);
+      });
+      doc.addEventListener('focusout', function () {
+        setTimeout(function () {
+          if (!lb) return;
+          if (linkBar.contains(document.activeElement)) return;
+          var active = doc.activeElement;
+          if (active && fieldEl(active) && fieldEl(active).getAttribute('data-mr-k') !== 'image') return;
+          hideLinkBar();
+        }, 150);
+      });
+      doc.addEventListener('selectionchange', function () {
+        if (linkBar.contains(document.activeElement)) return;
+        var s = doc.getSelection();
+        var el = s && s.anchorNode ? fieldEl(s.anchorNode) : null;
+        if (el && el.getAttribute('data-mr-k') !== 'image') syncLinkBar(el);
+      });
+      doc.addEventListener('keydown', function (e) {
+        var el = fieldEl(e.target);
+        if (!el) return;
+        var kind = el.getAttribute('data-mr-k');
+        var mod = e.metaKey || e.ctrlKey;
+        if (e.key === 'Escape') { el.blur(); return; }
+        if (mod && /^[biu]$/i.test(e.key)) { e.preventDefault(); return; }       // bold and italic are not kept in email text
+        if (mod && e.key.toLowerCase() === 'k' && (kind === 'text' || el.getAttribute('data-mr-l'))) {
+          e.preventDefault();
+          syncLinkBar(el);
+          if (lb) { lbInput.focus(); lbInput.select(); }
+          return;
+        }
+        if (e.key === 'Enter' && !mod) {
+          if (kind === 'line') { e.preventDefault(); el.blur(); }
+          else if (kind === 'text') { e.preventDefault(); doc.execCommand('insertLineBreak'); }
+        }
+      });
+      doc.addEventListener('paste', function (e) {
+        var el = fieldEl(e.target);
+        if (!el || el.getAttribute('data-mr-k') === 'image') return;
+        e.preventDefault();
+        var t = ((e.clipboardData || window.clipboardData).getData('text/plain') || '').replace(/\r/g, '');
+        if (el.getAttribute('data-mr-k') === 'line') t = t.replace(/\s*\n\s*/g, ' ');
+        doc.execCommand('insertText', false, t);
+      });
+      doc.addEventListener('dblclick', function (e) {
+        var el = fieldEl(e.target);
+        if (el && el.getAttribute('data-mr-k') === 'image' && !el.classList.contains('mr-ph-img')) {
+          select(el.getAttribute('data-mr-b'), true);
+          chooseImage(el);
+        }
+      });
+    }
+
+    /* ---------------- the link box ---------------- */
+    function linkOk(v) {
+      v = String(v || '').trim();
+      return /^(https?:|mailto:)/i.test(v) || /^[\w.-]+\.[a-z]{2,}(\/|$)/i.test(v) || /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(v);
+    }
+    function linkClean(v) {
+      v = String(v || '').replace(/\s/g, '');
+      if (/^[^\s@:\/]+@[^\s@]+\.[a-z]{2,}$/i.test(v)) v = 'mailto:' + v;
+      else if (!/^(https?:|mailto:)/i.test(v) && /^[\w.-]+\.[a-z]{2,}(\/|$)/i.test(v)) v = 'https://' + v;
+      return v;
+    }
+
+    function anchorAt(sel, el) {
+      var n = sel && sel.anchorNode;
+      for (; n && n !== el; n = n.parentNode) if (n.nodeType === 1 && n.tagName === 'A') return el.contains(n) ? n : null;
+      return null;
+    }
+
+    function lbElement() {
+      if (!lb) return null;
+      if (lb.el && lb.el.isConnected) return lb.el;
+      var d = frame.contentDocument;
+      lb.el = d ? d.querySelector(lb.key) : null;
+      return lb.el;
+    }
+
+    function syncLinkBar(el) {
+      var doc = frame.contentDocument;
+      var sel = doc.getSelection();
+      var kind = el.getAttribute('data-mr-k');
+      var link = el.getAttribute('data-mr-l');
+      var key = '[data-mr-b="' + el.getAttribute('data-mr-b') + '"][data-mr-f="' + el.getAttribute('data-mr-f') + '"]';
+      var block = byPath(el.getAttribute('data-mr-b'));
+      if (link && block) {
+        showLinkBar({ mode: 'field', key: key, el: el, field: link, path: el.getAttribute('data-mr-b') }, String(getIn(block, link) || ''));
+        return;
+      }
+      if (kind !== 'text') { hideLinkBar(); return; }
+      var a = anchorAt(sel, el);
+      if (a) { showLinkBar({ mode: 'anchor', key: key, el: el, anchor: a }, a.getAttribute('data-mr-url') || a.getAttribute('href') || ''); return; }
+      if (sel && sel.rangeCount && !sel.isCollapsed && el.contains(sel.anchorNode) && el.contains(sel.focusNode)) {
+        showLinkBar({ mode: 'sel', key: key, el: el, range: sel.getRangeAt(0).cloneRange() }, '');
+        return;
+      }
+      hideLinkBar();
+    }
+
+    function showLinkBar(next, value) {
+      var same = lb && lb.mode === next.mode && lb.key === next.key;
+      lb = next;
+      lbLabel.textContent = next.mode === 'sel' ? 'Link the selected words' : (next.mode === 'field' ? 'Where it links to' : 'Link');
+      lbRemove.textContent = 'Remove link';
+      lbApply.hidden = next.mode !== 'sel';
+      lbRemove.hidden = next.mode === 'sel';
+      lbInput.removeAttribute('aria-invalid');
+      if (!same || document.activeElement !== lbInput) lbInput.value = value;
+      linkBar.hidden = false;
+      placeLinkBar();
+    }
+
+    function hideLinkBar() {
+      lb = null;
+      linkBar.hidden = true;
+    }
+
+    function placeLinkBar() {
+      if (lb && !lbElement()) hideLinkBar();     // the words it was for have gone
+    }
+
+    lbInput.addEventListener('input', function () {
+      if (!lb) return;
+      var v = lbInput.value.trim();
+      lbInput.removeAttribute('aria-invalid');
+      if (lb.mode === 'field') {
+        var block = byPath(lb.path);
+        if (block && setIn(block, lb.field, v)) changed();
+      } else if (lb.mode === 'anchor') {
+        var a = lb.anchor, c = linkClean(v);
+        if (c) { a.setAttribute('data-mr-url', c); a.setAttribute('href', linkOk(c) ? c : '#'); }
+        else { a.removeAttribute('data-mr-url'); a.setAttribute('href', '#'); }
+        fieldChanged(lbElement());
+      }
+    });
+    lbInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        if (lb && lb.mode === 'sel') applyLink();
+        else { var el = lbElement(); if (el) el.focus(); }
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        var el2 = lbElement();
+        if (el2) el2.focus(); else hideLinkBar();
+      }
+    });
+    // A bare address such as example.org/page is stored with https:// in front, so the plain-text
+    // version of the email carries a link a mail app can follow.
+    lbInput.addEventListener('change', function () {
+      if (!lb || lb.mode === 'sel') return;
+      var v = lbInput.value.trim();
+      if (!v || /^(https?:|mailto:)/i.test(v) || !linkOk(v)) return;
+      var c = linkClean(v);
+      lbInput.value = c;
+      lbInput.dispatchEvent(new Event('input'));
+    });
+    lbApply.addEventListener('click', applyLink);
+    lbRemove.addEventListener('click', function () {
+      if (!lb) return;
+      if (lb.mode === 'field') {
+        var block = byPath(lb.path);
+        if (block && setIn(block, lb.field, '')) { lbInput.value = ''; changed(); }
+        lbInput.focus();
+      } else if (lb.mode === 'anchor') {
+        var a = lb.anchor, el = lbElement();
+        while (a.firstChild) a.parentNode.insertBefore(a.firstChild, a);
+        a.parentNode.removeChild(a);
+        if (el) fieldChanged(el);
+        paint();
+        hideLinkBar();
+      }
+    });
+
+    function applyLink() {
+      if (!lb || lb.mode !== 'sel') return;
+      var c = linkClean(lbInput.value);
+      if (!c || !linkOk(c)) {
+        lbInput.setAttribute('aria-invalid', 'true');
+        lbInput.title = 'Use a full web address, such as https://example.com';
+        lbInput.focus();
+        return;
+      }
+      var el = lbElement(), r = lb.range;
+      if (!el || !r) return;
+      var a = el.ownerDocument.createElement('a');
+      a.setAttribute('href', c);
+      a.setAttribute('data-mr-url', c);
+      var frag = r.extractContents();
+      Array.prototype.forEach.call(frag.querySelectorAll('a'), function (old) {
+        while (old.firstChild) old.parentNode.insertBefore(old.firstChild, old);
+        old.parentNode.removeChild(old);
+      });
+      a.appendChild(frag);
+      r.insertNode(a);
+      fieldChanged(el);
+      hideLinkBar();
+      flush(); record();
+      paint();                                   // draws the link in the email's own link style
+    }
 
     /* ---------------- changes from the settings fields ---------------- */
     function changed(style) {

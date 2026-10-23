@@ -146,6 +146,37 @@
   var ST = resolveStyle(null);
   MR.resolveStyle = resolveStyle;
 
+  /* ---------------- editing mode ----------------
+     MR.renderEmail(campaign, account, { editing: true }) is used by the
+     editor canvas and nowhere else. It draws the same email, and adds three
+     things that never reach a reader: data attributes that say which field of
+     which block an element shows, an empty field where a prompt would be, and
+     a grey prompt (drawn by CSS, so it is never text) in an empty field.
+     Without the option none of this exists and the markup is unchanged. */
+  var EDIT = false;
+  var PATH = '';
+
+  // Attributes for one editable element. kind: text, line, list or image.
+  // link names the field that holds the link for the element, if it has one.
+  function ea(field, ph, kind, link) {
+    if (!EDIT) return '';
+    kind = kind || 'text';
+    return ' data-mr-b="' + PATH + '" data-mr-f="' + field + '" data-mr-k="' + kind + '"' +
+      (ph ? ' data-mr-ph="' + esc(ph) + '"' : '') + (link ? ' data-mr-l="' + link + '"' : '') +
+      (kind === 'image' ? '' : ' contenteditable="true" spellcheck="true" aria-label="' + esc(ph || field) + '"' +
+        (kind === 'list' ? '' : ' role="textbox"' + (kind === 'text' ? ' aria-multiline="true"' : '')));
+  }
+
+  var EDIT_CSS =
+    '  [data-mr-f]{outline:none;cursor:text}\n' +
+    '  [data-mr-f]:hover{box-shadow:0 0 0 1px rgba(30,107,60,.45)}\n' +
+    '  [data-mr-f]:focus{box-shadow:0 0 0 2px #1e6b3c}\n' +
+    '  [data-mr-ph]:empty::before{content:attr(data-mr-ph);color:#8a9195;font-weight:normal;font-style:normal;text-decoration:none;pointer-events:none}\n' +
+    '  .mr-ph-img{display:block;box-sizing:border-box;width:100%;min-height:120px;padding:44px 12px;border:2px dashed #b4bbbf;background:#f6f7f7;color:#5f6b72;font:14px/20px Arial,Helvetica,sans-serif;text-align:center;cursor:pointer}\n' +
+    '  .mr-ph-img:hover{border-color:#1e6b3c;color:#1e6b3c}\n' +
+    '  img[data-mr-f]{cursor:pointer}\n' +
+    '  [data-mr-ghost]{opacity:.5}\n';
+
   // Padding for a row: top, the side padding from the style, then bottom.
   function px(top, bottom) {
     return top + 'px ' + ST.pad + 'px' + (bottom === undefined ? '' : ' ' + bottom + (bottom ? 'px' : ''));
@@ -202,6 +233,8 @@
   // opts: { outlook: true, brand: {...}, archiveUrl: '...' }
   MR.renderEmail = function (campaign, account, opts) {
     opts = opts || {};
+    EDIT = !!opts.editing;
+    PATH = '';
     ST = resolveStyle(campaign.style);
     var brand = brandOf(opts.brand);
     var font = FONTS[campaign.font_family || brand.font_family] || FONTS.sans;
@@ -212,7 +245,8 @@
     var ctx = context(brand, null);
     ctx.recipient = opts.recipient || null;
 
-    var body = blocks.map(function (b) {
+    var body = blocks.map(function (b, i) {
+      PATH = String(i);
       return renderBlock(b, font, outlook, brand, ctx);
     }).join('\n');
 
@@ -241,6 +275,7 @@
 '    .rc-col img{width:100% !important;max-width:100% !important}\n' +
 (ST.btnPct ? '    .rc-btn{width:100% !important;max-width:100% !important;box-sizing:border-box !important}\n' : '') +
 '  }\n' +
+(EDIT ? EDIT_CSS : '') +
 '</style>\n' +
 '</head>\n' +
 '<body style="margin:0;padding:0;background-color:' + ST.page + '">\n' +
@@ -395,7 +430,7 @@ footer(account, font, unsubscribe, preferences, brand) +
       case 'dynamic':
         return row(paragraph(merge(b.text, ctx.recipient), font, ctx), px(8), align(b.align));
       default:
-        return row(paragraph(b.text, font, ctx), px(8), align(b.align));
+        return row(paragraph(b.text, font, ctx, null, ea('text', 'Write your text here. Select words to add a link.', 'text')), px(8), align(b.align));
     }
   }
 
@@ -407,13 +442,13 @@ footer(account, font, unsubscribe, preferences, brand) +
 
   // Links inside body text are written as [text](url), the one piece of
   // markup the editor accepts, because a member should not have to write HTML.
-  function paragraph(text, font, ctx, size) {
+  function paragraph(text, font, ctx, size, ed) {
     var s = size || { font: ST.pSize, line: ST.pLine };
     var html = esc(text);
     html = html.replace(/\[([^\]\n]+)\]\(([^)\s]+)\)/g, function (m, labelText, url) {
-      return '<a href="' + safeUrl(url) + '" style="' + linkCss(ctx) + '">' + labelText + '</a>';
+      return '<a href="' + safeUrl(url) + '"' + (EDIT ? ' data-mr-url="' + esc(url) + '"' : '') + ' style="' + linkCss(ctx) + '">' + labelText + '</a>';
     });
-    return '<p style="margin:0;font-family:' + bodyFont(font) + ';font-size:' + s.font + 'px;line-height:' + s.line + 'px;' +
+    return '<p' + (ed || '') + ' style="margin:0;font-family:' + bodyFont(font) + ';font-size:' + s.font + 'px;line-height:' + s.line + 'px;' +
       'mso-line-height-rule:exactly;color:' + ctx.ink + '">' + html.replace(/\n/g, '<br>') + '</p>';
   }
 
@@ -421,7 +456,7 @@ footer(account, font, unsubscribe, preferences, brand) +
     var small = b.level === 'small';
     var size = small ? Math.max(12, ST.tSize - 5) : ST.tSize;
     var line = small ? size + 7 : size + 6;
-    return row('<h2 style="margin:0;font-family:' + titleFont(font) + ';font-size:' + size + 'px;line-height:' + line + 'px;' +
+    return row('<h2' + ea('text', small ? 'Add a subheading' : 'Add a headline', 'line') + ' style="margin:0;font-family:' + titleFont(font) + ';font-size:' + size + 'px;line-height:' + line + 'px;' +
       'mso-line-height-rule:exactly;font-weight:bold;color:' + ctx.title + '">' + esc(b.text) + '</h2>',
       small ? px(16, 4) : px(24, 8), align(b.align));
   }
@@ -431,15 +466,15 @@ footer(account, font, unsubscribe, preferences, brand) +
   function story(b, font, ctx) {
     var url = String(b.url || '').trim();
     var title = esc(b.text || '');
-    var head = url
+    var head = url && !EDIT
       ? '<a href="' + safeUrl(url) + '" style="color:' + ctx.title + ';text-decoration:none">' + title + '</a>'
       : title;
     var rule = b.rule === false ? '' : 'border-top:1px solid ' + ctx.rule + ';';
     var a = align(b.align);
     return '<tr><td class="rc-pad" align="' + a + '" style="' + rule + 'padding:' + px(14, 12) + ';text-align:' + a + '">' +
-      '<h3 style="margin:0 0 4px;font-family:' + titleFont(font) + ';font-size:16px;line-height:22px;' +
+      '<h3' + ea('text', 'Story headline', 'line', 'url') + ' style="margin:0 0 4px;font-family:' + titleFont(font) + ';font-size:16px;line-height:22px;' +
       'mso-line-height-rule:exactly;font-weight:bold;color:' + ctx.title + '">' + head + '</h3>' +
-      (b.detail ? '<p style="margin:0;font-family:' + bodyFont(font) + ';font-size:13px;line-height:19px;' +
+      (b.detail || EDIT ? '<p' + ea('detail', 'One line underneath', 'line') + ' style="margin:0;font-family:' + bodyFont(font) + ';font-size:13px;line-height:19px;' +
         'mso-line-height-rule:exactly;color:' + ctx.muted + '">' + esc(b.detail) + '</p>' : '') +
       '</td></tr>';
   }
@@ -451,10 +486,13 @@ footer(account, font, unsubscribe, preferences, brand) +
     var bg = colour(b.background, brand.accent_colour);
     var ctx = context(brand, b);
     ctx.recipient = parent ? parent.recipient : null;
+    var outer = PATH;
     var children = (Array.isArray(b.blocks) ? b.blocks : [])
-      .filter(function (c) { return c && c.type !== 'panel'; })
-      .map(function (c) { return renderBlock(c, font, outlook, brand, ctx); })
+      .map(function (c, j) { return { c: c, j: j }; })
+      .filter(function (x) { return x.c && x.c.type !== 'panel'; })
+      .map(function (x) { PATH = outer + '.' + x.j; return renderBlock(x.c, font, outlook, brand, ctx); })
       .join('\n');
+    PATH = outer;
     return '<tr><td style="padding:0;background-color:' + bg + '">\n' +
       '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" ' +
       'style="background-color:' + bg + '">\n' +
@@ -465,7 +503,10 @@ footer(account, font, unsubscribe, preferences, brand) +
   }
 
   function image(b, width) {
-    return '<img src="' + safeUrl(b.url) + '" alt="' + esc(b.alt) + '" width="' + width + '" ' +
+    if (EDIT && !String(b.url || '').trim()) {
+      return '<div' + ea('url', '', 'image') + ' class="mr-ph-img" contenteditable="false">Click to add an image</div>';
+    }
+    return '<img' + ea('url', '', 'image') + ' src="' + safeUrl(b.url) + '" alt="' + esc(b.alt) + '" width="' + width + '" ' +
       'style="display:block;width:100%;max-width:' + width + 'px;height:auto;border:0;outline:none;text-decoration:none">';
   }
 
@@ -477,15 +518,15 @@ footer(account, font, unsubscribe, preferences, brand) +
   function list(b, font, ctx) {
     var items = String(b.text || '').split('\n').filter(function (l) { return l.trim(); });
     if (!items.length) items = [''];
-    return '<ul style="margin:0;padding-' + startSide() + ':22px;font-family:' + bodyFont(font) + ';font-size:' + ST.pSize +
+    return '<ul' + ea('text', 'Add a point', 'list') + ' style="margin:0;padding-' + startSide() + ':22px;font-family:' + bodyFont(font) + ';font-size:' + ST.pSize +
       'px;line-height:' + ST.pLine + 'px;mso-line-height-rule:exactly;color:' + ctx.ink + ';text-align:' + startSide() + '">' +
-      items.map(function (l) { return '<li style="margin:0 0 6px">' + esc(l.trim()) + '</li>'; }).join('') +
+      items.map(function (l) { return '<li' + (EDIT ? ' data-mr-ph="Add a point"' : '') + ' style="margin:0 0 6px">' + esc(l.trim()) + '</li>'; }).join('') +
       '</ul>';
   }
 
   function columns(b, font, brand, ctx) {
-    var left = paragraph(b.left, font, ctx);
-    var right = paragraph(b.right, font, ctx);
+    var left = paragraph(b.left, font, ctx, null, ea('left', 'Left column text', 'text'));
+    var right = paragraph(b.right, font, ctx, null, ea('right', 'Right column text', 'text'));
     return '<tr><td class="rc-pad" style="padding:' + px(8) + '">' +
       '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>' +
       '<td class="rc-col" width="48%" valign="top" style="width:48%;vertical-align:top">' + left + '</td>' +
@@ -498,7 +539,7 @@ footer(account, font, unsubscribe, preferences, brand) +
     var img = '<td class="rc-col" width="40%" valign="top" style="width:40%;vertical-align:top">' +
       image(b, Math.round(ST.inner * 220 / 552)) + '</td>';
     var txt = '<td class="rc-col" width="56%" valign="top" style="width:56%;vertical-align:top">' +
-      paragraph(b.text, font, ctx) + '</td>';
+      paragraph(b.text, font, ctx, null, ea('text', 'Text beside the image', 'text')) + '</td>';
     var gap = '<td class="rc-col-gap" width="4%" style="width:4%;font-size:1px;line-height:1px">&nbsp;</td>';
     // On a phone both cells stack, so the image always ends up above the text.
     var cells = b.side === 'right' ? txt + gap + img : img + gap + txt;
@@ -522,10 +563,10 @@ footer(account, font, unsubscribe, preferences, brand) +
           '</a>';
       }).join('<span style="font-size:1px">&nbsp;&nbsp;&nbsp;</span>');
     } else {
-      inner = links.map(function (l) {
-        return '<a href="' + safeUrl(l.url) + '" style="color:' + ctx.link +
+      inner = links.map(function (l, i) {
+        return '<a' + ea('links.' + i + '.label', 'Link name', 'line', 'links.' + i + '.url') + ' href="' + safeUrl(l.url) + '" style="color:' + ctx.link +
           ';font-family:' + bodyFont(font) + ';font-size:14px;line-height:20px;text-decoration:underline">' +
-          esc(l.label || l.url) + '</a>';
+          esc(EDIT ? l.label : (l.label || l.url)) + '</a>';
       }).join('<span style="color:' + ctx.muted + '"> &nbsp;&middot;&nbsp; </span>');
     }
     return '<tr><td class="rc-pad" align="' + a + '" style="padding:' + px(12) + ';text-align:' + a + '">' + inner + '</td></tr>';
@@ -665,22 +706,25 @@ footer(account, font, unsubscribe, preferences, brand) +
   function product(b, font, outlook, brand, ctx) {
     var a = align(b.align);
     var rows = '';
-    if (b.url) rows += '<tr><td class="rc-pad" align="' + a + '" style="padding:' + px(8, 0) + '">' + image(b, ST.inner) + '</td></tr>';
-    if (b.name) {
+    if (b.url || EDIT) rows += '<tr><td class="rc-pad" align="' + a + '" style="padding:' + px(8, 0) + '">' + image(b, ST.inner) + '</td></tr>';
+    if (b.name || EDIT) {
       rows += '<tr><td class="rc-pad" align="' + a + '" style="padding:' + px(12, 0) + ';text-align:' + a + '">' +
-        '<h3 style="margin:0;font-family:' + titleFont(font) + ';font-size:18px;line-height:24px;mso-line-height-rule:exactly;' +
+        '<h3' + ea('name', 'Product name', 'line') + ' style="margin:0;font-family:' + titleFont(font) + ';font-size:18px;line-height:24px;mso-line-height-rule:exactly;' +
         'font-weight:bold;color:' + ctx.title + '">' + esc(b.name) + '</h3></td></tr>';
     }
-    if (b.price) {
+    if (b.price || EDIT) {
       rows += '<tr><td class="rc-pad" align="' + a + '" style="padding:' + px(4, 0) + ';text-align:' + a + '">' +
-        '<p style="margin:0;font-family:' + bodyFont(font) + ';font-size:' + ST.pSize + 'px;line-height:' + ST.pLine + 'px;mso-line-height-rule:exactly;' +
+        '<p' + ea('price', 'Price', 'line') + ' style="margin:0;font-family:' + bodyFont(font) + ';font-size:' + ST.pSize + 'px;line-height:' + ST.pLine + 'px;mso-line-height-rule:exactly;' +
         'font-weight:bold;color:' + ctx.ink + '">' + esc(b.price) + '</p></td></tr>';
     }
-    if (b.description) {
+    if (b.description || EDIT) {
       rows += '<tr><td class="rc-pad" align="' + a + '" style="padding:' + px(8, 0) + ';text-align:' + a + '">' +
-        paragraph(b.description, font, ctx) + '</td></tr>';
+        paragraph(b.description, font, ctx, null, ea('description', 'Describe the product', 'text')) + '</td></tr>';
     }
-    if (b.link) rows += button({ label: b.label || 'Buy now', url: b.link, align: b.align, colour: b.colour, text_colour: b.text_colour }, font, outlook, brand, ctx);
+    if (b.link || EDIT) {
+      rows += button({ label: EDIT ? b.label : (b.label || 'Buy now'), url: b.link, align: b.align, colour: b.colour, text_colour: b.text_colour },
+        font, outlook, brand, ctx, { label: 'label', link: 'link', ph: 'Buy now', ghost: !b.link });
+    }
     if (!rows) rows = '<tr><td height="8" style="height:8px;line-height:8px;font-size:1px">&nbsp;</td></tr>';
     return '<tr><td style="padding:0"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">' +
       rows + '</table></td></tr>';
@@ -688,19 +732,23 @@ footer(account, font, unsubscribe, preferences, brand) +
 
   // A row of links, as at the top of a website.
   function navigation(b, font, ctx) {
-    var links = (Array.isArray(b.links) ? b.links : []).filter(function (l) { return l && String(l.label || '').trim(); });
+    var links = (Array.isArray(b.links) ? b.links : []).map(function (l, i) { return { l: l, i: i }; })
+      .filter(function (x) { return x.l && String(x.l.label || '').trim(); });
     if (!links.length) return spacer({ size: 'small' });
     var a = b.align ? align(b.align) : 'center';
-    var inner = links.map(function (l) {
-      return '<a href="' + safeUrl(l.url) + '" style="color:' + ctx.link + ';font-family:' + bodyFont(font) +
+    var inner = links.map(function (x) {
+      var l = x.l;
+      return '<a' + ea('links.' + x.i + '.label', 'Link name', 'line', 'links.' + x.i + '.url') + ' href="' + safeUrl(l.url) + '" style="color:' + ctx.link + ';font-family:' + bodyFont(font) +
         ';font-size:14px;line-height:20px;font-weight:bold;text-decoration:none">' + esc(l.label) + '</a>';
     }).join('<span style="color:' + ctx.muted + '"> &nbsp;|&nbsp; </span>');
     return '<tr><td class="rc-pad" align="' + a + '" style="padding:' + px(12) + ';text-align:' + a + '">' + inner + '</td></tr>';
   }
 
-  function button(b, font, outlook, brand, ctx) {
+  function button(b, font, outlook, brand, ctx, ed) {
+    ed = ed || { label: 'label', link: 'url', ph: 'Read more' };
     var url = safeUrl(b.url);
-    var labelText = esc(b.label || 'Read more');
+    var labelText = esc(EDIT && !outlook ? b.label : (b.label || 'Read more'));
+    var vmlText = esc(b.label || ed.ph || 'Read more');
     var radius = outlook ? '0' : ST.btnRadius + 'px';
     var fill = colour(b.colour, ST.btnBg || brand.button_colour);
     var ink = colour(b.text_colour, ST.btnColour || brand.button_text);
@@ -717,9 +765,9 @@ footer(account, font, unsubscribe, preferences, brand) +
       'strokecolor="' + edge + '" fillcolor="' + fill + '"' + stroke + '>' +
       '<w:anchorlock/><center style="color:' + ink + ';font-family:' + face + ';font-size:' + ST.btnSize +
       'px;font-weight:' + weight + (ST.btnItalic ? ';font-style:italic' : '') + '">' +
-      labelText + '</center></v:roundrect><![endif]-->';
+      vmlText + '</center></v:roundrect><![endif]-->';
     var fallback = '<!--[if !mso]><!-- -->' +
-      '<a href="' + url + '"' + (ST.btnPct ? ' class="rc-btn"' : '') + ' style="background-color:' + fill + ';border:' + ST.btnBorder + 'px solid ' + edge +
+      '<a' + ea(ed.label, ed.ph, 'line', ed.link) + (EDIT && ed.ghost ? ' data-mr-ghost="1"' : '') + ' href="' + url + '"' + (ST.btnPct ? ' class="rc-btn"' : '') + ' style="background-color:' + fill + ';border:' + ST.btnBorder + 'px solid ' + edge +
       ';border-radius:' + radius + ';color:' + ink + ';display:inline-block;font-family:' + face +
       ';font-size:' + ST.btnSize + 'px;font-weight:' + weight + ';' + italic + 'line-height:' + (48 - 2 * ST.btnBorder) + 'px;' +
       'mso-line-height-rule:exactly;text-align:center;text-decoration:' + (ST.btnUnderline ? 'underline' : 'none') +
