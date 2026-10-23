@@ -264,7 +264,15 @@
       wrap.appendChild(MR.h('p', null, MR.h('a', { class: 'dr-link', href: 'preferences.html?token=' + encodeURIComponent(token), text: 'Change what you receive instead' })));
       return;
     }
-    if (!token) return;
+    if (!token) {
+      // A test email has no subscriber behind it, so its link carries no token.
+      // Say so, rather than leaving "Working…" on the page.
+      wrap.textContent = '';
+      wrap.appendChild(MR.h('h1', { text: 'This link has no reader attached' }));
+      wrap.appendChild(MR.h('p', { class: 'dr-lead', text: 'If this came from a test email, that is expected. A test is not sent to a subscriber, so there is nobody to unsubscribe. Each reader of a real send gets a personal link.' }));
+      wrap.appendChild(MR.h('p', { text: 'If you reached this page from a real email and want to stop receiving it, reply to that email and ask to be removed.' }));
+      return;
+    }
 
     fn('mailroom-unsubscribe', { token: token, unsubscribe: true }).then(function () {
       wrap.textContent = '';
