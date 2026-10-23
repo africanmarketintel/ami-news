@@ -35,14 +35,15 @@
   <h1>Create a sender account</h1>
   <p class="dr-lead">Confirm your email address and you can send. There is no approval queue and no daily cap.</p>
   <p>Before you start, read the <a href="pricing.html">sending policy</a>. It is short, and it is everything that can stop a campaign.</p>
-  <form id="mr-account-form" novalidate>
+  <p class="dr-hint" id="mr-required-note">Every question is needed except the website.</p>
+  <form id="mr-account-form" novalidate aria-describedby="mr-required-note">
     <div class="dr-form-group">
       <label class="dr-label" for="m-name">Organisation name</label>
       <span class="dr-hint">This appears as the sender name on your campaigns.</span>
       <input class="dr-input" id="m-name" type="text" autocomplete="organization">
     </div>
     <div class="dr-form-group">
-      <label class="dr-label" for="m-website">Website</label>
+      <label class="dr-label" for="m-website">Website (optional)</label>
       <input class="dr-input" id="m-website" type="url" placeholder="https://">
     </div>
     <div class="dr-form-group">
