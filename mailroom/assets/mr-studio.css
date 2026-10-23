@@ -327,3 +327,8 @@ html.mr-studio-on body > *:not(.mr-studio):not(dialog) { display: none !importan
 .mr-studio__linkbtn[hidden] { display: none; }
 .mr-studio__linkbtn--quiet { background: transparent; color: #fff; text-decoration: underline; padding: 0 .4rem; }
 .mr-studio__inlinehint { margin: 0 0 1rem; color: var(--mrs-soft); }
+
+.mr-studio__testerr { margin: .5rem 0 0; color: #b42318; font-weight: 600; }
+.mr-studio__testerr[hidden] { display: none; }
+.mr-studio__modalbody .dr-input[aria-invalid="true"] { border-color: #b42318; }
+.mr-studio__modalbody .dr-input { max-width: 36rem; width: 100%; }

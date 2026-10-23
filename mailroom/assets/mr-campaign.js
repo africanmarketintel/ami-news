@@ -774,17 +774,23 @@
         });
     }
 
-    function testSend() {
+    // addresses: the ones the member typed. Empty means everyone on the account.
+    function testSend(addresses) {
       var form = document.getElementById('mr-campaign-form');
+      var list = Array.isArray(addresses) ? addresses : [];
       if (MR.cfg.demo) {
-        MR.banner(notes(), 'Preview only', 'On the live service a test goes to everyone on your account.');
+        MR.banner(notes(), 'Preview only', 'On the live service a test goes to the addresses you type, or to everyone on your account if you leave the box empty.');
         return;
       }
       save('draft').then(function (saved) {
         if (!saved) return;
-        return MR.fn('mailroom-send', { campaign_id: saved.id, mode: 'test' }).then(function (r) {
+        var body = { campaign_id: saved.id, mode: 'test' };
+        if (list.length) body.addresses = list;
+        return MR.fn('mailroom-send', body).then(function (r) {
+          var n = r.queued || 0;
           MR.banner(notes(), 'Test on its way',
-            'A test is going to the ' + (r.queued || 0) + ' addresses on your account, usually within a minute. Open it on a phone as well as a laptop, and try it with images turned off.');
+            'A test is going to ' + (n === 1 ? '1 address' : n + ' addresses') + (list.length ? '' : ' on your account') +
+            ', usually within a minute. Open it on a phone as well as a laptop, and try it with images turned off.');
         });
       }).catch(function (err) {
         MR.banner(notes(), 'Test not sent', message(err), 'important');
@@ -847,6 +853,10 @@
       if (/domain_suspended|Sending from/i.test(m)) return 'Sending from that domain is suspended. Check the sending domains page for the reason.';
       if (/domain_not_yours|does not belong to this account/i.test(m)) return 'That sending domain does not belong to your account.';
       if (/monthly limit/i.test(m)) return 'This send would pass your monthly limit.';
+      if (/invalid_test_address/i.test(m)) return 'One of those is not a valid email address. Check them and try again.';
+      if (/too_many_test_addresses/i.test(m)) return 'A test can go to five addresses at most.';
+      if (/too_many_tests/i.test(m)) return 'You have sent a lot of tests in the last hour. Wait a while and try again.';
+      if (/no_test_addresses/i.test(m)) return 'There is no address to send the test to. Type one in the box.';
       if (/already_sent/i.test(m)) return 'This campaign has already been sent.';
       if (/no_recipients/i.test(m)) return 'Nobody on that list can be mailed: everyone has unsubscribed, bounced or complained.';
       if (/already passed|in the future/i.test(m)) return 'That time has already passed. Choose a time in the future.';

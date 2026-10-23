@@ -1808,8 +1808,38 @@
           body.appendChild(box);
           MR.preview(box, function () { return campaign; }, function () { return account(); }, function () { return brandNow(); });
         } else if (key === 'test') {
-          body.appendChild(h('p', { text: 'A test goes to everyone on your account, usually within a minute. Open it on a phone as well as a laptop, and try it with images turned off.' }));
-          body.appendChild(h('button', { type: 'button', class: 'mr-studio__btn mr-studio__btn--dark', text: 'Send a test to your team', onclick: function () { o.testSend(); } }));
+          var remembered = '';
+          try { remembered = localStorage.getItem('mr-test-addresses') || ''; } catch (e) { /* storage may be blocked */ }
+          var toBox = h('input', { type: 'text', id: 'mrs-test-to', class: 'dr-input', autocomplete: 'email', spellcheck: 'false', value: remembered, placeholder: 'name@example.com, other@example.com' });
+          var toErr = h('p', { class: 'mr-studio__testerr', role: 'alert', hidden: true });
+          var sendBtn = h('button', { type: 'button', class: 'mr-studio__btn mr-studio__btn--dark', text: 'Send a test' });
+          function sendTest() {
+            var list = toBox.value.split(/[\s,;]+/).filter(Boolean);
+            var seen = {};
+            list = list.filter(function (a) { var k = a.toLowerCase(); if (seen[k]) return false; seen[k] = 1; return true; });
+            var bad = list.filter(function (a) { return !/^[^\s@,;<>()"]+@[^\s@,;<>()"]+\.[a-z]{2,}$/i.test(a); });
+            toErr.hidden = true;
+            toBox.removeAttribute('aria-invalid');
+            if (bad.length || list.length > 5) {
+              toErr.textContent = bad.length
+                ? 'This does not look like an email address: ' + bad[0] + '. Check it and try again.'
+                : 'A test can go to five addresses at most.';
+              toErr.hidden = false;
+              toBox.setAttribute('aria-invalid', 'true');
+              toBox.focus();
+              return;
+            }
+            try { localStorage.setItem('mr-test-addresses', list.join(', ')); } catch (e) { /* not essential */ }
+            o.testSend(list);
+          }
+          sendBtn.addEventListener('click', sendTest);
+          toBox.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); sendTest(); } });
+          body.appendChild(h('p', { text: 'Open the test on a phone as well as a laptop, and try it with images turned off. The subject starts with [TEST].' }));
+          body.appendChild(h('div', { class: 'dr-form-group' },
+            h('label', { class: 'dr-label', for: 'mrs-test-to', text: 'Send the test to' }),
+            h('span', { class: 'dr-hint', text: 'Up to five addresses, separated by commas. Leave it empty to send to everyone on your account.' }),
+            toBox, toErr));
+          body.appendChild(sendBtn);
         } else {
           body.appendChild(h('p', { text: 'Make a link anyone can open to read this draft, without an account. Useful for sign-off. You can stop sharing at any time.' }));
           body.appendChild(h('button', { type: 'button', class: 'mr-studio__btn mr-studio__btn--dark', text: 'Make a preview link', onclick: function () { o.shareLink(); } }));
