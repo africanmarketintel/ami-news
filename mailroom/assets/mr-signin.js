@@ -41,6 +41,23 @@
     }
     modeLink.addEventListener('click', function (e) { e.preventDefault(); setMode(!useCode); });
 
+    // Says why Supabase refused the password, when it tells us. The site only
+    // checks for 8 characters; the project's own rules can be stricter.
+    function passwordMessage(err) {
+      var code = (err && err.code) || '', reasons = (err && err.reasons) || [];
+      if (code === 'same_password') return 'That is already your password. Choose a different one, or skip this step.';
+      if (code === 'weak_password' || reasons.length) {
+        var why = [];
+        if (reasons.indexOf('length') > -1) why.push('It is shorter than the minimum we accept.');
+        if (reasons.indexOf('characters') > -1) why.push('It needs a mix of letters, numbers and symbols.');
+        if (reasons.indexOf('pwned') > -1) why.push('It appears in lists of passwords exposed in data breaches.');
+        return 'That password is not strong enough. ' + (why.length ? why.join(' ') + ' ' : '') + 'Try a different one, or skip and do this later.';
+      }
+      if (/reauthentication/.test(code)) return 'For security, sign in again with a new code, then set your password. Or skip and do this later.';
+      if (err && err.status === 401) return 'Your sign-in has expired. Sign in again with a new code, then set your password.';
+      return 'We could not save that password. Try a longer or different one, or skip and do this later.';
+    }
+
     // After a code sign-in, offer a password so the next sign-in needs no code. Can be skipped.
     function offerPassword(go) {
       var h = MR.h, wrap = form.parentNode;
@@ -72,9 +89,10 @@
         if (pw.value.length < 8) { MR.errors.show(f, [{ id: 'np-password', message: 'Use at least 8 characters' }]); return; }
         if (pw.value !== pw2.value) { MR.errors.show(f, [{ id: 'np-confirm', message: 'The two passwords are not the same' }]); return; }
         save.setAttribute('aria-disabled', 'true');
-        MR.auth.setPassword(pw.value).then(go).catch(function () {
+        MR.auth.setPassword(pw.value).then(go).catch(function (err) {
           save.removeAttribute('aria-disabled');
-          MR.errors.show(f, [{ id: 'np-password', message: 'We could not save that password. Try a longer or different one, or skip and do this later.' }]);
+          console.error(err);
+          MR.errors.show(f, [{ id: 'np-password', message: passwordMessage(err) }]);
         });
       });
     }

@@ -383,7 +383,12 @@
         headers: { apikey: MR.cfg.key, Authorization: 'Bearer ' + s.access_token, 'Content-Type': 'application/json' },
         body: JSON.stringify({ password: password })
       }).then(function (r) {
-        if (!r.ok) return r.json().catch(function () { return {}; }).then(function (b) { throw new Error(b.msg || b.error_description || 'Could not set the password'); });
+        if (!r.ok) return r.json().catch(function () { return {}; }).then(function (b) {
+          var e = new Error(b.msg || b.error_description || 'Could not set the password');
+          e.status = r.status; e.code = b.error_code || b.code || '';
+          e.reasons = (b.weak_password && b.weak_password.reasons) || [];
+          throw e;
+        });
         return true;
       });
     },
