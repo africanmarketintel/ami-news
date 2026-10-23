@@ -109,14 +109,17 @@
 
   MR.sampleCampaigns = [
     { id: 'c1', ref: 'AMI-M1042', subject: 'Sample: March trade briefing', status: 'sent',
-      sent_at: days(-6), recipients: 2411, delivered: 2388, bounced: 23, complained: 1,
+      sent_at: days(-6), updated_at: days(-6), recipients: 2411, delivered: 2388, bounced: 23, complained: 1,
       clicked: 412, unsubscribed: 9 },
     { id: 'c2', ref: null, subject: 'Sample: April market outlook', status: 'held',
-      created_at: days(-1), recipients: 0, delivered: 0, bounced: 0, complained: 0, clicked: 0, unsubscribed: 0 },
+      created_at: days(-1), updated_at: days(-1), recipients: 0, delivered: 0, bounced: 0, complained: 0, clicked: 0, unsubscribed: 0 },
     { id: 'c3', ref: null, subject: 'Sample: draft announcement', status: 'draft',
-      created_at: days(0), recipients: 0, delivered: 0, bounced: 0, complained: 0, clicked: 0, unsubscribed: 0 },
+      created_at: days(0), updated_at: days(0), recipients: 0, delivered: 0, bounced: 0, complained: 0, clicked: 0, unsubscribed: 0 },
     { id: 'c4', ref: null, subject: 'Sample: May market outlook', status: 'scheduled',
-      created_at: days(0), scheduled_for: days(3), recipients: 0, delivered: 0,
+      created_at: days(0), updated_at: days(0), scheduled_for: days(3), recipients: 0, delivered: 0,
+      bounced: 0, complained: 0, clicked: 0, unsubscribed: 0 },
+    { id: 'c5', ref: null, subject: '', status: 'draft',
+      created_at: days(-2), updated_at: days(-2), recipients: 0, delivered: 0,
       bounced: 0, complained: 0, clicked: 0, unsubscribed: 0 }
   ];
 

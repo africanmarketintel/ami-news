@@ -207,7 +207,8 @@
 
       function colour(id, labelText, key, hint) {
         var swatch = MR.h('input', { class: 'mr-colour', id: id, type: 'color', value: brand[key] });
-        var hex = MR.h('input', { class: 'dr-input dr-input--w', id: id + '-hex', type: 'text', value: brand[key] });
+        var hex = MR.h('input', { class: 'dr-input dr-input--w', id: id + '-hex', type: 'text', value: brand[key],
+          'aria-label': labelText + ', colour code' });
         swatch.addEventListener('input', function () {
           brand[key] = swatch.value; hex.value = swatch.value; refresh();
         });

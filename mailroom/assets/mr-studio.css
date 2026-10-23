@@ -332,3 +332,17 @@ html.mr-studio-on body > *:not(.mr-studio):not(dialog) { display: none !importan
 .mr-studio__testerr[hidden] { display: none; }
 .mr-studio__modalbody .dr-input[aria-invalid="true"] { border-color: #b42318; }
 .mr-studio__modalbody .dr-input { max-width: 36rem; width: 100%; }
+
+/* ---- narrower screens: the bar keeps its buttons whole ----
+   From 700 pixels the editor is used on a tablet held upright. The buttons
+   never wrap or shrink; the campaign name gives way first, then the status
+   line is cut with an ellipsis. The page still has its heading for a screen
+   reader (a hidden h1 holds the campaign name). */
+.mr-studio__btn, .mr-studio__home, .mr-studio__seg { white-space: nowrap; flex: none; }
+@media (max-width: 860px) {
+  .mr-studio__title { display: none; }
+  .mr-studio__status { flex: 1 1 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  .mr-studio__grow { flex: 0 0 0; }
+  .mr-studio__btn { padding: 0 .75rem; }
+  .mr-studio__seg { margin-right: 0; }
+}

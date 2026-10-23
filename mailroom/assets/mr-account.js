@@ -481,7 +481,7 @@
       : MR.requireAccount(wrap).then(function (account) {
           return Promise.all([
             account,
-            MR.api.select('mailroom_campaigns?select=id,ref,subject,status,sent_at,scheduled_for,schedule_error,recipients,delivered,bounced,complained,clicked,unsubscribed&order=created_at.desc&limit=20'),
+            MR.api.select('mailroom_campaigns?select=id,ref,subject,status,sent_at,scheduled_for,schedule_error,recipients,delivered,bounced,complained,clicked,unsubscribed,created_at,updated_at&order=updated_at.desc&limit=20'),
             MR.api.select('mailroom_lists?select=id,name,consent_status'),
             MR.api.select('mailroom_domains?select=id,domain,from_local,status,is_default,sending_status,trust_level,clean_campaigns'),
             MR.api.select('mailroom_reply_addresses?select=id,email,status&order=email'),
@@ -491,7 +491,9 @@
         });
 
     load.then(function (res) {
-      var account = res[0], campaigns = res[1] || [], lists = res[2] || [], domains = res[3] || [];
+      var account = res[0], campaigns = (res[1] || []).slice().sort(function (a, b) {
+        return String(b.updated_at || b.created_at || '').localeCompare(String(a.updated_at || a.created_at || ''));
+      }), lists = res[2] || [], domains = res[3] || [];
       var replies = res[4] || [];
       var plan = (res[5] || [])[0] || null;
       var subscriberCount = MR.cfg.demo
@@ -620,7 +622,7 @@
         var qList = MR.h('ul', { class: 'dr-list' });
         queued.forEach(function (c) {
           qList.appendChild(MR.h('li', null,
-            MR.h('a', { href: 'campaign.html?id=' + c.id, text: c.subject }),
+            MR.h('a', { href: 'campaign.html?id=' + c.id, text: MR.campaignName(c) }),
             MR.h('br'),
             MR.h('span', { class: 'dr-small', text: MR.dateTimeInZone(c.scheduled_for, account.timezone) })));
         });
@@ -664,7 +666,7 @@
       // that used to sit here was a third way to the same two pages.
       wrap.appendChild(MR.h('div', { class: 'mr-section-head' },
         MR.h('h2', { class: 'dr-h', text: 'Recent campaigns' }),
-        MR.h('a', { class: 'mr-section-head__all', href: 'campaign.html', text: 'View all' })));
+        MR.h('a', { class: 'mr-section-head__all', href: 'campaigns.html', text: 'View all' })));
 
       if (!lists.some(function (l) { return l.consent_status !== 'unconfirmed'; })) {
         MR.banner(wrap, 'No list is ready to mail',
@@ -687,7 +689,7 @@
       campaigns.forEach(function (c) {
         var when = c.sent_at ? 'Sent ' + MR.date(c.sent_at)
           : c.scheduled_for ? 'Scheduled for ' + MR.dateTimeInZone(c.scheduled_for, account.timezone)
-          : 'Not sent yet';
+          : c.updated_at || c.created_at ? 'Edited ' + MR.date(c.updated_at || c.created_at) : 'Not sent yet';
         var stats = MR.h('div', { class: 'mr-camps__stats' });
         stats.appendChild(MR.h('span', { text: c.recipients ? MR.number(c.recipients) + ' sent' : '\u2013 sent' }));
         stats.appendChild(MR.h('span', { text: c.recipients ? MR.percent(c.clicked, c.recipients) + ' clicked' : '\u2013 clicked' }));
@@ -695,7 +697,7 @@
           text: MR.CAMPAIGN_STATUS[c.status] || c.status }));
         list.appendChild(MR.h('li', { class: 'mr-camps__row' },
           MR.h('div', null,
-            MR.h('p', { class: 'mr-camps__name' }, MR.h('a', { href: 'campaign.html?id=' + c.id, text: c.subject })),
+            MR.h('p', { class: 'mr-camps__name' }, MR.h('a', { href: 'campaign.html?id=' + c.id, text: MR.campaignName(c) })),
             MR.h('p', { class: 'mr-camps__sub', text: when + (c.ref ? ' \u00b7 ' + c.ref : '') })),
           stats));
       });

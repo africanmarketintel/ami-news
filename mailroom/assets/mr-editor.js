@@ -785,8 +785,66 @@
     { value: 'phone', label: 'Phone', width: 390 },
     { value: 'outlook', label: 'Outlook', width: 660 },
     { value: 'dark', label: 'Dark mode', width: 660 },
+    { value: 'images', label: 'Images off', width: 660 },
     { value: 'text', label: 'Plain text', width: 660 }
   ];
+
+  /* ---------------- checks before sending ----------------
+     What can be checked without a mail app: the size of the HTML, which Gmail
+     cuts off above 102 KB; images with no description, which a screen reader
+     skips and which show as an empty box when images are blocked; and buttons
+     that go nowhere. A real look in 20 or more mail apps needs a testing
+     service, which this does not replace: send a test to your own addresses. */
+  var GMAIL_CLIP_KB = 102;
+
+  function bytes(str) {
+    try { return new TextEncoder().encode(str).length; } catch (e) { return str.length; }
+  }
+
+  function linklessButtons(blocks) {
+    var n = 0;
+    (function walk(list) {
+      (Array.isArray(list) ? list : []).forEach(function (b) {
+        if (!b || typeof b !== 'object') return;
+        if (b.type === 'button' && !String(b.link || '').trim()) n++;
+        if (Array.isArray(b.blocks)) walk(b.blocks);
+      });
+    })(blocks);
+    return n;
+  }
+
+  function checkList(campaign, account, brand) {
+    var html = MR.renderEmail(campaign, account, { brand: brand });
+    var kb = Math.round(bytes(html) / 1024 * 10) / 10;
+    var doc = new DOMParser().parseFromString(html, 'text/html');
+    var noAlt = Array.prototype.filter.call(doc.querySelectorAll('img'), function (i) {
+      return i.getAttribute('src') && !String(i.getAttribute('alt') || '').trim();
+    }).length;
+    var buttons = linklessButtons(campaign.body_blocks);
+    var out = [];
+    out.push(kb > GMAIL_CLIP_KB * 0.9
+      ? { ok: false, text: 'The email is about ' + kb + ' KB before link tracking is added. Gmail cuts off the end of a message above ' + GMAIL_CLIP_KB + ' KB and hides it behind \u201cView entire message\u201d. Remove blocks or repeated sections.' }
+      : { ok: true, text: 'Size: about ' + kb + ' KB, under the ' + GMAIL_CLIP_KB + ' KB where Gmail starts cutting messages off.' });
+    out.push(noAlt
+      ? { ok: false, text: (noAlt === 1 ? '1 image has' : noAlt + ' images have') + ' no description. Add one: it is read out by a screen reader and shown when images are blocked.' }
+      : { ok: true, text: 'Every image has a description.' });
+    out.push(buttons
+      ? { ok: false, text: (buttons === 1 ? '1 button has' : buttons + ' buttons have') + ' no link, so a reader who presses it goes nowhere.' }
+      : { ok: true, text: 'Every button has a link.' });
+    return out;
+  }
+
+  // The email as it looks when a mail app blocks images: each picture is
+  // replaced by its description, or by a note that it has none.
+  function withoutImages(html) {
+    return html.replace(/<img\b[^>]*>/gi, function (tag) {
+      var m = /\balt="([^"]*)"/i.exec(tag);
+      var alt = m ? m[1].trim() : '';
+      var box = 'display:block;padding:12px;border:1px dashed #8a8d8f;background:#f3f2f1;color:#3b3f42;font:14px/1.4 Arial,sans-serif;';
+      return alt ? '<span style="' + box + '">' + alt + '</span>'
+        : '<span style="' + box + 'font-style:italic">No description, so nothing shows here</span>';
+    });
+  }
 
   MR.preview = function (target, getCampaign, getAccount, getBrand) {
     var view = 'desktop';
@@ -795,6 +853,7 @@
     });
     var textBox = MR.h('pre', { class: 'mr-preview__text', hidden: true, id: 'mr-preview-text' });
     var note = MR.h('p', { class: 'dr-small', id: 'mr-preview-note' });
+    var checks = MR.h('div', { class: 'mr-preview__checks', id: 'mr-preview-checks' });
 
     var tabs = MR.h('div', { class: 'mr-preview__tabs', role: 'tablist', 'aria-label': 'Preview' });
     VIEWS.forEach(function (v) {
@@ -810,6 +869,19 @@
     target.appendChild(frame);
     target.appendChild(textBox);
     target.appendChild(note);
+    target.appendChild(checks);
+
+    function drawChecks(campaign, account, brand) {
+      checks.textContent = '';
+      checks.appendChild(MR.h('h3', { class: 'dr-h', text: 'Checks before you send' }));
+      var ul = MR.h('ul', { class: 'mr-preview__checklist' });
+      checkList(campaign, account, brand).forEach(function (c) {
+        ul.appendChild(MR.h('li', { class: c.ok ? 'is-ok' : 'is-fix' },
+          MR.h('strong', { text: c.ok ? 'Fine: ' : 'Fix: ' }), c.text));
+      });
+      checks.appendChild(ul);
+      checks.appendChild(MR.h('p', { class: 'dr-small', text: 'These views are close approximations. They do not show how every mail app draws the email, so send a test to your own addresses before a real send.' }));
+    }
 
     function render() {
       var campaign = getCampaign();
@@ -820,6 +892,8 @@
         b.setAttribute('aria-selected', on ? 'true' : 'false');
         b.classList.toggle('is-on', on);
       });
+
+      drawChecks(campaign, account, brand);
 
       if (view === 'text') {
         frame.hidden = true;
@@ -838,6 +912,7 @@
           .replace(/background-color:#ffffff/g, 'background-color:#14181c')
           .replace(/color:#1a1208/g, 'color:#f3f2f1');
       }
+      if (view === 'images') html = withoutImages(html);
       var v = VIEWS.filter(function (x) { return x.value === view; })[0];
       frame.style.width = v.width + 'px';
       frame.setAttribute('width', String(v.width));
@@ -848,6 +923,7 @@
         phone: 'At 390px, the width of a common phone. Columns stack here.',
         outlook: 'An approximation of Outlook on Windows: square button, no rounded corners, fallback font, and columns that stay side by side. Outlook cannot be simulated exactly, so send a test before a real campaign.',
         dark: 'An approximation of dark mode. Mail apps recolour differently, so check a test message on your own phone. A colour panel keeps its own colours, which is usually what you want.',
+        images: 'How it looks when a mail app blocks images, which many do until the reader allows them. Each picture is replaced by its description. A dashed box that says there is no description is an image to fix.',
         text: ''
       }[view];
     }

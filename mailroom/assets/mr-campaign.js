@@ -98,7 +98,7 @@
 
     function loadVersions() {
       return MR.api.select('mailroom_campaign_versions?select=id,subject,created_at&campaign_id=eq.' +
-        campaign.id + '&order=created_at.desc&limit=20')
+        campaign.id + '&order=created_at.desc&limit=50')
         .then(function (rows) { versions = rows || []; })
         .catch(function () { versions = []; });
     }
@@ -274,6 +274,10 @@
       if (studioWanted()) { renderStudio(); return; }
       wrap.textContent = '';
       wrap.appendChild(MR.h('h1', { text: campaignId ? 'Edit campaign' : 'Write a campaign' }));
+      if (window.innerWidth < 700 && !MR.qs('classic') && MR.studio && MR.editorParts) {
+        wrap.appendChild(MR.h('p', { class: 'dr-lead', id: 'mr-simple-note',
+          text: 'You are using the simple editor because this screen is narrow. It does the same job, with fewer tools and no editing directly on the email. Open this campaign on a tablet or a computer for the full editor.' }));
+      }
 
       if (campaign.status === 'held') {
         MR.banner(wrap, 'Held for review',
@@ -338,10 +342,11 @@
 
     /* ---------------- the studio ----------------
        The full-screen editor (mr-studio.js). It needs room: a panel, the
-       email and a bar. On a narrow screen, or with ?classic=1 on the address,
-       the stacked editor above is used instead. */
+       email and a bar. It is laid out well from 700 pixels wide, which takes in
+       a tablet held upright. On a narrower screen, or with ?classic=1 on the
+       address, the stacked editor above is used instead, and says so. */
     function studioWanted() {
-      return !!(MR.studio && MR.editorParts && !MR.qs('classic') && window.innerWidth >= 900);
+      return !!(MR.studio && MR.editorParts && !MR.qs('classic') && window.innerWidth >= 700);
     }
 
     // Where a message goes: the studio's own space when it is open, because
@@ -412,7 +417,7 @@
         save: function (announce) { return save('draft', announce); },
         testSend: testSend,
         shareLink: shareLink,
-        home: 'account.html',
+        home: 'campaigns.html',
         classicUrl: 'campaign.html?classic=1' + (campaign.id ? '&id=' + campaign.id : ''),
         demo: !!MR.cfg.demo
       });
@@ -446,14 +451,14 @@
       var ul = MR.h('ul', { class: 'dr-list' });
       versions.forEach(function (v) {
         ul.appendChild(MR.h('li', null,
-          MR.h('span', { text: MR.date(v.created_at) + ' · ' + (v.subject || 'no subject') }), ' ',
+          MR.h('span', { text: MR.dateTimeInZone(v.created_at, tz()) + ' · ' + (v.subject || 'no subject') }), ' ',
           MR.h('button', {
             type: 'button', class: 'dr-button dr-button--secondary', text: 'Restore',
             onclick: function () { restore(v.id); }
           })));
       });
       box.appendChild(ul);
-      box.appendChild(MR.h('p', { class: 'dr-small', text: 'The last twenty saves are kept. Restoring brings the content back; it does not send anything.' }));
+      box.appendChild(MR.h('p', { class: 'dr-small', text: 'Up to the last fifty saves are kept, including the ones made automatically. Restoring brings the content back; it does not send anything.' }));
       return box;
     }
 

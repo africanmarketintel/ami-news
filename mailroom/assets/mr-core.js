@@ -73,6 +73,17 @@
     held: 'Held for review', cancelled: 'Cancelled'
   };
 
+  // What a campaign is called in a list. A draft saved before it has a subject
+  // line keeps an empty subject in the database - the send checks need that to
+  // stay empty - so the list names it by when it was started instead of
+  // showing a row nobody can read or choose.
+  MR.campaignName = function (c) {
+    var s = String((c && c.subject) || '').trim();
+    if (s) return s;
+    var when = MR.date((c && (c.created_at || c.updated_at)) || '');
+    return 'Untitled draft' + (when ? ', started ' + when : '');
+  };
+
   /* ---------------- timezones ----------------
      A scheduled send is stored as an instant. What a member picked is a wall
      clock time in their own timezone, so these two turn one into the other.

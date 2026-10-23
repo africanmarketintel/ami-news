@@ -88,7 +88,7 @@
       }
 
       box.appendChild(MR.h('div', { class: 'dr-form-group' },
-        MR.h('label', { class: 'dr-label', text: 'Send people to this address' }),
+        MR.h('label', { class: 'dr-label', for: 'form-url-' + f.id, text: 'Send people to this address' }),
         MR.h('input', { class: 'dr-input', readonly: true, value: url,
                         id: 'form-url-' + f.id, onclick: function (e) { e.target.select(); } })));
 

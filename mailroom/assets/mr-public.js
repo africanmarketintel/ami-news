@@ -192,6 +192,10 @@
           MR.h('button', {
             class: 'dr-button dr-button--danger', id: 'mr-hub-stop', type: 'button',
             onclick: function () {
+              // The same question the preferences page asks before it does the
+              // same thing. This one also adds the address to the do-not-mail
+              // list, so it is the harder of the two to take back.
+              if (!confirm('This stops every sender who uses AMI Mailroom from emailing you, and none of them can add you again. Continue?')) return;
               apply({ token: token, hub: true, unsubscribe: true },
                     'You will not hear from any sender on AMI Mailroom again.');
             }
@@ -257,13 +261,40 @@
     var token = MR.qs('token');
     var done = MR.qs('done');
 
-    if (done || MR.cfg.demo) {
+    // What a reader sees once the unsubscribe has happened. Two ways onward:
+    // change what they get instead of leaving altogether, or undo a mistaken
+    // click. Both need the token, so a page reached without one offers neither.
+    function showDone() {
       wrap.textContent = '';
       wrap.appendChild(MR.h('h1', { text: 'You have been unsubscribed' }));
       wrap.appendChild(MR.h('p', { class: 'dr-lead', text: 'You will not receive any more campaigns from this sender.' }));
-      wrap.appendChild(MR.h('p', null, MR.h('a', { class: 'dr-link', href: 'preferences.html?token=' + encodeURIComponent(token), text: 'Change what you receive instead' })));
-      return;
+      if (!token && !MR.cfg.demo) return;
+      wrap.appendChild(MR.h('p', null, MR.h('a', { class: 'dr-link', href: 'preferences.html?token=' + encodeURIComponent(token || ''), text: 'Change what you receive instead' })));
+      var undo = MR.h('div', { class: 'mr-aside', id: 'mr-resubscribe' },
+        MR.h('h2', { class: 'dr-h', text: 'Unsubscribed by mistake?' }),
+        MR.h('p', { class: 'dr-small', text: 'You can start receiving this sender\u2019s email again.' }));
+      var msg = MR.h('p', { class: 'dr-small', role: 'status' });
+      var btn = MR.h('button', {
+        type: 'button', class: 'dr-button dr-button--secondary', text: 'Subscribe me again',
+        onclick: function () {
+          if (MR.cfg.demo) { msg.textContent = 'Preview only: nothing was changed.'; return; }
+          btn.disabled = true;
+          fn('mailroom-unsubscribe', { token: token, resubscribe: true }).then(function () {
+            undo.textContent = '';
+            undo.appendChild(MR.h('h2', { class: 'dr-h', text: 'You are subscribed again' }));
+            undo.appendChild(MR.h('p', { class: 'dr-small', role: 'status', text: 'You will receive this sender\u2019s email again. Use \u201cChange what you receive instead\u201d above to choose topics and how often.' }));
+          }).catch(function () {
+            btn.disabled = false;
+            msg.textContent = 'That did not work. If you stopped all email from AMI Mailroom, the sender has to add you again. Otherwise try again, or reply to the email you received.';
+          });
+        }
+      });
+      undo.appendChild(MR.h('p', null, btn));
+      undo.appendChild(msg);
+      wrap.appendChild(undo);
     }
+
+    if (done || MR.cfg.demo) { showDone(); return; }
     if (!token) {
       // A test email has no subscriber behind it, so its link carries no token.
       // Say so, rather than leaving "Working…" on the page.
@@ -274,12 +305,7 @@
       return;
     }
 
-    fn('mailroom-unsubscribe', { token: token, unsubscribe: true }).then(function () {
-      wrap.textContent = '';
-      wrap.appendChild(MR.h('h1', { text: 'You have been unsubscribed' }));
-      wrap.appendChild(MR.h('p', { class: 'dr-lead', text: 'You will not receive any more campaigns from this sender.' }));
-      wrap.appendChild(MR.h('p', null, MR.h('a', { class: 'dr-link', href: 'preferences.html?token=' + encodeURIComponent(token), text: 'Change what you receive instead' })));
-    }).catch(function () {
+    fn('mailroom-unsubscribe', { token: token, unsubscribe: true }).then(showDone).catch(function () {
       wrap.textContent = '';
       wrap.appendChild(MR.h('p', { class: 'dr-empty', text: 'That link is not valid any more. If you are still receiving email, reply to it and ask to be removed.' }));
     });

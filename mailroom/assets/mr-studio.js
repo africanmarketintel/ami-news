@@ -127,7 +127,12 @@
     function brandNow() { return o.getBrand ? o.getBrand() : null; }
 
     /* ---------------- structure ---------------- */
-    var root = h('div', { class: 'mr-studio', role: 'region', 'aria-label': 'Campaign editor' });
+    // The editor replaces the whole page, so it carries the page's main landmark
+    // and its main heading itself. Without them a screen reader user had
+    // nothing to jump to and no page title to hear.
+    var root = h('div', { class: 'mr-studio', role: 'main', 'aria-label': 'Campaign editor' });
+    var pageHeading = h('h1', { class: 'dr-visually-hidden' });
+    root.appendChild(pageHeading);
 
     // top bar
     var titleEl = h('span', { class: 'mr-studio__title' });
@@ -148,7 +153,7 @@
       h('a', { role: 'menuitem', href: o.classicUrl || 'campaign.html?classic=1', text: 'Use the simple editor' }));
 
     var bar = h('header', { class: 'mr-studio__bar' },
-      h('a', { class: 'mr-studio__home', href: o.home || 'account.html', title: 'Back to your account' }, icon('back', 20), h('span', { text: 'Back' })),
+      h('a', { class: 'mr-studio__home', href: o.home || 'campaigns.html', title: 'Back to your campaigns' }, icon('back', 20), h('span', { text: 'Back' })),
       titleEl, undoBtn, redoBtn, statusEl,
       h('span', { class: 'mr-studio__grow' }),
       h('div', { class: 'mr-studio__seg', role: 'group', 'aria-label': 'Preview width' }, deskBtn, phoneBtn),
@@ -192,7 +197,7 @@
     // The link box sits at the top of the editing area, in a dock with no height of its own,
     // so it never covers the words being edited and the email does not move when it appears.
     var linkDock = h('div', { class: 'mr-studio__linkdock' }, linkBar);
-    var main = h('main', { class: 'mr-studio__main' }, notes, linkDock, stage);
+    var main = h('div', { class: 'mr-studio__main' }, notes, linkDock, stage);
 
     root.appendChild(bar);
     root.appendChild(h('div', { class: 'mr-studio__body' }, rail, panel, main));
@@ -384,7 +389,7 @@
     }
 
     /* ---------------- status ---------------- */
-    function markDirty() { state.dirty = true; updateStatus(); }
+    function markDirty() { state.dirty = true; updateStatus(); scheduleAutosave(AUTOSAVE_MS); }
     function updateStatus() {
       var text, cls = '';
       if (o.demo) text = 'Preview only: nothing is saved';
@@ -398,17 +403,70 @@
     function updateTitle() {
       titleEl.textContent = campaign.subject ? campaign.subject : 'Untitled campaign';
       titleEl.title = titleEl.textContent;
+      pageHeading.textContent = 'Campaign editor: ' + titleEl.textContent;
     }
 
+    /* ---------------- automatic saving ----------------
+       A draft is saved by itself a short while after the last change, so a
+       closed tab or a dropped connection costs at most the last few seconds.
+       It is silent: no "Draft saved" announcement for a screen reader each
+       time, and the status line is read out only when something goes wrong.
+       Only a plain draft is saved this way. A held campaign is left for the
+       person to save on purpose, because saving puts it back to a draft. */
+    var AUTOSAVE_MS = o.autosaveMs || 20000, AUTOSAVE_RETRY_MS = o.autosaveRetryMs || 60000;
+    var autosaveTimer = null;
+    function autosaveAllowed() {
+      return !o.demo && (!campaign.status || campaign.status === 'draft');
+    }
+    function scheduleAutosave(ms) {
+      clearTimeout(autosaveTimer);
+      if (!autosaveAllowed()) return;
+      autosaveTimer = setTimeout(autosave, ms);
+    }
+    function quietStatus(fn) {
+      statusEl.setAttribute('aria-live', 'off');
+      fn();
+      statusEl.setAttribute('aria-live', 'polite');
+    }
+    function autosave() {
+      clearTimeout(autosaveTimer);
+      if (!state.dirty || !autosaveAllowed()) return Promise.resolve();
+      if (state.saving) { scheduleAutosave(5000); return Promise.resolve(); }
+      state.saving = true;
+      quietStatus(function () { statusEl.textContent = 'Saving…'; });
+      return Promise.resolve(o.save(false)).then(function (row) {
+        state.saving = false;
+        if (row) { state.dirty = false; state.savedAt = new Date(); }
+        quietStatus(function () {
+          updateStatus();
+          if (row) statusEl.textContent = 'Saved automatically at ' + state.savedAt.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+        });
+        if (!row && state.dirty) scheduleAutosave(AUTOSAVE_RETRY_MS);
+      }, function (err) {
+        state.saving = false;
+        console.error(err);
+        statusEl.textContent = 'Not saved. Check your connection. Trying again shortly.';
+        statusEl.className = 'mr-studio__status is-dirty';
+        scheduleAutosave(AUTOSAVE_RETRY_MS);
+      });
+    }
+    document.addEventListener('visibilitychange', onHide);
+    window.addEventListener('online', onOnline);
+    function onHide() { if (document.visibilityState === 'hidden' && state.dirty) autosave(); }
+    function onOnline() { if (state.dirty) autosave(); }
+
     function saveDraft() {
+      clearTimeout(autosaveTimer);
       state.saving = true; updateStatus();
       return Promise.resolve(o.save(true)).then(function (row) {
         state.saving = false;
         if (row) { state.dirty = false; state.savedAt = new Date(); }
         updateStatus();
+        if (!row && state.dirty) scheduleAutosave(AUTOSAVE_MS);
         return row;
       }, function (err) {
         state.saving = false; updateStatus();
+        scheduleAutosave(AUTOSAVE_RETRY_MS);
         throw err;
       });
     }
@@ -416,7 +474,7 @@
       saveDraft().then(function (row) {
         if (row && !o.demo) {
           window.removeEventListener('beforeunload', guard);
-          location.href = o.home || 'account.html';
+          location.href = o.home || 'campaigns.html';
         }
       }).catch(function (err) { console.error(err); });
     }
@@ -509,10 +567,10 @@
       box.appendChild(tiles(types.filter(function (t) { return !t.more; })));
       var more = types.filter(function (t) { return t.more; });
       if (more.length) {
-        box.appendChild(h('h3', { class: 'mr-studio__h3', text: 'More layouts' }));
+        box.appendChild(h('h2', { class: 'mr-studio__h3', text: 'More layouts' }));
         box.appendChild(tiles(more));
       }
-      box.appendChild(h('h3', { class: 'mr-studio__h3', text: 'In this email' }));
+      box.appendChild(h('h2', { class: 'mr-studio__h3', text: 'In this email' }));
       outlineBox = h('div', { class: 'mr-studio__outline' });
       box.appendChild(outlineBox);
       drawOutline();
@@ -1911,6 +1969,9 @@
       markSaved: function () { state.dirty = false; state.savedAt = new Date(); updateStatus(); },
       destroy: function () {
         window.removeEventListener('beforeunload', guard);
+        clearTimeout(autosaveTimer);
+        document.removeEventListener('visibilitychange', onHide);
+        window.removeEventListener('online', onOnline);
         window.removeEventListener('resize', onResize);
         document.removeEventListener('keydown', onKey);
         document.removeEventListener('click', onDocClick);
