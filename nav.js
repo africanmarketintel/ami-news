@@ -741,7 +741,7 @@ html body .ami-strip[hidden]{display:none !important}
     if (d.upd) {
       const t = new Date(d.upd);
       if (!isNaN(t)) {
-        when = t.toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'UTC' }) + ' UTC';
+        when = 'Rates as of ' + t.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'Europe/London' });
       }
     }
     if (when) list.insertAdjacentHTML('beforeend', '<span class="ami-strip__src">' + when + '</span>');
