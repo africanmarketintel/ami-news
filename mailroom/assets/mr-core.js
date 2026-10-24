@@ -92,6 +92,18 @@
     return !!(account && account.allows_custom_footer && domain && domain.kind === 'own_domain');
   };
 
+  // What is recorded when a member gives only the one answer about how
+  // addresses were collected. The date is the day they said so, and the
+  // wording is the answer itself, marked as not detailed, so the record never
+  // claims more than the member told us.
+  MR.todayIso = function () {
+    var d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  };
+  MR.defaultWording = function (opt) {
+    return (opt && opt.wording) || ((opt && opt.source) ? opt.source + ' (wording not recorded)' : '');
+  };
+
   // What a campaign is called in a list. A draft saved before it has a subject
   // line keeps an empty subject in the database - the send checks need that to
   // stay empty - so the list names it by when it was started instead of
@@ -632,6 +644,14 @@
      The first action is the primary one. Focus moves to the heading so a
      screen reader lands on the confirmation rather than staying where the
      button used to be. */
+  // MR.done empties its target with this. It was called there and never
+  // defined, so a finished import or send showed an error instead of the
+  // confirmation page.
+  MR.clear = function (el) {
+    while (el && el.firstChild) el.removeChild(el.firstChild);
+    return el;
+  };
+
   MR.done = function (target, opts) {
     opts = opts || {};
     MR.clear(target);
