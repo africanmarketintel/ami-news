@@ -6,8 +6,8 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://*.supabase.co https://open.er-api.com https://www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com; form-action 'self'; base-uri 'self'; object-src 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="robots" content="noindex, nofollow">
-<meta name="description" content="Import subscribers into a list.">
-<title>Import subscribers – AMI Mailroom</title>
+<meta name="description" content="Add subscribers to a new or existing list.">
+<title>Add your subscribers – AMI Mailroom</title>
 <link rel="stylesheet" href="assets/mr.css">
 <script src="../config.js"></script>
 <script src="../nav.js"></script>
@@ -37,8 +37,8 @@
 <main id="main">
 
 <div class="dr-width dr-narrow">
-  <h1>Import subscribers</h1>
-  <p class="dr-lead">A CSV file with a column headed email. Name, organisation and country are optional.</p>
+  <h1>Add your subscribers</h1>
+  <p class="dr-lead">Upload a CSV file with a column headed email, or type the addresses in. Name, organisation and country are optional in a file.</p>
   <div class="dr-banner dr-banner--important">
     <p class="dr-banner__title">What happens to your file</p>
     <div class="dr-banner__content"><p>Every address is checked against the platform suppression list. Anyone who has unsubscribed or complained before is skipped, whichever sender they left.</p></div>
@@ -49,6 +49,12 @@
       <input class="dr-file-upload" id="i-file" type="file" accept=".csv,text/csv">
     </div>
     <div id="mr-import-preview"></div>
+    <div class="dr-form-group">
+      <label class="dr-label" for="i-paste">Or type or paste email addresses</label>
+      <span class="dr-hint">One per line, or separated by commas. A name in front also works, as in Ada Obi &lt;ada@example.com&gt;. You can use this as well as a file.</span>
+      <textarea class="dr-textarea" id="i-paste" rows="5" spellcheck="false" autocomplete="off"></textarea>
+      <p class="dr-small" id="mr-paste-count" role="status"></p>
+    </div>
     <fieldset class="dr-form-group" id="mr-import-source">
       <legend class="dr-label">How were these addresses collected?</legend>
       <span class="dr-hint">The same question your list answers, asked again because a file can come from somewhere the rest of the list did not.</span>

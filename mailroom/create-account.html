@@ -35,7 +35,7 @@
   <h1>Create a sender account</h1>
   <p class="dr-lead">Confirm your email address and you can send. There is no approval queue and no daily cap.</p>
   <p>Before you start, read the <a href="pricing.html">sending policy</a>. It is short, and it is everything that can stop a campaign.</p>
-  <p class="dr-hint" id="mr-required-note">Every question is needed except the website.</p>
+  <p class="dr-hint" id="mr-required-note">Three questions. Your postal address is asked for when you first send.</p>
   <form id="mr-account-form" novalidate aria-describedby="mr-required-note">
     <div class="dr-form-group">
       <label class="dr-label" for="m-name">Organisation name</label>
@@ -43,27 +43,9 @@
       <input class="dr-input" id="m-name" type="text" autocomplete="organization">
     </div>
     <div class="dr-form-group">
-      <label class="dr-label" for="m-website">Website (optional)</label>
-      <input class="dr-input" id="m-website" type="url" placeholder="https://">
-    </div>
-    <div class="dr-form-group">
-      <label class="dr-label" for="m-contact">Your name</label>
-      <input class="dr-input" id="m-contact" type="text" autocomplete="name">
-    </div>
-    <div class="dr-form-group">
       <label class="dr-label" for="m-email">Work email address</label>
       <span class="dr-hint">Replies to your campaigns come here. We send a code to confirm it.</span>
       <input class="dr-input" id="m-email" type="email" autocomplete="email">
-    </div>
-    <div class="dr-form-group">
-      <label class="dr-label" for="m-address">Postal address</label>
-      <span class="dr-hint">Required by law in every marketing email, and added to your campaigns automatically.</span>
-      <textarea class="dr-textarea" id="m-address" rows="3"></textarea>
-    </div>
-    <div class="dr-form-group">
-      <label class="dr-label" for="m-timezone">Your timezone</label>
-      <span class="dr-hint">Used when you schedule a campaign, so 9am means 9am where you are. You can change it later.</span>
-      <select class="dr-select" id="m-timezone"></select>
     </div>
     <div class="dr-choice dr-choice--checkbox">
       <input class="dr-choice__input" id="m-declaration" type="checkbox">
