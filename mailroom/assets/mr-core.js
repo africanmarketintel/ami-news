@@ -607,7 +607,7 @@
         });
       }
       if (r.status === 204) return null;
-      return r.json();
+      return r.text().then(function (t) { return t ? JSON.parse(t) : null; });
     });
   }
 
@@ -616,9 +616,10 @@
       return request(path, { headers: headers() });
     },
     // opts.query adds a query string, opts.upsert writes over a row that
-    // already exists rather than failing on the key.
+    // already exists rather than failing on the key, opts.minimal asks for
+    // nothing back (needed when the member cannot read the row yet).
     insert: function (table, row, opts) {
-      var prefer = 'return=representation';
+      var prefer = (opts && opts.minimal) ? 'return=minimal' : 'return=representation';
       if (opts && opts.upsert) prefer += ',resolution=merge-duplicates';
       return request(table + ((opts && opts.query) || ''), {
         method: 'POST',

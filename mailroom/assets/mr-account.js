@@ -459,11 +459,16 @@
       }
 
       var finish = function () {
+        // The account is created with an id made here and nothing asked back.
+        // Asking for the new row back fails for a new member, because they
+        // can only read an account once they are listed as a user of it, and
+        // that row is added next. 24 October 2026.
+        var id = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : uuidFallback();
         return MR.api.insert('mailroom_accounts', {
-          name: v.name, contact_email: v.email, postal_address: '', timezone: v.timezone
-        }).then(function (rows) {
+          id: id, name: v.name, contact_email: v.email, postal_address: '', timezone: v.timezone
+        }, { minimal: true }).then(function () {
           return MR.api.insert('mailroom_account_users', {
-            account_id: rows[0].id, user_id: MR.auth.userId(), email: v.email, role: 'owner'
+            account_id: id, user_id: MR.auth.userId(), email: v.email, role: 'owner'
           });
         }).then(function () {
           // This used to leave the member on the signup form with the banner
@@ -473,14 +478,25 @@
           // show the message there. Not a timed redirect, which would fail
           // WCAG 2.2.1 unless the member could stop it. 14 October 2026.
           location.href = 'import.html?start=1';
+        }).catch(function (err) {
+          err.stage = 'account';
+          throw err;
         });
       };
+
+      function uuidFallback() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+          var r = Math.random() * 16 | 0;
+          return (c === 'x' ? r : (r & 3 | 8)).toString(16);
+        });
+      }
 
       if (MR.auth.signedIn()) { finish().catch(fail); return; }
       MR.auth.sendCode(v.email).then(function () {
         var code = MR.h('input', { class: 'dr-input dr-input--w', id: 'mr-code' });
         var status = MR.h('p', { class: 'dr-small', role: 'status' });
-        var panel = MR.h('div', { class: 'mr-aside' },
+        var old = document.getElementById('mr-code-panel'); if (old) old.remove();
+        var panel = MR.h('div', { class: 'mr-aside', id: 'mr-code-panel' },
           MR.h('h2', { class: 'dr-h', text: 'Confirm your email address' }),
           MR.h('p', { text: 'Enter the six-digit code sent to ' + v.email + '.' }),
           MR.h('div', { class: 'dr-form-group' }, MR.h('label', { class: 'dr-label', for: 'mr-code', text: 'Code' }), code),
@@ -497,7 +513,10 @@
       }).catch(fail);
 
       function fail(err) {
-        MR.errors.show(form, [{ id: 'm-email', message: MR.codeError(err) }]);
+        var said = [err && err.status, err && err.message].filter(Boolean).join(' – ').slice(0, 140);
+        MR.errors.show(form, [{ id: 'm-email', message: (err && err.stage === 'account')
+          ? 'Your address was confirmed but the account could not be created. Try again, and if it keeps failing tell ABTA.' + (said ? ' (Service reply: ' + said + ')' : '')
+          : MR.codeError(err) }]);
         console.error(err);
       }
     });
