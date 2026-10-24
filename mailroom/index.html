@@ -9,13 +9,14 @@
 <meta name="description" content="AMI Mailroom: ABTA members send campaigns to their own subscriber lists.">
 <title>Email for ABTA members – AMI Mailroom</title>
 <link rel="stylesheet" href="assets/mr.css">
+<link rel="stylesheet" href="assets/mr-ami.css">
 <script src="../config.js"></script>
 <script src="../nav.js"></script>
 <script src="assets/mr-core.js"></script>
 <script src="assets/mr-sample.js"></script>
 
 </head>
-<body>
+<body class="mr-ami">
 <a href="#main" class="dr-skip">Skip to main content</a>
 <header class="dr-header">
   <div class="dr-width dr-header__inner">
@@ -32,30 +33,161 @@
 <main id="main">
 
 <section class="dr-hero" aria-labelledby="hero-title">
-  <div class="dr-width dr-hero__inner">
-    <h1 id="hero-title">Send email your subscribers asked for</h1>
-    <p class="dr-hero__sub">AMI Mailroom lets ABTA members write and send campaigns to their own lists, through infrastructure ABTA maintains and monitors.</p>
-    <p><a class="dr-button" href="create-account.html">Create a sender account</a>
-       <a class="dr-button dr-button--secondary" href="how-it-works.html">How it works</a></p>
-    <ul class="dr-trust">
-      <li>Send as soon as you sign up, with no daily cap</li>
-      <li>Consent recorded for every list</li>
-      <li>One-click unsubscribe in every email</li>
-      <li>Complaints watched across the platform</li>
-    </ul>
+  <div class="dr-width dr-hero__inner mr-hero__inner">
+    <div>
+      <p class="mr-hero__eyebrow">AMI Mailroom for ABTA members</p>
+      <h1 id="hero-title">Send email your subscribers asked for</h1>
+      <p class="dr-hero__sub">Pick a ready-made layout, add your people and send. Every list records how its subscribers agreed to hear from you.</p>
+      <p class="dr-button-group"><a class="dr-button dr-button--start" data-mr-start href="create-account.html">Create a sender account</a>
+         <a class="dr-button dr-button--secondary" href="how-it-works.html">See how it works</a></p>
+      <p class="mr-hero__note">Free plan available. Confirm your email address and you can send.</p>
+      <ul class="dr-trust dr-trust--grid">
+        <li><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Send as soon as you sign up, with no daily cap</li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>You record how every list agreed to hear from you</li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>One-click unsubscribe in every email</li>
+        <li><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Spam reports watched across the platform</li>
+      </ul>
+    </div>
+    <div class="ma-demo" role="img" aria-label="Animated example: pick a layout, change the text, then send a test email to yourself.">
+      <div class="ma-demo__bar" aria-hidden="true"><i></i><i></i><i></i><span>Write a campaign</span></div>
+      <ol class="ma-demo__steps" aria-hidden="true"><li class="s1">1 Pick a layout</li><li class="s2">2 Make it yours</li><li class="s3">3 Send</li></ol>
+      <div class="ma-demo__stage" aria-hidden="true">
+        <div class="ma-scene ma-scene--1">
+          <img src="assets/home/newsletter.jpg" width="640" height="820" alt="">
+          <img class="pick" src="assets/home/event.jpg" width="640" height="820" alt="">
+          <img src="assets/home/offer.jpg" width="640" height="820" alt="">
+          <svg class="ma-cursor" viewBox="0 0 24 24" width="28" height="28"><path d="M4 2l15 9-6.5 1.6L9.5 19z" fill="#1a1208" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="ma-scene ma-scene--2">
+          <div class="ma-mail">
+            <small>Spring update | Issue 12</small>
+            <h4><span class="ma-type">What we learned from our first full year</span></h4>
+            <p class="bar"></p><p class="bar short"></p>
+            <b>Read the full story</b>
+          </div>
+          <div class="ma-tools"><span>Text</span><span>Picture</span><span>Button</span><span class="sw"></span><span class="sw sw2"></span><span class="sw sw3"></span></div>
+        </div>
+        <div class="ma-scene ma-scene--3">
+          <div class="ma-sent">
+            <svg viewBox="0 0 24 24" width="44" height="44"><circle cx="12" cy="12" r="11" fill="#1e6b3c"/><path d="M6.5 12.5l4 4 7-8" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <strong>Test email sent to you</strong>
+            <span>Check it, then send it to your list.</span>
+            <b>Send campaign</b>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
-<div class="dr-width">
-  <h2>What you get</h2>
-  <div class="dr-grid dr-grid--thirds">
-    <div><h3>Lists you control</h3><p>Import your own subscribers, record how they were collected, and keep the evidence in one place.</p></div>
-    <div><h3>Campaigns that arrive</h3><p>Authenticated sending, a suppression list shared across the platform, and results that tell you what happened.</p></div>
-    <div><h3>Readers in charge</h3><p>A preference centre on every email, so people choose topics and frequency instead of leaving.</p></div>
+
+<section class="ma-facts" aria-label="The product in four facts">
+  <ul class="dr-width">
+    <li><strong>12</strong><span>ready-made layouts</span></li>
+    <li><strong>1 click</strong><span>to unsubscribe, in every email</span></li>
+    <li><strong>0</strong><span>bought or scraped lists accepted</span></li>
+    <li><strong>Free</strong><span>plan available</span></li>
+  </ul>
+</section>
+
+<section class="mr-home mr-home--layouts" aria-labelledby="home-layouts">
+  <div class="dr-width">
+    <h2 id="home-layouts">Start from a layout that is already written</h2>
+    <p class="mr-home__lead">Each layout comes with its own text, pictures and colours. Edit what you want, delete what you do not, and send.</p>
   </div>
-  <h2>What it is not</h2>
-  <p>It is not a bulk email tool. Lists must be your own, collected with consent you can evidence. Bought, scraped or swapped lists are refused, and an account that sends to one is suspended.</p>
-  <p><a class="dr-link" href="pricing.html">Sending rules and limits</a></p>
-</div>
+  <ul class="mr-home__row" aria-label="Some of the twelve layouts">
+    <li><img src="assets/home/newsletter.jpg" width="640" height="820" alt="The Newsletter layout: a headline, a large picture, a button and two short items side by side." loading="lazy"><span>Newsletter</span></li>
+    <li><img src="assets/home/feature.jpg" width="640" height="820" alt="The Feature story layout: a headline, a picture, a pull quote and a short list." loading="lazy"><span>Feature story</span></li>
+    <li><img src="assets/home/event.jpg" width="640" height="820" alt="The Event invitation layout: a picture, the date and place, and a button to reserve a place." loading="lazy"><span>Event invitation</span></li>
+    <li><img src="assets/home/offer.jpg" width="640" height="820" alt="The Offer or sale layout: an offer, a code and two products." loading="lazy"><span>Offer or sale</span></li>
+    <li><img src="assets/home/launch.jpg" width="640" height="820" alt="The Product launch layout: a large picture, what it is and where to get it." loading="lazy"><span>Product launch</span></li>
+    <li><img src="assets/home/welcome.jpg" width="640" height="820" alt="The Welcome layout: a warm greeting and three first steps." loading="lazy"><span>Welcome</span></li>
+  </ul>
+</section>
+
+<section class="ma-section" aria-labelledby="ma-steps">
+  <div class="dr-width">
+    <h2 id="ma-steps" class="ma-h2">Three steps to your first campaign</h2>
+    <ol class="ma-steps">
+      <li><span class="ma-steps__n" aria-hidden="true">1</span><h3>Create a sender account</h3><p>Confirm your email address and you can send. There is no approval queue.</p></li>
+      <li><span class="ma-steps__n" aria-hidden="true">2</span><h3>Add your people</h3><p>Upload a file or use a signup form on your website. Say how each list agreed to hear from you.</p></li>
+      <li><span class="ma-steps__n" aria-hidden="true">3</span><h3>Write and send</h3><p>Pick a layout, make it yours, send a test to yourself and send it.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section class="ma-section ma-section--tint" aria-labelledby="ma-pictures">
+  <div class="dr-width ma-split">
+    <div class="ma-split__text">
+      <p class="ma-eyebrow">Pictures</p>
+      <h2 id="ma-pictures" class="ma-h2">Find a picture without leaving the editor</h2>
+      <p>Search free photos and GIFs while you write, so you can see your message with a real picture in it.</p>
+      <p><a class="dr-link" href="how-it-works.html">See how it works</a></p>
+    </div>
+    <div class="ma-split__visual" aria-hidden="true">
+      <div class="ma-picker">
+        <div class="ma-picker__tabs"><b>Photos</b><span>GIFs</span></div>
+        <div class="ma-picker__search">Search photos</div>
+        <div class="ma-picker__grid"><i style="--a:#d9b36c;--b:#8c3a1f"><img src="assets/home/photos/p1.jpg" width="240" height="240" alt="" loading="lazy"></i><i style="--a:#9cc7a8;--b:#1e6b3c"><img src="assets/home/photos/p2.jpg" width="240" height="240" alt="" loading="lazy"></i><i style="--a:#e8c9a0;--b:#b85c38"><img src="assets/home/photos/p3.jpg" width="240" height="240" alt="" loading="lazy"></i><i style="--a:#b9c9d8;--b:#3d5a73"><img src="assets/home/photos/p4.jpg" width="240" height="240" alt="" loading="lazy"></i><i style="--a:#f1d98a;--b:#c9a84c"><img src="assets/home/photos/p5.jpg" width="240" height="240" alt="" loading="lazy"></i><i style="--a:#cbb8d9;--b:#5b3f73"><img src="assets/home/photos/p6.jpg" width="240" height="240" alt="" loading="lazy"></i></div>
+        <p>Photos from Pexels. GIFs from GIPHY.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="ma-section" aria-labelledby="ma-forms">
+  <div class="dr-width ma-split ma-split--flip">
+    <div class="ma-split__text">
+      <p class="ma-eyebrow">Signup forms</p>
+      <h2 id="ma-forms" class="ma-h2">Collect subscribers from any website</h2>
+      <p>Put a form on Wix, Squarespace, WordPress or any page with one block of code. Each list records how people agreed to hear from you.</p>
+    </div>
+    <div class="ma-split__visual" aria-hidden="true">
+      <div class="ma-forms">
+        <div class="ma-forms__form"><strong>Join our list</strong><span>Your name</span><span>Your email</span><b>Subscribe</b></div>
+        <div class="ma-forms__code"><em>Copy embed code</em><i></i><i class="m"></i><i class="s"></i><i></i></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="ma-section ma-section--tint" aria-labelledby="ma-more">
+  <div class="dr-width">
+    <h2 id="ma-more" class="ma-h2">And the rest is built in</h2>
+    <div class="ma-four">
+      <div><h3>Your other tools</h3><p>Connect Zapier, Make or Pabbly to add contacts from Shopify, Typeform and thousands more.</p></div>
+      <div><h3>Results that mean something</h3><p>Clicks, delivery and spam reports for every campaign. Open rates are not shown because mail privacy features make them unreliable.</p></div>
+      <div><h3>Readers in charge</h3><p>A page linked from every email where people choose what they get and how often, instead of leaving.</p></div>
+      <div><h3>Email that proves who it is from</h3><p>People who asked to stop, and addresses that do not exist, are blocked for you.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="ma-statement" aria-labelledby="ma-only">
+  <div class="dr-width">
+    <h2 id="ma-only">Only for people who asked.</h2>
+    <p>It is not a bulk email tool. Lists must be your own, with people who agreed to hear from you. Bought, scraped or swapped lists are refused, and an account that sends to one is suspended.</p>
+    <p><a class="dr-link" href="pricing.html">Sending policy and limits</a></p>
+  </div>
+</section>
+
+<!-- Member quote. Hidden until there is a real one: put the quote and name in, then delete the hidden attribute. -->
+<section class="ma-section" id="ma-proof" aria-label="What members say" hidden>
+  <div class="dr-width">
+    <figure class="ma-quote">
+      <p class="ma-quote__tag">Placeholder: replace with a real member quote before publishing</p>
+      <blockquote>[One or two sentences from a member who has sent a campaign: what they sent, and what changed.]</blockquote>
+      <figcaption>[Name], [role], [organisation]</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="mr-cta" aria-labelledby="cta-title">
+  <div class="dr-width">
+    <h2 id="cta-title">Send your first campaign</h2>
+    <p>Create a sender account, add the people who asked to hear from you and start from a layout that is already written.</p>
+    <p><a class="dr-button dr-button--start" data-mr-start href="create-account.html">Create a sender account</a></p>
+  </div>
+</section>
 
 </main>
 <footer class="dr-footer">

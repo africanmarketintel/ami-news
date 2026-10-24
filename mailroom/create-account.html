@@ -9,13 +9,14 @@
 <meta name="description" content="Create a sender account on AMI Mailroom.">
 <title>Create a sender account – AMI Mailroom</title>
 <link rel="stylesheet" href="assets/mr.css">
+<link rel="stylesheet" href="assets/mr-ami.css">
 <script src="../config.js"></script>
 <script src="../nav.js"></script>
 <script src="assets/mr-core.js"></script>
 <script src="assets/mr-sample.js"></script>
 <script src="assets/mr-account.js"></script>
 </head>
-<body>
+<body class="mr-app">
 <a href="#main" class="dr-skip">Skip to main content</a>
 <header class="dr-header">
   <div class="dr-width dr-header__inner">
@@ -31,7 +32,8 @@
 
 <main id="main">
 
-<div class="dr-width dr-narrow">
+<div class="dr-width mr-page mr-signup">
+  <div class="mr-signup__main">
   <h1>Create a sender account</h1>
   <p class="dr-lead">Confirm your email address and you can send. There is no approval queue and no daily cap.</p>
   <p>Before you start, read the <a href="pricing.html">sending policy</a>. It is short, and it is everything that can stop a campaign.</p>
@@ -55,6 +57,18 @@
     </div>
     <button class="dr-button" type="submit">Create account</button>
   </form>
+  </div>
+  <aside class="mr-signup__aside" aria-labelledby="mr-signup-aside-h">
+    <h2 id="mr-signup-aside-h" class="dr-h">What you get</h2>
+    <ul class="mr-ticks">
+      <li><strong>No approval queue.</strong> Confirm your address and you can send.</li>
+      <li><strong>No daily cap.</strong> Large lists go out in batches while you carry on.</li>
+      <li><strong>Your own sending address.</strong> Something like sample-member-4821@mail.abta.africa, with your name in front.</li>
+      <li><strong>Layouts to start from.</strong> Twelve designed layouts, each with its own colours and type.</li>
+      <li><strong>A test to yourself in one click.</strong> No second confirmation.</li>
+    </ul>
+    <p class="dr-small">Your postal address is asked for once, when you first send.</p>
+  </aside>
 </div>
 
 </main>
