@@ -413,8 +413,13 @@
     var code = String((err && err.code) || '');
     var msg = String((err && err.message) || '');
     var status = err && err.status;
-    if (status === 429 || /rate_limit/.test(code))
-      return 'Too many codes have been requested. Wait a few minutes and try again.';
+    // Supabase allows one code per address a minute, and says so in words
+    // ("you can only request this after 52 seconds") on some versions
+    // without the 429 status.
+    var secs = /after (\d+) seconds?/i.exec(msg);
+    if (secs) return 'A code was sent a moment ago. Check your inbox and spam folder, or ask for another in ' + secs[1] + ' seconds.';
+    if (status === 429 || /rate_limit/.test(code) || /rate limit|too many|security purposes/i.test(msg))
+      return 'Too many codes have been requested. Check your inbox and spam folder for the latest one, or wait a few minutes and try again.';
     if (/signup_disabled|otp_disabled|email_provider_disabled/.test(code))
       return 'New sign-ups by email are switched off on this service. Contact ABTA.';
     if (/validation_failed|email_address_invalid/.test(code) || status === 422 && /email/i.test(msg))
@@ -423,7 +428,9 @@
       return 'The email service could not send the code. This is a fault on our side, not yours. Try again in a few minutes.';
     if (err && err.name === 'TypeError')
       return 'The service could not be reached. Check your connection and try again.';
-    return 'The code could not be sent. Try again in a few minutes.';
+    // Unknown cause: say what the service said, so it can be reported.
+    var said = [status, code, msg].filter(Boolean).join(' – ').slice(0, 140);
+    return 'The code could not be sent. Try again in a few minutes.' + (said ? ' (Service reply: ' + said + ')' : '');
   };
 
   MR.auth = {
