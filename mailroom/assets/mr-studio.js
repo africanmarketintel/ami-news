@@ -277,6 +277,9 @@
       return { list: parent.blocks, index: parts[1] };
     }
     function byPath(path) {
+      // The name at the top of the email is not a block. Its words live in
+      // the style, so typing over it on the email changes the style.
+      if (path === 'header') return sty();
       var at = resolve(path);
       return at ? at.list[at.index] || null : null;
     }
@@ -1133,6 +1136,11 @@
       });
 
       fold('header', 'Header', function (box) {
+        var topName = h('input', { class: 'dr-input dr-input--w', id: 'mrs-header-text', type: 'text', maxlength: '80',
+          value: sty().header_text || '', placeholder: account().name || '' });
+        topName.addEventListener('input', function () { setSty('header_text', topName.value.trim() ? topName.value : ''); });
+        box.appendChild(group('mrs-header-text', 'Name at the top',
+          'Shown above the email when there is no logo. You can also type over it on the email. Leave it empty to use your account name.', topName));
         var on = h('input', { class: 'dr-choice__input', id: 'mrs-strip', type: 'checkbox', checked: !!campaign.header_colour });
         var colourWrap = h('div', { hidden: !campaign.header_colour });
         function drawColour() {
@@ -1583,7 +1591,14 @@
         r.setStart(el, 0); r.collapse(true);
         var s = d.getSelection(); s.removeAllRanges(); s.addRange(r);
       }
-      if (setIn(block, el.getAttribute('data-mr-f'), v)) inlineChanged();
+      if (setIn(block, el.getAttribute('data-mr-f'), v)) {
+        // The name at the top also has a box on the Style tab. Keep it in step.
+        if (el.getAttribute('data-mr-b') === 'header') {
+          var box = document.getElementById('mrs-header-text');
+          if (box && box !== document.activeElement) box.value = v;
+        }
+        inlineChanged();
+      }
     }
 
     function caretToEnd(el) {
@@ -1625,7 +1640,7 @@
         var el = fieldEl(e.target);
         if (!el || el.getAttribute('data-mr-k') === 'image') return;
         var path = el.getAttribute('data-mr-b');
-        if (state.sel !== path) select(path, true);
+        if (path !== 'header' && state.sel !== path) select(path, true);
         syncLinkBar(el);
       });
       doc.addEventListener('focusout', function () {
@@ -1885,7 +1900,11 @@
           try { remembered = localStorage.getItem('mr-test-addresses') || ''; } catch (e) { /* storage may be blocked */ }
           var toBox = h('input', { type: 'text', id: 'mrs-test-to', class: 'dr-input', autocomplete: 'email', spellcheck: 'false', value: remembered, placeholder: 'name@example.com, other@example.com' });
           var toErr = h('p', { class: 'mr-studio__testerr', role: 'alert', hidden: true });
-          var sendBtn = h('button', { type: 'button', class: 'mr-studio__btn mr-studio__btn--dark', text: 'Send a test' });
+          var sendBtn = h('button', { type: 'button', class: 'mr-studio__btn', text: 'Send to these addresses' });
+          // The usual case, in one click: the address you signed up with, and
+          // anyone else on your account.
+          var meBtn = h('button', { type: 'button', class: 'mr-studio__btn mr-studio__btn--dark', id: 'mrs-test-me', text: 'Send a test to me',
+            onclick: function () { o.testSend([]); } });
           function sendTest() {
             var list = toBox.value.split(/[\s,;]+/).filter(Boolean);
             var seen = {};
@@ -1908,9 +1927,10 @@
           sendBtn.addEventListener('click', sendTest);
           toBox.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); sendTest(); } });
           body.appendChild(h('p', { text: 'Open the test on a phone as well as a laptop, and try it with images turned off. The subject starts with [TEST].' }));
+          body.appendChild(meBtn);
           body.appendChild(h('div', { class: 'dr-form-group' },
             h('label', { class: 'dr-label', for: 'mrs-test-to', text: 'Send the test to' }),
-            h('span', { class: 'dr-hint', text: 'Up to five addresses, separated by commas. Leave it empty to send to everyone on your account.' }),
+            h('span', { class: 'dr-hint', text: 'Or send it to other addresses: up to five, separated by commas. Leave it empty to send to everyone on your account.' }),
             toBox, toErr));
           body.appendChild(sendBtn);
         } else {

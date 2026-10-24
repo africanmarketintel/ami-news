@@ -73,6 +73,25 @@
     held: 'Held for review', cancelled: 'Cancelled'
   };
 
+  // An account row can hold the placeholder "ADDRESS NOT SET", which is not an
+  // address. Every marketing email has to carry a real one.
+  MR.hasAddress = function (account) {
+    var a = String((account && account.postal_address) || '').replace(/\s+/g, ' ').trim();
+    return a !== '' && !/^(address not set|not set|none|n\/a|tbc|tbd|-)$/i.test(a);
+  };
+
+
+  // The platform's line at the foot of every email. A paid plan can replace or
+  // remove it, but only on emails sent from the account's own verified domain.
+  // Mail sent from the shared address always carries it, so a recipient can
+  // tell who is behind the shared sender. NO_CREDIT is the value stored for
+  // "no line". Keep these in step with mr-render.js.
+  MR.NO_CREDIT = '[none]';
+  MR.PLATFORM_CREDIT_TEXT = 'Sent through AMI Mailroom, a service of the African Business Trade Association.';
+  MR.creditAllowed = function (account, domain) {
+    return !!(account && account.allows_custom_footer && domain && domain.kind === 'own_domain');
+  };
+
   // What a campaign is called in a list. A draft saved before it has a subject
   // line keeps an empty subject in the database - the send checks need that to
   // stay empty - so the list names it by when it was started instead of
@@ -218,6 +237,7 @@
     asks_for_payment: 'A campaign appeared to ask readers for money or bank details. That is never allowed.',
     image_no_alt: 'An image had no description, so readers who block images saw nothing.',
     mostly_images: 'A campaign was nearly all images. Add real text.',
+    protected_name: 'A sender name, account name or sending address used a name that belongs to ABTA, so a person checks it before it goes.',
     no_postal_address: 'Your account has no postal address, which every marketing email must carry.',
     role_addresses: 'A list you imported holds many addresses like info@ or sales@. They complain more often than named people.',
     poor_list_quality: 'A list you imported had many invalid rows, which usually means it is old or was not collected directly.',

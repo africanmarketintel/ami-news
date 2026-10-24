@@ -42,10 +42,24 @@
   MR.DEFAULT_BRAND = DEFAULT_BRAND;
 
   // The line at the foot of every email. An account on a paid plan may replace
-  // it with its own, through brand.footer_credit; the sending code only passes
-  // that on when the plan allows it.
-  var PLATFORM_CREDIT = 'Sent through AMI Mailroom, operated by African Business Trade Association Limited.';
-  var PLATFORM_CREDIT_TEXT = 'Sent through AMI Mailroom.';
+  // it with its own, or remove it, but only on emails sent from its own
+  // verified domain. The sending code passes brand.footer_credit on only then.
+  // NO_CREDIT is the stored value for "no line".
+  var PLATFORM_CREDIT_TEXT = 'Sent through AMI Mailroom, a service of the African Business Trade Association.';
+  var PLATFORM_URL = 'https://ami.abta.africa/mailroom/';
+  var NO_CREDIT = '[none]';
+
+  // An account row can hold the placeholder "ADDRESS NOT SET", which is not an
+  // address. Every marketing email has to carry a real one, so the placeholder
+  // counts as nothing.
+  function hasAddress(account) {
+    var a = String((account && account.postal_address) || '').replace(/\s+/g, ' ').trim();
+    return a !== '' && !/^(address not set|not set|none|n\/a|tbc|tbd|-)$/i.test(a);
+  }
+
+  // The browser shows a warning where the address is missing, so the person
+  // who is writing the email sees it. The sending worker never prints one.
+  var SHOW_PLACEHOLDERS = true;
 
   var INK = '#1a1208';
   var MUTED = '#505a5f';
@@ -155,6 +169,7 @@
      Without the option none of this exists and the markup is unchanged. */
   var EDIT = false;
   var PATH = '';
+  var PH = false;
 
   // Attributes for one editable element. kind: text, line, list or image.
   // link names the field that holds the link for the element, if it has one.
@@ -234,6 +249,7 @@
   MR.renderEmail = function (campaign, account, opts) {
     opts = opts || {};
     EDIT = !!opts.editing;
+    PH = SHOW_PLACEHOLDERS && !opts.noPlaceholders;
     PATH = '';
     ST = resolveStyle(campaign.style);
     var brand = brandOf(opts.brand);
@@ -312,6 +328,12 @@ footer(account, font, unsubscribe, preferences, brand) +
   }
 
   /* ---------------- header ---------------- */
+  function headerName(campaign, account) {
+    var st = campaign && campaign.style && typeof campaign.style === 'object' ? campaign.style : {};
+    var own = String(st.header_text == null ? '' : st.header_text).replace(/\s+/g, ' ').trim().slice(0, 80);
+    return own || String((account && account.name) || '');
+  }
+
   function header(account, font, brand, campaign) {
     var band = colour(campaign && campaign.header_colour, '');
     var inner;
@@ -320,9 +342,15 @@ footer(account, font, unsubscribe, preferences, brand) +
         esc(brand.logo_alt || (account && account.name) || '') + '" width="' + brand.logo_width + '" ' +
         'style="display:block;margin:0 auto;width:' + brand.logo_width + 'px;max-width:100%;height:auto;border:0;outline:none;text-decoration:none">';
     } else {
-      inner = '<span style="font-family:' + font + ';font-size:12px;line-height:16px;' +
+      // The name at the top. A campaign may set its own (style.header_text);
+      // without one it is the account name. In the editor it is typed over.
+      var keepPath = PATH;
+      PATH = 'header';
+      var nameAttrs = ea('header_text', 'Your name or organisation', 'line');
+      PATH = keepPath;
+      inner = '<span' + nameAttrs + ' style="font-family:' + font + ';font-size:12px;line-height:16px;' +
         'mso-line-height-rule:exactly;letter-spacing:1px;text-transform:uppercase;color:' + MUTED + '">' +
-        esc(account && account.name) + '</span>';
+        esc(headerName(campaign, account)) + '</span>';
     }
     // With a band colour the header is a full-width strip, as most newsletters
     // have it. Without one it is a rule in the accent colour.
@@ -506,7 +534,7 @@ footer(account, font, unsubscribe, preferences, brand) +
     if (EDIT && !String(b.url || '').trim()) {
       return '<div' + ea('url', '', 'image') + ' class="mr-ph-img" contenteditable="false">Click to add an image</div>';
     }
-    return '<img' + ea('url', '', 'image') + ' src="' + safeUrl(b.url) + '" alt="' + esc(b.alt) + '" width="' + width + '" ' +
+    return '<img' + ea('url', '', 'image') + ' src="' + safeUrl(b.url) + '" alt="' + esc(b.decorative ? '' : b.alt) + '" width="' + width + '" ' +
       'style="display:block;width:100%;max-width:' + width + 'px;height:auto;border:0;outline:none;text-decoration:none">';
   }
 
@@ -781,29 +809,47 @@ footer(account, font, unsubscribe, preferences, brand) +
 
   function footer(account, font, unsubscribe, preferences, brand) {
     var small = 'font-family:' + font + ';font-size:13px;line-height:20px;mso-line-height-rule:exactly;color:' + MUTED;
+    var fine = 'font-family:' + font + ';font-size:12px;line-height:18px;mso-line-height-rule:exactly;color:' + MUTED;
     var links = (brand.social_links || []).map(function (l) {
       return '<a href="' + safeUrl(l.url) + '" style="color:' + brand.accent_colour + '">' + esc(l.label || l.url) + '</a>';
     }).join(' &middot; ');
+    // Who sent it, and where they are. Both are required in a marketing email.
+    var who = esc(account && account.name);
+    if (hasAddress(account)) who += ', ' + esc(String(account.postal_address).replace(/\s+/g, ' ').trim());
+    else if (PH) {
+      who += ', <span style="background-color:#fff3cd;color:#594300">[postal address needed: add it in your account settings]</span>';
+    }
+    // The platform's own line, shown unless the account's plan lets it
+    // replace or remove it. The name links to the product page.
+    var credit = brand.footer_credit === NO_CREDIT ? ''
+      : brand.footer_credit
+        ? esc(brand.footer_credit)
+        : 'Sent through <a href="' + PLATFORM_URL + '" style="color:' + MUTED + '">AMI Mailroom</a>, a service of the African Business Trade Association.';
     return '<tr><td class="rc-pad" style="padding:' + allPad(24) + '">\n' +
       '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">\n' +
       '<tr><td style="padding-top:14px;border-top:1px solid ' + RULE + ';' + small + '">\n' +
-      '<p style="margin:0 0 8px">' + esc(account && account.name) + ', ' + esc(account && account.postal_address) + '</p>\n' +
-      (links ? '<p style="margin:0 0 8px">' + links + '</p>\n' : '') +
+      '<p style="margin:0 0 8px">' + who + '</p>\n' +
       (brand.footer_note ? '<p style="margin:0 0 8px">' + esc(brand.footer_note) + '</p>\n' : '') +
+      (links ? '<p style="margin:0 0 8px">' + links + '</p>\n' : '') +
       '<p style="margin:0 0 8px">You are receiving this because you subscribed to updates from ' +
       esc(account && account.name) + '.</p>\n' +
-      '<p style="margin:0"><a href="' + preferences + '" style="color:' + brand.accent_colour + '">Choose what you receive</a> &middot; ' +
-      '<a href="' + unsubscribe + '" style="color:' + brand.accent_colour + '">Unsubscribe</a></p>\n' +
-      '<p style="margin:12px 0 0">' + esc(brand.footer_credit || PLATFORM_CREDIT) + '</p>\n' +
-      '</td></tr></table></td></tr>';
+      '<p style="margin:0"><a href="' + unsubscribe + '" style="color:' + brand.accent_colour + '">Unsubscribe</a></p>\n' +
+      '</td></tr>\n' +
+      (credit ? '<tr><td style="padding-top:14px;' + fine + '">' + credit + '</td></tr>\n' : '') +
+      '</table></td></tr>';
   }
 
   MR.renderText = function (campaign, account, unsubscribeUrl, recipient, brand) {
     var blocks = Array.isArray(campaign.body_blocks) ? campaign.body_blocks : [];
     var body = blocks.map(one).filter(Boolean).join('\n\n');
     return (campaign.subject ? campaign.subject + '\n\n' : '') + body +
-      '\n\n---\n' + (account && account.name) + ', ' + (account && account.postal_address) +
-      '\nUnsubscribe: ' + (unsubscribeUrl || '') + '\n' + (brandOf(brand).footer_credit || PLATFORM_CREDIT_TEXT);
+      '\n\n---\n' + (account && account.name) + (hasAddress(account) ? ', ' + String(account.postal_address).replace(/\s+/g, ' ').trim() : '') +
+      '\nUnsubscribe: ' + (unsubscribeUrl || '') + creditText(brandOf(brand));
+
+    function creditText(b) {
+      if (b.footer_credit === NO_CREDIT) return '';
+      return '\n' + (b.footer_credit || (PLATFORM_CREDIT_TEXT + ' ' + PLATFORM_URL));
+    }
 
     function one(b) {
       if (b.type === 'panel') {
@@ -814,7 +860,7 @@ footer(account, font, unsubscribe, preferences, brand) +
           (b.detail ? '\n' + b.detail : '') + (b.url ? '\n' + b.url : '');
       }
       if (b.type === 'button') return (b.label || 'Read more') + ': ' + (b.url || '');
-      if (b.type === 'image') return b.alt ? '[' + b.alt + ']' : '';
+      if (b.type === 'image') return b.alt && !b.decorative ? '[' + b.alt + ']' : '';
       if (b.type === 'divider') return '---';
       if (b.type === 'spacer') return '';
       if (b.type === 'heading') return String(b.text || '').toUpperCase();
@@ -823,7 +869,7 @@ footer(account, font, unsubscribe, preferences, brand) +
           .map(function (l) { return '* ' + l.trim(); }).join('\n');
       }
       if (b.type === 'columns') return plain(b.left) + '\n\n' + plain(b.right);
-      if (b.type === 'imagetext') return (b.alt ? '[' + b.alt + ']\n' : '') + plain(b.text);
+      if (b.type === 'imagetext') return (b.alt && !b.decorative ? '[' + b.alt + ']\n' : '') + plain(b.text);
       if (b.type === 'social' || b.type === 'navigation') {
         return (Array.isArray(b.links) ? b.links : [])
           .map(function (l) { return (l.label || '') + ': ' + (l.url || ''); }).join('\n');

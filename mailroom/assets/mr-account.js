@@ -64,6 +64,46 @@
     });
   }
 
+  /* ---------------- the postal address ----------------
+     Printed in the footer of every email. The law in the UK and the US asks
+     for one, so a campaign cannot be sent without it. It could only be set
+     when the account was created, so an account made with a placeholder had
+     no way to fix it. */
+  function addressBox(account) {
+    var missing = !MR.hasAddress(account);
+    var box = MR.h('div', { class: 'mr-aside', id: 'mr-address-box' },
+      MR.h('h2', { class: 'dr-h', text: 'Postal address' }),
+      MR.h('p', { class: 'dr-small', text: missing
+        ? 'Your account has no postal address yet. Every marketing email has to carry one, so you cannot send until you add it.'
+        : 'Printed in the footer of every email, after your organisation name. Use an address where post reaches you: a street address, or a PO box or private mailbox that is registered to you.' }));
+    var area = MR.h('textarea', { class: 'dr-textarea', id: 'mr-address', rows: '3' });
+    area.value = missing ? '' : String(account.postal_address || '');
+    var status = MR.h('span', { class: 'dr-small', id: 'mr-address-status', role: 'status' });
+    box.appendChild(MR.h('div', { class: 'dr-form-group' },
+      MR.h('label', { class: 'dr-label', for: 'mr-address', text: 'Address' }), area));
+    box.appendChild(MR.h('button', {
+      type: 'button', class: 'dr-button dr-button--secondary', text: 'Save address',
+      disabled: !!MR.cfg.demo,
+      onclick: function () {
+        var v = area.value.replace(/[ \t]+/g, ' ').trim();
+        if (!MR.hasAddress({ postal_address: v })) { status.textContent = 'Enter the address that should appear in your emails.'; return; }
+        MR.api.update('mailroom_accounts', 'id=eq.' + account.id, { postal_address: v })
+          .then(function () {
+            account.postal_address = v;
+            status.textContent = 'Saved.';
+            MR.announce('Address saved');
+          })
+          .catch(function (err) {
+            status.textContent = 'That address could not be saved.';
+            console.error(err);
+          });
+      }
+    }));
+    box.appendChild(MR.h('p', null, status));
+    if (MR.cfg.demo) box.appendChild(MR.h('p', { class: 'dr-small', text: 'Nothing is saved in preview mode.' }));
+    return box;
+  }
+
   function timezoneBox(account) {
     var box = MR.h('div', { class: 'mr-aside', id: 'mr-timezone' },
       MR.h('h2', { class: 'dr-h', text: 'Your timezone' }),
@@ -392,25 +432,21 @@
     var form = document.getElementById('mr-account-form');
     if (!form) return;
 
-    fillZones(form.querySelector('#m-timezone'), browserZone());
-
     form.addEventListener('submit', function (e) {
       e.preventDefault();
-      var zoneField = form.querySelector('#m-timezone');
+      // Only the three answers the account cannot exist without. The postal
+      // address is asked for at the first send, where it is needed, the
+      // timezone is read from the browser and can be changed on the account
+      // page, and a contact name is not used anywhere.
       var v = {
         name: form.querySelector('#m-name').value.trim(),
-        website: form.querySelector('#m-website').value.trim(),
-        contact: form.querySelector('#m-contact').value.trim(),
         email: form.querySelector('#m-email').value.trim(),
-        address: form.querySelector('#m-address').value.trim(),
-        timezone: (zoneField && zoneField.value) || MR.TIMEZONE_FALLBACK,
+        timezone: browserZone(),
         declared: form.querySelector('#m-declaration').checked
       };
       var errors = [];
       if (!v.name) errors.push({ id: 'm-name', message: 'Enter your organisation name' });
-      if (!v.contact) errors.push({ id: 'm-contact', message: 'Enter a contact name' });
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v.email)) errors.push({ id: 'm-email', message: 'Enter a work email address' });
-      if (!v.address) errors.push({ id: 'm-address', message: 'Enter the postal address that will appear in every email' });
       if (!v.declared) errors.push({ id: 'm-declaration', message: 'You must confirm how your list was collected' });
       if (MR.errors.show(form, errors)) return;
 
@@ -423,8 +459,7 @@
 
       var finish = function () {
         return MR.api.insert('mailroom_accounts', {
-          name: v.name, website: v.website || null, contact_name: v.contact,
-          contact_email: v.email, postal_address: v.address, timezone: v.timezone
+          name: v.name, contact_email: v.email, postal_address: '', timezone: v.timezone
         }).then(function (rows) {
           return MR.api.insert('mailroom_account_users', {
             account_id: rows[0].id, user_id: MR.auth.userId(), email: v.email, role: 'owner'
@@ -436,7 +471,7 @@
           // was knowing the URL. Go straight to the dashboard instead and
           // show the message there. Not a timed redirect, which would fail
           // WCAG 2.2.1 unless the member could stop it. 14 October 2026.
-          location.href = 'account.html?created=1';
+          location.href = 'import.html?start=1';
         });
       };
 
@@ -579,6 +614,7 @@
       // Appended at the foot, below the campaign list, as the mockup has it.
 
       wrap.appendChild(replyBox(account, replies));
+      wrap.appendChild(addressBox(account));
       wrap.appendChild(timezoneBox(account));
       var emailsThisMonth = campaigns.filter(function (c) {
         if (c.status !== 'sent' || !c.sent_at) return false;
@@ -677,6 +713,8 @@
       if (!lists.some(function (l) { return l.consent_status !== 'unconfirmed'; })) {
         MR.banner(wrap, 'No list is ready to mail',
           'A list can only be used once you have recorded how the addresses were collected.');
+        wrap.appendChild(MR.h('p', null,
+          MR.h('a', { class: 'dr-button', href: 'import.html', text: 'Add your subscribers' })));
       }
 
       if (!campaigns.length) {
@@ -750,6 +788,9 @@
       wrap.textContent = '';
       wrap.appendChild(MR.h('h1', { text: 'Your lists' }));
       wrap.appendChild(MR.h('p', { class: 'dr-lead', text: 'A list can only be mailed once you have said how its addresses were collected. One answer and a date, asked once per list, and they become the consent record you can show a subscriber who asks why you have their address.' }));
+      wrap.appendChild(MR.h('p', null,
+        MR.h('a', { class: 'dr-button', href: 'import.html', text: 'Add subscribers from a file' }),
+        ' creates a list, records how it was collected and imports the file in one go.'));
       wrap.appendChild(newListForm(account));
 
       if (!lists.length) {
@@ -928,9 +969,61 @@
     if (!form) return;
     var listId = MR.qs('list');
     var listName = '';
+    // With no list named, this page makes the list as well: one page and one
+    // answer to "where did these addresses come from", instead of a lists
+    // page, a consent form and an import page asking the same question.
+    var newList = !listId;
+    var account = null;
+    var wordingBox = null, fromBox = null, nameBox = null;
     var fileField = form.querySelector('#i-file');
     var preview = document.getElementById('mr-import-preview');
     var parsed = [];
+    var pasteField = form.querySelector('#i-paste');
+    var pasteCount = document.getElementById('mr-paste-count');
+    var EMAIL_OK = /^[^@\s,;<>()"]+@[^@\s,;<>()"]+\.[^@\s,;<>()"]+$/;
+
+    // Addresses typed or pasted in. One per line or separated by commas or
+    // semicolons; "Ada Obi <ada@example.com>" keeps the name. Anything that is
+    // not an address is counted and named so a typing slip is seen, not lost.
+    function typedRows() {
+      var rows = [], bad = [];
+      String(pasteField ? pasteField.value : '').split(/[\r\n,;]+/).forEach(function (part) {
+        part = part.trim();
+        if (!part) return;
+        var named = part.match(/^"?([^"<]*?)"?\s*<\s*([^\s<>]+)\s*>$/);
+        if (named) {
+          if (EMAIL_OK.test(named[2])) rows.push({ email: named[2], full_name: named[1].trim() || null, organisation: null, country: null });
+          else bad.push(part);
+          return;
+        }
+        part.split(/\s+/).forEach(function (token) {
+          if (EMAIL_OK.test(token)) rows.push({ email: token, full_name: null, organisation: null, country: null });
+          else bad.push(token);
+        });
+      });
+      return { rows: rows, bad: bad };
+    }
+
+    // The file and the typed addresses together. A repeat is dropped here, and
+    // the server drops any already on the list.
+    function allRows() {
+      var seen = {}, out = [];
+      parsed.concat(typedRows().rows).forEach(function (r) {
+        var k = String(r.email).toLowerCase();
+        if (!seen[k]) { seen[k] = 1; out.push(r); }
+      });
+      return out;
+    }
+
+    function showTyped() {
+      if (!pasteCount) return;
+      var t = typedRows();
+      if (!t.rows.length && !t.bad.length) { pasteCount.textContent = ''; return; }
+      pasteCount.textContent = t.rows.length + (t.rows.length === 1 ? ' address' : ' addresses') + ' typed.' +
+        (t.bad.length ? ' ' + t.bad.length + ' will be skipped because ' + (t.bad.length === 1 ? 'it does' : 'they do') +
+          ' not look like an email address: ' + t.bad.slice(0, 3).join(', ') + (t.bad.length > 3 ? ' and more' : '') + '.' : '');
+    }
+    if (pasteField) pasteField.addEventListener('input', showTyped);
 
     // The same choice as the list page, in the same words. A file can come
     // from somewhere the rest of the list did not, so it is still asked per
@@ -951,11 +1044,12 @@
         var radio = MR.h('input', {
           class: 'dr-choice__input', type: 'radio', id: id, name: 'i-source', value: opt.id
         });
-        if (preselect && preselect === opt.id) { radio.checked = true; importChoice = opt; }
+        if (preselect && preselect === opt.id) { radio.checked = true; importChoice = opt; setTimeout(function () { chosenSource(opt); }, 0); }
         radio.addEventListener('change', function () {
           importChoice = opt;
           var warn = document.getElementById('mr-import-refused');
           if (warn) warn.hidden = !opt.refuse;
+          chosenSource(opt);
         });
         importGroup.appendChild(MR.h('div', { class: 'dr-choice dr-choice--radio' }, radio,
           MR.h('label', { class: 'dr-choice__label', for: id }, opt.label,
@@ -972,6 +1066,68 @@
     function sourceIdFor(recorded) {
       var hit = MR.CONSENT_SOURCES.filter(function (o) { return o.source === recorded; })[0];
       return hit ? hit.id : null;
+    }
+
+    // The extra questions a new list needs: its name, when the addresses
+    // started being collected, and what people were told. The wording is
+    // filled in from the answer above, so the usual case is one date.
+    function chosenSource(opt) {
+      if (!newList || !wordingBox) return;
+      var open = !opt.refuse;
+      fromBox.hidden = !open; wordingBox.hidden = !open;
+      if (!open) return;
+      var w = form.querySelector('#i-wording');
+      var hint = form.querySelector('#i-wording-hint');
+      if (opt.wordingRequired) {
+        hint.textContent = 'Copy the wording from the form itself, as they read it.';
+        // A wording filled in for another answer is not theirs to keep.
+        if (MR.CONSENT_SOURCES.some(function (o) { return o.wording && o.wording === w.value; })) w.value = '';
+      } else {
+        hint.textContent = 'Filled in from your answer above. Change it if it is not quite right.';
+        if (!w.value.trim() || MR.CONSENT_SOURCES.some(function (o) { return o.wording && o.wording === w.value; })) w.value = opt.wording || '';
+      }
+    }
+
+    if (newList) {
+      var h1 = document.querySelector('main h1');
+      var lead = document.querySelector('main .dr-lead');
+      if (h1) h1.textContent = 'Add your subscribers';
+      document.title = 'Add your subscribers \u2013 AMI Mailroom';
+      if (lead) lead.textContent = 'A CSV file with a column headed email. Name, organisation and country are optional. This creates your list and fills it in one go.';
+      var legendHint = importGroup && importGroup.querySelector('.dr-hint');
+      if (legendHint) legendHint.textContent = 'This becomes the consent record for the list, and is saved against every address in the file.';
+
+      if (MR.qs('start') === '1') {
+        var steps = MR.h('ol', { class: 'dr-small', id: 'mr-start-steps', 'aria-label': 'Your first email, in three steps' },
+          MR.h('li', { 'aria-current': 'step' }, MR.h('strong', { text: 'Add your subscribers' })),
+          MR.h('li', { text: 'Write your email' }),
+          MR.h('li', { text: 'Send it' }));
+        form.parentNode.insertBefore(steps, form);
+      }
+
+      var nameInput = MR.h('input', { class: 'dr-input', id: 'i-list-name', type: 'text', value: 'Subscribers' });
+      nameBox = MR.h('div', { class: 'dr-form-group' },
+        MR.h('label', { class: 'dr-label', for: 'i-list-name', text: 'List name' }),
+        MR.h('span', { class: 'dr-hint', text: 'Only you see this. You can add more lists later.' }), nameInput);
+      form.insertBefore(nameBox, form.firstChild);
+
+      fromBox = MR.h('div', { class: 'dr-form-group', hidden: true },
+        MR.h('label', { class: 'dr-label', for: 'i-from', text: 'Roughly when did you start collecting them?' }),
+        MR.h('span', { class: 'dr-hint', text: 'The first of the month is close enough. It is the start of the period this record covers.' }),
+        MR.h('input', { class: 'dr-input dr-input--w', id: 'i-from', type: 'date' }));
+      wordingBox = MR.h('div', { class: 'dr-form-group', hidden: true },
+        MR.h('label', { class: 'dr-label', for: 'i-wording', text: 'What were they told?' }),
+        MR.h('span', { class: 'dr-hint', id: 'i-wording-hint', text: '' }),
+        MR.h('textarea', { class: 'dr-textarea', id: 'i-wording', rows: '2' }));
+      var consentNote = document.getElementById('mr-import-consent');
+      form.insertBefore(fromBox, consentNote);
+      form.insertBefore(wordingBox, consentNote);
+      form.querySelector('button[type="submit"]').textContent = 'Add subscribers';
+      if (!MR.cfg.demo) {
+        MR.requireAccount(form.parentNode).then(function (a) { account = a; }).catch(function () { /* the sign-in prompt is already showing */ });
+      }
+    } else {
+      var h1b = document.querySelector('main h1'); if (h1b) h1b.textContent = 'Import subscribers';
     }
 
     if (listId && !MR.cfg.demo) {
@@ -1034,27 +1190,49 @@
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       var errors = [];
-      if (!parsed.length) errors.push({ id: 'i-file', message: 'Choose a CSV file with an email column' });
+      if (!allRows().length) errors.push({ id: 'i-file', message: 'Choose a CSV file with an email column, or type at least one email address' });
       if (!importChoice) {
         errors.push({ id: 'i-src-' + MR.CONSENT_SOURCES[0].id, message: 'Choose how these addresses were collected' });
       } else if (importChoice.refuse) {
         errors.push({ id: 'i-src-' + MR.CONSENT_SOURCES[0].id, message: 'A bought, rented, scraped or appended list cannot be imported' });
+      }
+      var nameValue = '', fromValue = '', wordingValue = '';
+      if (newList) {
+        nameValue = form.querySelector('#i-list-name').value.trim();
+        fromValue = form.querySelector('#i-from').value;
+        wordingValue = form.querySelector('#i-wording').value.trim();
+        if (!nameValue) errors.push({ id: 'i-list-name', message: 'Give the list a name' });
+        if (importChoice && !importChoice.refuse) {
+          if (!fromValue) errors.push({ id: 'i-from', message: 'Give roughly when you started collecting them' });
+          if (!wordingValue) errors.push({ id: 'i-wording', message: 'Say what people were told when you took their address' });
+        }
       }
       if (MR.errors.show(form, errors)) return;
       var source = importChoice.source;
 
       if (MR.cfg.demo) {
         MR.banner(form.parentNode, 'Preview only',
-          parsed.length + ' rows would be checked against the suppression list and imported.');
+          allRows().length + ' addresses would be checked against the suppression list and imported.');
         return;
       }
 
-      MR.fn('mailroom-import', { list_id: listId, rows: parsed, consent_source: source })
+      // A new list is made first, with its consent record, then filled. If the
+      // import fails the list is kept, and a second try fills that one rather
+      // than making another.
+      var ready = listId ? Promise.resolve(listId)
+        : (account ? Promise.resolve() : Promise.reject(new Error('Sign in again, then retry')))
+          .then(function () {
+            return MR.api.insert('mailroom_lists', {
+              account_id: account.id, name: nameValue, consent_source: source,
+              consent_wording: wordingValue, consent_from: fromValue, consent_to: null
+            });
+          }).then(function (rows) { listId = rows[0].id; listName = nameValue; return listId; });
+      ready.then(function () { return MR.fn('mailroom-import', { list_id: listId, rows: allRows(), consent_source: source }); })
         .then(function (r) {
           // Confirmation page, not a cleared form. See MR.done.
           var main = document.getElementById('main') || form.parentNode;
           MR.done(main, {
-            title: 'Import finished',
+            title: newList && MR.qs('start') === '1' ? 'Step 1 of 3 done: your subscribers are added' : 'Import finished',
             lead: r.added + (r.added === 1 ? ' address added to' : ' addresses added to'),
             detail: listName || 'your list',
             next: [
@@ -1063,7 +1241,7 @@
               'Anyone who had unsubscribed or complained before was left off, whichever sender they left.'
             ],
             actions: [
-              ['campaign.html', 'Write a campaign'],
+              ['campaign.html?list=' + encodeURIComponent(listId) + (MR.qs('start') === '1' ? '&start=1' : ''), 'Write your email'],
               ['lists.html', 'Back to your lists'],
               ['import.html' + (listId ? '?list=' + encodeURIComponent(listId) : ''), 'Import another file']
             ],

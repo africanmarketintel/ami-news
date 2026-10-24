@@ -92,7 +92,7 @@
       }
       var altInput = text('b-logo-alt', 'What the logo says', brand.logo_alt,
         function (v) { brand.logo_alt = v; refresh(); },
-        'Usually your organisation name. Read out to anyone using a screen reader, and shown when images are blocked.');
+        'Usually your organisation name. Read out to anyone using a screen reader, and shown when images are blocked. If you leave it empty, your account name is used.');
       form.appendChild(altInput.group);
       altInput = altInput.input;
 
@@ -132,22 +132,52 @@
       form.appendChild(MR.h('h2', { text: 'Footer' }));
       form.appendChild(text('b-footer', 'A line in the footer', brand.footer_note,
         function (v) { brand.footer_note = v; refresh(); },
-        'For example: Registered in England and Wales, number 00000000. Or a charity registration. Your postal address is added automatically.').group);
+        'Your postal address is added automatically. A UK company should also give its registered name, number, place of registration and registered office here, as plain text. For example: Registered in England and Wales, number 00000000. Or add a charity registration.').group);
 
-      /* the credit line: the platform's own, or the account's if its plan allows */
-      var DEFAULT_CREDIT = 'Sent through AMI Mailroom, operated by African Business Trade Association Limited.';
+      /* the credit line: the platform's own, or a paid plan's own line or none.
+         Only emails sent from the account's own verified domain can change it. */
+      var STANDARD = MR.PLATFORM_CREDIT_TEXT;
       var canCredit = !!account.allows_custom_footer;
       form.appendChild(MR.h('h3', { class: 'dr-h', text: 'Credit line' }));
       if (canCredit) {
-        form.appendChild(text('b-credit', 'The credit line at the very bottom of every email', brand.footer_credit,
-          function (v) { brand.footer_credit = v; refresh(); },
-          'Leave this empty to keep the standard line: "' + DEFAULT_CREDIT + '" Up to 160 characters, plain text.').group);
-        form.querySelector('#b-credit').setAttribute('maxlength', '160');
+        var mode = brand.footer_credit === MR.NO_CREDIT ? 'none' : (brand.footer_credit ? 'own' : 'standard');
+        var ownInput = MR.h('input', { class: 'dr-input', id: 'b-credit', type: 'text', maxlength: '160',
+          value: mode === 'own' ? brand.footer_credit : '' });
+        var ownBox = MR.h('div', { class: 'dr-form-group', hidden: mode !== 'own' },
+          MR.h('label', { class: 'dr-label', for: 'b-credit', text: 'Your own credit line' }),
+          MR.h('span', { class: 'dr-hint', text: 'Up to 160 characters, plain text.' }), ownInput);
+        var set = function (m) {
+          mode = m;
+          ownBox.hidden = m !== 'own';
+          brand.footer_credit = m === 'none' ? MR.NO_CREDIT : (m === 'own' ? ownInput.value : '');
+          refresh();
+        };
+        ownInput.addEventListener('input', function () { brand.footer_credit = ownInput.value; refresh(); });
+        var creditGroup = MR.h('fieldset', { class: 'dr-form-group' },
+          MR.h('legend', { class: 'dr-label', text: 'The line at the very bottom of your emails' }));
+        [
+          { id: 'standard', label: 'The standard line', hint: STANDARD },
+          { id: 'own', label: 'My own line', hint: 'Replaces the standard line with text you write.' },
+          { id: 'none', label: 'No line', hint: 'Nothing is printed at the bottom.' }
+        ].forEach(function (opt) {
+          var rid = 'b-credit-' + opt.id;
+          var radio = MR.h('input', { class: 'dr-choice__input', type: 'radio', id: rid, name: 'b-credit-mode',
+            value: opt.id, checked: mode === opt.id });
+          radio.addEventListener('change', function () { if (radio.checked) set(opt.id); });
+          creditGroup.appendChild(MR.h('div', { class: 'dr-choice dr-choice--radio' }, radio,
+            MR.h('label', { class: 'dr-choice__label', for: rid }, opt.label,
+              MR.h('span', { class: 'dr-choice__hint', text: opt.hint }))));
+        });
+        form.appendChild(creditGroup);
+        form.appendChild(ownBox);
+        form.appendChild(MR.h('p', { class: 'dr-hint' },
+          'This applies only to emails sent from your own verified domain. Emails sent from the shared ABTA address always carry the standard line, so readers can see who is behind the sender. ',
+          MR.h('a', { href: 'domain.html', text: 'Set up your own domain' }), '.'));
       } else {
         brand.footer_credit = '';
-        form.appendChild(MR.h('p', { class: 'dr-body', text: DEFAULT_CREDIT }));
+        form.appendChild(MR.h('p', { class: 'dr-body', text: STANDARD }));
         form.appendChild(MR.h('p', { class: 'dr-hint' },
-          'You can change this line with any paid plan. ',
+          'To change or remove this line, choose a paid plan and send from your own domain. ',
           MR.h('a', { href: 'pricing.html', text: 'See the plans' }), '.'));
       }
 
@@ -237,11 +267,12 @@
           errors.push({ id: ['b-accent', 'b-button', 'b-button-text'][i] + '-hex', message: 'Enter a colour as six characters, such as #222222' });
         }
       });
-      if (brand.logo_url && !String(brand.logo_alt || '').trim()) {
-        errors.push({ id: 'b-logo-alt', message: 'Say what the logo says, for readers who cannot see it' });
-      }
-      if (account.allows_custom_footer && String(brand.footer_credit || '').trim().length > 160) {
+      if (account.allows_custom_footer && brand.footer_credit !== MR.NO_CREDIT && String(brand.footer_credit || '').trim().length > 160) {
         errors.push({ id: 'b-credit', message: 'Keep the credit line to 160 characters or fewer' });
+      }
+      var picked = form.querySelector('input[name="b-credit-mode"]:checked');
+      if (picked && picked.value === 'own' && !String(brand.footer_credit || '').trim()) {
+        errors.push({ id: 'b-credit', message: 'Write your credit line, or choose the standard line or no line' });
       }
       var w = parseInt(brand.logo_width, 10);
       if (!(w >= 60 && w <= 552)) errors.push({ id: 'b-logo-width', message: 'Enter a width between 60 and 552' });

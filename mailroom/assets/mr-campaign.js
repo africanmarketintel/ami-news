@@ -53,12 +53,14 @@
     if (MR.cfg.demo) {
       account = MR.sampleAccount;
       brand = MR.sampleBrand || null;
-      if (brand && !account.allows_custom_footer) brand.footer_credit = '';
+      // Lets the first-send address question be tried in preview mode.
+      if (MR.qs('noaddress') === '1') account = Object.assign({}, account, { postal_address: '' });
       campaign = JSON.parse(JSON.stringify(DEMO_CAMPAIGN));
       lists = (MR.sampleLists || []).map(function (l) { return { id: l.id, name: l.name, consent_status: l.consent_status }; });
       domains = (MR.sampleDomains || []).filter(function (d) { return d.status === 'verified'; });
       savedBlocks = MR.sampleSavedBlocks || [];
       replyAddresses = [DEMO_CAMPAIGN.reply_to];
+      defaultList();
       render();
       return;
     }
@@ -68,7 +70,7 @@
       return Promise.all([
         MR.api.select('mailroom_lists?select=id,name,consent_status'),
         campaignId ? MR.api.select('mailroom_campaigns?select=*&id=eq.' + campaignId) : Promise.resolve([]),
-        MR.api.select('mailroom_domains?select=id,domain,from_local,is_default,sending_status&status=eq.verified'),
+        MR.api.select('mailroom_domains?select=id,domain,from_local,is_default,sending_status,kind&status=eq.verified'),
         MR.api.select('mailroom_brand?select=*&account_id=eq.' + a.id),
         MR.api.select('mailroom_saved_blocks?select=*&order=name'),
         MR.api.select('mailroom_reply_addresses?select=email,status&status=eq.verified&order=email')
@@ -77,9 +79,6 @@
       lists = res[0] || [];
       domains = (res[2] || []).filter(function (d) { return d.sending_status === 'active'; });
       brand = (res[3] || [])[0] || null;
-      // The credit line is only the account's own while its plan allows that,
-      // so the preview shows what will really be sent.
-      if (brand && !account.allows_custom_footer) brand.footer_credit = '';
       savedBlocks = res[4] || [];
       replyAddresses = (res[5] || []).map(function (r) { return r.email; });
       if (res[1] && res[1][0]) campaign = res[1][0];
@@ -88,6 +87,7 @@
         if (preferred) campaign.sending_domain_id = preferred.id;
       }
       if (!campaign.from_name) campaign.from_name = account.name;
+      defaultList();
       if (!campaign.reply_to) campaign.reply_to = replyAddresses[0] || account.contact_email;
       if (!campaign.font_family) campaign.font_family = (brand && brand.font_family) || 'sans';
       if (campaign.id) return loadVersions().then(render);
@@ -95,6 +95,65 @@
     }).catch(function (err) {
       return MR.loadFailed(wrap, err);
     });
+
+    // A new campaign starts on the list named in the address (the page that
+    // just filled it), or on the only list that can be mailed, so the first
+    // send does not open with a question that has one answer.
+    function defaultList() {
+      if (campaign.id || campaign.list_id) return;
+      var mailable = lists.filter(function (l) { return l.consent_status !== 'unconfirmed'; });
+      var named = mailable.filter(function (l) { return l.id === MR.qs('list'); })[0];
+      if (named) campaign.list_id = named.id;
+      else if (mailable.length === 1) campaign.list_id = mailable[0].id;
+    }
+
+    function addressField(refresh) {
+      var area = MR.h('textarea', { class: 'dr-textarea', id: 'c-address', rows: '3' });
+      var status = MR.h('p', { class: 'dr-small', id: 'c-address-status', role: 'status' });
+      var save = function () {
+        var v = area.value.replace(/[ \t]+/g, ' ').trim();
+        if (!MR.hasAddress({ postal_address: v })) { status.textContent = ''; return; }
+        if (MR.cfg.demo) { status.textContent = 'Preview only: nothing is saved.'; account.postal_address = v; refresh(); return; }
+        MR.api.update('mailroom_accounts', 'id=eq.' + account.id, { postal_address: v })
+          .then(function () {
+            account.postal_address = v;
+            status.textContent = 'Saved to your account. You will not be asked again.';
+            refresh();
+          })
+          .catch(function (err) { status.textContent = 'That address could not be saved. Please try again.'; console.error(err); });
+      };
+      area.addEventListener('change', save);
+      return MR.h('div', { class: 'dr-form-group' },
+        MR.h('label', { class: 'dr-label', for: 'c-address', text: 'Your postal address' }),
+        MR.h('span', { class: 'dr-hint', text: 'Required by law in every marketing email. It is printed in the footer and saved to your account, so you only enter it once. A street address, or a PO box or private mailbox registered to you.' }),
+        area, status);
+    }
+
+    // The domain this campaign will leave from, or null for the shared address.
+    function chosenDomain() {
+      return domains.filter(function (d) { return d.id === campaign.sending_domain_id; })[0] || null;
+    }
+
+    // The credit line is the platform's own unless the plan allows another and
+    // the email leaves from the account's own domain. The preview applies the
+    // same rule as the sending code, so it shows what will really go out.
+    function brandForPreview() {
+      if (!brand || MR.creditAllowed(account, chosenDomain())) return brand;
+      var copy = {};
+      Object.keys(brand).forEach(function (k) { copy[k] = brand[k]; });
+      copy.footer_credit = '';
+      return copy;
+    }
+
+    // Exactly what the reader sees in front of the message, worked out the way
+    // the sending code works it out.
+    function recipientsSee() {
+      var d = chosenDomain();
+      var address = d ? d.from_local + '@' + d.domain
+        : (account.sender_local || 'mailroom') + '@mail.abta.africa';
+      return { name: String(campaign.from_name || '').trim() || account.name, address: address,
+        own: !!d && d.kind === 'own_domain', sub: !!d && d.kind !== 'own_domain' };
+    }
 
     function loadVersions() {
       return MR.api.select('mailroom_campaign_versions?select=id,subject,created_at&campaign_id=eq.' +
@@ -146,11 +205,14 @@
        the simple editor. withStyle adds typeface, header strip and browser
        link, which the studio keeps on its Style panel instead. */
     function buildSettings(form, refresh, withStyle) {
+      // Asked here, at the first send, rather than at sign-up: this is where
+      // it is needed, and it is saved to the account so it is asked once.
+      if (!MR.hasAddress(account)) form.appendChild(addressField(refresh));
       form.appendChild(field('c-subject', 'Subject line', campaign.subject, function (v) { campaign.subject = v; refresh(); },
         'Say what is in the email. Capitals and rows of exclamation marks get flagged.'));
       form.appendChild(field('c-preheader', 'Preview text', campaign.preheader, function (v) { campaign.preheader = v; refresh(); },
         'The line mail apps show after the subject.'));
-      form.appendChild(field('c-from', 'From name', campaign.from_name, function (v) { campaign.from_name = v; refresh(); },
+      form.appendChild(field('c-from', 'From name', campaign.from_name, function (v) { campaign.from_name = v; refresh(); showSender(); },
         'Your organisation name. It appears in front of the sending address below.'));
 
       var domainSelect = MR.h('select', { class: 'dr-select', id: 'c-domain' },
@@ -166,6 +228,8 @@
       });
       domainSelect.addEventListener('change', function () {
         campaign.sending_domain_id = domainSelect.value || null;
+        showSender();
+        refresh();
       });
       form.appendChild(MR.h('div', { class: 'dr-form-group' },
         MR.h('label', { class: 'dr-label', for: 'c-domain', text: 'Sent from' }),
@@ -174,6 +238,25 @@
           : 'You have no verified domain of your own yet. ',
           domains.length ? null : MR.h('a', { href: 'domain.html', text: 'Send from your own domain instead' })),
         domainSelect));
+
+      // What the reader sees in the From line, so nobody has to guess.
+      var seeLine = MR.h('p', { class: 'dr-body', id: 'c-sees', 'aria-live': 'polite' });
+      var seeNote = MR.h('p', { class: 'dr-hint', id: 'c-sees-note' });
+      form.appendChild(MR.h('div', { class: 'dr-form-group' }, seeLine, seeNote));
+      function showSender() {
+        var r = recipientsSee();
+        seeLine.textContent = 'Recipients will see: ' + r.name + ' <' + r.address + '>';
+        seeNote.textContent = '';
+        if (r.own) {
+          seeNote.appendChild(document.createTextNode('This is your own address.'));
+        } else {
+          seeNote.appendChild(document.createTextNode(
+            (r.sub ? 'This address is on a subdomain ABTA sets up for you.' : 'This is the shared ABTA address.') + ' Every email sent from it carries a line at the bottom saying it was sent through AMI Mailroom. '));
+          seeNote.appendChild(MR.h('a', { href: 'domain.html', text: 'Use your own address' }));
+          seeNote.appendChild(document.createTextNode('.'));
+        }
+      }
+      showSender();
 
       // Only an address the account has confirmed, so replies cannot be sent
       // to somebody else's inbox. New ones are added on the account page.
@@ -234,6 +317,20 @@
             MR.h('span', { class: 'dr-choice__hint', text: 'Otherwise the header is a rule in your accent colour.' }))));
         form.appendChild(MR.h('div', { class: 'dr-form-group' },
           MR.h('label', { class: 'dr-label', for: 'c-header-colour', text: 'Strip colour' }), headerHex));
+
+        var topName = MR.h('input', {
+          class: 'dr-input dr-input--w', id: 'c-header-text', type: 'text', maxlength: '80',
+          value: (campaign.style && campaign.style.header_text) || '', placeholder: account.name || ''
+        });
+        topName.addEventListener('input', function () {
+          if (!campaign.style || typeof campaign.style !== 'object') campaign.style = {};
+          if (topName.value.trim()) campaign.style.header_text = topName.value; else delete campaign.style.header_text;
+          refresh();
+        });
+        form.appendChild(MR.h('div', { class: 'dr-form-group' },
+          MR.h('label', { class: 'dr-label', for: 'c-header-text', text: 'Name at the top' }),
+          MR.h('span', { class: 'dr-hint', text: 'Shown above the email when there is no logo. Leave it empty to use your account name.' }),
+          topName));
 
         var browserOn = MR.h('input', {
           class: 'dr-choice__input', id: 'c-browser', type: 'checkbox',
@@ -307,7 +404,7 @@
 
       form.appendChild(MR.h('div', { class: 'dr-button-group' },
         MR.h('button', { class: 'dr-button dr-button--secondary', type: 'button', text: 'Save draft', onclick: function () { save('draft', true); } }),
-        MR.h('button', { class: 'dr-button dr-button--secondary', type: 'button', text: 'Send a test to your team', onclick: testSend }),
+        MR.h('button', { class: 'dr-button dr-button--secondary', type: 'button', text: 'Send a test to me', onclick: testSend }),
         MR.h('button', { class: 'dr-button dr-button--secondary', type: 'button', text: 'Share a preview link', onclick: shareLink }),
         MR.h('button', { class: 'dr-button', type: 'submit', text: 'Send campaign' })));
 
@@ -327,7 +424,7 @@
         onSaveBlock: function (blocks, done) { saveBlock(blocks, done); }
       });
       preview = MR.preview(previewBox, function () { return campaign; },
-        function () { return account; }, function () { return brand; });
+        function () { return account; }, brandForPreview);
 
       function refresh() { if (preview) preview.refresh(); }
 
@@ -409,7 +506,7 @@
       studio = MR.studio.mount({
         campaign: campaign,
         getAccount: function () { return account; },
-        getBrand: function () { return brand; },
+        getBrand: brandForPreview,
         saved: savedBlocks,
         images: MR.cfg.demo ? null : function (onPick) { MR.pickImage(account.id, onPick); },
         onSaveBlock: function (blocks, done) { saveBlock(blocks, done); },
@@ -540,6 +637,10 @@
         errors.push({ id: 'c-reply', message: 'Enter a reply-to address' });
       }
       if (forSend && !campaign.list_id) errors.push({ id: 'c-list', message: 'Choose a list to send to' });
+      if (forSend && !MR.hasAddress(account)) {
+        errors.push({ id: document.getElementById('c-address') ? 'c-address' : 'c-from',
+          message: 'Add your postal address. Every marketing email has to carry one' });
+      }
       var hasContent = campaign.body_blocks.some(function (b) {
         return (b.text && b.text.trim()) || (b.left && b.left.trim()) ||
                (b.right && b.right.trim()) || (b.url && b.url.trim()) ||
@@ -548,8 +649,10 @@
       if (!hasContent) errors.push({ id: 'c-subject', message: 'Add some content before sending' });
       campaign.body_blocks.forEach(function (b, i) {
         var needsImage = b.type === 'image' || b.type === 'imagetext';
-        if (needsImage && !String(b.alt || '').trim()) {
-          errors.push({ id: 'b' + i + '-alt', path: String(i), message: 'Describe image ' + (i + 1) + ', or readers who block images see nothing' });
+        // A description, or the tick that says the picture is only decoration.
+        var told = String(b.alt || '').trim() !== '' || b.decorative === true;
+        if (needsImage && !told) {
+          errors.push({ id: 'b' + i + '-alt', path: String(i), message: 'Describe image ' + (i + 1) + ', or tick that it is only decoration' });
         }
         if (needsImage && !String(b.url || '').trim()) {
           errors.push({ id: 'b' + i + '-url', path: String(i), message: 'Choose or upload image ' + (i + 1) });
@@ -577,8 +680,8 @@
           if (!String(b.name || '').trim()) {
             errors.push({ id: 'b' + i + '-name', path: String(i), message: 'Give product ' + (i + 1) + ' a name' });
           }
-          if (String(b.url || '').trim() && !String(b.alt || '').trim()) {
-            errors.push({ id: 'b' + i + '-alt', path: String(i), message: 'Describe the image of product ' + (i + 1) });
+          if (String(b.url || '').trim() && !told) {
+            errors.push({ id: 'b' + i + '-alt', path: String(i), message: 'Describe the image of product ' + (i + 1) + ', or tick that it is only decoration' });
           }
         }
         if (b.type === 'navigation') {
@@ -758,7 +861,7 @@
       wrap.appendChild(MR.h('h2', { text: 'What goes out' }));
       wrap.appendChild(previewBox);
       MR.preview(previewBox, function () { return campaign; },
-        function () { return account; }, function () { return brand; });
+        function () { return account; }, brandForPreview);
 
       wrap.appendChild(MR.h('div', { class: 'dr-button-group' },
         MR.h('button', {

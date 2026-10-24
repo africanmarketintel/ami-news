@@ -88,8 +88,8 @@
       MR.h('span', { class: 'dr-hint', text: 'PNG, JPEG, GIF or WebP, up to 2MB. Aim for under 200KB.' }),
       fileInput));
     dialog.appendChild(MR.h('div', { class: 'dr-form-group' },
-      MR.h('label', { class: 'dr-label', for: 'mr-image-alt', text: 'Describe the image' }),
-      MR.h('span', { class: 'dr-hint', text: 'What a reader who cannot see it would need to know. Required before it can be used.' }),
+      MR.h('label', { class: 'dr-label', for: 'mr-image-alt', text: 'Default description (optional)' }),
+      MR.h('span', { class: 'dr-hint', text: 'Filled in each time you use this image, and you can change it there. Leave it empty if the image is only decoration.' }),
       altInput));
     dialog.appendChild(MR.h('div', { class: 'dr-button-group' }, uploadBtn,
       MR.h('button', {
@@ -130,14 +130,13 @@
           onclick: function () { onPick(img); close(); }
         },
           MR.h('img', { src: img.url, alt: img.alt || '', loading: 'lazy' }),
-          MR.h('span', { class: 'dr-small', text: img.alt || 'No description' })));
+          MR.h('span', { class: 'dr-small', text: img.alt || 'No default description' })));
       });
     }
 
     function upload() {
       var file = fileInput.files && fileInput.files[0];
       var problem = MR.checkImageFile(file);
-      if (!problem && !altInput.value.trim()) problem = 'Describe the image before uploading it';
       if (problem) { status.textContent = problem; return; }
       if (MR.cfg.demo) { status.textContent = 'Preview only: nothing is uploaded.'; return; }
       uploadBtn.disabled = true;

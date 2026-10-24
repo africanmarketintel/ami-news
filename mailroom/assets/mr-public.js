@@ -434,7 +434,7 @@
       class: 'mr-shared__frame', title: 'The campaign', loading: 'lazy'
     });
     var html = MR.renderEmail
-      ? MR.renderEmail(campaign, account, { brand: brand })
+      ? MR.renderEmail(campaign, account, { brand: brand, noPlaceholders: true })
       : '<p>The preview could not be built.</p>';
     frame.setAttribute('sandbox', 'allow-popups allow-popups-to-escape-sandbox');
     frame.srcdoc = html;

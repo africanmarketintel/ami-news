@@ -254,9 +254,9 @@
 
     if (block.type === 'image' || block.type === 'imagetext') {
       wrap.appendChild(imageField(block, id, api));
-      wrap.appendChild(field(id + '-alt', 'Description of the image', 'text', block.alt,
-        function (v) { block.alt = v; api.changed(); },
-        'Required. Many readers block images, and some use a screen reader.'));
+      wrap.appendChild(altGroup(block, id, api, {
+        decorative: 'This picture is only decoration. Screen readers skip it.'
+      }));
       if (block.type === 'imagetext') {
         wrap.appendChild(textArea(id + '-text', 'Text beside it', block.text, 4,
           function (v) { block.text = v; api.changed(); }, LINK_HINT));
@@ -279,9 +279,10 @@
         'The web address of the video. Email cannot play video, so readers see a picture that opens it.'));
       wrap.appendChild(imageField(block, id, api, 'thumb', 'Thumbnail address',
         'Leave this empty for a YouTube link and its own thumbnail is used. A thumbnail with a play symbol on it works best.'));
-      wrap.appendChild(field(id + '-alt', 'Description of the thumbnail', 'text', block.alt,
-        function (v) { block.alt = v; api.changed(); },
-        'Required. Many readers block images, and some use a screen reader.'));
+      wrap.appendChild(altGroup(block, id, api, {
+        label: 'Description of the thumbnail',
+        hint: 'What the thumbnail shows, or the name of the video. The thumbnail is a link, so this is what a screen reader says the link is.'
+      }));
       wrap.appendChild(field(id + '-label', 'Link text under the thumbnail', 'text', block.label,
         function (v) { block.label = v; api.changed(); }));
       wrap.appendChild(alignField(id, block, api));
@@ -291,9 +292,10 @@
     if (block.type === 'logo') {
       wrap.appendChild(imageField(block, id, api, 'url', 'Logo address',
         'Leave this empty to use the logo saved in your brand settings.'));
-      wrap.appendChild(field(id + '-alt', 'Description of the logo', 'text', block.alt,
-        function (v) { block.alt = v; api.changed(); },
-        'Leave this empty to use the description saved in your brand settings.'));
+      wrap.appendChild(altGroup(block, id, api, {
+        label: 'Description of the logo',
+        hint: 'What the logo says, usually your organisation name. Leave this empty to use the description saved in your brand settings.'
+      }));
       wrap.appendChild(field(id + '-link', 'Link, if the logo should be one', 'url', block.link,
         function (v) { block.link = v; api.changed(); }));
       wrap.appendChild(field(id + '-width', 'Width in pixels, from 40 to 552', 'number', block.width,
@@ -311,9 +313,10 @@
 
     if (block.type === 'product') {
       wrap.appendChild(imageField(block, id, api, 'url', 'Product image address'));
-      wrap.appendChild(field(id + '-alt', 'Description of the image', 'text', block.alt,
-        function (v) { block.alt = v; api.changed(); },
-        'Required when there is an image.'));
+      wrap.appendChild(altGroup(block, id, api, {
+        hint: ALT_HINT + ' Needed when there is an image.',
+        decorative: 'The name beside it says everything. Screen readers skip the picture.'
+      }));
       wrap.appendChild(field(id + '-name', 'Name', 'text', block.name, function (v) { block.name = v; api.changed(); }));
       wrap.appendChild(field(id + '-price', 'Price', 'text', block.price, function (v) { block.price = v; api.changed(); },
         'Written as you want it shown, with the currency.'));
@@ -476,6 +479,40 @@
       return MR.h('div', { class: 'dr-form-group' },
         MR.h('label', { class: 'dr-label', for: fid, text: labelText }),
         hint ? MR.h('span', { class: 'dr-hint', text: hint }) : null, area);
+    }
+
+    /* The description of a picture, with a tick for a picture that is only
+       decoration. The description belongs to this use of the picture, not to
+       the file: one photo can inform in one email and decorate in another, so
+       it is asked for here and not when the file is uploaded. A decorative
+       picture is sent with an empty description, which tells a screen reader
+       to skip it. Keep it short: 125 characters is about what is read out well. */
+    var ALT_HINT = 'One short sentence on what the picture shows. If it contains words, include them. There is no need to start with \u201cimage of\u201d.';
+    function altGroup(block, id, api, o) {
+      o = o || {};
+      var input = MR.h('input', { class: 'dr-input', id: id + '-alt', type: 'text', value: block.alt || '' });
+      var hint = MR.h('span', { class: 'dr-hint', id: id + '-alt-hint', text: o.hint || ALT_HINT });
+      var length = MR.h('span', { class: 'dr-hint', id: id + '-alt-length', role: 'status' });
+      input.setAttribute('aria-describedby', id + '-alt-hint ' + id + '-alt-length');
+      function measure() {
+        var n = input.value.length;
+        length.textContent = n > 125 ? 'That is ' + n + ' characters. Under 125 is easier to listen to.' : '';
+      }
+      input.addEventListener('input', function () { block.alt = input.value; measure(); api.changed(); });
+      var out = document.createDocumentFragment();
+      out.appendChild(MR.h('div', { class: 'dr-form-group' },
+        MR.h('label', { class: 'dr-label', for: id + '-alt', text: o.label || 'Description of the image' }),
+        hint, input, length));
+      if (o.decorative) {
+        input.disabled = !!block.decorative;
+        out.appendChild(checkbox(id + '-decor', o.decorative, !!block.decorative, function (on) {
+          if (on) block.decorative = true; else delete block.decorative;
+          input.disabled = on;
+          api.changed();
+        }));
+      }
+      measure();
+      return out;
     }
 
     function checkbox(fid, labelText, on, onChange) {
@@ -801,6 +838,27 @@
     try { return new TextEncoder().encode(str).length; } catch (e) { return str.length; }
   }
 
+  // Pictures with neither a description nor the tick that says they are
+  // only decoration. A picture in an HTML block counts when it has no alt
+  // attribute at all: writing alt="" there is the same decision.
+  function undescribed(blocks) {
+    var n = 0;
+    (function walk(list) {
+      (Array.isArray(list) ? list : []).forEach(function (b) {
+        if (!b || typeof b !== 'object') return;
+        var told = String(b.alt || '').trim() !== '' || b.decorative === true;
+        var url = String(b.url || '').trim() !== '';
+        if ((b.type === 'image' || b.type === 'imagetext') && !told) n++;
+        if (b.type === 'product' && url && !told) n++;
+        if (b.type === 'video' && (url || String(b.thumb || '').trim()) && !String(b.alt || '').trim()) n++;
+        if (b.type === 'logo' && url && !String(b.alt || '').trim()) n++;
+        if (b.type === 'html') n += (String(b.html || '').match(/<img\b(?![^>]*\balt\s*=)[^>]*>/gi) || []).length;
+        if (Array.isArray(b.blocks)) walk(b.blocks);
+      });
+    })(blocks);
+    return n;
+  }
+
   function linklessButtons(blocks) {
     var n = 0;
     (function walk(list) {
@@ -817,17 +875,15 @@
     var html = MR.renderEmail(campaign, account, { brand: brand });
     var kb = Math.round(bytes(html) / 1024 * 10) / 10;
     var doc = new DOMParser().parseFromString(html, 'text/html');
-    var noAlt = Array.prototype.filter.call(doc.querySelectorAll('img'), function (i) {
-      return i.getAttribute('src') && !String(i.getAttribute('alt') || '').trim();
-    }).length;
+    var noAlt = undescribed(campaign.body_blocks);
     var buttons = linklessButtons(campaign.body_blocks);
     var out = [];
     out.push(kb > GMAIL_CLIP_KB * 0.9
       ? { ok: false, text: 'The email is about ' + kb + ' KB before link tracking is added. Gmail cuts off the end of a message above ' + GMAIL_CLIP_KB + ' KB and hides it behind \u201cView entire message\u201d. Remove blocks or repeated sections.' }
       : { ok: true, text: 'Size: about ' + kb + ' KB, under the ' + GMAIL_CLIP_KB + ' KB where Gmail starts cutting messages off.' });
     out.push(noAlt
-      ? { ok: false, text: (noAlt === 1 ? '1 image has' : noAlt + ' images have') + ' no description. Add one: it is read out by a screen reader and shown when images are blocked.' }
-      : { ok: true, text: 'Every image has a description.' });
+      ? { ok: false, text: (noAlt === 1 ? '1 image has' : noAlt + ' images have') + ' no description. Add one, which a screen reader reads out and which shows when images are blocked. If a picture adds nothing for someone who cannot see it, tick that it is only decoration.' }
+      : { ok: true, text: 'Every image has a description or is marked as decoration.' });
     out.push(buttons
       ? { ok: false, text: (buttons === 1 ? '1 button has' : buttons + ' buttons have') + ' no link, so a reader who presses it goes nowhere.' }
       : { ok: true, text: 'Every button has a link.' });
@@ -842,7 +898,7 @@
       var alt = m ? m[1].trim() : '';
       var box = 'display:block;padding:12px;border:1px dashed #8a8d8f;background:#f3f2f1;color:#3b3f42;font:14px/1.4 Arial,sans-serif;';
       return alt ? '<span style="' + box + '">' + alt + '</span>'
-        : '<span style="' + box + 'font-style:italic">No description, so nothing shows here</span>';
+        : '<span style="' + box + 'font-style:italic">No description: nothing shows here</span>';
     });
   }
 
@@ -923,7 +979,7 @@
         phone: 'At 390px, the width of a common phone. Columns stack here.',
         outlook: 'An approximation of Outlook on Windows: square button, no rounded corners, fallback font, and columns that stay side by side. Outlook cannot be simulated exactly, so send a test before a real campaign.',
         dark: 'An approximation of dark mode. Mail apps recolour differently, so check a test message on your own phone. A colour panel keeps its own colours, which is usually what you want.',
-        images: 'How it looks when a mail app blocks images, which many do until the reader allows them. Each picture is replaced by its description. A dashed box that says there is no description is an image to fix.',
+        images: 'How it looks when a mail app blocks images, which many do until the reader allows them. Each picture is replaced by its description. A dashed box that says there is no description is fine for a picture that is only decoration, and a gap for anything else.',
         text: ''
       }[view];
     }
