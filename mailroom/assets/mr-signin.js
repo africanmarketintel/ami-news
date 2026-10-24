@@ -138,9 +138,22 @@
         MR.auth.signIn(email, passField.value, keep).then(function () {
           location.href = next;
         }).catch(function (err) {
-          var msg = err && err.status === 429
-            ? 'You have tried to sign in too many times. Wait a few minutes and try again.'
-            : 'Enter a correct email address and password, or email me a code instead.';
+          // Say what actually went wrong. Supabase answers a wrong password,
+          // an account that has no password yet (made with an email code) and
+          // an unknown address with the same reply, so those share a message
+          // that names all three. A missing status means the request never
+          // reached Supabase, which points at the site's connection settings.
+          var msg;
+          if (err && err.status === 429) {
+            msg = 'You have tried to sign in too many times. Wait a few minutes and try again.';
+          } else if (err && err.code === 'email_not_confirmed') {
+            msg = 'Your email address has not been confirmed yet. Choose Email me a code instead to confirm it.';
+          } else if (!err || !err.status) {
+            msg = 'We could not reach the sign-in service. Check your connection and try again. If it keeps happening, email ami@abta.africa.';
+          } else {
+            msg = 'The email address or password is not right, or this account has no password yet. Email me a code instead, or choose Forgotten your password? to set one.';
+          }
+          console.error('Sign in failed:', err && err.status, err && err.code, err && err.message);
           MR.errors.show(form, [{ id: 'si-password', message: msg }]);
         });
         return;
