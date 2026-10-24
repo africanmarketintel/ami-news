@@ -12,6 +12,7 @@
 <script src="../config.js"></script>
 <script src="../nav.js"></script>
 <script src="assets/mr-core.js"></script>
+<script src="assets/mr-contacts.js"></script>
 <script src="assets/mr-sample.js"></script>
 <script src="assets/mr-account.js"></script>
 </head>
@@ -38,20 +39,21 @@
 
 <div class="dr-width dr-narrow">
   <h1>Add your subscribers</h1>
-  <p class="dr-lead">Upload a CSV file with a column headed email, or type the addresses in. Name, organisation and country are optional in a file.</p>
+  <p class="dr-lead">Upload a CSV, TXT or Excel file, or paste the addresses in. Name, organisation and country are optional.</p>
   <div class="dr-banner dr-banner--important">
     <p class="dr-banner__title">What happens to your file</p>
-    <div class="dr-banner__content"><p>Every address is checked against the platform suppression list. Anyone who has unsubscribed or complained before is skipped, whichever sender they left.</p></div>
+    <div class="dr-banner__content"><p>Every address is checked against the blocked addresses. Hard bounces, complaints and anyone who asked to stop all AMI Mailroom email are skipped. Someone who unsubscribed from your own list stays unsubscribed.</p></div>
   </div>
   <form id="mr-import-form" novalidate>
     <div class="dr-form-group">
-      <label class="dr-label" for="i-file">CSV file</label>
-      <input class="dr-file-upload" id="i-file" type="file" accept=".csv,text/csv">
+      <label class="dr-label" for="i-file">File</label>
+      <span class="dr-hint">CSV, TXT or Excel (.xlsx). A first row headed email brings in name, organisation and country columns too.</span>
+      <input class="dr-file-upload" id="i-file" type="file" accept=".csv,.tsv,.txt,.xlsx,.xls,text/csv,text/plain,text/tab-separated-values,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
     </div>
     <div id="mr-import-preview"></div>
     <div class="dr-form-group">
       <label class="dr-label" for="i-paste">Or type or paste email addresses</label>
-      <span class="dr-hint">One per line, or separated by commas. A name in front also works, as in Ada Obi &lt;ada@example.com&gt;. You can use this as well as a file.</span>
+      <span class="dr-hint">One per line, or separated by commas. A name in front also works, as in Ada Obi &lt;ada@example.com&gt;. You can paste straight from a spreadsheet: if the first row is headed email, the name, organisation and country columns are read too. You can use this as well as a file.</span>
       <textarea class="dr-textarea" id="i-paste" rows="5" spellcheck="false" autocomplete="off"></textarea>
       <p class="dr-small" id="mr-paste-count" role="status"></p>
     </div>
