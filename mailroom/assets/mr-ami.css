@@ -1,0 +1,181 @@
+/* AMI News look for the Mailroom home page: cream paper, ink, gold, serif headlines.
+   Colours and fonts are the ones the AMI news pages already use. */
+.mr-ami {
+  --ami-cream: #faf7f0; --ami-cream-dark: #f0ead9; --ami-rule: #d4c4a0;
+  --ami-ink: #1a1208; --ami-ink-mid: #3d2b1f; --ami-ink-soft: #6b5344;
+  --ami-gold: #c9a84c; --ami-gold-light: #f9c53d; --ami-gold-dark: #7a5f1a;
+  --ami-green: #1e6b3c; --ami-dark: #0a1a10;
+  --ami-serif: "Source Serif 4", Georgia, serif;
+  background: var(--ami-cream); color: var(--ami-ink);
+}
+.mr-ami h1, .mr-ami h2, .mr-ami h3 { font-family: var(--ami-serif); color: var(--ami-ink); letter-spacing: -.01em; }
+
+/* hero */
+.mr-ami .dr-hero { background: var(--ami-cream-dark); color: var(--ami-ink); border-bottom: 1px solid var(--ami-rule); }
+.mr-ami .dr-hero::before { display: none; }
+.mr-ami .dr-hero h1 { color: var(--ami-ink); font-size: 3.25rem; font-weight: 600; line-height: 1.08; max-width: 18ch; text-wrap: balance; }
+.mr-ami .dr-hero__sub { color: var(--ami-ink-mid); font-size: 1.25rem; line-height: 1.5; }
+.mr-ami .mr-hero__eyebrow { color: var(--ami-gold-dark); font-size: .8rem; letter-spacing: .14em; }
+.mr-ami .mr-hero__note { color: var(--ami-ink-soft); font-size: .95rem; }
+.mr-ami .dr-trust { color: var(--ami-ink-mid); font-size: .95rem; }
+.mr-ami .dr-trust svg { color: var(--ami-green); }
+.mr-ami .dr-button, .mr-ami .dr-button--start {
+  border-radius: 999px; font-size: .8rem; font-weight: 600; letter-spacing: .09em; text-transform: uppercase;
+  padding: .95rem 1.6rem; box-shadow: none; border: 1.5px solid transparent;
+}
+.mr-ami .dr-button:not(.dr-button--secondary) { background: var(--ami-gold); color: var(--ami-ink); }
+.mr-ami .dr-button:not(.dr-button--secondary):hover { background: var(--ami-gold-light); color: var(--ami-ink); }
+.mr-ami .dr-button--secondary { background: transparent; color: var(--ami-ink); border-color: var(--ami-ink); }
+.mr-ami .dr-button--secondary:hover { background: var(--ami-ink); color: var(--ami-cream); }
+.mr-ami .mr-hero__stack img { box-shadow: 0 18px 36px rgba(26, 18, 8, .22); border-radius: 12px; }
+.mr-ami .mr-hero__stack figcaption { color: var(--ami-ink-soft); font-size: .85rem; }
+
+/* sections */
+.mr-ami .mr-home--layouts { background: var(--ami-cream); border-bottom: 1px solid var(--ami-rule); }
+.mr-ami .mr-home h2 { font-size: 2rem; font-weight: 600; }
+.mr-ami .mr-home__lead { color: var(--ami-ink-mid); }
+.mr-ami .mr-home__row img { border-radius: 12px; }
+.mr-ami .mr-home__row span { font-size: .8rem; letter-spacing: .09em; text-transform: uppercase; font-weight: 600; }
+.mr-ami .mr-home__steps li { background: #fff; border: 1px solid var(--ami-rule); border-radius: 4px; }
+.mr-ami .mr-home__n { background: var(--ami-gold); color: var(--ami-ink); font-family: var(--ami-serif); font-size: 1.1rem; }
+.mr-ami .mr-home__features > div { background: #fff; border: 1px solid var(--ami-rule); border-radius: 4px; }
+.mr-ami .mr-home__features h3, .mr-ami .mr-home__steps h3 { font-size: 1.15rem; }
+.mr-ami .dr-link { color: var(--ami-green); }
+
+/* closing band: the dark of the AMI ticker */
+.mr-ami .mr-cta { background: var(--ami-dark); border-top: 3px solid var(--ami-gold); }
+.mr-ami .mr-cta h2 { color: #ede5d5; font-weight: 600; }
+.mr-ami .mr-cta p { color: #cfc6b3; }
+
+/* ---------- animated demo (CSS only, 12 second loop) ---------- */
+.ma-demo { position: relative; width: 100%; max-width: 540px; justify-self: center; background: #fff; border-radius: 14px; box-shadow: 0 24px 50px rgba(26, 18, 8, .22); overflow: hidden; border: 1px solid var(--ami-rule); }
+.ma-demo__bar { display: flex; align-items: center; gap: 6px; padding: .6rem .9rem; background: #f3efe4; border-bottom: 1px solid var(--ami-rule); font-size: .8rem; color: var(--ami-ink-soft); }
+.ma-demo__bar i { width: 10px; height: 10px; border-radius: 50%; background: #d4c4a0; }
+.ma-demo__bar span { margin-left: .5rem; font-weight: 600; }
+.ma-demo__steps { display: flex; gap: .4rem; list-style: none; margin: 0; padding: .7rem .9rem 0; font-size: .72rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+.ma-demo__steps li { flex: 1; text-align: center; padding: .4rem .2rem; border-radius: 999px; background: #f3efe4; color: var(--ami-ink-soft); animation: ma-pill 12s infinite; }
+.ma-demo__steps .s2 { animation-name: ma-pill2; } .ma-demo__steps .s3 { animation-name: ma-pill3; }
+@keyframes ma-pill  { 0%, 30% { background: var(--ami-gold); color: var(--ami-ink); } 34%, 100% { background: #f3efe4; color: var(--ami-ink-soft); } }
+@keyframes ma-pill2 { 0%, 32% { background: #f3efe4; color: var(--ami-ink-soft); } 36%, 62% { background: var(--ami-gold); color: var(--ami-ink); } 66%, 100% { background: #f3efe4; color: var(--ami-ink-soft); } }
+@keyframes ma-pill3 { 0%, 64% { background: #f3efe4; color: var(--ami-ink-soft); } 69%, 96% { background: var(--ami-gold); color: var(--ami-ink); } 100% { background: #f3efe4; color: var(--ami-ink-soft); } }
+.ma-demo__stage { position: relative; height: 330px; margin: .8rem .9rem .9rem; border-radius: 10px; background: #faf7f0; overflow: hidden; }
+.ma-scene { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: .6rem; padding: .8rem; opacity: 0; }
+.ma-scene--1 { animation: ma-s1 12s infinite; } .ma-scene--2 { animation: ma-s2 12s infinite; } .ma-scene--3 { animation: ma-s3 12s infinite; }
+@keyframes ma-s1 { 0%, 28% { opacity: 1; } 33%, 100% { opacity: 0; } }
+@keyframes ma-s2 { 0%, 31% { opacity: 0; } 36%, 61% { opacity: 1; } 66%, 100% { opacity: 0; } }
+@keyframes ma-s3 { 0%, 64% { opacity: 0; } 69%, 95% { opacity: 1; } 100% { opacity: 0; } }
+.ma-scene--1 img { width: 31%; height: auto; border-radius: 8px; box-shadow: 0 6px 14px rgba(26, 18, 8, .18); }
+.ma-scene--1 img.pick { animation: ma-pick 12s infinite; }
+@keyframes ma-pick { 0%, 12% { transform: none; box-shadow: 0 6px 14px rgba(26, 18, 8, .18); } 17%, 30% { transform: scale(1.07); box-shadow: 0 0 0 3px var(--ami-gold), 0 12px 22px rgba(26, 18, 8, .3); } 100% { transform: none; } }
+.ma-cursor { position: absolute; left: 12%; top: 78%; animation: ma-move 12s infinite; }
+@keyframes ma-move { 0% { transform: translate(0, 0); } 15% { transform: translate(105px, -62px); } 28%, 100% { transform: translate(105px, -62px); } }
+.ma-mail { width: 62%; background: #fff; border-radius: 8px; box-shadow: 0 8px 20px rgba(26, 18, 8, .16); padding: 1rem 1rem 1.1rem; border-top: 8px solid #c7bdf0; }
+.ma-mail small { display: block; color: var(--ami-ink-soft); font-size: .68rem; margin-bottom: .5rem; }
+.ma-mail h4 { margin: 0 0 .7rem; font-family: var(--ami-serif); font-size: 1.15rem; line-height: 1.2; min-height: 2.8rem; }
+.ma-type { display: inline-block; overflow: hidden; white-space: nowrap; max-width: 100%; vertical-align: bottom; border-right: 2px solid var(--ami-gold-dark); animation: ma-type 12s steps(30) infinite; width: 0; }
+@keyframes ma-type { 0%, 37% { width: 0; } 55%, 100% { width: 100%; } }
+.ma-mail .bar { height: 7px; border-radius: 4px; background: #e5dfd0; margin: 0 0 .4rem; } .ma-mail .bar.short { width: 60%; }
+.ma-mail b { display: inline-block; margin-top: .6rem; background: var(--ami-ink); color: #fff; font-size: .7rem; padding: .45rem .8rem; border-radius: 4px; font-weight: 600; }
+.ma-tools { display: flex; flex-direction: column; gap: .35rem; font-size: .72rem; font-weight: 600; }
+.ma-tools span { background: #fff; border: 1px solid var(--ami-rule); border-radius: 6px; padding: .35rem .7rem; text-align: center; }
+.ma-tools .sw { height: 22px; padding: 0; background: #c7bdf0; } .ma-tools .sw2 { background: #e87d62; } .ma-tools .sw3 { background: #f1d98a; }
+.ma-sent { background: #fff; border-radius: 12px; padding: 1.4rem 1.6rem; text-align: center; box-shadow: 0 10px 24px rgba(26, 18, 8, .16); display: grid; gap: .45rem; justify-items: center; }
+.ma-sent strong { font-family: var(--ami-serif); font-size: 1.2rem; } .ma-sent span { font-size: .85rem; color: var(--ami-ink-soft); }
+.ma-sent b { margin-top: .4rem; background: var(--ami-gold); border-radius: 999px; padding: .6rem 1.3rem; font-size: .72rem; letter-spacing: .09em; text-transform: uppercase; }
+@media (prefers-reduced-motion: reduce) {
+  .ma-demo *, .ma-demo *::before { animation: none !important; }
+  .ma-scene { opacity: 0; } .ma-scene--2 { opacity: 1; } .ma-type { width: 100%; border-right: 0; }
+  .ma-demo__steps .s2 { background: var(--ami-gold); color: var(--ami-ink); }
+}
+
+/* ---------- sections ---------- */
+.ma-facts { border-bottom: 1px solid var(--ami-rule); background: var(--ami-cream); }
+.ma-facts ul { display: grid; grid-template-columns: repeat(4, 1fr); list-style: none; margin: 0 auto; padding-block: 1.6rem; }
+.ma-facts li { padding: .2rem 1.2rem; border-left: 1px solid var(--ami-rule); display: grid; gap: .1rem; }
+.ma-facts li:first-child { border-left: 0; padding-left: 0; }
+.ma-facts strong { font-family: var(--ami-serif); font-size: 2.1rem; font-weight: 600; line-height: 1.1; }
+.ma-facts span { color: var(--ami-ink-soft); font-size: .95rem; }
+.ma-section { padding: 5rem 0; }
+.ma-section--tint { background: var(--ami-cream-dark); border-block: 1px solid var(--ami-rule); }
+.ma-h2 { font-family: var(--ami-serif); font-size: 2.4rem; font-weight: 600; line-height: 1.15; margin: 0 0 1rem; max-width: 20ch; }
+.ma-eyebrow { margin: 0 0 .6rem; font-size: .78rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--ami-gold-dark); }
+.ma-steps { list-style: none; margin: 2.5rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; }
+.ma-steps li { border-top: 3px solid var(--ami-gold); padding-top: 1rem; }
+.ma-steps__n { display: block; font-family: var(--ami-serif); font-size: 4.2rem; font-weight: 600; line-height: 1; color: var(--ami-gold); margin-bottom: .6rem; }
+.ma-steps h3 { margin: 0 0 .4rem; font-size: 1.3rem; } .ma-steps p { margin: 0; color: var(--ami-ink-mid); }
+.ma-split { display: grid; grid-template-columns: 1fr 1.05fr; gap: 4rem; align-items: center; }
+.ma-split--flip .ma-split__text { order: 2; }
+.ma-split__text p { color: var(--ami-ink-mid); font-size: 1.15rem; max-width: 44ch; }
+.ma-picker, .ma-forms__form, .ma-forms__code { background: #fff; border: 1px solid var(--ami-rule); border-radius: 12px; box-shadow: 0 18px 36px rgba(26, 18, 8, .14); }
+.ma-picker { padding: 1rem; max-width: 460px; margin-inline: auto; }
+.ma-picker__tabs { display: flex; gap: 1.2rem; font-size: .85rem; margin-bottom: .8rem; border-bottom: 1px solid var(--ami-rule); }
+.ma-picker__tabs b { border-bottom: 3px solid var(--ami-gold); padding-bottom: .4rem; } .ma-picker__tabs span { color: var(--ami-ink-soft); }
+.ma-picker__search { border: 1px solid var(--ami-rule); border-radius: 999px; padding: .5rem 1rem; font-size: .85rem; color: var(--ami-ink-soft); margin-bottom: .8rem; }
+.ma-picker__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; }
+.ma-picker__grid i { aspect-ratio: 1; border-radius: 8px; background: linear-gradient(135deg, var(--a), var(--b)); }
+.ma-picker p { margin: .8rem 0 0; font-size: .75rem !important; color: var(--ami-ink-soft) !important; }
+.ma-forms { position: relative; max-width: 460px; margin-inline: auto; padding: 0 0 6.2rem; }
+.ma-forms__form { padding: 1.4rem; display: grid; gap: .6rem; max-width: 290px; }
+.ma-forms__form strong { font-family: var(--ami-serif); font-size: 1.3rem; }
+.ma-forms__form span { border: 1px solid var(--ami-rule); border-radius: 6px; padding: .5rem .7rem; font-size: .85rem; color: var(--ami-ink-soft); }
+.ma-forms__form b { background: var(--ami-gold); border-radius: 999px; text-align: center; padding: .6rem; font-size: .72rem; letter-spacing: .09em; text-transform: uppercase; }
+.ma-forms__code { position: absolute; right: 0; bottom: 0; width: 66%; padding: 1rem; background: var(--ami-dark); border-color: var(--ami-dark); display: grid; gap: .45rem; }
+.ma-forms__code em { color: var(--ami-gold); font-style: normal; font-size: .75rem; font-weight: 600; }
+.ma-forms__code i { height: 7px; border-radius: 4px; background: #2e4a38; } .ma-forms__code i.m { width: 70%; } .ma-forms__code i.s { width: 40%; }
+.ma-four { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; margin-top: 2rem; }
+.ma-four > div { border-top: 3px solid var(--ami-gold); padding-top: 1rem; }
+.ma-four h3 { font-size: 1.2rem; margin: 0 0 .4rem; } .ma-four p { margin: 0; color: var(--ami-ink-mid); font-size: 1rem; }
+.ma-statement { padding: 6.5rem 0; text-align: center; background: var(--ami-cream); }
+.ma-statement h2 { font-size: clamp(2.6rem, 6vw, 4.6rem); font-weight: 600; line-height: 1.05; margin: 0 0 1.5rem; }
+.ma-statement p { max-width: 54ch; margin: 0 auto 1rem; color: var(--ami-ink-mid); font-size: 1.2rem; }
+.ma-quote { margin: 0 auto; max-width: 760px; text-align: center; border: 2px dashed var(--ami-rule); border-radius: 12px; padding: 2.5rem 2rem; }
+.ma-quote__tag { margin: 0 0 1rem; font-size: .75rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #b85c38; }
+.ma-quote blockquote { margin: 0 0 1rem; font-family: var(--ami-serif); font-size: 1.7rem; line-height: 1.35; font-weight: 500; }
+.ma-quote figcaption { color: var(--ami-ink-soft); }
+@media (max-width: 899px) {
+  .ma-facts ul { grid-template-columns: 1fr 1fr; gap: 1rem 0; } .ma-facts li:nth-child(3) { border-left: 0; padding-left: 0; }
+  .ma-steps, .ma-four { grid-template-columns: 1fr; gap: 1.8rem; }
+  .ma-split { grid-template-columns: 1fr; gap: 2rem; } .ma-split--flip .ma-split__text { order: 0; }
+  .ma-section { padding: 3.5rem 0; } .ma-h2 { font-size: 1.9rem; } .ma-statement { padding: 4rem 0; }
+  .ma-demo__stage { height: 290px; }
+}
+.ma-picker__grid i { position: relative; overflow: hidden; display: block; }
+.ma-picker__grid i img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+/* ==========================================================================
+   The rest of the Mailroom pages, in the same AMI look as the home page.
+   Most of it is done by changing the shared colours; the page, rules and grey
+   text pick them up. Buttons take the gold pill, headings take the serif.
+   ========================================================================== */
+.mr-app {
+  --page: #faf7f0; --page-alt: #f0ead9;
+  --border-light: #d4c4a0; --border: #b9a77c;
+  --secondary: #6b5344;
+  --ami-cream: #faf7f0; --ami-cream-dark: #f0ead9; --ami-rule: #d4c4a0;
+  --ami-ink: #1a1208; --ami-ink-mid: #3d2b1f; --ami-ink-soft: #6b5344;
+  --ami-gold: #c9a84c; --ami-gold-light: #f9c53d; --ami-green: #1e6b3c;
+  --ami-serif: "Source Serif 4", Georgia, serif;
+}
+.mr-app h1, .mr-app h2, .mr-app h3, .mr-app .dr-h, .mr-app .dr-table caption { font-family: var(--ami-serif); font-weight: 600; letter-spacing: -.005em; }
+.mr-app h1 { font-size: 2.4rem; line-height: 1.12; }
+.mr-app .dr-lead { color: var(--ami-ink-mid); }
+.mr-app .dr-button { font-size: .8rem; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; padding: .85rem 1.5rem; border-width: 1.5px; }
+.mr-app .dr-button--start { font-size: .85rem; padding: .95rem 1.7rem; }
+.mr-app .dr-button:not(.dr-button--secondary):not(.dr-button--warning) { background: var(--ami-gold); color: var(--ami-ink); }
+.mr-app .dr-button:not(.dr-button--secondary):not(.dr-button--warning):hover { background: var(--ami-gold-light); }
+.mr-app .dr-button--secondary { background: transparent; color: var(--ami-ink); border-color: var(--ami-ink); }
+.mr-app .dr-button--secondary:hover { background: var(--ami-ink); color: var(--ami-cream); }
+.mr-app .dr-button:focus-visible { background: var(--focus) !important; color: var(--focus-text) !important; }
+.mr-app .mr-aside, .mr-app .dr-card, .mr-app .mr-linkcard, .mr-app .mr-camps__row, .mr-app .dr-status-card, .mr-app .mr-steps, .mr-app .dr-price-box {
+  border-color: var(--ami-rule); border-radius: 6px; background: #fff; box-shadow: none;
+}
+.mr-app .mr-settings > .mr-aside { border-radius: 6px; box-shadow: none; }
+.mr-app .mr-subnav { background: var(--page-alt); }
+.mr-app .dr-footer { background: var(--page-alt); }
+.mr-app .dr-link, .mr-app main a:not(.dr-button):not(.mr-linkcard) { color: var(--ami-green); }
+.mr-app .mr-camps__name a, .mr-app .mr-linkcard, .mr-app .dr-tag { color: var(--ami-ink); }
+.mr-app .mr-camps__name a { text-decoration-color: var(--ami-rule); }
+.mr-app input[type="text"], .mr-app input[type="email"], .mr-app input[type="url"], .mr-app input[type="password"], .mr-app input[type="search"], .mr-app select, .mr-app textarea { background: #fff; }
+.mr-app .dr-tag { font-family: var(--font); font-weight: 600; letter-spacing: 0; }
+.mr-app main .mr-camps__name a { color: var(--ami-ink); }
+.mr-app main .mr-camps__name a:hover { color: var(--ami-green); }
