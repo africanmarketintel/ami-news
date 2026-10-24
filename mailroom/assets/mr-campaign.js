@@ -751,7 +751,7 @@
        A member picks a wall clock time; the account's timezone turns it into
        an instant. */
 
-    function tz() { return (account && account.timezone) || MR.TIMEZONE_FALLBACK; }
+    function tz() { return MR.displayZone(account && account.timezone); }
 
     function scheduleBox() {
       var box = MR.h('div', { class: 'mr-aside', id: 'mr-schedule' },

@@ -166,14 +166,14 @@
           MR.h('td', null, MR.h('a', { href: 'campaign.html?id=' + c.id, text: c.subject }),
             MR.h('br'), MR.h('span', { class: 'dr-small', text: acct.name || '' })),
           MR.h('td', { text: MR.dateTimeInZone(c.scheduled_for, acct.timezone || MR.TIMEZONE_FALLBACK) }),
-          MR.h('td', { text: MR.dateTimeInZone(c.scheduled_for, 'UTC') }),
+          MR.h('td', { text: MR.dateTimeInZone(c.scheduled_for, 'Europe/London') }),
           MR.h('td', null, MR.h('span', {
             class: 'dr-tag dr-tag--' + (stale || overdue ? 'red' : 'blue'),
             text: stale ? 'Dispatch stalled' : overdue ? 'Overdue' : 'Waiting'
           }))));
       });
       wrap.appendChild(section('Scheduled campaigns', queued.length
-        ? table(['Campaign', 'Due, sender’s time', 'Due, UTC', 'State'], qBody)
+        ? table(['Campaign', 'Due, sender’s time', 'Due, London time', 'State'], qBody)
         : MR.h('p', { class: 'dr-empty', text: 'Nothing scheduled.' })));
       wrap.appendChild(MR.h('p', { class: 'dr-small', text: 'The dispatcher runs every five minutes, so a campaign shows as overdue only if it is more than ten minutes late. Anything stuck here means pg_cron or the dispatcher secrets need looking at.' }));
 

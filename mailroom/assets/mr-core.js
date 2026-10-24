@@ -161,7 +161,16 @@
      Intl does the work, because a table of offsets goes stale every time a
      country changes its mind about daylight saving. */
 
-  MR.TIMEZONE_FALLBACK = 'Africa/Lagos';
+  MR.TIMEZONE_FALLBACK = 'Europe/London';
+
+  // ABTA works in London time, which is BST in summer and GMT in winter.
+  // A plain UTC zone (what some browsers report) is shown as London time
+  // too, so a member never sees "00:02 UTC" for 01:02 BST.
+  var UTC_NAMES = ['UTC', 'Etc/UTC', 'Etc/UCT', 'UCT', 'Etc/GMT', 'GMT', 'Etc/Zulu', 'Zulu'];
+  MR.displayZone = function (tz) {
+    if (!tz || UTC_NAMES.indexOf(tz) !== -1) return MR.TIMEZONE_FALLBACK;
+    return tz;
+  };
 
   function zoneParts(date, tz) {
     var parts = {};
@@ -190,6 +199,7 @@
   // change and give the offset for the wrong hour.
   MR.zonedToIso = function (dateStr, timeStr, tz) {
     if (!dateStr || !timeStr) return null;
+    tz = MR.displayZone(tz);
     if (!MR.knownZone(tz)) tz = MR.TIMEZONE_FALLBACK;
     var asUtc = new Date(dateStr + 'T' + timeStr + ':00Z');
     if (isNaN(asUtc)) return null;
@@ -201,6 +211,7 @@
   // The instant, back as the date and time boxes a member would recognise.
   MR.isoToZoned = function (iso, tz) {
     if (!iso) return { date: '', time: '' };
+    tz = MR.displayZone(tz);
     if (!MR.knownZone(tz)) tz = MR.TIMEZONE_FALLBACK;
     var d = new Date(iso);
     if (isNaN(d)) return { date: '', time: '' };
@@ -208,9 +219,10 @@
     return { date: p.year + '-' + p.month + '-' + p.day, time: p.hour + ':' + p.minute };
   };
 
-  // '1 October 2026 at 09:00 WAT'
+  // '1 October 2026 at 09:00 BST'
   MR.dateTimeInZone = function (iso, tz) {
     if (!iso) return '';
+    tz = MR.displayZone(tz);
     if (!MR.knownZone(tz)) tz = MR.TIMEZONE_FALLBACK;
     var d = new Date(iso);
     if (isNaN(d)) return String(iso);
@@ -240,7 +252,7 @@
     'America/Toronto', 'America/Sao_Paulo',
     'Asia/Dubai', 'Asia/Riyadh', 'Asia/Karachi', 'Asia/Kolkata',
     'Asia/Shanghai', 'Asia/Singapore', 'Asia/Tokyo',
-    'Australia/Sydney', 'UTC'
+    'Australia/Sydney'
   ];
   // What an automatic check found, in words a member can act on.
   MR.FLAG_TEXT = {
@@ -393,6 +405,26 @@
     });
     try { localStorage.removeItem(LEGACY); } catch (e) { /* ignore */ }
   }
+
+
+  // Plain words for a failed sign-in code request, with the cause where the
+  // service gives one. Used by the sign-up page and the sign-in page.
+  MR.codeError = function (err) {
+    var code = String((err && err.code) || '');
+    var msg = String((err && err.message) || '');
+    var status = err && err.status;
+    if (status === 429 || /rate_limit/.test(code))
+      return 'Too many codes have been requested. Wait a few minutes and try again.';
+    if (/signup_disabled|otp_disabled|email_provider_disabled/.test(code))
+      return 'New sign-ups by email are switched off on this service. Contact ABTA.';
+    if (/validation_failed|email_address_invalid/.test(code) || status === 422 && /email/i.test(msg))
+      return 'That email address was not accepted. Check it and try again.';
+    if (/error sending|smtp|unexpected_failure/i.test(code + ' ' + msg) || status >= 500)
+      return 'The email service could not send the code. This is a fault on our side, not yours. Try again in a few minutes.';
+    if (err && err.name === 'TypeError')
+      return 'The service could not be reached. Check your connection and try again.';
+    return 'The code could not be sent. Try again in a few minutes.';
+  };
 
   MR.auth = {
     session: function () {

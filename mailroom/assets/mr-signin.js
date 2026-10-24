@@ -167,8 +167,7 @@
           submit.textContent = 'Sign in';
           MR.announce('A code has been sent to ' + email);
         }).catch(function (err) {
-          var wait = err && (err.status === 429 || /rate_limit/.test(err.code || ''));
-          MR.errors.show(form, [{ id: 'si-email', message: wait ? 'Too many codes have been requested. Wait a few minutes and try again.' : 'We could not send a code to that address.' }]);
+          MR.errors.show(form, [{ id: 'si-email', message: MR.codeError(err) }]);
           console.error(err);
         });
         return;

@@ -36,6 +36,7 @@
   function browserZone() {
     try {
       var z = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      z = MR.displayZone(z);
       return MR.knownZone(z) ? z : MR.TIMEZONE_FALLBACK;
     } catch (e) { return MR.TIMEZONE_FALLBACK; }
   }
@@ -44,7 +45,7 @@
     var name = tz.replace(/_/g, ' ');
     try {
       var now = new Intl.DateTimeFormat('en-GB', {
-        timeZone: tz, hour: '2-digit', minute: '2-digit', hour12: false
+        timeZone: tz, hour: '2-digit', minute: '2-digit', hour12: false, timeZoneName: 'short'
       }).format(new Date());
       return name + ' (' + now + ' now)';
     } catch (e) { return name; }
@@ -110,7 +111,7 @@
       MR.h('p', { class: 'dr-small', text: 'When you schedule a campaign for 9am, this is the 9am it means.' }));
 
     var select = MR.h('select', { class: 'dr-select', id: 'mr-timezone-select' });
-    fillZones(select, account.timezone || MR.TIMEZONE_FALLBACK);
+    fillZones(select, MR.displayZone(account.timezone));
     var status = MR.h('span', { class: 'dr-small', id: 'mr-timezone-status' });
 
     box.appendChild(MR.h('div', { class: 'dr-form-group' },
@@ -445,8 +446,8 @@
         declared: form.querySelector('#m-declaration').checked
       };
       var errors = [];
-      if (!v.name) errors.push({ id: 'm-name', message: 'Enter your organisation name' });
-      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v.email)) errors.push({ id: 'm-email', message: 'Enter a work email address' });
+      if (!v.name) errors.push({ id: 'm-name', message: 'Enter your name or organisation name' });
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v.email)) errors.push({ id: 'm-email', message: 'Enter an email address' });
       if (!v.declared) errors.push({ id: 'm-declaration', message: 'You must confirm how your list was collected' });
       if (MR.errors.show(form, errors)) return;
 
@@ -496,7 +497,7 @@
       }).catch(fail);
 
       function fail(err) {
-        MR.errors.show(form, [{ id: 'm-email', message: 'That could not be sent. Please try again shortly.' }]);
+        MR.errors.show(form, [{ id: 'm-email', message: MR.codeError(err) }]);
         console.error(err);
       }
     });

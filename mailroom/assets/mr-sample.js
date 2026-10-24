@@ -18,7 +18,7 @@
 
   MR.sampleAccount = {
     id: 'sample', name: 'Sample Member Ltd', status: 'active', trust_level: 2,
-    sender_local: 'sample-member-4821', timezone: 'Africa/Lagos',
+    sender_local: 'sample-member-4821', timezone: 'Europe/London',
     postal_address: '12 Example Road, London, EC1A 1AA, United Kingdom',
     max_subscribers: 500, monthly_send_limit: 1000,
     trial_ends_at: previewFree ? null : days(9),
