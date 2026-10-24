@@ -407,6 +407,24 @@
   }
 
 
+  // Plain words for any failed request. The technical reply is written to the
+  // browser console for support and never shown to the member.
+  MR.friendlyError = function (err, fallback) {
+    try { console.error(err); } catch (e) { /* ignore */ }
+    var msg = String((err && err.message) || '');
+    var status = err && err.status;
+    if (err && err.name === 'TypeError' || /failed to fetch|networkerror|load failed/i.test(msg))
+      return 'The service could not be reached. Check your connection and try again.';
+    if (status === 401 || /jwt|session.*(expired|ended)/i.test(msg))
+      return 'Your session has ended. Sign in again, then try again.';
+    if (status === 403 || /row-level security|permission denied|not allowed/i.test(msg))
+      return 'Your account is not set up to do that yet. Sign out, sign in again and retry. If it still fails, contact ABTA.';
+    if (status === 429) return 'Too many requests. Wait a minute and try again.';
+    if (/duplicate key|already exists/i.test(msg)) return 'That already exists.';
+    if (status >= 500) return 'The service had a problem. Try again in a few minutes.';
+    return fallback || 'Something went wrong. Try again, and if it keeps happening contact ABTA.';
+  };
+
   // Plain words for a failed sign-in code request, with the cause where the
   // service gives one. Used by the sign-up page and the sign-in page.
   MR.codeError = function (err) {
@@ -428,9 +446,7 @@
       return 'The email service could not send the code. This is a fault on our side, not yours. Try again in a few minutes.';
     if (err && err.name === 'TypeError')
       return 'The service could not be reached. Check your connection and try again.';
-    // Unknown cause: say what the service said, so it can be reported.
-    var said = [status, code, msg].filter(Boolean).join(' – ').slice(0, 140);
-    return 'The code could not be sent. Try again in a few minutes.' + (said ? ' (Service reply: ' + said + ')' : '');
+    return 'The code could not be sent. Try again in a few minutes.';
   };
 
   MR.auth = {
@@ -548,7 +564,14 @@
         body: JSON.stringify({ email: email, token: token, type: 'email' })
       }).then(function (r) {
         return r.json().then(function (b) {
-          if (!r.ok) throw new Error(b.msg || b.error_description || 'That code was not accepted');
+          if (!r.ok) {
+            console.error('Code check failed:', r.status, b);
+            var ve = new Error(r.status === 429
+              ? 'Too many attempts. Wait a few minutes and try again.'
+              : 'That code was not accepted. Check it, or ask for a new one.');
+            ve.status = r.status;
+            throw ve;
+          }
           MR.auth.save(b, remember !== false);
           return b;
         });

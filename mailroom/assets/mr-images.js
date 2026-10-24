@@ -150,7 +150,7 @@
         close();
       }).catch(function (err) {
         uploadBtn.disabled = false;
-        status.textContent = err.message || 'The upload failed.';
+        status.textContent = MR.friendlyError(err, 'The upload failed. Try again.');
       });
     }
   };

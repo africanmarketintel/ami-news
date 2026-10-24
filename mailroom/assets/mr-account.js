@@ -506,16 +506,19 @@
               status.textContent = 'Checking…';
               MR.auth.verifyCode(v.email, code.value.trim())
                 .then(function () { panel.remove(); return finish(); })
-                .catch(function (err) { status.textContent = err.message; });
+                .catch(function (err) {
+                  status.textContent = err && err.stage === 'account'
+                    ? MR.friendlyError(err, 'Your email address is confirmed but the account could not be set up. Try again, and if it keeps happening contact ABTA.')
+                    : err.message;
+                });
             }
           }), status);
         form.parentNode.insertBefore(panel, form);
       }).catch(fail);
 
       function fail(err) {
-        var said = [err && err.status, err && err.message].filter(Boolean).join(' – ').slice(0, 140);
         MR.errors.show(form, [{ id: 'm-email', message: (err && err.stage === 'account')
-          ? 'Your address was confirmed but the account could not be created. Try again, and if it keeps failing tell ABTA.' + (said ? ' (Service reply: ' + said + ')' : '')
+          ? MR.friendlyError(err, 'Your email address is confirmed but the account could not be set up. Try again, and if it keeps happening contact ABTA.')
           : MR.codeError(err) }]);
         console.error(err);
       }
@@ -1297,8 +1300,8 @@
           progress.textContent = '';
           MR.errors.show(form, [{ id: 'i-file', message: err && err.done
             ? 'The import stopped after ' + MR.number(err.done) + ' of ' + MR.number(err.of) + ' addresses (' + MR.number(err.imported) +
-              ' added): ' + err.message + ' Run it again and the ones already added are skipped.'
-            : 'The import failed: ' + err.message }]);
+              ' added): ' + MR.friendlyError(err, 'Something went wrong.') + ' Run it again and the ones already added are skipped.'
+            : 'The import failed. ' + MR.friendlyError(err, 'Try again, and if it keeps happening contact ABTA.') }]);
           console.error(err);
         });
     });
