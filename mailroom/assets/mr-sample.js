@@ -46,12 +46,12 @@
     accent_colour: '#6b7280', button_colour: '#222222', button_text: '#ffffff',
     font_family: 'sans', footer_note: 'Registered in England and Wales, number 00000000.', footer_credit: '',
     social_links: [
-      { label: 'Facebook', url: 'https://example.com', icon: 'facebook', colour: 'clay' },
-      { label: 'Instagram', url: 'https://example.com', icon: 'instagram', colour: 'clay' },
-      { label: 'X', url: 'https://example.com', icon: 'x', colour: 'clay' },
-      { label: 'Pinterest', url: 'https://example.com', icon: 'pinterest', colour: 'clay' },
-      { label: 'Spotify', url: 'https://example.com', icon: 'spotify', colour: 'clay' },
-      { label: 'Patreon', url: 'https://example.com', icon: 'patreon', colour: 'clay' }
+      { label: 'Facebook', url: 'https://example.com', icon: 'facebook', colour: 'dark' },
+      { label: 'Instagram', url: 'https://example.com', icon: 'instagram', colour: 'dark' },
+      { label: 'X', url: 'https://example.com', icon: 'x', colour: 'dark' },
+      { label: 'Pinterest', url: 'https://example.com', icon: 'pinterest', colour: 'dark' },
+      { label: 'Spotify', url: 'https://example.com', icon: 'spotify', colour: 'dark' },
+      { label: 'Patreon', url: 'https://example.com', icon: 'patreon', colour: 'dark' }
     ]
   };
 

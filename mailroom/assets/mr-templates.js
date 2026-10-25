@@ -434,12 +434,12 @@
   // The previews show the footer as it looks once a member has ticked some
   // social icons in their brand settings.
   var PREVIEW_BRAND = { social_links: [
-    { label: 'Facebook', url: 'https://example.com', icon: 'facebook', colour: 'clay' },
-    { label: 'Instagram', url: 'https://example.com', icon: 'instagram', colour: 'clay' },
-    { label: 'X', url: 'https://example.com', icon: 'x', colour: 'clay' },
-    { label: 'Pinterest', url: 'https://example.com', icon: 'pinterest', colour: 'clay' },
-    { label: 'Spotify', url: 'https://example.com', icon: 'spotify', colour: 'clay' },
-    { label: 'Patreon', url: 'https://example.com', icon: 'patreon', colour: 'clay' }] };
+    { label: 'Facebook', url: 'https://example.com', icon: 'facebook', colour: 'dark' },
+    { label: 'Instagram', url: 'https://example.com', icon: 'instagram', colour: 'dark' },
+    { label: 'X', url: 'https://example.com', icon: 'x', colour: 'dark' },
+    { label: 'Pinterest', url: 'https://example.com', icon: 'pinterest', colour: 'dark' },
+    { label: 'Spotify', url: 'https://example.com', icon: 'spotify', colour: 'dark' },
+    { label: 'Patreon', url: 'https://example.com', icon: 'patreon', colour: 'dark' }] };
   MR.templatePreviewHtml = function (id, account) {
     if (!MR.renderEmail) return '';
     var t = MR.TEMPLATES.filter(function (x) { return x.id === id; })[0];
