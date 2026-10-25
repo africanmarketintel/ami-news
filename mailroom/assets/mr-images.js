@@ -97,6 +97,8 @@
         onclick: function () { close(); }
       })));
     dialog.appendChild(status);
+    dialog.appendChild(stockSection());
+    dialog.appendChild(MR.h('h3', { class: 'dr-h', text: 'Images you have uploaded' }));
     dialog.appendChild(grid);
     document.body.appendChild(dialog);
 
@@ -109,6 +111,70 @@
     function close() {
       dialog.remove();
       if (back && back.focus) back.focus();
+    }
+
+    /* Free photos and GIFs. The search runs on our side with the platform's
+       own keys, so nobody has to register anywhere. A picture stays on the
+       service's address and is not copied, and the service is credited. */
+    function stockSection() {
+      var source = 'photos', page = 1, last = null;
+      var box = MR.h('section', { class: 'mr-stock', 'aria-labelledby': 'mr-stock-h' });
+      var results = MR.h('div', { class: 'mr-image-grid' });
+      var note = MR.h('p', { class: 'dr-small', role: 'status' });
+      var credit = MR.h('p', { class: 'dr-small' });
+      var q = MR.h('input', { class: 'dr-input', id: 'mr-stock-q', type: 'search', autocomplete: 'off' });
+      var more = MR.h('button', { type: 'button', class: 'dr-button dr-button--secondary', text: 'Show more', hidden: true,
+        onclick: function () { page += 1; search(true); } });
+      var tabs = MR.h('div', { class: 'mr-stock__tabs', role: 'group', 'aria-label': 'What to search' });
+      var tabButtons = {};
+      [['photos', 'Photos'], ['gifs', 'GIFs']].forEach(function (t) {
+        var b = MR.h('button', { type: 'button', class: 'mr-stock__tab', text: t[1],
+          'aria-pressed': t[0] === source ? 'true' : 'false',
+          onclick: function () { source = t[0]; page = 1; mark(); search(false); } });
+        tabButtons[t[0]] = b; tabs.appendChild(b);
+      });
+      function mark() {
+        Object.keys(tabButtons).forEach(function (k) { tabButtons[k].setAttribute('aria-pressed', k === source ? 'true' : 'false'); });
+      }
+      box.appendChild(MR.h('h3', { class: 'dr-h', id: 'mr-stock-h', text: 'Find a free photo or GIF' }));
+      box.appendChild(MR.h('p', { class: 'dr-hint', text: 'See your message with a real picture in it. Search by what the picture shows, such as “market stall” or “handshake”.' }));
+      box.appendChild(tabs);
+      box.appendChild(MR.h('form', { class: 'mr-stock__form', onsubmit: function (e) { e.preventDefault(); page = 1; search(false); } },
+        MR.h('label', { class: 'dr-label', for: 'mr-stock-q', text: 'Search' }), q,
+        MR.h('button', { type: 'submit', class: 'dr-button', text: 'Search' })));
+      box.appendChild(note); box.appendChild(results); box.appendChild(more); box.appendChild(credit);
+
+      function message(code) {
+        if (code === 'not_set_up') return 'Photo and GIF search is not switched on yet. You can still upload your own image.';
+        if (code === 'busy' || code === 'slow_down') return 'Too many searches just now. Wait a minute and try again.';
+        return 'The search did not work. Try again in a moment.';
+      }
+
+      function search(append) {
+        if (MR.cfg.demo) { note.textContent = 'Preview only: search is switched off here.'; return; }
+        note.textContent = 'Searching…';
+        MR.fn('mailroom-media', { source: source, q: q.value.trim(), page: page }).then(function (r) {
+          last = r;
+          if (!append) results.textContent = '';
+          note.textContent = (r.results || []).length || append ? '' : 'Nothing found. Try a simpler word.';
+          (r.results || []).forEach(function (p) {
+            results.appendChild(MR.h('button', { type: 'button', class: 'mr-image-tile',
+              onclick: function () {
+                if (p.track) MR.fn('mailroom-media', { source: 'photos', track: p.track }).catch(function () {});
+                onPick({ url: p.url, alt: p.alt || '', credit: p.credit, credit_url: p.credit_url, stock: true }); close(); } },
+              MR.h('img', { src: p.thumb, alt: p.alt || '', loading: 'lazy' }),
+              MR.h('span', { class: 'dr-small', text: p.credit })));
+          });
+          more.hidden = (r.results || []).length < 24;
+          credit.textContent = '';
+          credit.appendChild(document.createTextNode(r.credit_name === 'GIPHY' ? 'Powered by ' : 'Pictures from '));
+          credit.appendChild(MR.h('a', { href: r.credit_url, target: '_blank', rel: 'noopener', text: r.credit_name }));
+          credit.appendChild(document.createTextNode(r.credit_name === 'GIPHY' ? '. Check the GIF suits your message before you send.' : '. Check the picture suits your message before you send.'));
+        }).catch(function (err) {
+          note.textContent = message(err && err.message);
+        });
+      }
+      return box;
     }
 
     function load() {
