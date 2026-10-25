@@ -824,13 +824,18 @@
       var isPanel = block.type === 'panel';
       var box = h('div', { class: 'mr-studio__card' });
       box.appendChild(h('h3', { class: 'mr-studio__h3', style: 'margin-top:0', text: isPanel ? 'This whole panel' : 'This block only' }));
+      box.appendChild(h('p', { class: 'mr-studio__hint', text: isPanel
+        ? 'Changes everything inside this panel. The rest of the email stays as it is.'
+        : 'Changes only the block you have selected. The rest of the email stays as it is.' }));
       var sel = h('select', { class: 'dr-select dr-input--w', id: 'bt-own-font' });
       fillSelect(sel, fontOptions('Same as the rest of the email'), block.font || '');
       sel.addEventListener('change', function () {
         if (sel.value) block.font = sel.value; else delete block.font;
         changed(true);
       });
-      box.appendChild(group('bt-own-font', 'Font', isPanel ? 'Used by every block inside this panel, unless a block has a font of its own.' : null, sel));
+      box.appendChild(group('bt-own-font', 'Font', isPanel
+        ? 'A block inside the panel with its own font keeps it. Google fonts may show as a similar standard font in Gmail and some versions of Outlook.'
+        : 'Google fonts may show as a similar standard font in Gmail and some versions of Outlook.', sel));
       if (!isPanel) {
         var lo = isButton ? 11 : 10, hi = isButton ? 28 : 60;
         var size = h('input', { class: 'dr-input dr-input--w', id: 'bt-own-size', type: 'number', min: String(lo), max: String(hi),
@@ -842,7 +847,7 @@
           if (isFinite(n)) { block.size = Math.max(lo, Math.min(hi, n)); changed(true); }
         });
         size.addEventListener('blur', function () { size.value = block.size ? String(block.size) : ''; });
-        box.appendChild(group('bt-own-size', 'Size in pixels', 'Between ' + lo + ' and ' + hi + '. Empty uses the size set for the whole email.', size));
+        box.appendChild(group('bt-own-size', 'Text size', 'Type a number from ' + lo + ' to ' + hi + '. A normal paragraph is 16. Leave empty to match the rest of the email.', size));
         // Style for this block: same as the email, or one of the four.
         var boldDefault = isButton || block.type === 'heading' || block.type === 'story';
         var st = h('select', { class: 'dr-select dr-input--w', id: 'bt-own-style' });
@@ -856,7 +861,7 @@
           else { block.bold = st.value === 'bold' || st.value === 'bolditalic'; block.italic = st.value === 'italic' || st.value === 'bolditalic'; }
           changed(true);
         });
-        box.appendChild(group('bt-own-style', 'Style', null, st));
+        box.appendChild(group('bt-own-style', 'Style', 'Some fonts have no italic of their own, so the mail app slants the regular letters.', st));
       }
       return box;
     }
@@ -870,6 +875,7 @@
       var same = fonts.every(function (f) { return f === fonts[0]; });
       var box = h('div', { class: 'mr-studio__card' });
       box.appendChild(h('h3', { class: 'mr-studio__h3', style: 'margin-top:0', text: 'This whole section' }));
+      box.appendChild(h('p', { class: 'mr-studio__hint', text: 'A section is a group of blocks that were added together, such as one ready-made section, or the blocks between two lines or colour panels in a layout.' }));
       var sel = h('select', { class: 'dr-select dr-input--w', id: 'bt-section-font' });
       var opts = fontOptions('Same as the rest of the email');
       if (!same) opts = [['__mixed', 'Different fonts in this section']].concat(opts);
@@ -880,7 +886,7 @@
         changed(true);
       });
       box.appendChild(group('bt-section-font', 'Font for all ' + mates.length + ' blocks in this section',
-        'Sets the font on every block in the section at once. Select a single block to give it a different font.', sel));
+        'Changes the font of every block in this section at once. To give one block a different font, select it and use "This block only".', sel));
       return box;
     }
 
@@ -1170,10 +1176,10 @@
     // similar standard font instead (listed in mr-render.js beside each name).
     // ['__group', ...] starts a labelled group in the list.
     var FONT_OPTS = [
-      ['__group', 'Fonts every device has'],
+      ['__group', 'Standard fonts: look the same everywhere'],
       ['sans', 'Arial'], ['serif', 'Georgia'], ['system', 'Each device’s own font'],
       ['verdana', 'Verdana'], ['trebuchet', 'Trebuchet MS'], ['tahoma', 'Tahoma'], ['courier', 'Courier New'],
-      ['__group', 'Google fonts'],
+      ['__group', 'Google fonts: some mail apps swap these'],
       ['roboto', 'Roboto'],
       ['opensans', 'Open Sans'],
       ['inter', 'Inter'],
@@ -1440,7 +1446,7 @@
         fillSelect(font, FONT_OPTS, campaign.font_family || 'sans');
         font.addEventListener('change', function () { campaign.font_family = font.value; changed(true); });
         box.appendChild(group('mrs-font', 'Main font',
-          'Fonts every device has look the same everywhere. A Google font shows in mail apps that can load it. Gmail cannot load most of them, so readers there see a similar standard font instead.', font));
+          'Standard fonts look the same everywhere. Google fonts show in most mail apps, but Gmail and some versions of Outlook show a similar standard font instead.', font));
         box.appendChild(colourControl('mrs-page', 'Colour around the email', 'page', '#f3f2f1'));
         box.appendChild(colourControl('mrs-body', 'Colour of the email', 'body', '#ffffff'));
       });
