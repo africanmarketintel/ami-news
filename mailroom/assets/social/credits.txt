@@ -1,0 +1,9 @@
+Social icons used in the footer of emails
+The icon shapes for Instagram, X, Pinterest, Spotify, YouTube and TikTok come from
+Simple Icons (https://simpleicons.org), released under CC0 1.0.
+The Facebook "f" and the LinkedIn "in" come from Font Awesome Free 7.1.0
+(https://fontawesome.com), icons under CC BY 4.0.
+The Patreon bar and circle was drawn for this project.
+Each shape is saved as a picture in nine colours: black (no suffix), grey, white, clay,
+green, blue, purple, rose and gold, for example facebook-clay.png.
+The names and logos belong to their owners and are used only to link to their pages.
