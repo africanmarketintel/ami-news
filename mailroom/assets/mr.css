@@ -830,6 +830,14 @@ a:hover, .dr-link:hover { color: var(--brand-hover); text-decoration-thickness: 
 .mr-tpl-tab[aria-pressed="true"] { background: #1a1208; color: #fff; }
 .mr-tpl-tab:focus-visible { outline: 3px solid #1e6b3c; outline-offset: 2px; }
 .mr-tpl-tab__n { font-size: .8rem; font-weight: 600; opacity: .75; }
+.mr-pager { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px; margin: 40px 0 8px; }
+.mr-pager[hidden] { display: none; }
+.mr-pager__btn { min-width: 44px; min-height: 44px; padding: 0 10px; border: 0; border-radius: 10px; background: transparent; color: #66665f; font: inherit; font-size: 1.05rem; font-weight: 500; cursor: pointer; }
+.mr-pager__btn:hover { background: #efe9dc; color: #1a1208; }
+.mr-pager__btn.is-current { color: #1a1208; font-weight: 700; }
+.mr-pager__btn:focus-visible { outline: 3px solid #1e6b3c; outline-offset: 2px; }
+.mr-pager__arrow { font-size: 1.6rem; line-height: 1; }
+.mr-pager__gap { min-width: 28px; text-align: center; color: #66665f; }
 .mr-tpl-about { margin: 14px 0 0; color: #3b3b3b; }
 .mr-tpl__facts { display: flex; flex-wrap: wrap; gap: 6px; margin: 2px 0 6px; padding: 0; }
 .mr-tpl__facts span { font-size: .75rem; padding: 2px 8px; border-radius: 999px; background: #efece4; color: #3b3b3b; }

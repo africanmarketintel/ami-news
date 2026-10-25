@@ -40,7 +40,9 @@
       var groups = (MR.TEMPLATE_GROUPS || []).filter(function (g) {
         return all.some(function (t) { return t.category === g.name; });
       });
-      var current = 'All', term = '';
+      var current = 'All', term = '', page = 1;
+      // Six rows of three a page, so the page stays short and quick to draw.
+      var PER_PAGE = 18;
 
       var wrap = o.root;
       var account = o.account;
@@ -67,7 +69,7 @@
       function count(g) { return all.filter(function (t) { return g === 'All' || t.category === g; }).length; }
       ['All'].concat(groups.map(function (g) { return g.name; })).forEach(function (g) {
         var b = MR.h('button', { type: 'button', class: 'mr-tpl-tab', 'aria-pressed': g === current ? 'true' : 'false',
-          onclick: function () { current = g; refresh(true); } },
+          onclick: function () { current = g; page = 1; refresh(true); } },
           g === 'All' ? 'All layouts' : g, MR.h('span', { class: 'mr-tpl-tab__n', text: String(count(g)) }));
         tabButtons[g] = b; tabs.appendChild(b);
       });
@@ -112,23 +114,71 @@
       var none = MR.h('p', { class: 'mr-tpl-none', hidden: true, text: 'No layouts match. Try a simpler word, or choose All layouts.' });
       wrap.appendChild(none);
 
-      function refresh(announce) {
+      // The page buttons: 1 2 3 4 > with the current page in bold. A long run
+      // is shortened with dots, and the first and last page are always there.
+      var pager = MR.h('nav', { class: 'mr-pager', 'aria-label': 'Pages of layouts', hidden: true });
+      wrap.appendChild(pager);
+      function pageList(now, last) {
+        if (last <= 7) { var all7 = []; for (var i = 1; i <= last; i++) all7.push(i); return all7; }
+        var out = [1];
+        var from = Math.max(2, now - 1), to = Math.min(last - 1, now + 1);
+        if (now <= 3) { from = 2; to = 4; }
+        if (now >= last - 2) { from = last - 3; to = last - 1; }
+        if (from > 2) out.push('gap');
+        for (var n = from; n <= to; n++) out.push(n);
+        if (to < last - 1) out.push('gap');
+        out.push(last);
+        return out;
+      }
+      function drawPager(pages, focusNow) {
+        pager.textContent = '';
+        pager.hidden = pages <= 1;
+        if (pages <= 1) return;
+        function go(n) { page = n; refresh(false, true); }
+        if (page > 1) {
+          pager.appendChild(MR.h('button', { type: 'button', class: 'mr-pager__btn mr-pager__arrow', 'aria-label': 'Previous page',
+            onclick: function () { go(page - 1); } }, MR.h('span', { 'aria-hidden': 'true', text: '\u2039' })));
+        }
+        pageList(page, pages).forEach(function (n) {
+          if (n === 'gap') { pager.appendChild(MR.h('span', { class: 'mr-pager__gap', 'aria-hidden': 'true', text: '\u2026' })); return; }
+          var b = MR.h('button', { type: 'button', class: 'mr-pager__btn', 'aria-label': 'Page ' + n + (n === page ? ', current page' : ''),
+            onclick: function () { go(n); }, text: String(n) });
+          if (n === page) { b.setAttribute('aria-current', 'page'); b.classList.add('is-current'); }
+          pager.appendChild(b);
+        });
+        if (page < pages) {
+          pager.appendChild(MR.h('button', { type: 'button', class: 'mr-pager__btn mr-pager__arrow', 'aria-label': 'Next page',
+            onclick: function () { go(page + 1); } }, MR.h('span', { 'aria-hidden': 'true', text: '\u203a' })));
+        }
+        if (focusNow) { var cur = pager.querySelector('[aria-current="page"]'); if (cur) cur.focus(); }
+      }
+
+      // paged is true when the visitor moved between pages: the top of the list
+      // scrolls back into view, and the page button keeps the keyboard focus.
+      function refresh(announce, paged) {
         Object.keys(tabButtons).forEach(function (k) { tabButtons[k].setAttribute('aria-pressed', k === current ? 'true' : 'false'); });
         var q = term.trim().toLowerCase();
-        var shown = 0;
-        cards.forEach(function (c) {
+        var matches = cards.filter(function (c) {
           var t = c._t;
           var inGroup = current === 'All' || t.category === current;
           var hit = !q || (t.name + ' ' + t.summary + ' ' + (t.category || '')).toLowerCase().indexOf(q) !== -1;
-          c.hidden = !(inGroup && hit);
-          if (!c.hidden) shown += 1;
+          return inGroup && hit;
         });
+        var shown = matches.length;
+        var pages = Math.max(1, Math.ceil(shown / PER_PAGE));
+        if (page > pages) page = pages;
+        var first = (page - 1) * PER_PAGE;
+        var onPage = matches.slice(first, first + PER_PAGE);
+        cards.forEach(function (c) { c.hidden = onPage.indexOf(c) === -1; });
         var g = groups.filter(function (x) { return x.name === current; })[0];
-        about.textContent = (g ? g.about + '. ' : '') + shown + (shown === 1 ? ' layout' : ' layouts') + (q ? ' match "' + term.trim() + '".' : '.');
+        var range = pages > 1 ? ' Showing ' + (first + 1) + ' to ' + (first + onPage.length) + '. Page ' + page + ' of ' + pages + '.' : '';
+        about.textContent = (g ? g.about + '. ' : '') + shown + (shown === 1 ? ' layout' : ' layouts') + (q ? ' match "' + term.trim() + '".' : '.') + range;
         none.hidden = shown !== 0;
-        if (announce) MR.announce(about.textContent);
+        drawPager(pages, paged);
+        if (paged && about.scrollIntoView) about.scrollIntoView({ block: 'start' });
+        if (announce || paged) MR.announce(about.textContent);
       }
-      search.addEventListener('input', function () { term = search.value; refresh(false); });
+      search.addEventListener('input', function () { term = search.value; page = 1; refresh(false); });
       refresh(false);
 
       function preview(t) {
@@ -151,7 +201,7 @@
       wrap.appendChild(MR.h('section', { class: 'mr-tpl-faq', 'aria-labelledby': 'mr-tpl-faq-h' },
         MR.h('h2', { id: 'mr-tpl-faq-h', text: 'Questions about layouts' }),
         [['Can I change everything in a layout?', 'Yes. Every part is an ordinary block. Change the words, swap the pictures, move parts around, delete what you do not need and change the colours and type.'],
-         ['Whose pictures are in the layouts?', 'The drawings were made for the Mailroom, so there is nothing to license. Replace any of them with your own picture or a free one from the picture search.'],
+         ['Where do the pictures in the layouts come from?', 'The photographs come from Pixabay, a free picture library, and are stored on this site. Replace any of them with your own photograph, or a free one from the picture search, before you send.'],
          ['Why am I asked to change the words before I send?', 'Every layout is written out in full, with invented dates, prices and names, so you can see how it reads. Before an email goes out, the Mailroom lists any of those lines you have not yet changed, so an example cannot reach your list by mistake.'],
          ['Do the layouts work on a phone?', 'Yes. Columns stack, buttons keep a large target and text stays at a readable size. The preview in the editor shows both.']].map(function (qa) {
           return MR.h('details', { class: 'mr-tpl-faq__item' }, MR.h('summary', { text: qa[0] }), MR.h('p', { text: qa[1] }));
