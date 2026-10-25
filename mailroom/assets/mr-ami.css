@@ -69,7 +69,13 @@
 @keyframes ma-pick { 0%, 12% { transform: none; box-shadow: 0 6px 14px rgba(26, 18, 8, .18); } 17%, 30% { transform: scale(1.07); box-shadow: 0 0 0 3px var(--ami-gold), 0 12px 22px rgba(26, 18, 8, .3); } 100% { transform: none; } }
 .ma-cursor { position: absolute; left: 12%; top: 78%; animation: ma-move 12s infinite; }
 @keyframes ma-move { 0% { transform: translate(0, 0); } 15% { transform: translate(105px, -62px); } 28%, 100% { transform: translate(105px, -62px); } }
-.ma-mail { width: 62%; background: #fff; border-radius: 8px; box-shadow: 0 8px 20px rgba(26, 18, 8, .16); padding: 1rem 1rem 1.1rem; border-top: 8px solid #c7bdf0; }
+.ma-mail { width: 62%; background: #fff; border-radius: 8px; box-shadow: 0 8px 20px rgba(26, 18, 8, .16); padding: 0 0 .8rem; overflow: hidden; }
+.ma-mail .ma-pic { display: block; width: 100%; height: auto; }
+.ma-mail .ma-band { background: #0f6e66; color: #fff; text-align: center; padding: .9rem 1rem 1rem; }
+.ma-mail .ma-band h4 { margin: 0 0 .6rem; font-family: var(--ami-sans, inherit); font-size: 1.1rem; text-transform: uppercase; letter-spacing: .02em; min-height: 1.5rem; }
+.ma-mail .ma-band .bar { background: rgba(255, 255, 255, .45); margin-left: auto; margin-right: auto; }
+.ma-mail .ma-band b { background: #fff; color: #0f6e66; }
+.ma-mail > small { margin: .7rem 1rem 0; text-align: center; }
 .ma-mail small { display: block; color: var(--ami-ink-soft); font-size: .68rem; margin-bottom: .5rem; }
 .ma-mail h4 { margin: 0 0 .7rem; font-family: var(--ami-serif); font-size: 1.15rem; line-height: 1.2; min-height: 2.8rem; }
 .ma-type { display: inline-block; overflow: hidden; white-space: nowrap; max-width: 100%; vertical-align: bottom; border-right: 2px solid var(--ami-gold-dark); animation: ma-type 12s steps(30) infinite; width: 0; }

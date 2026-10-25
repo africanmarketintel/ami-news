@@ -1,6 +1,6 @@
 /* ==========================================================================
    The layout gallery (mr-gallery.js)
-   One gallery of starter layouts, used in two places: the "Write a campaign"
+   One gallery of starter templates, used in two places: the "Write a campaign"
    page, where choosing a layout starts a campaign, and the public Templates
    page, where choosing a layout is a link to the editor.
 
@@ -35,14 +35,32 @@
     }
 
 
+  // The templates shown first: the brightest, most colourful and most direct,
+  // mixed across types so the first page shows a spread. Everything else
+  // follows in its usual order.
+  var FIRST = ['featured-this-week', 'bold-sale', 'join-us-event', 'first-order', 'promote-class', 'colour-band-sale',
+    'cookbook-preorder', 'multi-part-newsletter', 'early-bird-sale', 'welcome-you-made-it', 'store-wide-sale', 'new-menu-band',
+    'big-word-sale', 'roundup-colour', 'course-welcome', 'deadline-sale', 'welcome-with-note', 'digital-download',
+    'first-to-hear', 'soft-sale-announcement', 'tips-roundup-band', 'welcome-friend', 'invite-register', 'coupon-big-word',
+    'expert-roundup', 'product-spotlight-band', 'welcome-thank-you-blocks', 'gift-of-thanks', 'collage-welcome', 'big-number-sale',
+    'numbered-picks', 'educator-offer', 'creator-sale', 'multi-offer-sale', 'open-house', 'blog-roundup', 'wellness-welcome-resources',
+    'welcome-card-on-picture', 'join-waitlist', 'showcase-one-picture'];
+  // The five types people most often look for, after All templates. The
+  // other types stay reachable through the search box.
+  var TYPES = ['Newsletters', 'Sales and offers', 'Welcome', 'Events', 'Announcements'];
+
   MR.templateGallery = function (o) {
-      var all = (MR.TEMPLATES || []).filter(function (t) { return t.id !== 'blank'; });
+      var all = (MR.TEMPLATES || []).filter(function (t) { return t.id !== 'blank'; })
+        .map(function (t, i) { var r = FIRST.indexOf(t.id); return { t: t, k: r === -1 ? FIRST.length + i : r }; })
+        .sort(function (a, b) { return a.k - b.k; })
+        .map(function (x) { return x.t; });
       var groups = (MR.TEMPLATE_GROUPS || []).filter(function (g) {
-        return all.some(function (t) { return t.category === g.name; });
-      });
+        return TYPES.indexOf(g.name) !== -1 && all.some(function (t) { return t.category === g.name; });
+      }).sort(function (a, b) { return TYPES.indexOf(a.name) - TYPES.indexOf(b.name); });
       var current = 'All', term = '', page = 1;
-      // Six rows of three a page, so the page stays short and quick to draw.
-      var PER_PAGE = 18;
+      // About eighteen to twenty a page. The number is worked out from the
+      // columns on show, so the last row of every full page is always full.
+      var PER_PAGE = 20;
 
       var wrap = o.root;
       var account = o.account;
@@ -50,8 +68,8 @@
       function thumbAction(t) { if (o.hrefFor) preview(t); else useLayout(t); }
       // On a page that cannot open the editor itself the choice is a link.
       function useControl(t, quiet) {
-        var label = 'Use this layout';
-        var aria = 'Use the layout: ' + t.name;
+        var label = 'Use this template';
+        var aria = 'Use the template: ' + t.name;
         if (o.hrefFor) return MR.h('a', { class: 'dr-button', href: o.hrefFor(t), 'aria-label': aria, text: label });
         return MR.h('button', { type: 'button', class: 'dr-button', 'data-template': t.id, 'aria-label': aria, text: label, onclick: function () { useLayout(t); } });
       }
@@ -61,26 +79,25 @@
       var search = MR.h('input', { class: 'dr-input', id: 'mr-tpl-q', type: 'search', autocomplete: 'off', placeholder: 'For example: sale, event, thank you' });
       wrap.appendChild(MR.h('div', { class: 'mr-tpl-tools' },
         MR.h('div', { class: 'mr-tpl-tools__search' },
-          MR.h('label', { class: 'dr-label', for: 'mr-tpl-q', text: 'Search layouts' }), search),
+          MR.h('label', { class: 'dr-label', for: 'mr-tpl-q', text: 'Search templates' }), search),
         blank ? MR.h('button', { type: 'button', class: 'dr-button dr-button--secondary', text: 'Start with a blank page', onclick: function () { o.onBlank(blank); } }) : null));
 
-      var tabs = MR.h('div', { class: 'mr-tpl-tabs', role: 'group', 'aria-label': 'Types of layout' });
+      var tabs = MR.h('div', { class: 'mr-tpl-tabs', role: 'group', 'aria-label': 'Types of template' });
       var tabButtons = {};
-      function count(g) { return all.filter(function (t) { return g === 'All' || t.category === g; }).length; }
       ['All'].concat(groups.map(function (g) { return g.name; })).forEach(function (g) {
         var b = MR.h('button', { type: 'button', class: 'mr-tpl-tab', 'aria-pressed': g === current ? 'true' : 'false',
           onclick: function () { current = g; page = 1; refresh(true); } },
-          g === 'All' ? 'All layouts' : g, MR.h('span', { class: 'mr-tpl-tab__n', text: String(count(g)) }));
+          g === 'All' ? 'All templates' : g);
         tabButtons[g] = b; tabs.appendChild(b);
       });
       wrap.appendChild(tabs);
-      var about = MR.h('p', { class: 'mr-tpl-about', role: 'status' });
+      var about = MR.h('p', { class: 'dr-visually-hidden', role: 'status' });
       wrap.appendChild(about);
 
       var grid = MR.h('div', { class: 'mr-tpl-grid', id: 'mr-templates' });
       // Each layout sits on its own coloured panel, so the grid reads as a set
       // of finished designs rather than a list of thumbnails.
-      var PANELS = ['#c9c0f2', '#e8795e', '#8091bd', '#b4b57a', '#4a1426', '#efd56b', '#9db39d', '#c4d6fb', '#e9b9a0', '#2d4a3e', '#d8a6c3', '#f3c969'];
+      var PANELS = ['#c9c0f2', '#e8795e', '#8091bd', '#b4b57a', '#f08fb0', '#efd56b', '#9db39d', '#c4d6fb', '#e9b9a0', '#7fc8b6', '#d8a6c3', '#f3c969'];
       var cards = [];
       var seen = window.IntersectionObserver ? new IntersectionObserver(function (entries) {
         entries.forEach(function (e) {
@@ -104,7 +121,7 @@
             thumb,
             MR.h('div', { class: 'mr-tpl__actions' },
               useControl(t),
-              MR.h('button', { type: 'button', class: 'dr-button dr-button--secondary', 'aria-label': 'Preview the layout: ' + t.name, text: 'Preview', onclick: function () { preview(t); } }))),
+              MR.h('button', { type: 'button', class: 'dr-button dr-button--secondary', 'aria-label': 'Preview the template: ' + t.name, text: 'Preview', onclick: function () { preview(t); } }))),
           MR.h('div', { class: 'mr-tpl__body' },
             MR.h('h2', { class: 'mr-tpl__name', text: t.name }),
             t.category ? MR.h('span', { class: 'mr-tpl__cat', text: t.category }) : null,
@@ -123,15 +140,19 @@
         var gap = parseFloat(cs.columnGap) || 0;
         var w = (grid.clientWidth - gap * (cols - 1)) / cols;
         if (w > 0) grid.style.setProperty('--tpl-scale', String(w / 600));
+        // A whole number of rows, so no page ends with a gap beside its last card.
+        var per = cols * Math.ceil(18 / cols);
+        if (per !== PER_PAGE) { PER_PAGE = per; if (ready) refresh(false); }
       }
+      var ready = false;
       fitCards();
       if (window.ResizeObserver) new ResizeObserver(fitCards).observe(grid); else window.addEventListener('resize', fitCards);
-      var none = MR.h('p', { class: 'mr-tpl-none', hidden: true, text: 'No layouts match. Try a simpler word, or choose All layouts.' });
+      var none = MR.h('p', { class: 'mr-tpl-none', hidden: true, text: 'No templates match. Try a simpler word, or choose All templates.' });
       wrap.appendChild(none);
 
       // The page buttons: 1 2 3 4 > with the current page in bold. A long run
       // is shortened with dots, and the first and last page are always there.
-      var pager = MR.h('nav', { class: 'mr-pager', 'aria-label': 'Pages of layouts', hidden: true });
+      var pager = MR.h('nav', { class: 'mr-pager', 'aria-label': 'Pages of templates', hidden: true });
       wrap.appendChild(pager);
       function pageList(now, last) {
         if (last <= 7) { var all7 = []; for (var i = 1; i <= last; i++) all7.push(i); return all7; }
@@ -187,7 +208,7 @@
         cards.forEach(function (c) { c.hidden = onPage.indexOf(c) === -1; });
         var g = groups.filter(function (x) { return x.name === current; })[0];
         var range = pages > 1 ? ' Showing ' + (first + 1) + ' to ' + (first + onPage.length) + '. Page ' + page + ' of ' + pages + '.' : '';
-        about.textContent = (g ? g.about + '. ' : '') + shown + (shown === 1 ? ' layout' : ' layouts') + (q ? ' match "' + term.trim() + '".' : '.') + range;
+        about.textContent = (g ? g.about + '. ' : '') + shown + (shown === 1 ? ' template' : ' templates') + (q ? ' match "' + term.trim() + '".' : '.') + range;
         none.hidden = shown !== 0;
         drawPager(pages, paged);
         if (paged && about.scrollIntoView) about.scrollIntoView({ block: 'start' });
@@ -195,10 +216,11 @@
       }
       search.addEventListener('input', function () { term = search.value; page = 1; refresh(false); });
       refresh(false);
+      ready = true;
 
       function preview(t) {
         var dlg = MR.h('dialog', { class: 'mr-tpl-dialog', 'aria-labelledby': 'mr-tpl-dlg-h' });
-        var frame = MR.h('iframe', { class: 'mr-tpl-dialog__frame', sandbox: '', title: 'Preview of the ' + t.name + ' layout' });
+        var frame = MR.h('iframe', { class: 'mr-tpl-dialog__frame', sandbox: '', title: 'Preview of the ' + t.name + ' template' });
         frame.srcdoc = MR.templatePreviewHtml ? MR.templatePreviewHtml(t.id, account) : '';
         function close() { dlg.close ? dlg.close() : dlg.removeAttribute('open'); dlg.remove(); }
         dlg.appendChild(MR.h('div', { class: 'mr-tpl-dialog__head' },
@@ -207,18 +229,18 @@
         dlg.appendChild(MR.h('p', { class: 'dr-small', text: t.summary + ' The words and facts are examples for you to replace.' }));
         dlg.appendChild(frame);
         dlg.appendChild(MR.h('div', { class: 'mr-tpl__actions' },
-          o.hrefFor ? useControl(t) : MR.h('button', { type: 'button', class: 'dr-button', text: 'Use this layout', onclick: function () { close(); useLayout(t); } })));
+          o.hrefFor ? useControl(t) : MR.h('button', { type: 'button', class: 'dr-button', text: 'Use this template', onclick: function () { close(); useLayout(t); } })));
         dlg.addEventListener('cancel', function (e) { e.preventDefault(); close(); });
         document.body.appendChild(dlg);
         if (dlg.showModal) dlg.showModal(); else dlg.setAttribute('open', '');
       }
 
       wrap.appendChild(MR.h('section', { class: 'mr-tpl-faq', 'aria-labelledby': 'mr-tpl-faq-h' },
-        MR.h('h2', { id: 'mr-tpl-faq-h', text: 'Questions about layouts' }),
-        [['Can I change everything in a layout?', 'Yes. Every part is an ordinary block. Change the words, swap the pictures, move parts around, delete what you do not need and change the colours and type.'],
-         ['Where do the pictures in the layouts come from?', 'The photographs come from Pixabay, a free picture library, and are stored on this site. Replace any of them with your own photograph, or a free one from the picture search, before you send.'],
-         ['Why am I asked to change the words before I send?', 'Every layout is written out in full, with invented dates, prices and names, so you can see how it reads. Before an email goes out, the Mailroom lists any of those lines you have not yet changed, so an example cannot reach your list by mistake.'],
-         ['Do the layouts work on a phone?', 'Yes. Columns stack, buttons keep a large target and text stays at a readable size. The preview in the editor shows both.']].map(function (qa) {
+        MR.h('h2', { id: 'mr-tpl-faq-h', text: 'Questions about templates' }),
+        [['Can I change everything in a template?', 'Yes. Every part is an ordinary block. Change the words, swap the pictures, move parts around, delete what you do not need and change the colours and type.'],
+         ['Where do the pictures in the templates come from?', 'The photographs come from Pixabay, a free picture library, and are stored on this site. Replace any of them with your own photograph, or a free one from the picture search, before you send.'],
+         ['Why am I asked to change the words before I send?', 'Every template is written out in full, with invented dates, prices and names, so you can see how it reads. Before an email goes out, the Mailroom lists any of those lines you have not yet changed, so an example cannot reach your list by mistake.'],
+         ['Do the templates work on a phone?', 'Yes. Columns stack, buttons keep a large target and text stays at a readable size. The preview in the editor shows both.']].map(function (qa) {
           return MR.h('details', { class: 'mr-tpl-faq__item' }, MR.h('summary', { text: qa[0] }), MR.h('p', { text: qa[1] }));
         })));
 
