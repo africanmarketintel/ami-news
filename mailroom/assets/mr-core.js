@@ -20,6 +20,15 @@
   // security policy, which allows no inline script.
   document.documentElement.classList.add('js');
 
+  // A home page picture that has not been added yet is hidden, so the sample
+  // tile shows its colour and not a broken-picture mark.
+  function hideBroken(img) { if (img && img.tagName === 'IMG' && img.closest && img.closest('.ma-picker__grid')) img.style.visibility = 'hidden'; }
+  document.addEventListener('error', function (e) { hideBroken(e.target); }, true);
+  document.addEventListener('DOMContentLoaded', function () {
+    var list = document.querySelectorAll('.ma-picker__grid img');
+    for (var i = 0; i < list.length; i++) if (list[i].complete && list[i].naturalWidth === 0) hideBroken(list[i]);
+  });
+
   /* ---------------- configuration ---------------- */
   var url = (typeof SUPABASE_URL !== 'undefined') ? SUPABASE_URL : '';
   var key = (typeof SUPABASE_ANON !== 'undefined') ? SUPABASE_ANON
@@ -274,8 +283,8 @@
   };
 
   MR.CONSENT_STATUS = {
-    unconfirmed: 'Consent not recorded', declared: 'Consent recorded',
-    repermission_sent: 'Re-permission sent', confirmed: 'Confirmed'
+    unconfirmed: 'Agreement not recorded', declared: 'Agreement recorded',
+    repermission_sent: 'Asked to confirm again', confirmed: 'Confirmed'
   };
 
   /* ---------------- where a list came from ----------------
@@ -890,10 +899,19 @@
       account.textContent = 'Your account';
       account.setAttribute('href', account.getAttribute('data-account') || 'account.html');
     }
+    // A signed-in member does not need to be asked to create an account.
+    if (MR.auth.signedIn()) {
+      [].forEach.call(document.querySelectorAll('[data-mr-start]'), function (a) {
+        a.textContent = 'Go to your mailroom';
+        a.setAttribute('href', 'account.html');
+      });
+    }
     // The member navigation. Shown to a signed-in member, and in preview mode
     // so the sample pages demonstrate the product rather than a locked door.
     var memberNav = document.getElementById('mr-member-nav');
-    if (memberNav) memberNav.hidden = !(MR.auth.signedIn() || MR.cfg.demo);
+    if (memberNav) { buildMemberNav(memberNav); memberNav.hidden = !(MR.auth.signedIn() || MR.cfg.demo); }
+
+    addBackLink();
 
     var out = document.getElementById('mr-sign-out');
     if (out) {
@@ -907,6 +925,57 @@
     // The id is now on the strip itself, so this line still governs it.
     // The sample-data strip was removed on 14 October 2026 at YO's request,
     // markup and all, so there is nothing left here to show or hide.
+  }
+
+
+  /* A way back from pages that are opened from another page: How your email
+     looks and Sending domains from Settings, Add subscribers from Lists, and a
+     sent campaign from Campaigns. The row above shows the same place. */
+  var BACK_LINKS = {
+    'brand.html': ['settings.html', 'Settings'], 'domain.html': ['settings.html', 'Settings'],
+    'import.html': ['lists.html', 'Your lists'], 'campaign-view.html': ['campaigns.html', 'Campaigns']
+  };
+  function addBackLink() {
+    var here = location.pathname.split('/').pop();
+    var back = BACK_LINKS[here], main = document.getElementById('main');
+    if (!back || !main || main.querySelector('.mr-back')) return;
+    var row = MR.h('div', { class: 'dr-width mr-back' },
+      MR.h('a', { href: back[0], text: '\u2039 ' + back[1] }));
+    main.insertBefore(row, main.firstChild);
+  }
+
+  /* ---------------- the member menu ----------------
+     One definition, so every page has the same menu. It is a plain row of
+     links on purpose: the AMI header (nav.js) reads these links and shows them
+     as the section bar for a signed-in member, so they must be ordinary links,
+     one level deep, in the order a sender works. */
+  var MEMBER_MENU = [
+    ['Your mailroom', 'account.html'],
+    ['Campaigns', 'campaigns.html'],
+    ['Lists', 'lists.html'],
+    ['Signup forms', 'forms.html'],
+    ['Integrations', 'integrations.html'],
+    ['Settings', 'settings.html']
+  ];
+  // Pages that belong under one of the links above, so the row still shows
+  // where you are. How your email looks and Sending domains are opened from
+  // the Settings page.
+  var MEMBER_PARENT = {
+    'campaign.html': 'campaigns.html', 'campaign-view.html': 'campaigns.html',
+    'import.html': 'lists.html', 'brand.html': 'settings.html', 'domain.html': 'settings.html'
+  };
+
+  function buildMemberNav(root) {
+    var inner = root.querySelector('.mr-subnav__inner');
+    if (!inner) return;
+    var here = (location.pathname.split('/').pop() || 'account.html');
+    here = MEMBER_PARENT[here] || here;
+    inner.textContent = '';
+    var nav = MR.h('nav', { class: 'mr-subnav__group', 'aria-label': 'Your mailroom' });
+    MEMBER_MENU.forEach(function (it) {
+      nav.appendChild(MR.h('a', { href: it[1], 'aria-current': it[1] === here ? 'page' : null, text: it[0] }));
+    });
+    inner.appendChild(nav);
   }
 
   if (document.readyState === 'loading') {
