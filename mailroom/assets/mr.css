@@ -844,3 +844,13 @@ a:hover, .dr-link:hover { color: var(--brand-hover); text-decoration-thickness: 
 .mr-jump a:hover { background: #f3efe6; }
 .mr-jump a:focus-visible { outline: 3px solid #1e6b3c; outline-offset: 2px; }
 #main h2[id] { scroll-margin-top: 90px; }
+
+/* ---- Resources page: links with a line of explanation ---- */
+.mr-res__h { margin-top: 40px; }
+.mr-res { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+.mr-res li { margin: 0; }
+.mr-res__link { display: flex; flex-direction: column; gap: 4px; height: 100%; padding: 16px 18px; border: 1.5px solid #d9d3c6; border-radius: 14px; background: #fff; color: #1a1208; text-decoration: none; }
+.mr-res__link:hover { border-color: #1a1208; background: #faf8f3; }
+.mr-res__link:focus-visible { outline: 3px solid #1e6b3c; outline-offset: 2px; }
+.mr-res__title { font-weight: 700; text-decoration: underline; text-underline-offset: .15em; }
+.mr-res__desc { font-size: .9rem; color: #4a4338; }
