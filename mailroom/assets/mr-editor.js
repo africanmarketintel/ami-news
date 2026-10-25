@@ -831,14 +831,22 @@
   };
 
   /* ---------------- previews ---------------- */
+  // The three tabs. Each has an icon and a word. The icon is decoration, so
+  // the word is what a screen reader reads.
+  var VIEW_ICONS = {
+    desktop: '<rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16v4"/>',
+    phone: '<rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18.5h2"/>',
+    inbox: '<rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M3.5 6.5l8.5 6.5 8.5-6.5"/>'
+  };
   var VIEWS = [
     { value: 'desktop', label: 'Desktop', width: 660 },
     { value: 'phone', label: 'Phone', width: 390 },
-    { value: 'outlook', label: 'Outlook', width: 660 },
-    { value: 'dark', label: 'Dark mode', width: 660 },
-    { value: 'images', label: 'Images off', width: 660 },
-    { value: 'text', label: 'Plain text', width: 660 }
+    { value: 'inbox', label: 'Email', width: 660 }
   ];
+  // The Dark mode, Outlook, Images off and Plain text views are not offered as
+  // tabs. The code that draws them is kept below: add { value: 'dark' |
+  // 'outlook' | 'images' | 'text', label: ..., width: 660 } to VIEWS to bring
+  // one back. The plain text version of every email is still sent.
 
   /* ---------------- checks before sending ----------------
      What can be checked without a mail app: the size of the HTML, which Gmail
@@ -922,22 +930,30 @@
       class: 'mr-preview__frame', title: 'Email preview', id: 'mr-preview-frame'
     });
     var textBox = MR.h('pre', { class: 'mr-preview__text', hidden: true, id: 'mr-preview-text' });
+    var inbox = MR.h('div', { class: 'mr-inbox', hidden: true, id: 'mr-preview-inbox' });
     var note = MR.h('p', { class: 'dr-small', id: 'mr-preview-note' });
     var checks = MR.h('div', { class: 'mr-preview__checks', id: 'mr-preview-checks' });
 
     var tabs = MR.h('div', { class: 'mr-preview__tabs', role: 'tablist', 'aria-label': 'Preview' });
     VIEWS.forEach(function (v) {
-      tabs.appendChild(MR.h('button', {
+      var tab = MR.h('button', {
         type: 'button', role: 'tab', class: 'mr-preview__tab', 'data-view': v.value,
-        'aria-selected': v.value === view ? 'true' : 'false', text: v.label,
+        'aria-selected': v.value === view ? 'true' : 'false',
         onclick: function () { view = v.value; render(); }
-      }));
+      });
+      var ic = MR.h('span', { class: 'mr-preview__tabicon', 'aria-hidden': 'true' });
+      ic.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" ' +
+        'stroke-linecap="round" stroke-linejoin="round" focusable="false">' + (VIEW_ICONS[v.value] || '') + '</svg>';
+      tab.appendChild(ic);
+      tab.appendChild(MR.h('span', { text: v.label }));
+      tabs.appendChild(tab);
     });
 
     target.textContent = '';
     target.appendChild(tabs);
     target.appendChild(frame);
     target.appendChild(textBox);
+    target.appendChild(inbox);
     target.appendChild(note);
     target.appendChild(checks);
 
@@ -953,6 +969,44 @@
       checks.appendChild(MR.h('p', { class: 'dr-small', text: 'These views are close approximations. They do not show how every mail app draws the email, so send a test to your own addresses before a real send.' }));
     }
 
+    // How the email looks in an inbox list, before it is opened: who it is
+    // from, the subject and the preview text. Drawn twice, wide and narrow.
+    function drawInbox(campaign, account) {
+      inbox.textContent = '';
+      var sender = String(campaign.from_name || '').trim() || String(account.name || '').trim() || 'Sender name';
+      var subject = String(campaign.subject || '').trim();
+      var pre = String(campaign.preheader || '').trim();
+      function row(kind) {
+        var r = MR.h('div', { class: 'mr-inbox__row mr-inbox__row--' + kind });
+        r.appendChild(MR.h('span', { class: 'mr-inbox__avatar', 'aria-hidden': 'true', text: sender.charAt(0).toUpperCase() }));
+        var body = MR.h('div', { class: 'mr-inbox__body' });
+        var top = MR.h('div', { class: 'mr-inbox__top' },
+          MR.h('span', { class: 'mr-inbox__from', text: sender }),
+          MR.h('span', { class: 'mr-inbox__time', text: '09:00' }));
+        var subj = MR.h('span', { class: 'mr-inbox__subject' + (subject ? '' : ' is-empty'), text: subject || 'No subject yet' });
+        var prev = MR.h('span', { class: 'mr-inbox__preview' + (pre ? '' : ' is-empty'),
+          text: pre || 'No preview text set. Mail apps show the first words of the email instead.' });
+        if (kind === 'wide') {
+          body.appendChild(MR.h('div', { class: 'mr-inbox__line' }, MR.h('span', { class: 'mr-inbox__from', text: sender }), subj,
+            MR.h('span', { class: 'mr-inbox__dash', text: ' \u2013 ' }), prev, MR.h('span', { class: 'mr-inbox__time', text: '09:00' })));
+        } else {
+          body.appendChild(top);
+          body.appendChild(MR.h('div', { class: 'mr-inbox__subjline' }, subj));
+          body.appendChild(MR.h('div', { class: 'mr-inbox__prevline' }, prev));
+        }
+        r.appendChild(body);
+        return r;
+      }
+      function ghost() {
+        return MR.h('div', { class: 'mr-inbox__ghost', 'aria-hidden': 'true' },
+          MR.h('span', { class: 'mr-inbox__avatar' }), MR.h('span', { class: 'mr-inbox__bars' }));
+      }
+      inbox.appendChild(MR.h('h3', { class: 'dr-h', text: 'On a computer' }));
+      inbox.appendChild(MR.h('div', { class: 'mr-inbox__list mr-inbox__list--wide' }, ghost(), row('wide'), ghost()));
+      inbox.appendChild(MR.h('h3', { class: 'dr-h', text: 'On a phone' }));
+      inbox.appendChild(MR.h('div', { class: 'mr-inbox__list mr-inbox__list--narrow' }, ghost(), row('narrow'), ghost()));
+    }
+
     function render() {
       var campaign = getCampaign();
       var account = getAccount() || { name: 'Your organisation', postal_address: 'Your postal address' };
@@ -964,6 +1018,16 @@
       });
 
       drawChecks(campaign, account, brand);
+
+      if (view === 'inbox') {
+        frame.hidden = true;
+        textBox.hidden = true;
+        inbox.hidden = false;
+        drawInbox(campaign, account);
+        note.textContent = 'The sender name, subject and preview text are what a reader sees in an inbox before opening the email. Mail apps cut long lines off at different points, so put the most important words first.';
+        return;
+      }
+      inbox.hidden = true;
 
       if (view === 'text') {
         frame.hidden = true;
@@ -994,7 +1058,8 @@
         outlook: 'An approximation of Outlook on Windows: square button, no rounded corners, fallback font, and columns that stay side by side. Outlook cannot be simulated exactly, so send a test before a real campaign.',
         dark: 'An approximation of dark mode. Mail apps recolour differently, so check a test message on your own phone. A colour panel keeps its own colours, which is usually what you want.',
         images: 'How it looks when a mail app blocks images, which many do until the reader allows them. Each picture is replaced by its description. A dashed box that says there is no description is fine for a picture that is only decoration, and a gap for anything else.',
-        text: ''
+        text: '',
+        inbox: ''
       }[view];
     }
 
