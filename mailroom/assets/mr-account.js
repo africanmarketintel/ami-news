@@ -526,6 +526,91 @@
   }
 
   /* ---------------- dashboard ---------------- */
+
+  /* ---------------- first steps ----------------
+     A new sender sees what to do next, in order. Each step is true or false
+     from what already exists, so it ticks itself and disappears when the
+     sender has done them all. */
+  function firstSteps(done) {
+    var steps = [
+      { key: 'brand', title: 'Set how your email looks', text: 'Your logo, colours and the address people see it from.', href: 'brand.html', go: 'Set it up' },
+      { key: 'people', title: 'Add your people', text: 'Upload a file, or paste the addresses in.', href: 'import.html', go: 'Add subscribers' },
+      { key: 'agreed', title: 'Record how they agreed to hear from you', text: 'A list can only be mailed once you have said how its addresses were collected.', href: 'lists.html', go: 'Open your lists' },
+      { key: 'written', title: 'Write a campaign from a layout', text: 'Pick one of more than 50 layouts and change anything in it.', href: 'campaign.html', go: 'Write a campaign' },
+      { key: 'sent', title: 'Send your first campaign', text: 'Send a test to yourself first, then send it to your list.', href: 'campaigns.html', go: 'Open your campaigns' }
+    ];
+    var count = steps.filter(function (x) { return done[x.key]; }).length;
+    if (count === steps.length) return null;
+    var next = steps.filter(function (x) { return !done[x.key]; })[0];
+    var list = MR.h('ol', { class: 'mr-steps__list' });
+    steps.forEach(function (x) {
+      var ok = !!done[x.key];
+      var item = MR.h('li', { class: 'mr-steps__item' + (ok ? ' is-done' : x === next ? ' is-next' : '') },
+        MR.h('span', { class: 'mr-steps__mark', 'aria-hidden': 'true', text: ok ? '✓' : String(steps.indexOf(x) + 1) }),
+        MR.h('div', { class: 'mr-steps__body' },
+          MR.h('p', { class: 'mr-steps__title' }, x.title, ok ? MR.h('span', { class: 'dr-visually-hidden', text: ' (done)' }) : null),
+          ok ? null : MR.h('p', { class: 'mr-steps__text', text: x.text })),
+        !ok && x === next ? MR.h('a', { class: 'dr-button', href: x.href, text: x.go }) : null);
+      list.appendChild(item);
+    });
+    return MR.h('section', { class: 'mr-steps', 'aria-labelledby': 'mr-steps-h' },
+      MR.h('div', { class: 'mr-steps__head' },
+        MR.h('h2', { class: 'dr-h', id: 'mr-steps-h', text: 'Get started' }),
+        MR.h('p', { class: 'mr-steps__count', text: count + ' of ' + steps.length + ' done' })),
+      MR.h('div', { class: 'mr-steps__bar', role: 'presentation' },
+        MR.h('span', { style: 'width:' + Math.round(count / steps.length * 100) + '%' })),
+      list);
+  }
+
+  /* ---------------- the Settings page ----------------
+     The things set once and rarely touched: where replies go, the postal
+     address, the timezone, the plan, and a copy of your data. They used to sit
+     under the campaigns on the dashboard, next to the button that closes the
+     account. */
+  function initSettings() {
+    var wrap = document.getElementById('mr-settings-page');
+    if (!wrap) return;
+    var load = MR.cfg.demo
+      ? Promise.resolve([MR.sampleAccount, MR.sampleReplyAddresses || [], MR.samplePlans || [], [], MR.sampleCampaigns || []])
+      : MR.requireAccount(wrap).then(function (account) {
+          return Promise.all([
+            account,
+            MR.api.select('mailroom_reply_addresses?select=id,email,status&order=email'),
+            MR.api.select('mailroom_plans?select=*&code=eq.' + encodeURIComponent(account.plan_code || 'included')),
+            MR.api.select('mailroom_subscribers?select=id&status=eq.subscribed'),
+            MR.api.select('mailroom_campaigns?select=status,sent_at,recipients&status=eq.sent&order=sent_at.desc&limit=200')
+          ]);
+        });
+    load.then(function (res) {
+      var account = res[0], replies = res[1] || [], plan = (res[2] || [])[0] || null;
+      var subscriberCount = MR.cfg.demo
+        ? (MR.sampleLists || []).reduce(function (n, l) { return n + (l.subscribers || 0); }, 0)
+        : (res[3] || []).length;
+      var emails = (res[4] || []).filter(function (c) {
+        if (c.status !== 'sent' || !c.sent_at) return false;
+        var d = new Date(c.sent_at), now = new Date();
+        return d.getUTCFullYear() === now.getUTCFullYear() && d.getUTCMonth() === now.getUTCMonth();
+      }).reduce(function (n, c) { return n + (c.recipients || 0); }, 0);
+      wrap.textContent = '';
+      wrap.appendChild(MR.h('h1', { text: 'Settings' }));
+      wrap.appendChild(MR.h('p', { class: 'dr-lead', text: 'Things you set once: how your email looks, where it comes from, your replies, postal address, timezone, plan and data.' }));
+      wrap.appendChild(MR.h('div', { class: 'mr-linkcards' },
+        MR.h('a', { class: 'mr-linkcard', href: 'brand.html' },
+          MR.h('strong', { text: 'How your email looks' }),
+          MR.h('span', { text: 'Your logo, colours and footer, saved once and used by every campaign.' })),
+        MR.h('a', { class: 'mr-linkcard', href: 'domain.html' },
+          MR.h('strong', { text: 'Sending domains' }),
+          MR.h('span', { text: 'Send from a subdomain ABTA sets up for you, or from a domain of your own.' }))));
+      var settings = MR.h('div', { class: 'mr-settings' });
+      settings.appendChild(replyBox(account, replies));
+      settings.appendChild(addressBox(account));
+      settings.appendChild(timezoneBox(account));
+      settings.appendChild(planBox(account, plan, { emails: emails, subscribers: subscriberCount }));
+      settings.appendChild(dataBox(account));
+      wrap.appendChild(settings);
+    }).catch(function (err) { return MR.loadFailed(wrap, err); });
+  }
+
   function initDashboard() {
     var wrap = document.getElementById('mr-dashboard');
     if (!wrap) return;
@@ -533,9 +618,11 @@
     // In preview mode the same render runs on the sample data, so the page a
     // member is sent to when a reply-to address is refused is not a blank one.
     var load = MR.cfg.demo
-      ? Promise.resolve([MR.sampleAccount, MR.sampleCampaigns || [], MR.sampleLists || [],
-                         MR.sampleDomains || [], MR.sampleReplyAddresses || [],
-                         MR.samplePlans || [], []])
+      ? (MR.qs('fresh')
+          ? Promise.resolve([MR.sampleAccount, [], [], [], MR.sampleReplyAddresses || [], MR.samplePlans || [], [], []])
+          : Promise.resolve([MR.sampleAccount, MR.sampleCampaigns || [], MR.sampleLists || [],
+                             MR.sampleDomains || [], MR.sampleReplyAddresses || [],
+                             MR.samplePlans || [], [], []]))
       : MR.requireAccount(wrap).then(function (account) {
           return Promise.all([
             account,
@@ -544,7 +631,8 @@
             MR.api.select('mailroom_domains?select=id,domain,from_local,status,is_default,sending_status,trust_level,clean_campaigns'),
             MR.api.select('mailroom_reply_addresses?select=id,email,status&order=email'),
             MR.api.select('mailroom_plans?select=*&code=eq.' + encodeURIComponent(account.plan_code || 'included')),
-            MR.api.select('mailroom_subscribers?select=id&status=eq.subscribed')
+            MR.api.select('mailroom_subscribers?select=id&status=eq.subscribed&limit=1'),
+            MR.api.select('mailroom_brand?select=account_id&limit=1')
           ]);
         });
 
@@ -561,8 +649,9 @@
       var replies = res[4] || [];
       var plan = (res[5] || [])[0] || null;
       var subscriberCount = MR.cfg.demo
-        ? (MR.sampleLists || []).reduce(function (n, l) { return n + (l.subscribers || 0); }, 0)
+        ? (MR.qs('fresh') ? 0 : (MR.sampleLists || []).reduce(function (n, l) { return n + (l.subscribers || 0); }, 0))
         : (res[6] || []).length;
+      var hasBrand = MR.cfg.demo ? !MR.qs('fresh') && !!MR.sampleBrand : (res[7] || []).length > 0;
       wrap.textContent = '';
       // Arriving straight from create-account.html, which no longer leaves the
       // member stranded on the signup form.
@@ -596,6 +685,12 @@
       // Each figure carries the thing you would do about it, or the line it
       // must not cross. A complaint rate with no threshold beside it tells a
       // member nothing: they cannot know whether 0.04% is fine or alarming.
+      var steps = firstSteps({
+        brand: hasBrand, people: subscriberCount > 0,
+        agreed: lists.some(function (l) { return l.consent_status !== 'unconfirmed'; }),
+        written: campaigns.length > 0, sent: sent.length > 0
+      });
+      if (steps) wrap.appendChild(steps);
       wrap.appendChild(MR.h('div', { class: 'mr-figures mr-figures--cards' },
         card('Campaigns sent', MR.number(sentThisYear.length), 'Across the last 12 months'),
         card('Delivered', MR.number(delivered),
@@ -635,20 +730,6 @@
       domainRow.appendChild(domainText);
       domainRow.appendChild(MR.h('a', { class: 'mr-domain-row__link', href: 'domain.html', text: 'Sending domains' }));
       // Appended at the foot, below the campaign list, as the mockup has it.
-
-      wrap.appendChild(replyBox(account, replies));
-      wrap.appendChild(addressBox(account));
-      wrap.appendChild(timezoneBox(account));
-      var emailsThisMonth = campaigns.filter(function (c) {
-        if (c.status !== 'sent' || !c.sent_at) return false;
-        var d = new Date(c.sent_at), now = new Date();
-        return d.getUTCFullYear() === now.getUTCFullYear() && d.getUTCMonth() === now.getUTCMonth();
-      }).reduce(function (n, c) { return n + (c.recipients || 0); }, 0);
-
-      wrap.appendChild(planBox(account, plan, {
-        emails: emailsThisMonth, subscribers: subscriberCount
-      }));
-      wrap.appendChild(dataBox(account));
 
       // A campaign part-way through sending. Large lists take minutes now that
       // the work is spread across workers, so say so rather than leaving the
@@ -721,8 +802,14 @@
         if (!figures || !head) return;
         var block = [], n = head;
         while (n) { block.push(n); n = n.nextSibling; }
-        var at = figures.nextSibling;
-        block.forEach(function (el) { wrap.insertBefore(el, at); });
+        // Placed one after another from the figures down, so the order holds
+        // whatever is or is not between them.
+        var anchor = figures;
+        ['mr-in-flight', 'mr-queued'].forEach(function (id) {
+          var box = document.getElementById(id);
+          if (box) { anchor.after(box); anchor = box; }
+        });
+        block.forEach(function (el) { anchor.after(el); anchor = el; });
       }
 
       // "Recent campaigns" with a View all link, per the mockup. Write a
@@ -733,12 +820,8 @@
         MR.h('h2', { class: 'dr-h', text: 'Recent campaigns' }),
         MR.h('a', { class: 'mr-section-head__all', href: 'campaigns.html', text: 'View all' })));
 
-      if (!lists.some(function (l) { return l.consent_status !== 'unconfirmed'; })) {
-        MR.banner(wrap, 'No list is ready to mail',
-          'A list can only be used once you have recorded how the addresses were collected.');
-        wrap.appendChild(MR.h('p', null,
-          MR.h('a', { class: 'dr-button', href: 'import.html', text: 'Add your subscribers' })));
-      }
+      // The Get started list above says what to do about lists, so there is no
+      // separate banner for it.
 
       if (!campaigns.length) {
         wrap.appendChild(MR.h('p', { class: 'dr-empty', text: 'You have not written a campaign yet.' }));
@@ -810,14 +893,15 @@
     function render(account, lists) {
       wrap.textContent = '';
       wrap.appendChild(MR.h('h1', { text: 'Your lists' }));
-      wrap.appendChild(MR.h('p', { class: 'dr-lead', text: 'A list can only be mailed once you have said how its addresses were collected. One answer, asked once per list, and it becomes the consent record you can show a subscriber who asks why you have their address.' }));
+      wrap.appendChild(MR.h('p', { class: 'dr-lead', text: 'Each list records how its people agreed to hear from you. Once that is saved, the list can be mailed, and the record is there to show anyone who asks why you have their address.' }));
       wrap.appendChild(MR.h('p', null,
         MR.h('a', { class: 'dr-button', href: 'import.html', text: 'Add subscribers from a file' }),
         ' creates a list, records how it was collected and imports the file in one go.'));
       wrap.appendChild(newListForm(account));
 
       if (!lists.length) {
-        wrap.appendChild(MR.h('p', { class: 'dr-empty', text: 'No lists yet.' }));
+        wrap.appendChild(MR.h('p', { class: 'dr-empty' }, 'No lists yet. Add subscribers from a file above, or collect them with a ',
+          MR.h('a', { href: 'forms.html', text: 'signup form' }), '.'));
         return;
       }
       lists.forEach(function (l) { wrap.appendChild(listCard(l)); });
@@ -1251,7 +1335,7 @@
 
       if (MR.cfg.demo) {
         MR.banner(form.parentNode, 'Preview only',
-          allRows().length + ' addresses would be checked against the suppression list and imported.');
+          allRows().length + ' addresses would be checked against the blocked addresses and imported.');
         return;
       }
 
@@ -1279,7 +1363,7 @@
             next: [
               'The addresses are on the list now and can be mailed.',
               'How you said they were collected is saved against each one, with today\u2019s date, so every person has a record of their own.',
-              'Addresses blocked on the platform or on your account were left off: hard bounces, complaints and requests to stop all AMI Mailroom email. Anyone who had unsubscribed from your list stays unsubscribed.'
+              'Addresses blocked on the platform or on your account were left off: addresses that do not exist, spam reports and requests to stop all AMI Mailroom email. Anyone who had unsubscribed from your list stays unsubscribed.'
             ],
             actions: [
               ['campaign.html?list=' + encodeURIComponent(listId) + (MR.qs('start') === '1' ? '&start=1' : ''), 'Write your email'],
@@ -1290,7 +1374,7 @@
               r.added + ' added',
               r.skipped_duplicate + ' already on the list, including anyone who had unsubscribed',
               r.skipped_invalid + ' not valid addresses',
-              r.skipped_suppressed + ' skipped because they are blocked: a hard bounce, a complaint or a request to stop all email'
+              r.skipped_suppressed + ' skipped because they are blocked: an address that does not exist, a spam report or a request to stop all email'
             ].concat(r.skipped_disposable ? [r.skipped_disposable + ' throwaway addresses skipped'] : [])
              .concat(r.skipped_quota ? [r.skipped_quota + ' not added because your plan\u2019s subscriber limit was reached'] : [])
           });
@@ -1310,6 +1394,7 @@
   document.addEventListener('DOMContentLoaded', function () {
     initCreateAccount();
     initDashboard();
+    initSettings();
     initLists();
     initImport();
   });

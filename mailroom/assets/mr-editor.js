@@ -555,15 +555,29 @@
     }
   }
 
+  // Left, centre and right as three icon buttons, so the choice is one click.
+  // Each button still has its words for a screen reader and a tooltip.
+  var ALIGN_ICONS = {
+    left: '<path d="M4 6h16M4 10h10M4 14h16M4 18h10"/>',
+    center: '<path d="M4 6h16M7 10h10M4 14h16M7 18h10"/>',
+    right: '<path d="M4 6h16M10 10h10M4 14h16M10 18h10"/>'
+  };
   function alignField(id, block, api) {
     if (ALIGNABLE.indexOf(block.type) === -1) return null;
-    var select = MR.h('select', { class: 'dr-select dr-input--w', id: id + '-align' },
-      MR.h('option', { value: 'left', text: 'Left', selected: (block.align || 'left') === 'left' }),
-      MR.h('option', { value: 'center', text: 'Centre', selected: block.align === 'center' }),
-      MR.h('option', { value: 'right', text: 'Right', selected: block.align === 'right' }));
-    select.addEventListener('change', function () { block.align = select.value; api.changed(); });
-    return MR.h('div', { class: 'dr-form-group' },
-      MR.h('label', { class: 'dr-label', for: id + '-align', text: 'Alignment' }), select);
+    var cur = block.align || 'left';
+    var group = MR.h('div', { class: 'mr-seg', role: 'group', id: id + '-align', 'aria-labelledby': id + '-align-label' });
+    [['left', 'Left'], ['center', 'Centre'], ['right', 'Right']].forEach(function (o) {
+      var b = MR.h('button', { type: 'button', class: 'mr-seg__btn', title: o[1], 'aria-label': o[1], 'aria-pressed': cur === o[0] ? 'true' : 'false' });
+      b.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">' + ALIGN_ICONS[o[0]] + '</svg>';
+      b.addEventListener('click', function () {
+        block.align = o[0];
+        Array.prototype.forEach.call(group.children, function (c) { c.setAttribute('aria-pressed', c === b ? 'true' : 'false'); });
+        api.changed();
+      });
+      group.appendChild(b);
+    });
+    return MR.h('div', { class: 'dr-form-group mr-field--inline' },
+      MR.h('span', { class: 'dr-label', id: id + '-align-label', text: 'Alignment' }), group);
   }
 
   function colourField(id, labelText, block, key, api, hint) {

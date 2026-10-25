@@ -912,6 +912,7 @@
     if (memberNav) { buildMemberNav(memberNav); memberNav.hidden = !(MR.auth.signedIn() || MR.cfg.demo); }
 
     addBackLink();
+    linkProductName();
 
     var out = document.getElementById('mr-sign-out');
     if (out) {
@@ -927,6 +928,31 @@
     // markup and all, so there is nothing left here to show or hide.
   }
 
+
+  /* The product name in the shared band ("Mailroom") takes the visitor to the
+     Mailroom home page. The band belongs to nav.js and is left as it is: this
+     only wraps its text in a link once the band exists, in the same colour and
+     type, so nothing looks different. */
+  function linkProductName() {
+    // One folder level for the pages under /mailroom/legal/, none elsewhere.
+    var home = /\/mailroom\/legal\//.test(window.location.pathname) ? '../index.html' : 'index.html';
+    function wrap() {
+      var name = document.querySelector('.ami-band__name:not([data-mr-home])');
+      if (!name) return;
+      name.setAttribute('data-mr-home', '1');
+      var a = document.createElement('a');
+      a.href = home;
+      a.textContent = name.textContent;
+      a.style.cssText = 'color:inherit;text-decoration:none;font:inherit';
+      a.setAttribute('aria-label', 'Mailroom home');
+      name.textContent = '';
+      name.appendChild(a);
+    }
+    wrap();
+    if (window.MutationObserver) {
+      new MutationObserver(wrap).observe(document.documentElement, { childList: true, subtree: true });
+    }
+  }
 
   /* A way back from pages that are opened from another page: How your email
      looks and Sending domains from Settings, Add subscribers from Lists, and a

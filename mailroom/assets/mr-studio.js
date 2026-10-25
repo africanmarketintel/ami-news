@@ -56,6 +56,7 @@
     desktop: '<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/>',
     phone: '<rect x="7" y="3" width="10" height="18" rx="2"/><path d="M11 18h2"/>',
     back: '<path d="M15 6l-6 6 6 6"/>',
+    plus: '<path d="M12 5v14M5 12h14"/>',
     close: '<path d="M6 6l12 12M18 6L6 18"/>',
     more: '<circle cx="12" cy="5" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="12" cy="19" r="1.4"/>',
     up: '<path d="M6 15l6-6 6 6"/>',
@@ -112,7 +113,7 @@
     var campaign = o.campaign;
     var PARTS = MR.editorParts;
     var saved = o.saved || [];
-    var state = { sel: null, device: 'desktop', rail: 'content', tab: 'blocks', dirty: false, savedAt: null, saving: false };
+    var state = { sel: null, device: 'desktop', rail: 'content', tab: 'blocks', btab: 'block', adding: false, dirty: false, savedAt: null, saving: false };
     var hist = { stack: [], i: -1 };
     var map = [];                       // one entry per top-level block row
     var byRow = new Map();              // table row -> { path, block, tr }
@@ -179,20 +180,20 @@
     function railBtn(key, label) {
       var b = h('button', {
         type: 'button', class: 'mr-studio__railbtn', 'aria-pressed': 'false',
-        onclick: function () { state.rail = key; if (key !== 'content') state.sel = null, placeSel(); renderPanels(); renderRail(); }
-      }, icon(key, 24), h('span', { text: label }));
+        onclick: function () { state.rail = key; state.sel = null; state.adding = false; placeSel(); renderPanels(); renderRail(); drawOutline(); }
+      }, icon(key, 20), h('span', { text: label }));
       railBtns[key] = b;
       return b;
     }
     var rail = h('nav', { class: 'mr-studio__rail', 'aria-label': 'Editor sections' },
-      railBtn('content', 'Content'), railBtn('style', 'Style'), railBtn('send', 'Send'));
+      railBtn('content', 'Add'), railBtn('style', 'Design'), railBtn('send', 'Send'));
 
     // panels
     var pContent = h('div', { class: 'mr-studio__pane' });
     var pBlock = h('div', { class: 'mr-studio__pane', hidden: true });
     var pStyle = h('div', { class: 'mr-studio__pane', hidden: true });
     var pSend = h('div', { class: 'mr-studio__pane', hidden: true });
-    var panel = h('aside', { class: 'mr-studio__panel', 'aria-label': 'Editor panel' }, pContent, pBlock, pStyle, pSend);
+    var panel = h('aside', { class: 'mr-studio__panel', 'aria-label': 'Editor panel' }, rail, pContent, pBlock, pStyle, pSend);
 
     // stage
     var notes = h('div', { class: 'mr-studio__notes' });
@@ -214,7 +215,7 @@
     var main = h('div', { class: 'mr-studio__main' }, notes, linkDock, stage);
 
     root.appendChild(bar);
-    root.appendChild(h('div', { class: 'mr-studio__body' }, rail, panel, main));
+    root.appendChild(h('div', { class: 'mr-studio__body' }, main, panel));
 
     /* ---------------- history ---------------- */
     function snap() {
@@ -311,6 +312,7 @@
       paint();
       var p = focusBlock ? pathOf(focusBlock) : null;
       state.sel = p;
+      state.adding = false;
       if (p !== null) state.rail = 'content';
       renderRail();
       renderPanels();
@@ -506,27 +508,35 @@
     /* ---------------- rail and panels ---------------- */
     function renderRail() {
       Object.keys(railBtns).forEach(function (k) {
-        railBtns[k].setAttribute('aria-pressed', state.rail === k ? 'true' : 'false');
-        railBtns[k].classList.toggle('is-on', state.rail === k);
+        var on = state.rail === k && !(k === 'content' && state.sel !== null && !state.adding && byPath(state.sel));
+        railBtns[k].setAttribute('aria-pressed', on ? 'true' : 'false');
+        railBtns[k].classList.toggle('is-on', on);
       });
     }
     function pane(name) { return { content: pContent, block: pBlock, style: pStyle, send: pSend }[name]; }
     function renderPanels() {
-      var showBlock = state.rail === 'content' && state.sel !== null && byPath(state.sel);
+      var showBlock = state.rail === 'content' && state.sel !== null && !state.adding && byPath(state.sel);
       pContent.hidden = !(state.rail === 'content' && !showBlock);
       pBlock.hidden = !showBlock;
       pStyle.hidden = state.rail !== 'style';
       pSend.hidden = state.rail !== 'send';
+      if (addNote) addNote.textContent = state.adding
+        ? 'Choose a block. It goes below the one you selected.'
+        : 'Click anything in your email to change it. To add something new, drag a block in or click it.';
       if (showBlock) buildBlockPane();
     }
 
     /* ---------------- Content: blocks, sections, saved ---------------- */
     var tabBtns = {};
+    var addNote = null;
+    var styleUi = { open: { email: true } };
     var tabBodies = {};
     function buildContent() {
       pContent.textContent = '';
+      addNote = h('p', { class: 'mr-studio__hint mr-studio__addnote' });
+      pContent.appendChild(addNote);
       var tablist = h('div', { class: 'mr-studio__tabs', role: 'tablist', 'aria-label': 'Content' });
-      [['blocks', 'Blocks'], ['sections', 'Sections'], ['saved', 'Saved']].forEach(function (t) {
+      [['blocks', 'Blocks'], ['sections', 'Ready-made'], ['saved', 'Saved']].forEach(function (t) {
         var b = h('button', {
           type: 'button', role: 'tab', class: 'mr-studio__tab', id: 'mrs-tab-' + t[0], 'aria-controls': 'mrs-body-' + t[0],
           onclick: function () { state.tab = t[0]; renderTabs(); if (t[0] === 'sections') drawSections(); }
@@ -560,10 +570,11 @@
       });
     }
 
+    var PRIMARY = ['heading', 'text', 'image', 'button', 'imagetext', 'columns', 'list', 'video', 'social', 'divider', 'spacer', 'logo'];
+    var TILE_NAME = { dynamic: 'Personalised text', video: 'Video', imagetext: 'Image and text', panel: 'Colour panel' };
     function drawBlocks() {
       var box = tabBodies.blocks;
       box.textContent = '';
-      box.appendChild(h('p', { class: 'mr-studio__hint', text: 'Drag a block into your email, or select one to add it after the block you have selected.' }));
       var types = MR.BLOCK_TYPES || [];
       function tiles(list) {
         var grid = h('div', { class: 'mr-studio__tiles' });
@@ -571,7 +582,7 @@
           var tile = h('button', {
             type: 'button', class: 'mr-studio__tile', draggable: 'true', title: t.hint,
             onclick: function () { add(t.value); }
-          }, icon(t.value, 34), h('span', { text: t.label }));
+          }, icon(t.value, 30), h('span', { text: TILE_NAME[t.value] || t.label }));
           tile.addEventListener('dragstart', function (e) {
             dragging = { kind: 'new', type: t.value };
             e.dataTransfer.setData('text/mr-new', t.value);
@@ -582,15 +593,25 @@
         });
         return grid;
       }
-      box.appendChild(tiles(types.filter(function (t) { return !t.more; })));
-      var more = types.filter(function (t) { return t.more; });
+      box.appendChild(tiles(PRIMARY.map(function (v) { return types.filter(function (t) { return t.value === v; })[0]; }).filter(Boolean)));
+      var more = types.filter(function (t) { return PRIMARY.indexOf(t.value) === -1; });
       if (more.length) {
-        box.appendChild(h('h2', { class: 'mr-studio__h3', text: 'More layouts' }));
-        box.appendChild(tiles(more));
+        var d = h('details', { class: 'mr-studio__fold' });
+        d.open = !!styleUi.open['more-blocks'];
+        d.addEventListener('toggle', function () { styleUi.open['more-blocks'] = d.open; });
+        d.appendChild(h('summary', { class: 'mr-studio__foldhead', text: 'More blocks' }));
+        var inner = h('div', { class: 'mr-studio__foldbody' });
+        inner.appendChild(tiles(more));
+        d.appendChild(inner);
+        box.appendChild(d);
       }
-      box.appendChild(h('h2', { class: 'mr-studio__h3', text: 'In this email' }));
+      var od = h('details', { class: 'mr-studio__fold' });
+      od.open = !!styleUi.open['outline'];
+      od.addEventListener('toggle', function () { styleUi.open['outline'] = od.open; });
+      od.appendChild(h('summary', { class: 'mr-studio__foldhead', text: 'Every block in this email' }));
       outlineBox = h('div', { class: 'mr-studio__outline' });
-      box.appendChild(outlineBox);
+      od.appendChild(h('div', { class: 'mr-studio__foldbody' }, outlineBox));
+      box.appendChild(od);
       drawOutline();
     }
 
@@ -773,25 +794,72 @@
       redraw: function () { flush(); record(); markDirty(); paint(); renderPanels(); drawOutline(); placeSel(); }
     };
 
+    // Which of the email-wide text styles a block follows, so the Text tab can
+    // show the right ones. A block with no words in it has no Text tab.
+    function textKind(block) {
+      var t = block.type;
+      if (t === 'heading' || t === 'story') return 'title';
+      if (t === 'button') return 'button';
+      if (t === 'social' || t === 'navigation') return 'links';
+      if (['text', 'list', 'columns', 'imagetext', 'dynamic', 'html', 'product'].indexOf(t) > -1) return 'paragraph';
+      return null;
+    }
+    var KIND_NAME = { title: 'every title', paragraph: 'all paragraph text', button: 'every button', links: 'every link' };
+
     function buildBlockPane() {
       var path = state.sel;
       var block = byPath(path);
       pBlock.textContent = '';
       if (!block) return;
       var at = resolve(path);
-      pBlock.appendChild(h('div', { class: 'mr-studio__phead' },
-        h('button', { type: 'button', class: 'mr-studio__back', onclick: function () { select(null); } }, icon('back', 18), h('span', { text: 'All blocks' })),
-        h('h2', { class: 'mr-studio__h2', text: blockLabel(block) })));
+      var kind = textKind(block);
+      if (state.btab === 'text' && !kind) state.btab = 'block';
 
-      var actions = h('div', { class: 'mr-studio__actions' },
-        smallBtn('Move up', 'up', at.index === 0, function () { move(path, -1); }, 'up'),
-        smallBtn('Move down', 'down', at.index === at.list.length - 1, function () { move(path, 1); }, 'down'),
-        smallBtn('Duplicate', 'copy', false, function () { duplicate(path); }),
-        o.onSaveBlock ? smallBtn('Save to reuse', 'bookmark', false, function () {
+      var actions = h('div', { class: 'mr-studio__tinys' },
+        tinyBtn('Add a block below', 'plus', false, function () {
+          state.adding = true; state.rail = 'content'; state.tab = 'blocks'; renderTabs(); renderPanels(); renderRail();
+          var first = pContent.querySelector('.mr-studio__tile'); if (first) first.focus();
+        }),
+        tinyBtn('Move up', 'up', at.index === 0, function () { move(path, -1); }, 'up'),
+        tinyBtn('Move down', 'down', at.index === at.list.length - 1, function () { move(path, 1); }, 'down'),
+        tinyBtn('Duplicate', 'copy', false, function () { duplicate(path); }),
+        o.onSaveBlock ? tinyBtn('Save to reuse later', 'bookmark', false, function () {
           o.onSaveBlock([block], function (row) { saved = saved.concat([row]); drawSaved(); });
         }) : null,
-        smallBtn('Remove', 'trash', false, function () { remove(path); }, null, true));
-      pBlock.appendChild(actions);
+        tinyBtn('Remove', 'trash', false, function () { remove(path); }, null, true));
+      pBlock.appendChild(h('div', { class: 'mr-studio__phead' },
+        h('button', { type: 'button', class: 'mr-studio__back', onclick: function () { select(null); } }, icon('back', 18), h('span', { text: 'Done' })),
+        h('div', { class: 'mr-studio__titlerow' }, h('h2', { class: 'mr-studio__h2', text: blockLabel(block) }), actions)));
+
+      if (kind) {
+        var tabs = h('div', { class: 'mr-studio__tabs mr-studio__tabs--block', role: 'tablist', 'aria-label': 'Settings for this block' });
+        var tb = {};
+        [['block', 'Block'], ['text', 'Font']].forEach(function (t) {
+          var b2 = h('button', {
+            type: 'button', role: 'tab', class: 'mr-studio__tab' + (state.btab === t[0] ? ' is-on' : ''),
+            'aria-selected': state.btab === t[0] ? 'true' : 'false', tabindex: state.btab === t[0] ? '0' : '-1',
+            onclick: function () { state.btab = t[0]; buildBlockPane(); var again = pBlock.querySelector('[role="tab"][aria-selected="true"]'); if (again) again.focus(); }
+          }, t[1]);
+          b2.addEventListener('keydown', function (e) {
+            if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+            e.preventDefault();
+            state.btab = t[0] === 'block' ? 'text' : 'block';
+            buildBlockPane();
+            var again = pBlock.querySelector('[role="tab"][aria-selected="true"]'); if (again) again.focus();
+          });
+          tb[t[0]] = b2;
+          tabs.appendChild(b2);
+        });
+        pBlock.appendChild(tabs);
+      }
+
+      if (kind && state.btab === 'text') {
+        var tp = h('div', { class: 'mr-studio__textpane' });
+        tp.appendChild(h('p', { class: 'mr-studio__hint', text: 'Applies to ' + KIND_NAME[kind] + ' in this email, so they always match. Colour panels keep their own text colour.' }));
+        textControls(kind, tp, 'bt');
+        pBlock.appendChild(tp);
+        return;
+      }
 
       if (block.type === 'panel') pBlock.appendChild(panelSettings(block, path));
       else pBlock.appendChild(PARTS.fields(block, path, fieldsApi));
@@ -870,7 +938,7 @@
       draw();
       return h('div', { class: 'dr-form-group' },
         h('div', { class: 'mr-studio__row2' }, h('span', { class: 'dr-label', text: text + ' (px)' }),
-          h('span', { class: 'dr-choice dr-choice--checkbox' }, box, h('label', { class: 'dr-choice__label', for: id + '-group', text: 'Group sides' }))),
+          h('span', { class: 'dr-choice dr-choice--checkbox' }, box, h('label', { class: 'dr-choice__label', for: id + '-group', text: 'Same on all sides' }))),
         holder);
     }
     function dfield(id, text, control, hint) {
@@ -904,33 +972,60 @@
       return d;
     }
 
+    function dslider(block, id, text, key, min, max, def) {
+      var cur = dget(block, key);
+      var val = cur === undefined ? def : cur;
+      var range = h('input', { type: 'range', class: 'mr-range', id: id, min: String(min), max: String(max), step: '1', value: String(val) });
+      var num = h('input', { type: 'number', class: 'dr-input mr-range__num', min: String(min), max: String(max), step: '1', value: String(val), 'aria-label': text + ', as a number' });
+      function put(n) { dset(block, key, n === def ? '' : n); }
+      range.addEventListener('input', function () { var n = parseInt(range.value, 10); num.value = n; put(n); });
+      num.addEventListener('input', function () {
+        var n = parseInt(num.value, 10);
+        if (isFinite(n) && n >= min && n <= max) { range.value = n; put(n); }
+      });
+      num.addEventListener('blur', function () { var v = dget(block, key); num.value = v === undefined ? def : v; });
+      return h('div', { class: 'dr-form-group' }, h('label', { class: 'dr-label', for: id, text: text }),
+        h('div', { class: 'mr-range__row' }, range, num));
+    }
+
     function designPanel(block) {
       var id = 'dz' + String(state.sel).replace(/\./g, '-');
       var wrap = h('div', { class: 'mr-studio__design' });
-      wrap.appendChild(h('h3', { class: 'mr-studio__h3', text: 'Block design' }));
-      wrap.appendChild(h('p', { class: 'mr-studio__hint', text: 'Leave a setting empty to keep the email’s own style.' }));
+      wrap.appendChild(h('h3', { class: 'mr-studio__h3', text: 'Spacing and colour' }));
+      wrap.appendChild(dslider(block, id + '-pt', 'Space above', 'pad_t', 0, 80, 0));
+      wrap.appendChild(dslider(block, id + '-pb', 'Space below', 'pad_b', 0, 80, 0));
+      if (block.type !== 'panel') wrap.appendChild(dcolour(block, id + '-bgc', 'Background colour', 'bg', '#ffffff'));
 
-      wrap.appendChild(dfold('layout', 'Layout', function (b) {
+      var more = h('details', { class: 'mr-studio__fold mr-studio__fold--more' });
+      more.open = !!styleUi.open['d-more'];
+      more.addEventListener('toggle', function () { styleUi.open['d-more'] = more.open; });
+      more.appendChild(h('summary', { class: 'mr-studio__foldhead', text: 'More options' }));
+      var inner = h('div', { class: 'mr-studio__foldbody' });
+      inner.appendChild(h('p', { class: 'mr-studio__hint', text: 'Leave a setting empty to keep the email’s own style.' }));
+      more.appendChild(inner);
+      wrap.appendChild(more);
+
+      inner.appendChild(dfold('layout', 'Size and position', function (b) {
         b.appendChild(dfield(id + '-w', 'Width', dnum(block, id + '-w', 'Width', 'width', 10, 100, 100, '%')));
-        b.appendChild(dfield(id + '-a', 'Block alignment',
-          dseg(block, 'Block alignment', 'block_align', [['left', 'Left'], ['center', 'Centre'], ['right', 'Right']], 'left'),
+        b.appendChild(dfield(id + '-a', 'Position',
+          dseg(block, 'Position', 'block_align', [['left', 'Left'], ['center', 'Centre'], ['right', 'Right']], 'left'),
           'Where a block narrower than 100% sits.'));
       }));
-      wrap.appendChild(dfold('spacing', 'Spacing', function (b) {
-        b.appendChild(dsides(block, id + '-pad', 'Padding', ['pad_t', 'pad_r', 'pad_b', 'pad_l'], 80));
-        b.appendChild(dsides(block, id + '-mar', 'Margin', ['mar_t', 'mar_r', 'mar_b', 'mar_l'], 80));
+      inner.appendChild(dfold('spacing', 'Space inside and outside', function (b) {
+        b.appendChild(dsides(block, id + '-pad', 'Space inside', ['pad_t', 'pad_r', 'pad_b', 'pad_l'], 80));
+        b.appendChild(dsides(block, id + '-mar', 'Space outside', ['mar_t', 'mar_r', 'mar_b', 'mar_l'], 80));
       }));
-      wrap.appendChild(dfold('bg', 'Background', function (b) {
-        b.appendChild(dcolour(block, id + '-bgc', 'Colour', 'bg', '#ffffff'));
+      inner.appendChild(dfold('bg', 'Background picture', function (b) {
         var url = h('input', { class: 'dr-input', id: id + '-bgi', type: 'url', placeholder: 'https://', value: dget(block, 'bg_image') || '' });
         url.addEventListener('input', function () { dset(block, 'bg_image', /^https?:\/\//i.test(url.value.trim()) ? url.value.trim() : ''); });
-        b.appendChild(dfield(id + '-bgi', 'Image address', url, 'A web address starting https://. Some email apps do not show background images.'));
+        b.appendChild(dfield(id + '-bgi', 'Picture address', url, 'A web address starting https://. Some email apps do not show background pictures.'));
       }));
-      wrap.appendChild(dfold('radius', 'Rounded corners', function (b) {
-        b.appendChild(dfield(id + '-r', 'Radius', dnum(block, id + '-r', 'Radius', 'radius', 0, 40, 0, 'px'), 'Outlook for Windows shows square corners.'));
+      inner.appendChild(dfold('radius', 'Rounded corners', function (b) {
+        b.appendChild(dslider(block, id + '-r', 'Roundness', 'radius', 0, 40, 0));
+        b.appendChild(h('p', { class: 'mr-studio__hint', text: 'Outlook for Windows shows square corners.' }));
       }));
-      wrap.appendChild(dfold('border', 'Borders', function (b) {
-        b.appendChild(dfield(id + '-bs', 'Size', dnum(block, id + '-bs', 'Border size', 'border_size', 0, 10, 0, 'px')));
+      inner.appendChild(dfold('border', 'Border', function (b) {
+        b.appendChild(dfield(id + '-bs', 'Thickness', dnum(block, id + '-bs', 'Border thickness', 'border_size', 0, 10, 0, 'px')));
         b.appendChild(dcolour(block, id + '-bc', 'Colour', 'border_colour', '#cccccc'));
         var cur = String(dget(block, 'border_sides') || 'trbl');
         var sides = h('div', { class: 'mr-studio__sidechecks' });
@@ -943,13 +1038,18 @@
           });
           sides.appendChild(h('span', { class: 'dr-choice dr-choice--checkbox' }, cb, h('label', { class: 'dr-choice__label', for: id + '-s' + sd[0], text: sd[1] })));
         });
-        b.appendChild(dfield(id + '-sides', 'Apply to', sides));
+        b.appendChild(dfield(id + '-sides', 'Which sides', sides));
       }));
-      wrap.appendChild(dfold('show', 'Content visibility', function (b) {
-        b.appendChild(h('p', { class: 'mr-studio__hint', text: 'Show this block on:' }));
-        b.appendChild(dseg(block, 'Show on', 'show', [['all', 'All devices'], ['desktop', 'Only on desktop'], ['mobile', 'Only on mobile']], 'all'));
+      inner.appendChild(dfold('show', 'Show on', function (b) {
+        b.appendChild(dseg(block, 'Show on', 'show', [['all', 'All devices'], ['desktop', 'Computers only'], ['mobile', 'Phones only']], 'all'));
       }));
       return wrap;
+    }
+    function tinyBtn(text, ic, disabled, fn, focusKey, warn) {
+      return h('button', {
+        type: 'button', class: 'mr-studio__tiny' + (warn ? ' is-warn' : ''), disabled: disabled, 'data-focus': focusKey,
+        title: text, 'aria-label': text, onclick: fn
+      }, icon(ic, 18));
     }
     function smallBtn(text, ic, disabled, fn, focusKey, warn) {
       return h('button', {
@@ -982,10 +1082,9 @@
        a key is removed when it goes back to its default. The renderer checks
        every value again, so nothing here is trusted on the other side. */
     var FONT_OPTS = [
-      ['sans', 'Sans serif (Arial, Helvetica)'], ['serif', 'Serif (Georgia, Times)'], ['system', 'System font'],
+      ['sans', 'Arial and Helvetica'], ['serif', 'Georgia and Times'], ['system', 'Each device’s own font'],
       ['verdana', 'Verdana'], ['trebuchet', 'Trebuchet MS'], ['tahoma', 'Tahoma'], ['courier', 'Courier New']
     ];
-    var styleUi = { text: 'p', open: { layout: true } };
 
     function sty() {
       if (!campaign.style || typeof campaign.style !== 'object') campaign.style = {};
@@ -1035,6 +1134,37 @@
       return group(id, text, hint || ('Between ' + min + ' and ' + max + '. Empty means ' + def + '.'), input);
     }
 
+    // Capital letters: as typed, ALL CAPITALS or all lowercase. Three buttons, one choice.
+    function caseControl(id, text, key) {
+      var cur = sty()[key] || '';
+      var wrap = h('div', { class: 'mr-seg', role: 'group', id: id, 'aria-labelledby': id + '-label' });
+      [['', 'Aa', 'As typed'], ['upper', 'AA', 'All capitals'], ['lower', 'aa', 'All lowercase']].forEach(function (o2) {
+        var b = h('button', { type: 'button', class: 'mr-seg__btn mr-seg__btn--text', title: o2[2], 'aria-label': o2[2], 'aria-pressed': cur === o2[0] ? 'true' : 'false', text: o2[1] });
+        b.addEventListener('click', function () {
+          setSty(key, o2[0]);
+          Array.prototype.forEach.call(wrap.children, function (c) { c.setAttribute('aria-pressed', c === b ? 'true' : 'false'); });
+        });
+        wrap.appendChild(b);
+      });
+      return h('div', { class: 'dr-form-group mr-field--inline' }, h('span', { class: 'dr-label', id: id + '-label', text: text }), wrap);
+    }
+
+    // A slider with its number beside it. The default value clears the setting.
+    function sliderControl(id, text, key, min, max, def, hint) {
+      var cur = sty()[key];
+      var val = cur === undefined ? def : cur;
+      var range = h('input', { type: 'range', class: 'mr-range', id: id, min: String(min), max: String(max), step: '1', value: String(val) });
+      var num = h('input', { type: 'number', class: 'dr-input mr-range__num', min: String(min), max: String(max), step: '1', value: String(val), 'aria-label': text + ', as a number' });
+      function put(n) { setSty(key, n === def ? '' : n); }
+      range.addEventListener('input', function () { var n = parseInt(range.value, 10); num.value = n; put(n); });
+      num.addEventListener('input', function () {
+        var n = parseInt(num.value, 10);
+        if (isFinite(n) && n >= min && n <= max) { range.value = n; put(n); }
+      });
+      num.addEventListener('blur', function () { var v = sty()[key]; num.value = v === undefined ? def : v; });
+      return group(id, text, hint, h('div', { class: 'mr-range__row' }, range, num));
+    }
+
     function selControl(id, text, key, options, hint) {
       var cur = sty()[key] || '';
       var sel = h('select', { class: 'dr-select dr-input--w', id: id });
@@ -1067,19 +1197,71 @@
       return (first ? [['', first]] : []).concat(FONT_OPTS);
     }
 
-    function buildStyle() {
-      pStyle.textContent = '';
-      pStyle.appendChild(h('h2', { class: 'mr-studio__h2', text: 'Style' }));
+    // The text choices for one kind of text. Used on the Text tab of a selected
+    // block and on the Design tab, so there is one set of controls for each.
+    function textControls(kind, box, pfx) {
       var brand = brandNow() || {};
       var DB = MR.DEFAULT_BRAND;
       var accent = hexOk(brand.accent_colour) ? brand.accent_colour : DB.accent_colour;
       var btnFill = hexOk(brand.button_colour) ? brand.button_colour : DB.button_colour;
       var btnInk = hexOk(brand.button_text) ? brand.button_text : DB.button_text;
+      if (kind === 'title') {
+        box.appendChild(selControl(pfx + '-t-font', 'Font', 't_font', fontOptions('Same as the rest of the email')));
+        box.appendChild(sliderControl(pfx + '-t-size', 'Size of a large title', 't_size', 16, 40, 22));
+        box.appendChild(colourControl(pfx + '-t-colour', 'Colour', 't_colour', '#1a1208'));
+        box.appendChild(caseControl(pfx + '-t-case', 'Capitals', 't_case'));
+        box.appendChild(h('h3', { class: 'mr-studio__h3', text: 'Spacing' }));
+        box.appendChild(sliderControl(pfx + '-t-lead', 'Line height (per cent)', 't_leading', 100, 200, 127));
+        box.appendChild(sliderControl(pfx + '-t-space', 'Letter spacing (pixels)', 't_spacing', -2, 10, 0));
+      } else if (kind === 'paragraph') {
+        box.appendChild(selControl(pfx + '-p-font', 'Font', 'p_font', fontOptions('Same as the rest of the email')));
+        box.appendChild(sliderControl(pfx + '-p-size', 'Size', 'p_size', 11, 28, 16));
+        box.appendChild(colourControl(pfx + '-p-colour', 'Colour', 'p_colour', '#1a1208'));
+        box.appendChild(caseControl(pfx + '-p-case', 'Capitals', 'p_case'));
+        // An older choice of Tight or Roomy becomes the same line height as a number.
+        var legacy = { compact: 130, relaxed: 175 }[sty().line];
+        if (legacy && sty().p_leading === undefined) { sty().p_leading = legacy; delete sty().line; }
+        box.appendChild(h('h3', { class: 'mr-studio__h3', text: 'Spacing' }));
+        box.appendChild(sliderControl(pfx + '-p-lead', 'Line height (per cent)', 'p_leading', 100, 220, 150));
+        box.appendChild(sliderControl(pfx + '-p-space', 'Letter spacing (pixels)', 'p_spacing', -2, 10, 0));
+      } else if (kind === 'links') {
+        box.appendChild(colourControl(pfx + '-link-colour', 'Colour', 'link_colour', accent, 'Empty uses the accent colour from your brand.'));
+        box.appendChild(toggleControl(pfx + '-link-bold', 'Bold', 'link_bold', false));
+        box.appendChild(toggleControl(pfx + '-link-italic', 'Italic', 'link_italic', false));
+        box.appendChild(toggleControl(pfx + '-link-underline', 'Underline', 'link_underline', true));
+      } else if (kind === 'button') {
+        box.appendChild(colourControl(pfx + '-b-bg', 'Button colour', 'btn_bg', btnFill, 'Empty uses the button colour from your brand.'));
+        box.appendChild(colourControl(pfx + '-b-text', 'Words colour', 'btn_text', btnInk));
+        box.appendChild(selControl(pfx + '-b-font', 'Font', 'btn_font', fontOptions('Same as the rest of the email')));
+        box.appendChild(sliderControl(pfx + '-b-size', 'Size', 'btn_size', 11, 28, 16));
+        box.appendChild(sliderControl(pfx + '-b-radius', 'Roundness', 'btn_radius', 0, 50, 24));
+        box.appendChild(toggleControl(pfx + '-b-bold', 'Bold', 'btn_bold', true));
+        box.appendChild(caseControl(pfx + '-b-case', 'Capitals', 'btn_case'));
+        box.appendChild(sliderControl(pfx + '-b-space', 'Letter spacing (pixels)', 'btn_spacing', -2, 10, 0));
+        var more = h('details', { class: 'mr-studio__fold mr-studio__fold--more' });
+        more.open = !!styleUi.open['b-more'];
+        more.addEventListener('toggle', function () { styleUi.open['b-more'] = more.open; });
+        more.appendChild(h('summary', { class: 'mr-studio__foldhead', text: 'More button options' }));
+        var inner = h('div', { class: 'mr-studio__foldbody' });
+        inner.appendChild(toggleControl(pfx + '-b-italic', 'Italic', 'btn_italic', false));
+        inner.appendChild(toggleControl(pfx + '-b-underline', 'Underline', 'btn_underline', false));
+        inner.appendChild(sliderControl(pfx + '-b-width', 'Width in pixels', 'btn_width', 10, 600, 260));
+        inner.appendChild(sliderControl(pfx + '-b-border', 'Border thickness', 'btn_border', 0, 6, 2));
+        inner.appendChild(colourControl(pfx + '-b-border-colour', 'Border colour', 'btn_border_colour', btnFill, 'Empty matches the button colour.'));
+        more.appendChild(inner);
+        box.appendChild(more);
+      }
+    }
+
+    function buildStyle() {
+      pStyle.textContent = '';
+      pStyle.appendChild(h('h2', { class: 'mr-studio__h2', text: 'Design' }));
+      pStyle.appendChild(h('p', { class: 'mr-studio__hint', text: 'These choices apply to the whole email. To change one block, click it.' }));
+      var brand = brandNow() || {};
 
       // The brand library: what is kept once and used by every campaign.
       var lib = h('div', { class: 'mr-studio__card' });
-      lib.appendChild(h('h3', { class: 'mr-studio__cardhead', text: 'Brand library' }));
-      lib.appendChild(h('p', { class: 'mr-studio__hint', text: 'Your logo, colours and footer are kept once and used in every campaign.' }));
+      lib.appendChild(h('h3', { class: 'mr-studio__cardhead', text: 'Your brand' }));
       var list = h('dl', { class: 'mr-studio__brand' });
       function swatch(label, hex) {
         list.appendChild(h('dt', { text: label }));
@@ -1093,54 +1275,30 @@
       swatch('Button colour', hexOk(brand.button_colour) ? brand.button_colour : '');
       lib.appendChild(list);
       lib.appendChild(h('p', { class: 'mr-studio__hint' },
-        h('a', { href: 'brand.html', target: '_blank', rel: 'noopener', text: 'Open the brand library' }),
+        h('a', { href: 'brand.html', target: '_blank', rel: 'noopener', text: 'Change your brand' }),
         ' (opens in a new tab). Reload this page afterwards to see the change.'));
       pStyle.appendChild(lib);
 
-      fold('layout', 'Layout', function (box) {
-        box.appendChild(numControl('mrs-width', 'Email width (pixels)', 'width', 480, 700, 600,
-          'Between 480 and 700. 600 is the width mail apps show most reliably. On a phone the email fills the screen at any width.'));
+      fold('email', 'Email size and colours', function (box) {
+        box.appendChild(sliderControl('mrs-width', 'Email width', 'width', 480, 700, 600,
+          'On a phone the email always fills the screen.'));
         var font = h('select', { class: 'dr-select dr-input--w', id: 'mrs-font' });
         FONT_OPTS.forEach(function (f) {
           font.appendChild(h('option', { value: f[0], text: f[1], selected: (campaign.font_family || 'sans') === f[0] }));
         });
         font.addEventListener('change', function () { campaign.font_family = font.value; changed(true); });
-        box.appendChild(group('mrs-font', 'Typeface',
-          'Only fonts that exist on every device. A downloaded brand font silently falls back in Outlook, so none is offered.', font));
-        box.appendChild(selControl('mrs-dir', 'Writing direction', 'dir',
-          [['', 'Left to right'], ['rtl', 'Right to left']],
-          'For Arabic, Hebrew and similar languages. Left and right alignment swap, so a block set to the start of the line stays there.'));
+        box.appendChild(group('mrs-font', 'Main font',
+          'Only fonts every device has, so the email looks the same everywhere.', font));
+        box.appendChild(colourControl('mrs-page', 'Colour around the email', 'page', '#f3f2f1'));
+        box.appendChild(colourControl('mrs-body', 'Colour of the email', 'body', '#ffffff'));
       });
 
-      fold('spacing', 'Spacing', function (box) {
-        box.appendChild(numControl('mrs-pad', 'Side padding (pixels)', 'pad', 0, 48, 24,
-          'The space at the left and right of every block. Images get narrower to fit. A phone always uses 16.'));
-      });
-
-      fold('background', 'Background', function (box) {
-        box.appendChild(colourControl('mrs-page', 'Page colour', 'page', '#f3f2f1', 'The colour around the email.'));
-        box.appendChild(colourControl('mrs-body', 'Email colour', 'body', '#ffffff', 'The colour behind your content.'));
-        var url = h('input', { class: 'dr-input', id: 'mrs-bgimage', type: 'url', value: sty().bg_image || '',
-          placeholder: 'https://' });
-        url.addEventListener('input', function () { setSty('bg_image', url.value.trim()); });
-        var row2 = h('div', { class: 'dr-button-group' });
-        if (o.images) {
-          row2.appendChild(h('button', { type: 'button', class: 'dr-button dr-button--secondary', text: 'Choose or upload an image',
-            onclick: function () { o.images(function (picked) { setSty('bg_image', picked.url); buildStyle(); }); } }));
-        }
-        row2.appendChild(h('button', { type: 'button', class: 'dr-button dr-button--secondary', text: 'Remove image',
-          onclick: function () { setSty('bg_image', ''); url.value = ''; } }));
-        box.appendChild(group('mrs-bgimage', 'Background image',
-          'An address starting https://. It sits behind the email on the page colour. Outlook on Windows does not show it, so the page colour must work without it.', url));
-        box.appendChild(row2);
-      });
-
-      fold('header', 'Header', function (box) {
+      fold('header', 'Top of the email', function (box) {
         var topName = h('input', { class: 'dr-input dr-input--w', id: 'mrs-header-text', type: 'text', maxlength: '80',
           value: sty().header_text || '', placeholder: account().name || '' });
         topName.addEventListener('input', function () { setSty('header_text', topName.value.trim() ? topName.value : ''); });
         box.appendChild(group('mrs-header-text', 'Name at the top',
-          'Shown above the email when there is no logo. You can also type over it on the email. Leave it empty to use your account name.', topName));
+          'Shown when there is no logo. Leave it empty to use your account name.', topName));
         var on = h('input', { class: 'dr-choice__input', id: 'mrs-strip', type: 'checkbox', checked: !!campaign.header_colour });
         var colourWrap = h('div', { hidden: !campaign.header_colour });
         function drawColour() {
@@ -1158,71 +1316,48 @@
         });
         box.appendChild(h('div', { class: 'dr-choice dr-choice--checkbox' }, on,
           h('label', { class: 'dr-choice__label', for: 'mrs-strip' }, 'Put a colour strip behind the logo',
-            h('span', { class: 'dr-choice__hint', text: 'Otherwise the header is a rule in your accent colour.' }))));
+            h('span', { class: 'dr-choice__hint', text: 'Otherwise the top is a line in your accent colour.' }))));
         drawColour();
         box.appendChild(colourWrap);
         var br = h('input', { class: 'dr-choice__input', id: 'mrs-browser', type: 'checkbox', checked: !!campaign.show_browser_link });
         br.addEventListener('change', function () { campaign.show_browser_link = br.checked; changed(true); });
         box.appendChild(h('div', { class: 'dr-choice dr-choice--checkbox' }, br,
-          h('label', { class: 'dr-choice__label', for: 'mrs-browser' }, 'Show a "View in browser" link above the email',
-            h('span', { class: 'dr-choice__hint', text: 'It points at the archive copy, so it only works if this campaign is public in the archive.' }))));
+          h('label', { class: 'dr-choice__label', for: 'mrs-browser' }, 'Show a “View in browser” link',
+            h('span', { class: 'dr-choice__hint', text: 'It only works if this campaign is public in the archive.' }))));
       });
 
-      fold('text', 'Text styles', function (box) {
-        var kind = h('select', { class: 'dr-select dr-input--w', id: 'mrs-textkind' },
-          h('option', { value: 'p', text: 'Paragraph', selected: styleUi.text === 'p' }),
-          h('option', { value: 't', text: 'Title', selected: styleUi.text === 't' }));
-        kind.addEventListener('change', function () { styleUi.text = kind.value; buildStyle(); });
-        box.appendChild(group('mrs-textkind', 'Style', null, kind));
-        if (styleUi.text === 'p') {
-          box.appendChild(h('p', { class: 'mr-studio__hint', text: 'Paragraph covers text, lists, columns, product descriptions and HTML blocks.' }));
-          box.appendChild(selControl('mrs-p-font', 'Font', 'p_font', fontOptions('Same as the typeface')));
-          box.appendChild(numControl('mrs-p-size', 'Size (pixels)', 'p_size', 11, 28, 16));
-          box.appendChild(colourControl('mrs-p-colour', 'Colour', 'p_colour', '#1a1208', 'Colour panels keep their own text colour.'));
-        } else {
-          box.appendChild(h('p', { class: 'mr-studio__hint', text: 'Title covers Heading blocks and story headlines. A small heading is five pixels smaller than a large one.' }));
-          box.appendChild(selControl('mrs-t-font', 'Font', 't_font', fontOptions('Same as the typeface')));
-          box.appendChild(numControl('mrs-t-size', 'Size of a large heading (pixels)', 't_size', 16, 40, 22));
-          box.appendChild(colourControl('mrs-t-colour', 'Colour', 't_colour', '#1a1208', 'Colour panels keep their own text colour.'));
+      fold('titles', 'Titles', function (box) { textControls('title', box, 'ds'); });
+      fold('paragraphs', 'Paragraphs', function (box) { textControls('paragraph', box, 'ds'); });
+      fold('links', 'Links', function (box) { textControls('links', box, 'ds'); });
+      fold('buttons', 'Buttons', function (box) { textControls('button', box, 'ds'); });
+
+      fold('more', 'More options', function (box) {
+        box.appendChild(sliderControl('mrs-pad', 'Space at the sides', 'pad', 0, 48, 24,
+          'On a phone this is always 16.'));
+        box.appendChild(selControl('mrs-dir', 'Writing direction', 'dir',
+          [['', 'Left to right'], ['rtl', 'Right to left']],
+          'Right to left is for Arabic, Hebrew and similar languages.'));
+        var url = h('input', { class: 'dr-input', id: 'mrs-bgimage', type: 'url', value: sty().bg_image || '',
+          placeholder: 'https://' });
+        url.addEventListener('input', function () { setSty('bg_image', url.value.trim()); });
+        var row2 = h('div', { class: 'dr-button-group' });
+        if (o.images) {
+          row2.appendChild(h('button', { type: 'button', class: 'dr-button dr-button--secondary', text: 'Choose or upload a picture',
+            onclick: function () { o.images(function (picked) { setSty('bg_image', picked.url); buildStyle(); }); } }));
         }
-      });
-
-      fold('settings', 'Text settings', function (box) {
-        box.appendChild(selControl('mrs-line', 'Line spacing', 'line',
-          [['', 'Normal'], ['compact', 'Compact'], ['relaxed', 'Relaxed']],
-          'The space between lines of paragraph text. Normal is one and a half times the size.'));
-      });
-
-      fold('links', 'Links', function (box) {
-        box.appendChild(colourControl('mrs-link-colour', 'Colour', 'link_colour', accent,
-          'Colour panels keep their own link colour. Empty uses the accent colour from your brand.'));
-        box.appendChild(toggleControl('mrs-link-bold', 'Bold', 'link_bold', false));
-        box.appendChild(toggleControl('mrs-link-italic', 'Italic', 'link_italic', false));
-        box.appendChild(toggleControl('mrs-link-underline', 'Underline', 'link_underline', true));
-      });
-
-      fold('buttons', 'Buttons', function (box) {
-        box.appendChild(selControl('mrs-b-font', 'Font', 'btn_font', fontOptions('Same as the typeface')));
-        box.appendChild(numControl('mrs-b-size', 'Text size (pixels)', 'btn_size', 11, 28, 16));
-        box.appendChild(colourControl('mrs-b-text', 'Text colour', 'btn_text', btnInk, 'A colour set on a button itself wins over this.'));
-        box.appendChild(toggleControl('mrs-b-bold', 'Bold', 'btn_bold', true));
-        box.appendChild(toggleControl('mrs-b-italic', 'Italic', 'btn_italic', false));
-        box.appendChild(toggleControl('mrs-b-underline', 'Underline', 'btn_underline', false));
-        box.appendChild(numControl('mrs-b-width', 'Width (per cent of the content)', 'btn_width', 10, 100, 260,
-          'Between 10 and 100. Empty keeps the standard 260 pixel button.'));
-        box.appendChild(numControl('mrs-b-radius', 'Corner radius (pixels)', 'btn_radius', 0, 50, 24,
-          'Outlook on Windows draws the nearest shape it supports.'));
-        box.appendChild(colourControl('mrs-b-bg', 'Button colour', 'btn_bg', btnFill, 'Empty uses the button colour from your brand.'));
-        box.appendChild(numControl('mrs-b-border', 'Border (pixels)', 'btn_border', 0, 6, 2));
-        box.appendChild(colourControl('mrs-b-border-colour', 'Border colour', 'btn_border_colour', btnFill, 'Empty matches the button colour.'));
+        row2.appendChild(h('button', { type: 'button', class: 'dr-button dr-button--secondary', text: 'Remove picture',
+          onclick: function () { setSty('bg_image', ''); url.value = ''; } }));
+        box.appendChild(group('mrs-bgimage', 'Picture behind the email',
+          'A web address starting https://. Outlook on Windows does not show it, so the colour around the email must work without it.', url));
+        box.appendChild(row2);
       });
 
       var count = campaign.style ? Object.keys(campaign.style).length : 0;
       var reset = h('button', { type: 'button', class: 'mr-studio__small is-warn', id: 'mrs-style-reset', disabled: !count,
         onclick: function () { if (campaign.style) campaign.style = {}; buildStyle(); changed(true); } },
-        h('span', { text: 'Reset style settings' }));
+        h('span', { text: 'Put the design back to normal' }));
       pStyle.appendChild(h('div', { class: 'mr-studio__reset' }, reset,
-        h('p', { class: 'mr-studio__hint', text: 'Puts every setting above back to its default. Undo brings them back. The typeface, header strip and browser link are not changed.' })));
+        h('p', { class: 'mr-studio__hint', text: 'Resets the choices on this tab. Undo brings them back. The main font and the top of the email are not changed.' })));
     }
 
     /* ---------------- Send ---------------- */
@@ -1395,6 +1530,7 @@
 
     function select(path, quiet) {
       state.sel = (path === undefined) ? null : path;
+      state.adding = false;
       if (state.sel !== null) state.rail = 'content';
       renderRail();
       renderPanels();

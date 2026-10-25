@@ -805,3 +805,42 @@ a:hover, .dr-link:hover { color: var(--brand-hover); text-decoration-thickness: 
 .mr-int-table code { overflow-wrap: anywhere; word-break: break-all; }
 @media (max-width: 640px) { .mr-int-table { display: block; overflow-x: auto; } }
 .dr-small code, .mr-page code { overflow-wrap: anywhere; word-break: break-word; }
+
+/* ---- the layout gallery on "Write a campaign" ---- */
+.mr-tpl[hidden], .mr-tpl-none[hidden] { display: none; }
+.mr-tpl-tools { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; justify-content: space-between; margin-top: 24px; }
+.mr-tpl-tools__search { flex: 1 1 260px; max-width: 420px; }
+.mr-tpl-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+.mr-tpl-tab { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; border: 1.5px solid #1a1208; border-radius: 999px; background: #fff; color: #1a1208; font: inherit; font-size: .95rem; font-weight: 600; cursor: pointer; }
+.mr-tpl-tab:hover { background: #f3efe6; }
+.mr-tpl-tab[aria-pressed="true"] { background: #1a1208; color: #fff; }
+.mr-tpl-tab:focus-visible { outline: 3px solid #1e6b3c; outline-offset: 2px; }
+.mr-tpl-tab__n { font-size: .8rem; font-weight: 600; opacity: .75; }
+.mr-tpl-about { margin: 14px 0 0; color: #3b3b3b; }
+.mr-tpl__facts { display: flex; flex-wrap: wrap; gap: 6px; margin: 2px 0 6px; padding: 0; }
+.mr-tpl__facts span { font-size: .75rem; padding: 2px 8px; border-radius: 999px; background: #efece4; color: #3b3b3b; }
+.mr-tpl__actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; }
+.mr-tpl__body .mr-tpl__actions .dr-button { margin-top: 0; }
+.mr-tpl-none { margin: 32px 0; font-size: 1.05rem; }
+.mr-tpl-dialog { width: min(680px, calc(100vw - 24px)); max-height: calc(100vh - 24px); border: 0; border-radius: 16px; padding: 20px; box-shadow: 0 24px 60px rgba(0,0,0,.35); }
+.mr-tpl-dialog::backdrop { background: rgba(26, 18, 8, .55); }
+.mr-tpl-dialog__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.mr-tpl-dialog__head h2 { margin: 0; font-size: 1.3rem; }
+.mr-tpl-dialog__frame { display: block; width: 100%; height: min(62vh, 640px); margin: 12px 0; border: 1px solid #d8d2c4; border-radius: 10px; background: #fff; }
+.mr-tpl-faq { margin: 56px 0 24px; max-width: 760px; }
+.mr-tpl-faq h2 { margin: 0 0 12px; }
+.mr-tpl-faq__item { border-top: 1px solid #c9c2b0; padding: 14px 0; }
+.mr-tpl-faq__item:last-child { border-bottom: 1px solid #c9c2b0; }
+.mr-tpl-faq__item summary { cursor: pointer; font-weight: 600; }
+.mr-tpl-faq__item p { margin: 10px 0 0; }
+@media (max-width: 640px) {
+  .mr-tpl-tabs { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 6px; margin-inline: -1rem; padding-inline: 1rem; scroll-snap-type: x proximity; }
+  .mr-tpl-tab { flex: 0 0 auto; }
+}
+
+/* ---- "On this page" jump links ---- */
+.mr-jump { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 8px; }
+.mr-jump a { display: inline-flex; align-items: center; min-height: 40px; padding: 0 14px; border: 1.5px solid #1a1208; border-radius: 999px; color: #1a1208; background: #fff; font-size: .9rem; font-weight: 600; text-decoration: none; }
+.mr-jump a:hover { background: #f3efe6; }
+.mr-jump a:focus-visible { outline: 3px solid #1e6b3c; outline-offset: 2px; }
+#main h2[id] { scroll-margin-top: 90px; }
