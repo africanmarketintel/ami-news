@@ -14,6 +14,9 @@
 <script src="../nav.js"></script>
 <script src="assets/mr-core.js"></script>
 <script src="assets/mr-sample.js"></script>
+<script src="assets/mr-render.js" defer></script>
+<script src="assets/mr-templates.js" defer></script>
+<script src="assets/mr-home.js" defer></script>
 
 </head>
 <body class="mr-ami">
@@ -53,9 +56,9 @@
       <ol class="ma-demo__steps" aria-hidden="true"><li class="s1">1 Pick a layout</li><li class="s2">2 Make it yours</li><li class="s3">3 Send</li></ol>
       <div class="ma-demo__stage" aria-hidden="true">
         <div class="ma-scene ma-scene--1">
-          <img src="assets/home/newsletter.jpg" width="640" height="820" alt="">
-          <img class="pick" src="assets/home/event.jpg" width="640" height="820" alt="">
-          <img src="assets/home/offer.jpg" width="640" height="820" alt="">
+          <div class="hm-shot" data-home-layout="newsletter" style="--bg:#c9c0f2"><img src="assets/home/newsletter.jpg" width="640" height="820" alt=""></div>
+          <div class="hm-shot pick" data-home-layout="event" style="--bg:#b4b57a"><img src="assets/home/event.jpg" width="640" height="820" alt=""></div>
+          <div class="hm-shot" data-home-layout="offer" style="--bg:#efd56b"><img src="assets/home/offer.jpg" width="640" height="820" alt=""></div>
           <svg class="ma-cursor" viewBox="0 0 24 24" width="28" height="28"><path d="M4 2l15 9-6.5 1.6L9.5 19z" fill="#1a1208" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg>
         </div>
         <div class="ma-scene ma-scene--2">
@@ -95,12 +98,12 @@
     <p class="mr-home__lead">Each layout comes with its own text, pictures and colours. Edit what you want, delete what you do not, and send.</p>
   </div>
   <ul class="mr-home__row" aria-label="Some of the layouts">
-    <li><img src="assets/home/newsletter.jpg" width="640" height="820" alt="The Newsletter layout: a headline, a large picture, a button and two short items side by side." loading="lazy"><span>Newsletter</span></li>
-    <li><img src="assets/home/feature.jpg" width="640" height="820" alt="The Feature story layout: a headline, a picture, a pull quote and a short list." loading="lazy"><span>Feature story</span></li>
-    <li><img src="assets/home/event.jpg" width="640" height="820" alt="The Event invitation layout: a picture, the date and place, and a button to reserve a place." loading="lazy"><span>Event invitation</span></li>
-    <li><img src="assets/home/offer.jpg" width="640" height="820" alt="The Offer or sale layout: an offer, a code and two products." loading="lazy"><span>Offer or sale</span></li>
-    <li><img src="assets/home/launch.jpg" width="640" height="820" alt="The Product launch layout: a large picture, what it is and where to get it." loading="lazy"><span>Product launch</span></li>
-    <li><img src="assets/home/welcome.jpg" width="640" height="820" alt="The Welcome layout: a warm greeting and three first steps." loading="lazy"><span>Welcome</span></li>
+    <li><div class="hm-shot" data-home-layout="newsletter" style="--bg:#c9c0f2" role="img" aria-label="The Newsletter layout: a headline, a large picture, a button and two short items side by side."><img src="assets/home/newsletter.jpg" width="640" height="820" alt="" loading="lazy"></div><span>Newsletter</span></li>
+    <li><div class="hm-shot" data-home-layout="feature" style="--bg:#e8795e" role="img" aria-label="The Feature story layout: a headline, a picture, a pull quote and a short list."><img src="assets/home/feature.jpg" width="640" height="820" alt="" loading="lazy"></div><span>Feature story</span></li>
+    <li><div class="hm-shot" data-home-layout="event" style="--bg:#b4b57a" role="img" aria-label="The Event invitation layout: a picture, the date and place, and a button to reserve a place."><img src="assets/home/event.jpg" width="640" height="820" alt="" loading="lazy"></div><span>Event invitation</span></li>
+    <li><div class="hm-shot" data-home-layout="offer" style="--bg:#efd56b" role="img" aria-label="The Offer or sale layout: an offer, a code and two products."><img src="assets/home/offer.jpg" width="640" height="820" alt="" loading="lazy"></div><span>Offer or sale</span></li>
+    <li><div class="hm-shot" data-home-layout="launch" style="--bg:#8091bd" role="img" aria-label="The Product launch layout: a large picture, what it is and where to get it."><img src="assets/home/launch.jpg" width="640" height="820" alt="" loading="lazy"></div><span>Product launch</span></li>
+    <li><div class="hm-shot" data-home-layout="welcome" style="--bg:#e9b9a0" role="img" aria-label="The Welcome layout: a warm greeting and three first steps."><img src="assets/home/welcome.jpg" width="640" height="820" alt="" loading="lazy"></div><span>Welcome</span></li>
   </ul>
 </section>
 
@@ -127,7 +130,7 @@
       <div class="ma-picker">
         <div class="ma-picker__tabs"><b>Photos</b><span>GIFs</span></div>
         <div class="ma-picker__search">Search photos</div>
-        <div class="ma-picker__grid"><i style="--a:#d9b36c;--b:#8c3a1f"><img src="assets/home/photos/p1.jpg" width="240" height="240" alt="" loading="lazy"></i><i style="--a:#9cc7a8;--b:#1e6b3c"><img src="assets/home/photos/p2.jpg" width="240" height="240" alt="" loading="lazy"></i><i style="--a:#e8c9a0;--b:#b85c38"><img src="assets/home/photos/p3.jpg" width="240" height="240" alt="" loading="lazy"></i><i style="--a:#b9c9d8;--b:#3d5a73"><img src="assets/home/photos/p4.jpg" width="240" height="240" alt="" loading="lazy"></i><i style="--a:#f1d98a;--b:#c9a84c"><img src="assets/home/photos/p5.jpg" width="240" height="240" alt="" loading="lazy"></i><i style="--a:#cbb8d9;--b:#5b3f73"><img src="assets/home/photos/p6.jpg" width="240" height="240" alt="" loading="lazy"></i></div>
+        <div class="ma-picker__grid"><i style="--a:#d9b36c;--b:#8c3a1f"><img src="assets/home/photos/p1.jpg" width="480" height="480" alt="" loading="lazy"></i><i style="--a:#9cc7a8;--b:#1e6b3c"><img src="assets/home/photos/p2.jpg" width="480" height="480" alt="" loading="lazy"></i><i style="--a:#e8c9a0;--b:#b85c38"><img src="assets/home/photos/p3.jpg" width="480" height="480" alt="" loading="lazy"></i><i style="--a:#b9c9d8;--b:#3d5a73"><img src="assets/home/photos/p4.jpg" width="480" height="480" alt="" loading="lazy"></i><i style="--a:#f1d98a;--b:#c9a84c"><img src="assets/home/photos/p5.jpg" width="480" height="480" alt="" loading="lazy"></i><i style="--a:#cbb8d9;--b:#5b3f73"><img src="assets/home/photos/p6.jpg" width="480" height="480" alt="" loading="lazy"></i></div>
       </div>
     </div>
   </div>
