@@ -320,7 +320,13 @@
   function resolveImages(blocks) {
     blocks.forEach(function (b) {
       ['url', 'thumb'].forEach(function (k) {
-        if (typeof b[k] === 'string' && b[k].indexOf('tpl:') === 0) b[k] = imageBase() + b[k].slice(4);
+        if (typeof b[k] === 'string' && b[k].indexOf('tpl:') === 0) {
+          // Each drawing has a photograph of the same name in assets/templates/photos.
+          // The photograph is used unless MR.templatePhotos has been set to false.
+          b[k] = (MR.templatePhotos !== false && /\.png$/.test(b[k]))
+            ? MR.templatePhotoUrl(b[k].slice(4).replace(/\.png$/, ''))
+            : imageBase() + b[k].slice(4);
+        }
       });
       if (b.blocks) resolveImages(b.blocks);
     });
@@ -417,32 +423,19 @@
       if (b.blocks) standIns(b.blocks, n);
     });
   }
-  /* Real photographs for the preview only. tools/get-template-photos.sh puts
-     one photograph beside every drawing, under the same name. When
-     MR.templatePhotos is on, the preview shows the photograph in place of the
-     drawing. A campaign started from the layout still gets the drawing, so
-     nothing is ever sent with a photo nobody chose. */
+  /* Real photographs. tools/get-template-photos.sh puts one photograph beside
+     every drawing, in assets/templates/photos, under the same name. A layout
+     uses the photograph. Setting MR.templatePhotos to false brings the
+     drawings back (the tests do this). */
   var PHOTO_BASE = 'https://ami.abta.africa/mailroom/assets/templates/photos/';
   MR.templatePhotoUrl = function (name) { return (window.MR_TEMPLATE_PHOTO_BASE || PHOTO_BASE) + name + '.jpg'; };
-  MR.templatePhotos = false;
-  function photoSwap(blocks) {
-    var base = imageBase();
-    blocks.forEach(function (b) {
-      ['url', 'thumb'].forEach(function (k) {
-        if (typeof b[k] === 'string' && b[k].indexOf(base) === 0 && /\.png$/.test(b[k])) {
-          b[k] = MR.templatePhotoUrl(b[k].slice(base.length).replace(/\.png$/, ''));
-        }
-      });
-      if (b.blocks) photoSwap(b.blocks);
-    });
-  }
+  MR.templatePhotos = true;
 
   MR.templatePreviewHtml = function (id, account) {
     if (!MR.renderEmail) return '';
     var t = MR.TEMPLATES.filter(function (x) { return x.id === id; })[0];
     if (!t) return '';
     var blocks = MR.templateBlocks(id);
-    if (MR.templatePhotos) photoSwap(blocks);
     var n = { i: 0, map: {} };
     standIns(blocks, n);
     var html = MR.renderEmail({

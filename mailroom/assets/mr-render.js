@@ -563,14 +563,20 @@ footer(account, font, unsubscribe, preferences, brand) +
     var z = num(b.size, 10, 60, 0);
     var bo = b.bold === true || b.bold === false ? b.bold : null;
     var it = b.italic === true || b.italic === false ? b.italic : null;
-    if (!f && !z && bo === null && it === null) return null;
+    var tc = b.tcase === 'upper' ? 'uppercase' : (b.tcase === 'lower' ? 'lowercase' : (b.tcase === 'none' ? 'none' : ''));
+    var ls = typeof b.lspace === 'number' && isFinite(b.lspace) ? Math.max(-2, Math.min(10, Math.round(b.lspace))) : null;
+    var ld = num(b.lead, 100, 220, 0);
+    var ink = b.type === 'panel' ? '' : colour(b.ink, '');
+    if (!f && !z && bo === null && it === null && !tc && ls === null && !ld && !ink) return null;
     var o = {}; // the email's style, copied
     for (var k in ST) o[k] = ST[k];
+    var isTitle = b.type === 'heading' || b.type === 'story';
+    var isButton = b.type === 'button';
     if (f) { o.pFont = f; o.tFont = f; o.btnFont = f; }
     if (z) {
-      if (b.type === 'heading' || b.type === 'story') {
+      if (isTitle) {
         o.tSize = z;
-      } else if (b.type === 'button') {
+      } else if (isButton) {
         o.btnSize = Math.max(11, Math.min(28, z));
       } else {
         // Keep the same line spacing as the email-wide text, in proportion.
@@ -579,20 +585,46 @@ footer(account, font, unsubscribe, preferences, brand) +
       }
     }
     if (bo !== null || it !== null) {
-      if (b.type === 'button') {
+      if (isButton) {
         if (bo !== null) o.btnBold = bo;
         if (it !== null) o.btnItalic = it;
-      } else if (b.type === 'heading' || b.type === 'story') {
+      } else if (isTitle) {
         o.tType = ST.tBase + faceCss(bo === null ? ST.tBold : bo, it === null ? ST.tItalic : it, true);
       } else {
         o.pType = ST.pBase + faceCss(bo === null ? ST.pBold : bo, it === null ? ST.pItalic : it, false);
       }
     }
+    // Capitals and letter spacing for this block. Written after the email-wide
+    // ones, so they win.
+    var extra = (ls !== null ? 'letter-spacing:' + ls + 'px;' : '') + (tc ? 'text-transform:' + tc + ';' : '');
+    if (extra) {
+      if (isTitle) o.tType += extra;
+      else if (isButton) o.btnType += extra;
+      else o.pType += extra;
+    }
+    if (ld) {
+      if (isTitle) o.tLead = Math.min(ld, 200);
+      else if (!isButton) o.pLine = Math.round(o.pSize * ld / 100);
+    }
+    if (ink && isButton) o.btnColour = ink;
+    return o;
+  }
+
+  // The text colour a block may set for itself. Buttons use it as the colour of
+  // their words; every other text block as the ink and the title colour.
+  function blockInk(b, ctx) {
+    var c = b.type === 'panel' || b.type === 'button' ? '' : colour(b.ink, '');
+    if (!c) return ctx;
+    var o = {};
+    for (var k in ctx) o[k] = ctx[k];
+    o.ink = c;
+    o.title = c;
     return o;
   }
 
   function renderBlock(b, font, outlook, brand, ctx) {
     var own = blockType(b);
+    ctx = blockInk(b, ctx);
     if (!own) return applyDesign(renderBlockCore(b, font, outlook, brand, ctx), b);
     var kept = ST;
     ST = own;
@@ -994,13 +1026,24 @@ footer(account, font, unsubscribe, preferences, brand) +
   // who sent it and where, then Unsubscribe or Manage preferences. There is no
   // line about the platform. An account on a plan that allows it may add a
   // line of its own, which is printed at the very bottom.
+  var SOCIAL_ICON_BASE = 'https://ami.abta.africa/mailroom/assets/social/';
+  var SOCIAL_ICONS = { facebook: 'Facebook', x: 'X', instagram: 'Instagram', pinterest: 'Pinterest' };
   function footer(account, font, unsubscribe, preferences, brand) {
     var small = 'font-family:' + font + ';font-size:13px;line-height:20px;mso-line-height-rule:exactly;color:' + MUTED + ';text-align:center';
     var fine = 'font-family:' + font + ';font-size:12px;line-height:18px;mso-line-height-rule:exactly;color:' + MUTED + ';text-align:center';
     var heading = 'font-family:' + font + ';font-size:12px;line-height:18px;mso-line-height-rule:exactly;letter-spacing:3px;text-transform:uppercase;color:' + INK + ';text-align:center';
-    var links = (brand.social_links || []).map(function (l) {
+    // A link can be shown as an icon (icon: 'facebook', 'x', 'instagram' or
+    // 'pinterest') or as words. Icons go in one row; words follow below.
+    var all = (brand.social_links || []).filter(function (l) { return l && l.url; });
+    var links = all.filter(function (l) { return !SOCIAL_ICONS[l.icon]; }).map(function (l) {
       return '<a href="' + safeUrl(l.url) + '" style="color:' + brand.accent_colour + ';text-decoration:underline">' + esc(l.label || l.url) + '</a>';
     }).join(' &nbsp;&middot;&nbsp; ');
+    var iconCells = all.filter(function (l) { return SOCIAL_ICONS[l.icon]; }).map(function (l) {
+      return '<td style="padding:0 9px"><a href="' + safeUrl(l.url) + '" style="text-decoration:none">' +
+        '<img src="' + SOCIAL_ICON_BASE + l.icon + '.png" width="24" height="24" alt="' + esc(SOCIAL_ICONS[l.icon]) +
+        '" style="display:block;border:0;width:24px;height:24px"></a></td>';
+    }).join('');
+    var icons = iconCells ? '<table role="presentation" align="center" cellpadding="0" cellspacing="0" border="0" style="margin:0 auto 16px"><tr>' + iconCells + '</tr></table>\n' : '';
     // Who sent it, and where they are. Both are required in a marketing email.
     var who = esc(account && account.name);
     if (hasAddress(account)) who += ', ' + esc(String(account.postal_address).replace(/\s+/g, ' ').trim());
@@ -1013,7 +1056,8 @@ footer(account, font, unsubscribe, preferences, brand) +
     return '<tr><td class="rc-pad" align="center" style="padding:' + allPad(24) + '">\n' +
       '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">\n' +
       '<tr><td align="center" style="padding-top:20px;border-top:1px solid ' + RULE + ';' + small + '">\n' +
-      (links ? '<p style="margin:0 0 10px;' + heading + '">Follow us</p>\n<p style="margin:0 0 20px;' + small + '">' + links + '</p>\n' : '') +
+      (links || icons ? '<p style="margin:0 0 12px;' + heading + '">Follow us</p>\n' + icons : '') +
+      (links ? '<p style="margin:0 0 20px;' + small + '">' + links + '</p>\n' : (icons ? '<p style="margin:0;font-size:1px;line-height:4px">&nbsp;</p>\n' : '')) +
       '<p style="margin:0 0 8px">' + who + '</p>\n' +
       (brand.footer_note ? '<p style="margin:0 0 8px">' + esc(brand.footer_note) + '</p>\n' : '') +
       '<p style="margin:0 0 8px">You are receiving this because you subscribed to updates from ' +

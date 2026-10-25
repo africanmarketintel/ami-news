@@ -801,107 +801,131 @@
       if (t === 'panel') return 'panel';
       if (t === 'heading' || t === 'story') return 'title';
       if (t === 'button') return 'button';
-      if (t === 'social' || t === 'navigation') return 'links';
       if (['text', 'list', 'columns', 'imagetext', 'dynamic', 'html', 'product'].indexOf(t) > -1) return 'paragraph';
       return null;
     }
-    var KIND_NAME = { title: 'every title', paragraph: 'all paragraph text', button: 'every button', links: 'every link' };
 
-    // The blocks that belong to the same ready-made section or template part as
-    // this one. A block carries a section tag (block.section) when it came from
-    // a ready-made section or a layout. The tag is only a label for the editor:
-    // the renderer ignores it.
-    function sectionMates(block) {
-      if (!block.section) return [];
-      return campaign.body_blocks.filter(function (b) { return b.section === block.section; });
-    }
+    // The Font tab of one block, in the order people expect: font, size and
+    // style, colour, alignment, capitals, then spacing. Every choice changes the
+    // selected block only; the email-wide defaults are on the Design tab. Each
+    // control starts on the value the block already shows, and a choice that
+    // matches the email-wide value is not stored, so nothing is saved needlessly.
+    // Kept on the block as font, size, bold, italic, ink, tcase, lead and lspace;
+    // mr-render.js checks every one again.
+    function blockFontPane(block, kind) {
+      var box = h('div', { class: 'mr-studio__fontpane' });
+      var isPanel = kind === 'panel';
+      var isButton = kind === 'button';
+      var isTitle = kind === 'title';
+      var st = sty();
+      var S = MR.resolveStyle ? MR.resolveStyle(st) : {};
+      var brand = brandNow() || {};
+      var DB = MR.DEFAULT_BRAND;
+      var P = isTitle
+        ? { size: S.tSize || 22, bold: S.tBold !== false, italic: !!S.tItalic, tcase: st.t_case || '', space: st.t_spacing || 0, lead: st.t_leading || 127, ink: hexOk(st.t_colour) ? st.t_colour : '#1a1208' }
+        : isButton
+          ? { size: S.btnSize || 16, bold: S.btnBold !== false, italic: !!S.btnItalic, tcase: st.btn_case || '', space: st.btn_spacing || 0, lead: 0,
+              ink: hexOk(st.btn_text) ? st.btn_text : (hexOk(brand.button_text) ? brand.button_text : DB.button_text) }
+          : { size: S.pSize || 16, bold: !!S.pBold, italic: !!S.pItalic, tcase: st.p_case || '', space: st.p_spacing || 0,
+              lead: st.p_leading || (S.pSize && S.pLine ? Math.round(S.pLine / S.pSize * 100) : 150), ink: hexOk(st.p_colour) ? st.p_colour : '#1a1208' };
 
-    // A font, size and style for this one block, which beat the email-wide
-    // ones, and a font for the whole section the block belongs to. Kept on the
-    // block as font, size, bold and italic; the renderer checks them again.
-    function blockTypeControls(block) {
-      var isButton = block.type === 'button';
-      var isPanel = block.type === 'panel';
-      var box = h('div', { class: 'mr-studio__card' });
-      box.appendChild(h('h3', { class: 'mr-studio__h3', style: 'margin-top:0', text: isPanel ? 'This whole panel' : 'This block only' }));
-      box.appendChild(h('p', { class: 'mr-studio__hint', text: isPanel
-        ? 'Changes everything inside this panel. The rest of the email stays as it is.'
-        : 'Changes only the block you have selected. The rest of the email stays as it is.' }));
-      var sel = h('select', { class: 'dr-select dr-input--w', id: 'bt-own-font' });
+      // Font
+      var sel = h('select', { class: 'dr-select dr-input--w', id: 'bf-font' });
       fillSelect(sel, fontOptions('Same as the rest of the email'), block.font || '');
       sel.addEventListener('change', function () {
         if (sel.value) block.font = sel.value; else delete block.font;
         changed(true);
       });
-      box.appendChild(group('bt-own-font', 'Font', isPanel
-        ? 'A block inside the panel with its own font keeps it. Google fonts may show as a similar standard font in Gmail and some versions of Outlook.'
-        : 'Google fonts may show as a similar standard font in Gmail and some versions of Outlook.', sel));
-      if (!isPanel) {
-        var lo = isButton ? 11 : 10, hi = isButton ? 28 : 60;
-        var size = h('input', { class: 'dr-input dr-input--w', id: 'bt-own-size', type: 'number', min: String(lo), max: String(hi),
-          step: '1', inputmode: 'numeric', value: block.size ? String(block.size) : '', placeholder: 'Email size' });
-        size.addEventListener('input', function () {
-          var v = size.value.trim();
-          if (v === '') { delete block.size; changed(true); return; }
-          var n = parseInt(v, 10);
-          if (isFinite(n)) { block.size = Math.max(lo, Math.min(hi, n)); changed(true); }
-        });
-        size.addEventListener('blur', function () { size.value = block.size ? String(block.size) : ''; });
-        // Style for this block: same as the email, or one of the four.
-        var boldDefault = isButton || block.type === 'heading' || block.type === 'story';
-        var st = h('select', { class: 'dr-select dr-input--w', id: 'bt-own-style' });
-        var cur = '';
-        if (block.bold !== undefined || block.italic !== undefined) {
-          cur = styleValue(block.bold === undefined ? boldDefault : !!block.bold, !!block.italic);
-        }
-        fillSelect(st, [['', 'Same as email']].concat(STYLE_OPTS), cur);
-        st.addEventListener('change', function () {
-          if (!st.value) { delete block.bold; delete block.italic; }
-          else { block.bold = st.value === 'bold' || st.value === 'bolditalic'; block.italic = st.value === 'italic' || st.value === 'bolditalic'; }
-          changed(true);
-        });
-        box.appendChild(twoUp(group('bt-own-size', 'Size', null, size), group('bt-own-style', 'Style', null, st),
-          'Size is in pixels, ' + lo + ' to ' + hi + '. A normal paragraph is 16. Leave size and style empty to match the rest of the email. Some fonts have no italic of their own, so the mail app slants the regular letters.'));
-        // Where the text sits. Same setting as Position on the Block tab.
-        if (['text', 'heading', 'story', 'list', 'button'].indexOf(block.type) > -1) {
-          var curAlign = block.align || 'left';
-          var seg = h('div', { class: 'mr-seg', role: 'group', id: 'bt-own-align', 'aria-labelledby': 'bt-own-align-label' });
-          [['left', 'Left'], ['center', 'Centre'], ['right', 'Right']].forEach(function (o2) {
-            var bb = h('button', { type: 'button', class: 'mr-seg__btn mr-seg__btn--text', 'aria-pressed': curAlign === o2[0] ? 'true' : 'false', text: o2[1] });
-            bb.addEventListener('click', function () {
-              if (o2[0] === 'left') delete block.align; else block.align = o2[0];
-              Array.prototype.forEach.call(seg.children, function (c) { c.setAttribute('aria-pressed', c === bb ? 'true' : 'false'); });
-              changed(true);
-            });
-            seg.appendChild(bb);
-          });
-          box.appendChild(h('div', { class: 'dr-form-group mr-field--inline' }, h('span', { class: 'dr-label', id: 'bt-own-align-label', text: 'Alignment' }), seg));
-        }
-      }
-      return box;
-    }
+      box.appendChild(group('bf-font', isPanel ? 'Font for this panel' : 'Font', null, sel));
+      if (isPanel) return box;
 
-    // One font for every block in the same section. Overwrites a font set on a
-    // single block in it; a block inside a panel keeps its own.
-    function sectionControls(block) {
-      var mates = sectionMates(block);
-      if (mates.length < 2) return null;
-      var fonts = mates.map(function (b) { return b.font || ''; });
-      var same = fonts.every(function (f) { return f === fonts[0]; });
-      var box = h('div', { class: 'mr-studio__card' });
-      box.appendChild(h('h3', { class: 'mr-studio__h3', style: 'margin-top:0', text: 'This whole section' }));
-      box.appendChild(h('p', { class: 'mr-studio__hint', text: 'A section is a group of blocks that were added together, such as one ready-made section, or the blocks between two lines or colour panels in a layout.' }));
-      var sel = h('select', { class: 'dr-select dr-input--w', id: 'bt-section-font' });
-      var opts = fontOptions('Same as the rest of the email');
-      if (!same) opts = [['__mixed', 'Different fonts in this section']].concat(opts);
-      fillSelect(sel, opts, same ? fonts[0] : '__mixed');
-      sel.addEventListener('change', function () {
-        if (sel.value === '__mixed') return;
-        mates.forEach(function (b) { if (sel.value) b.font = sel.value; else delete b.font; });
+      // Size and style side by side
+      var lo = isButton ? 11 : 10, hi = isButton ? 28 : 60;
+      var size = h('input', { class: 'dr-input dr-input--w', id: 'bf-size', type: 'number', min: String(lo), max: String(hi),
+        step: '1', inputmode: 'numeric', value: String(block.size || P.size), 'aria-label': 'Size in pixels' });
+      size.addEventListener('input', function () {
+        var n = parseInt(size.value, 10);
+        if (!isFinite(n)) return;
+        n = Math.max(lo, Math.min(hi, n));
+        if (n === P.size) delete block.size; else block.size = n;
         changed(true);
       });
-      box.appendChild(group('bt-section-font', 'Font for all ' + mates.length + ' blocks in this section',
-        'Changes the font of every block in this section at once. To give one block a different font, select it and use "This block only".', sel));
+      size.addEventListener('blur', function () { size.value = String(block.size || P.size); });
+      var curB = block.bold === undefined ? P.bold : !!block.bold;
+      var curI = block.italic === undefined ? P.italic : !!block.italic;
+      var style = h('select', { class: 'dr-select dr-input--w', id: 'bf-style' });
+      fillSelect(style, STYLE_OPTS, styleValue(curB, curI));
+      style.addEventListener('change', function () {
+        var b2 = style.value === 'bold' || style.value === 'bolditalic';
+        var i2 = style.value === 'italic' || style.value === 'bolditalic';
+        if (b2 === P.bold && i2 === P.italic) { delete block.bold; delete block.italic; }
+        else { block.bold = b2; block.italic = i2; }
+        changed(true);
+      });
+      box.appendChild(twoUp(group('bf-size', 'Size', null, size), group('bf-style', 'Style', null, style)));
+
+      // Colour
+      var swatch = h('input', { class: 'mr-colour', id: 'bf-ink', type: 'color', value: hexOk(block.ink) ? block.ink : P.ink });
+      var hex = h('input', { class: 'dr-input dr-input--w', id: 'bf-ink-hex', type: 'text', value: hexOk(block.ink) ? block.ink : P.ink,
+        maxlength: 7, 'aria-label': 'Colour, as a colour code' });
+      var reset = h('button', { type: 'button', class: 'mr-studio__linkbtn', text: 'Use default', hidden: !hexOk(block.ink) });
+      function putInk(v) { block.ink = v; reset.hidden = false; changed(true); }
+      swatch.addEventListener('input', function () { hex.value = swatch.value; putInk(swatch.value); });
+      hex.addEventListener('input', function () { if (hexOk(hex.value)) { swatch.value = hex.value; putInk(hex.value); } });
+      hex.addEventListener('blur', function () { hex.value = hexOk(block.ink) ? block.ink : P.ink; });
+      reset.addEventListener('click', function () { delete block.ink; swatch.value = P.ink; hex.value = P.ink; reset.hidden = true; changed(true); });
+      box.appendChild(group('bf-ink', 'Colour', null, h('div', { class: 'mr-colour-row' }, swatch, hex, reset)));
+
+      // Alignment, for the blocks that have it. Same setting as Position on the Block tab.
+      if (['text', 'heading', 'story', 'list', 'button'].indexOf(block.type) > -1) {
+        var curAlign = block.align || 'left';
+        var seg = h('div', { class: 'mr-seg', role: 'group', id: 'bf-align', 'aria-labelledby': 'bf-align-label' });
+        [['left', 'Left'], ['center', 'Centre'], ['right', 'Right']].forEach(function (o2) {
+          var bb = h('button', { type: 'button', class: 'mr-seg__btn mr-seg__btn--text', 'aria-pressed': curAlign === o2[0] ? 'true' : 'false', text: o2[1] });
+          bb.addEventListener('click', function () {
+            if (o2[0] === 'left') delete block.align; else block.align = o2[0];
+            Array.prototype.forEach.call(seg.children, function (c) { c.setAttribute('aria-pressed', c === bb ? 'true' : 'false'); });
+            changed(true);
+          });
+          seg.appendChild(bb);
+        });
+        box.appendChild(h('div', { class: 'dr-form-group mr-field--inline' }, h('span', { class: 'dr-label', id: 'bf-align-label', text: 'Alignment' }), seg));
+      }
+
+      // Capitals
+      var baseCase = P.tcase || 'none';
+      var curCase = block.tcase || baseCase;
+      var cseg = h('div', { class: 'mr-seg', role: 'group', id: 'bf-case', 'aria-labelledby': 'bf-case-label' });
+      [['none', 'Aa', 'As typed'], ['upper', 'AA', 'All capitals'], ['lower', 'aa', 'All lowercase']].forEach(function (o2) {
+        var cb = h('button', { type: 'button', class: 'mr-seg__btn mr-seg__btn--text', title: o2[2], 'aria-label': o2[2],
+          'aria-pressed': curCase === o2[0] ? 'true' : 'false', text: o2[1] });
+        cb.addEventListener('click', function () {
+          if (o2[0] === baseCase) delete block.tcase; else block.tcase = o2[0];
+          Array.prototype.forEach.call(cseg.children, function (c) { c.setAttribute('aria-pressed', c === cb ? 'true' : 'false'); });
+          changed(true);
+        });
+        cseg.appendChild(cb);
+      });
+      box.appendChild(h('div', { class: 'dr-form-group mr-field--inline' }, h('span', { class: 'dr-label', id: 'bf-case-label', text: 'Case' }), cseg));
+
+      // Spacing, closed until opened
+      function slider(id, text, key, min, max, def) {
+        var val = block[key] === undefined ? def : block[key];
+        var range = h('input', { type: 'range', class: 'mr-range', id: id, min: String(min), max: String(max), step: '1', value: String(val) });
+        var num = h('input', { type: 'number', class: 'dr-input mr-range__num', min: String(min), max: String(max), step: '1', value: String(val), 'aria-label': text + ', as a number' });
+        function put(n) { if (n === def) delete block[key]; else block[key] = n; changed(true); }
+        range.addEventListener('input', function () { var n = parseInt(range.value, 10); num.value = n; put(n); });
+        num.addEventListener('input', function () {
+          var n = parseInt(num.value, 10);
+          if (isFinite(n) && n >= min && n <= max) { range.value = n; put(n); }
+        });
+        num.addEventListener('blur', function () { num.value = block[key] === undefined ? def : block[key]; });
+        return group(id, text, null, h('div', { class: 'mr-range__row' }, range, num));
+      }
+      spacingFold(box, 'bf-spacing', function (inner) {
+        if (!isButton) inner.appendChild(slider('bf-lead', 'Line height', 'lead', 100, isTitle ? 200 : 220, P.lead));
+        inner.appendChild(slider('bf-space', 'Letter spacing', 'lspace', -2, 10, P.space));
+      });
       return box;
     }
 
@@ -953,16 +977,7 @@
       }
 
       if (kind && state.btab === 'text') {
-        var tp = h('div', { class: 'mr-studio__textpane' });
-        if (kind !== 'links') tp.appendChild(blockTypeControls(block));
-        var secBox = sectionControls(block);
-        if (secBox) tp.appendChild(secBox);
-        if (kind !== 'panel') {
-          tp.appendChild(h('h3', { class: 'mr-studio__h3', text: 'Every block of this kind' }));
-          tp.appendChild(h('p', { class: 'mr-studio__hint', text: 'Applies to ' + KIND_NAME[kind] + ' in this email, so they always match. Colour panels keep their own text colour.' }));
-          textControls(kind, tp, 'bt');
-        }
-        pBlock.appendChild(tp);
+        pBlock.appendChild(blockFontPane(block, kind));
         return;
       }
 
@@ -1419,8 +1434,7 @@
       if (kind === 'title') {
         box.appendChild(selControl(pfx + '-t-font', 'Font', 't_font', fontOptions('Same as the rest of the email')));
         box.appendChild(twoUp(sizeControl(pfx + '-t-size', 'Size', 't_size', 16, 40, 22),
-          styleControl(pfx + '-t-style', 'Style', 't_bold', 't_italic', true),
-          'Size is in pixels, 16 to 40. Leave it empty to use 22.'));
+          styleControl(pfx + '-t-style', 'Style', 't_bold', 't_italic', true)));
         box.appendChild(colourControl(pfx + '-t-colour', 'Colour', 't_colour', '#1a1208'));
         box.appendChild(caseControl(pfx + '-t-case', 'Capitals', 't_case'));
         spacingFold(box, pfx + '-t-spacing', function (inner) {
@@ -1430,8 +1444,7 @@
       } else if (kind === 'paragraph') {
         box.appendChild(selControl(pfx + '-p-font', 'Font', 'p_font', fontOptions('Same as the rest of the email')));
         box.appendChild(twoUp(sizeControl(pfx + '-p-size', 'Size', 'p_size', 11, 28, 16),
-          styleControl(pfx + '-p-style', 'Style', 'p_bold', 'p_italic', false),
-          'Size is in pixels, 11 to 28. Leave it empty to use 16.'));
+          styleControl(pfx + '-p-style', 'Style', 'p_bold', 'p_italic', false)));
         box.appendChild(colourControl(pfx + '-p-colour', 'Colour', 'p_colour', '#1a1208'));
         box.appendChild(caseControl(pfx + '-p-case', 'Capitals', 'p_case'));
         // An older choice of Tight or Roomy becomes the same line height as a number.
@@ -1450,8 +1463,7 @@
         box.appendChild(colourControl(pfx + '-b-text', 'Words colour', 'btn_text', btnInk));
         box.appendChild(selControl(pfx + '-b-font', 'Font', 'btn_font', fontOptions('Same as the rest of the email')));
         box.appendChild(twoUp(sizeControl(pfx + '-b-size', 'Size', 'btn_size', 11, 28, 16),
-          styleControl(pfx + '-b-style', 'Style', 'btn_bold', 'btn_italic', true),
-          'Size is in pixels, 11 to 28. Leave it empty to use 16.'));
+          styleControl(pfx + '-b-style', 'Style', 'btn_bold', 'btn_italic', true)));
         box.appendChild(sliderControl(pfx + '-b-radius', 'Roundness', 'btn_radius', 0, 50, 24));
         box.appendChild(caseControl(pfx + '-b-case', 'Capitals', 'btn_case'));
         box.appendChild(sliderControl(pfx + '-b-space', 'Letter spacing (pixels)', 'btn_spacing', -2, 10, 0));

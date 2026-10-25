@@ -176,6 +176,42 @@
         brand.footer_credit = '';
       }
 
+      // Social icons. Each network is one entry in social_links with an icon
+      // name, so nothing new is stored. Ticking adds the icon to the bottom of
+      // every email; unticking removes it.
+      form.appendChild(MR.h('h3', { class: 'dr-h', text: 'Social icons at the bottom of your emails' }));
+      form.appendChild(MR.h('p', { class: 'dr-hint', text: 'Tick a network to show its icon above the unsubscribe line. Paste the full address of your page, starting with https://. Untick it to remove the icon.' }));
+      [['facebook', 'Facebook', 'https://www.facebook.com/yourpage'], ['x', 'X', 'https://x.com/yourname'],
+       ['instagram', 'Instagram', 'https://www.instagram.com/yourname'], ['pinterest', 'Pinterest', 'https://www.pinterest.com/yourname']
+      ].forEach(function (n) {
+        var kept = '';
+        function entry() {
+          return (brand.social_links || []).filter(function (l) { return l.icon === n[0]; })[0] || null;
+        }
+        if (entry()) kept = entry().url || '';
+        var id = 'b-ico-' + n[0];
+        var box = MR.h('input', { type: 'checkbox', id: id, class: 'dr-choice__input' });
+        box.checked = !!entry();
+        var url = MR.h('input', { class: 'dr-input', id: id + '-url', type: 'url', value: kept, placeholder: n[2],
+          'aria-label': n[1] + ' page address' });
+        url.disabled = !box.checked;
+        box.addEventListener('change', function () {
+          if (!Array.isArray(brand.social_links)) brand.social_links = [];
+          if (box.checked) {
+            brand.social_links.push({ label: n[1], url: url.value.trim(), icon: n[0] });
+          } else {
+            brand.social_links = brand.social_links.filter(function (l) { return l.icon !== n[0]; });
+          }
+          url.disabled = !box.checked;
+          if (box.checked) url.focus();
+          refresh();
+        });
+        url.addEventListener('input', function () { var e = entry(); if (e) e.url = url.value.trim(); refresh(); });
+        form.appendChild(MR.h('div', { class: 'mr-social-icon-row' },
+          MR.h('div', { class: 'dr-choice dr-choice--checkbox' }, box,
+            MR.h('label', { class: 'dr-choice__label', for: id, text: n[1] })), url));
+      });
+
       form.appendChild(MR.h('h3', { class: 'dr-h', text: 'Links in the footer' }));
       var linksBox = MR.h('div');
       form.appendChild(linksBox);
@@ -209,6 +245,7 @@
       function drawLinks() {
         linksBox.textContent = '';
         (brand.social_links || []).forEach(function (l, i) {
+          if (l.icon) return; // icons are managed in the section above
           linksBox.appendChild(MR.h('div', { class: 'mr-social-row' },
             text('b-l' + i + '-label', 'Name', l.label, function (v) { l.label = v; refresh(); }).group,
             text('b-l' + i + '-url', 'Link', l.url, function (v) { l.url = v; refresh(); }).group,
@@ -269,6 +306,9 @@
       if (picked && picked.value === 'own' && !String(brand.footer_credit || '').trim()) {
         errors.push({ id: 'b-credit', message: 'Write your line, or choose no line' });
       }
+      (brand.social_links || []).forEach(function (l) {
+        if (l.icon && !String(l.url || '').trim()) errors.push({ id: 'b-ico-' + l.icon + '-url', message: 'Paste the address of your ' + l.label + ' page, or untick it' });
+      });
       var w = parseInt(brand.logo_width, 10);
       if (!(w >= 60 && w <= 552)) errors.push({ id: 'b-logo-width', message: 'Enter a width between 60 and 552' });
       if (MR.errors.show(form, errors)) return;
@@ -282,7 +322,7 @@
         logo_width: w, accent_colour: brand.accent_colour, button_colour: brand.button_colour,
         button_text: brand.button_text, font_family: brand.font_family || 'sans',
         footer_note: brand.footer_note || null,
-        social_links: (brand.social_links || []).filter(function (l) { return l.label && l.url; }),
+        social_links: (brand.social_links || []).filter(function (l) { return l.url && (l.label || l.icon); }),
         updated_at: new Date().toISOString()
       };
       // Only sent when the plan allows it. Sending nothing leaves whatever is

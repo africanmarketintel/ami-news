@@ -394,5 +394,5 @@ html.mr-studio-on body > *:not(.mr-studio):not(dialog) { display: none !importan
 .mr-studio__addnote { margin-top: 0; }
 .mr-seg__btn--text { width: auto; min-width: 42px; padding: 0 .6rem; font-size: .875rem; font-weight: 700; }
 
-.mr-studio__two { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+.mr-studio__two { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin-bottom: .9rem; }
 .mr-studio__two .dr-form-group { margin-bottom: 0; }
