@@ -30,9 +30,115 @@
     verdana: "Verdana, Geneva, Tahoma, sans-serif",
     trebuchet: "'Trebuchet MS', 'Lucida Grande', Tahoma, sans-serif",
     tahoma: "Tahoma, Geneva, Verdana, sans-serif",
-    courier: "'Courier New', Courier, monospace"
+    courier: "'Courier New', Courier, monospace",
+    // The 30 most used Google Fonts that suit email text, each followed by the
+    // font a mail app uses when it cannot load it. Gmail and part of Outlook
+    // cannot, so the fallback is what many readers see: it is chosen to be
+    // close in width and weight, so a layout does not break. The font files
+    // are served from this site (see WEB_FONTS below).
+    roboto: "'Roboto', Arial, 'Helvetica Neue', Helvetica, sans-serif",
+    opensans: "'Open Sans', Arial, 'Helvetica Neue', Helvetica, sans-serif",
+    inter: "'Inter', Arial, 'Helvetica Neue', Helvetica, sans-serif",
+    montserrat: "'Montserrat', Arial, 'Helvetica Neue', Helvetica, sans-serif",
+    poppins: "'Poppins', Arial, 'Helvetica Neue', Helvetica, sans-serif",
+    lato: "'Lato', Arial, 'Helvetica Neue', Helvetica, sans-serif",
+    arimo: "'Arimo', Arial, 'Helvetica Neue', Helvetica, sans-serif",
+    robotocondensed: "'Roboto Condensed', 'Arial Narrow', Arial, Helvetica, sans-serif",
+    robotomono: "'Roboto Mono', 'Courier New', Courier, monospace",
+    oswald: "'Oswald', 'Arial Narrow', Arial, Helvetica, sans-serif",
+    notosans: "'Noto Sans', Arial, 'Helvetica Neue', Helvetica, sans-serif",
+    dmsans: "'DM Sans', Arial, 'Helvetica Neue', Helvetica, sans-serif",
+    playfair: "'Playfair Display', Georgia, 'Times New Roman', Times, serif",
+    raleway: "'Raleway', Arial, 'Helvetica Neue', Helvetica, sans-serif",
+    nunito: "'Nunito', Arial, 'Helvetica Neue', Helvetica, sans-serif",
+    nunitosans: "'Nunito Sans', Arial, 'Helvetica Neue', Helvetica, sans-serif",
+    robotoslab: "'Roboto Slab', Georgia, 'Times New Roman', Times, serif",
+    rubik: "'Rubik', Arial, 'Helvetica Neue', Helvetica, sans-serif",
+    manrope: "'Manrope', Arial, 'Helvetica Neue', Helvetica, sans-serif",
+    outfit: "'Outfit', Arial, 'Helvetica Neue', Helvetica, sans-serif",
+    ubuntu: "'Ubuntu', Arial, 'Helvetica Neue', Helvetica, sans-serif",
+    merriweather: "'Merriweather', Georgia, 'Times New Roman', Times, serif",
+    kanit: "'Kanit', Arial, 'Helvetica Neue', Helvetica, sans-serif",
+    plusjakarta: "'Plus Jakarta Sans', Arial, 'Helvetica Neue', Helvetica, sans-serif",
+    bebasneue: "'Bebas Neue', Impact, 'Arial Narrow', Arial, sans-serif",
+    lora: "'Lora', Georgia, 'Times New Roman', Times, serif",
+    worksans: "'Work Sans', Arial, 'Helvetica Neue', Helvetica, sans-serif",
+    figtree: "'Figtree', Arial, 'Helvetica Neue', Helvetica, sans-serif",
+    archivoblack: "'Archivo Black', 'Arial Black', Arial, Helvetica, sans-serif",
+    jetbrainsmono: "'JetBrains Mono', 'Courier New', Courier, monospace"
   };
   MR.FONTS = FONTS;
+
+  // Where the font files live, and the three scripts of the Latin alphabet
+  // they are cut into. A reader's app downloads a piece only when the email
+  // contains a character from it, so plain English text costs the smallest
+  // piece. Latin extended and Vietnamese carry the letters African languages
+  // need, such as the dotted vowels in Yoruba.
+  var FONT_BASE = 'https://ami.abta.africa/mailroom/fonts/';
+  var SUBSETS = [
+    ['latin', 'U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD'],
+    ['latin-ext', 'U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF'],
+    ['vietnamese', 'U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB']
+  ];
+  // key: [family, file name stem, weights available, has a true italic]
+  // Where there is no true italic the mail app slants the regular letters
+  // itself, which keeps the typeface. Declaring an italic file that is not
+  // there would drop the reader to the fallback font instead, so it is left out.
+  var WEB_FONTS = {
+    roboto: ['Roboto', 'roboto', [400, 700], true],
+    opensans: ['Open Sans', 'open-sans', [400, 700], true],
+    inter: ['Inter', 'inter', [400, 700], true],
+    montserrat: ['Montserrat', 'montserrat', [400, 700], true],
+    poppins: ['Poppins', 'poppins', [400, 700], true],
+    lato: ['Lato', 'lato', [400, 700], true],
+    arimo: ['Arimo', 'arimo', [400, 700], true],
+    robotocondensed: ['Roboto Condensed', 'roboto-condensed', [400, 700], true],
+    robotomono: ['Roboto Mono', 'roboto-mono', [400, 700], true],
+    oswald: ['Oswald', 'oswald', [400, 700], false],
+    notosans: ['Noto Sans', 'noto-sans', [400, 700], true],
+    dmsans: ['DM Sans', 'dm-sans', [400, 700], true],
+    playfair: ['Playfair Display', 'playfair-display', [400, 700], true],
+    raleway: ['Raleway', 'raleway', [400, 700], true],
+    nunito: ['Nunito', 'nunito', [400, 700], true],
+    nunitosans: ['Nunito Sans', 'nunito-sans', [400, 700], true],
+    robotoslab: ['Roboto Slab', 'roboto-slab', [400, 700], false],
+    rubik: ['Rubik', 'rubik', [400, 700], false],
+    manrope: ['Manrope', 'manrope', [400, 700], false],
+    outfit: ['Outfit', 'outfit', [400, 700], false],
+    ubuntu: ['Ubuntu', 'ubuntu', [400, 700], true],
+    merriweather: ['Merriweather', 'merriweather', [400, 700], true],
+    kanit: ['Kanit', 'kanit', [400, 700], true],
+    plusjakarta: ['Plus Jakarta Sans', 'plus-jakarta-sans', [400, 700], false],
+    bebasneue: ['Bebas Neue', 'bebas-neue', [400], false],
+    lora: ['Lora', 'lora', [400, 700], true],
+    worksans: ['Work Sans', 'work-sans', [400, 700], true],
+    figtree: ['Figtree', 'figtree', [400, 700], false],
+    archivoblack: ['Archivo Black', 'archivo-black', [400], false],
+    jetbrainsmono: ['JetBrains Mono', 'jetbrains-mono', [400, 700], true]
+  };
+
+  // The @font-face rules for the fonts an email actually uses, and no others.
+  // Written as a separate block hidden from Outlook for Windows: given a font
+  // it cannot load, Outlook falls back to Times New Roman, but given only the
+  // name in a font list it moves on to the next one, which is the fallback.
+  function webFontCss(used) {
+    var css = '';
+    var italics = used.indexOf('font-style:italic') !== -1;
+    for (var key in WEB_FONTS) {
+      var f = WEB_FONTS[key];
+      if (used.indexOf("'" + f[0] + "',") === -1) continue;
+      for (var v = 0; v < (italics && f[3] ? 2 : 1); v++) {
+        for (var w = 0; w < f[2].length; w++) {
+          for (var s = 0; s < SUBSETS.length; s++) {
+            css += '  @font-face{font-family:\'' + f[0] + '\';font-style:' + (v ? 'italic' : 'normal') + ';font-weight:' + f[2][w] +
+              ';font-display:swap;src:url(' + FONT_BASE + f[1] + '-' + SUBSETS[s][0] + '-' + f[2][w] + (v ? '-italic' : '') +
+              '.woff2) format(\'woff2\');unicode-range:' + SUBSETS[s][1] + '}\n';
+          }
+        }
+      }
+    }
+    return css ? '<!--[if !mso]><!-->\n<style>\n' + css + '</style>\n<!--<![endif]-->\n' : '';
+  }
 
   var DEFAULT_BRAND = {
     logo_url: '', logo_alt: '', logo_width: 180,
@@ -133,6 +239,15 @@
     return (spacing ? 'letter-spacing:' + spacing + 'px;' : '') + (tcase ? 'text-transform:' + tcase + ';' : '');
   }
 
+  // Bold and italic for one kind of text. Nothing is written for the default,
+  // which is bold for titles and regular for paragraphs, so an email set up
+  // before these choices existed is unchanged. Titles carry font-weight:bold
+  // in their markup already; this comes after it and wins when it differs.
+  function faceCss(bold, italic, boldByDefault) {
+    return (bold !== boldByDefault ? 'font-weight:' + (bold ? 'bold' : 'normal') + ';' : '') +
+      (italic ? 'font-style:italic;' : '');
+  }
+
   function fontKey(v) {
     var k = String(v || '');
     return FONTS[k] ? k : '';
@@ -155,10 +270,14 @@
     return {
       width: width, pad: pad, inner: inner,
       page: colour(s.page, '#f3f2f1'), body: colour(s.body, '#ffffff'), bgImage: bgImage,
+      pBold: flag(s.p_bold, false), pItalic: flag(s.p_italic, false),
+      tBold: flag(s.t_bold, true), tItalic: flag(s.t_italic, false),
+      pBase: typeCss(num(s.p_spacing, -2, 10, 0), caseKey(s.p_case)),
+      tBase: typeCss(num(s.t_spacing, -2, 10, 0), caseKey(s.t_case)),
       pFont: fontKey(s.p_font), pSize: pSize,
       pLine: pLead ? Math.round(pSize * pLead / 100) : Math.round(pSize * (LINES[String(s.line || '')] || LINES.normal)),
-      pType: typeCss(num(s.p_spacing, -2, 10, 0), caseKey(s.p_case)),
-      tLead: tLead, tType: typeCss(num(s.t_spacing, -2, 10, 0), caseKey(s.t_case)),
+      pType: typeCss(num(s.p_spacing, -2, 10, 0), caseKey(s.p_case)) + faceCss(flag(s.p_bold, false), flag(s.p_italic, false), false),
+      tLead: tLead, tType: typeCss(num(s.t_spacing, -2, 10, 0), caseKey(s.t_case)) + faceCss(flag(s.t_bold, true), flag(s.t_italic, false), true),
       btnType: typeCss(num(s.btn_spacing, -2, 10, 0), caseKey(s.btn_case)),
       pColour: colour(s.p_colour, ''),
       tFont: fontKey(s.t_font), tSize: num(s.t_size, 16, 40, 22), tColour: colour(s.t_colour, ''),
@@ -310,6 +429,8 @@
 '  }\n' +
 (EDIT ? EDIT_CSS : '') +
 '</style>\n' +
+webFontCss(body + '|' + font + '|' + (ST.pFont ? FONTS[ST.pFont] : '') + '|' +
+           (ST.tFont ? FONTS[ST.tFont] : '') + '|' + (ST.btnFont ? FONTS[ST.btnFont] : '')) +
 '</head>\n' +
 '<body style="margin:0;padding:0;background-color:' + ST.page + '">\n' +
 '<div style="display:none;max-height:0;overflow:hidden;opacity:0;font-size:1px;line-height:1px;color:' + ST.page + '">' +
@@ -433,8 +554,55 @@ footer(account, font, unsubscribe, preferences, brand) +
       '</td></tr></table></td></tr>';
   }
 
+  // A block may carry a font and a size of its own, which beat the email-wide
+  // ones for that block only. The block is drawn with a copy of the style that
+  // has them swapped in, then the email's own style goes back. Both values are
+  // checked here, so nothing in a saved block can put anything else into the
+  // markup. A title or story takes the size as its title size; a button as its
+  // button size; every other text block as its paragraph size.
+  function blockType(b) {
+    var f = fontKey(b.font);
+    var z = num(b.size, 10, 60, 0);
+    var bo = b.bold === true || b.bold === false ? b.bold : null;
+    var it = b.italic === true || b.italic === false ? b.italic : null;
+    if (!f && !z && bo === null && it === null) return null;
+    var o = {}; // the email's style, copied
+    for (var k in ST) o[k] = ST[k];
+    if (f) { o.pFont = f; o.tFont = f; o.btnFont = f; }
+    if (z) {
+      if (b.type === 'heading' || b.type === 'story') {
+        o.tSize = z;
+      } else if (b.type === 'button') {
+        o.btnSize = Math.max(11, Math.min(28, z));
+      } else {
+        // Keep the same line spacing as the email-wide text, in proportion.
+        o.pLine = Math.round(z * ST.pLine / ST.pSize);
+        o.pSize = z;
+      }
+    }
+    if (bo !== null || it !== null) {
+      if (b.type === 'button') {
+        if (bo !== null) o.btnBold = bo;
+        if (it !== null) o.btnItalic = it;
+      } else if (b.type === 'heading' || b.type === 'story') {
+        o.tType = ST.tBase + faceCss(bo === null ? ST.tBold : bo, it === null ? ST.tItalic : it, true);
+      } else {
+        o.pType = ST.pBase + faceCss(bo === null ? ST.pBold : bo, it === null ? ST.pItalic : it, false);
+      }
+    }
+    return o;
+  }
+
   function renderBlock(b, font, outlook, brand, ctx) {
-    return applyDesign(renderBlockCore(b, font, outlook, brand, ctx), b);
+    var own = blockType(b);
+    if (!own) return applyDesign(renderBlockCore(b, font, outlook, brand, ctx), b);
+    var kept = ST;
+    ST = own;
+    try {
+      return applyDesign(renderBlockCore(b, font, outlook, brand, ctx), b);
+    } finally {
+      ST = kept;
+    }
   }
 
   function renderBlockCore(b, font, outlook, brand, ctx) {

@@ -425,7 +425,7 @@
         onSaveBlock: function (blocks, done) { saveBlock(blocks, done); }
       });
       preview = MR.preview(previewBox, function () { return campaign; },
-        function () { return account; }, brandForPreview);
+        function () { return account; }, brandForPreview, recipientsSee);
 
       function refresh() { if (preview) preview.refresh(); }
 
@@ -508,6 +508,7 @@
         campaign: campaign,
         getAccount: function () { return account; },
         getBrand: brandForPreview,
+        getSender: recipientsSee,
         saved: savedBlocks,
         images: MR.cfg.demo ? null : function (onPick) { MR.pickImage(account.id, onPick); },
         onSaveBlock: function (blocks, done) { saveBlock(blocks, done); },
@@ -869,7 +870,7 @@
       wrap.appendChild(MR.h('h2', { text: 'What goes out' }));
       wrap.appendChild(previewBox);
       MR.preview(previewBox, function () { return campaign; },
-        function () { return account; }, brandForPreview);
+        function () { return account; }, brandForPreview, recipientsSee);
 
       wrap.appendChild(MR.h('div', { class: 'dr-button-group' },
         MR.h('button', {

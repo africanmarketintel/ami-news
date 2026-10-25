@@ -98,7 +98,7 @@
   /* ======================================================================
      mount(o)
        campaign      the object the page saves
-       getAccount()  getBrand()
+       getAccount()  getBrand()  getSender() -> { name, address }, for the Email preview
        saved         the member's saved blocks
        images        function (onPick) or null
        onSaveBlock   function (blocks, done) or null
@@ -798,6 +798,7 @@
     // show the right ones. A block with no words in it has no Text tab.
     function textKind(block) {
       var t = block.type;
+      if (t === 'panel') return 'panel';
       if (t === 'heading' || t === 'story') return 'title';
       if (t === 'button') return 'button';
       if (t === 'social' || t === 'navigation') return 'links';
@@ -805,6 +806,83 @@
       return null;
     }
     var KIND_NAME = { title: 'every title', paragraph: 'all paragraph text', button: 'every button', links: 'every link' };
+
+    // The blocks that belong to the same ready-made section or template part as
+    // this one. A block carries a section tag (block.section) when it came from
+    // a ready-made section or a layout. The tag is only a label for the editor:
+    // the renderer ignores it.
+    function sectionMates(block) {
+      if (!block.section) return [];
+      return campaign.body_blocks.filter(function (b) { return b.section === block.section; });
+    }
+
+    // A font, size and style for this one block, which beat the email-wide
+    // ones, and a font for the whole section the block belongs to. Kept on the
+    // block as font, size, bold and italic; the renderer checks them again.
+    function blockTypeControls(block) {
+      var isButton = block.type === 'button';
+      var isPanel = block.type === 'panel';
+      var box = h('div', { class: 'mr-studio__card' });
+      box.appendChild(h('h3', { class: 'mr-studio__h3', style: 'margin-top:0', text: isPanel ? 'This whole panel' : 'This block only' }));
+      var sel = h('select', { class: 'dr-select dr-input--w', id: 'bt-own-font' });
+      fillSelect(sel, fontOptions('Same as the rest of the email'), block.font || '');
+      sel.addEventListener('change', function () {
+        if (sel.value) block.font = sel.value; else delete block.font;
+        changed(true);
+      });
+      box.appendChild(group('bt-own-font', 'Font', isPanel ? 'Used by every block inside this panel, unless a block has a font of its own.' : null, sel));
+      if (!isPanel) {
+        var lo = isButton ? 11 : 10, hi = isButton ? 28 : 60;
+        var size = h('input', { class: 'dr-input dr-input--w', id: 'bt-own-size', type: 'number', min: String(lo), max: String(hi),
+          step: '1', inputmode: 'numeric', value: block.size ? String(block.size) : '', placeholder: 'Same as the email' });
+        size.addEventListener('input', function () {
+          var v = size.value.trim();
+          if (v === '') { delete block.size; changed(true); return; }
+          var n = parseInt(v, 10);
+          if (isFinite(n)) { block.size = Math.max(lo, Math.min(hi, n)); changed(true); }
+        });
+        size.addEventListener('blur', function () { size.value = block.size ? String(block.size) : ''; });
+        box.appendChild(group('bt-own-size', 'Size in pixels', 'Between ' + lo + ' and ' + hi + '. Empty uses the size set for the whole email.', size));
+        // Style for this block: same as the email, or one of the four.
+        var boldDefault = isButton || block.type === 'heading' || block.type === 'story';
+        var st = h('select', { class: 'dr-select dr-input--w', id: 'bt-own-style' });
+        var cur = '';
+        if (block.bold !== undefined || block.italic !== undefined) {
+          cur = styleValue(block.bold === undefined ? boldDefault : !!block.bold, !!block.italic);
+        }
+        fillSelect(st, [['', 'Same as the rest of the email']].concat(STYLE_OPTS), cur);
+        st.addEventListener('change', function () {
+          if (!st.value) { delete block.bold; delete block.italic; }
+          else { block.bold = st.value === 'bold' || st.value === 'bolditalic'; block.italic = st.value === 'italic' || st.value === 'bolditalic'; }
+          changed(true);
+        });
+        box.appendChild(group('bt-own-style', 'Style', null, st));
+      }
+      return box;
+    }
+
+    // One font for every block in the same section. Overwrites a font set on a
+    // single block in it; a block inside a panel keeps its own.
+    function sectionControls(block) {
+      var mates = sectionMates(block);
+      if (mates.length < 2) return null;
+      var fonts = mates.map(function (b) { return b.font || ''; });
+      var same = fonts.every(function (f) { return f === fonts[0]; });
+      var box = h('div', { class: 'mr-studio__card' });
+      box.appendChild(h('h3', { class: 'mr-studio__h3', style: 'margin-top:0', text: 'This whole section' }));
+      var sel = h('select', { class: 'dr-select dr-input--w', id: 'bt-section-font' });
+      var opts = fontOptions('Same as the rest of the email');
+      if (!same) opts = [['__mixed', 'Different fonts in this section']].concat(opts);
+      fillSelect(sel, opts, same ? fonts[0] : '__mixed');
+      sel.addEventListener('change', function () {
+        if (sel.value === '__mixed') return;
+        mates.forEach(function (b) { if (sel.value) b.font = sel.value; else delete b.font; });
+        changed(true);
+      });
+      box.appendChild(group('bt-section-font', 'Font for all ' + mates.length + ' blocks in this section',
+        'Sets the font on every block in the section at once. Select a single block to give it a different font.', sel));
+      return box;
+    }
 
     function buildBlockPane() {
       var path = state.sel;
@@ -855,8 +933,14 @@
 
       if (kind && state.btab === 'text') {
         var tp = h('div', { class: 'mr-studio__textpane' });
-        tp.appendChild(h('p', { class: 'mr-studio__hint', text: 'Applies to ' + KIND_NAME[kind] + ' in this email, so they always match. Colour panels keep their own text colour.' }));
-        textControls(kind, tp, 'bt');
+        if (kind !== 'links') tp.appendChild(blockTypeControls(block));
+        var secBox = sectionControls(block);
+        if (secBox) tp.appendChild(secBox);
+        if (kind !== 'panel') {
+          tp.appendChild(h('h3', { class: 'mr-studio__h3', text: 'Every block of this kind' }));
+          tp.appendChild(h('p', { class: 'mr-studio__hint', text: 'Applies to ' + KIND_NAME[kind] + ' in this email, so they always match. Colour panels keep their own text colour.' }));
+          textControls(kind, tp, 'bt');
+        }
         pBlock.appendChild(tp);
         return;
       }
@@ -1081,9 +1165,45 @@
        The choices on this tab are kept in campaign.style, one key each, and
        a key is removed when it goes back to its default. The renderer checks
        every value again, so nothing here is trusted on the other side. */
+    // One name each. The first group is fonts every device has. The second is
+    // the 30 most used Google fonts: a mail app that cannot load one shows a
+    // similar standard font instead (listed in mr-render.js beside each name).
+    // ['__group', ...] starts a labelled group in the list.
     var FONT_OPTS = [
-      ['sans', 'Arial and Helvetica'], ['serif', 'Georgia and Times'], ['system', 'Each device’s own font'],
-      ['verdana', 'Verdana'], ['trebuchet', 'Trebuchet MS'], ['tahoma', 'Tahoma'], ['courier', 'Courier New']
+      ['__group', 'Fonts every device has'],
+      ['sans', 'Arial'], ['serif', 'Georgia'], ['system', 'Each device’s own font'],
+      ['verdana', 'Verdana'], ['trebuchet', 'Trebuchet MS'], ['tahoma', 'Tahoma'], ['courier', 'Courier New'],
+      ['__group', 'Google fonts'],
+      ['roboto', 'Roboto'],
+      ['opensans', 'Open Sans'],
+      ['inter', 'Inter'],
+      ['montserrat', 'Montserrat'],
+      ['poppins', 'Poppins'],
+      ['lato', 'Lato'],
+      ['arimo', 'Arimo'],
+      ['robotocondensed', 'Roboto Condensed'],
+      ['robotomono', 'Roboto Mono'],
+      ['oswald', 'Oswald'],
+      ['notosans', 'Noto Sans'],
+      ['dmsans', 'DM Sans'],
+      ['playfair', 'Playfair Display'],
+      ['raleway', 'Raleway'],
+      ['nunito', 'Nunito'],
+      ['nunitosans', 'Nunito Sans'],
+      ['robotoslab', 'Roboto Slab'],
+      ['rubik', 'Rubik'],
+      ['manrope', 'Manrope'],
+      ['outfit', 'Outfit'],
+      ['ubuntu', 'Ubuntu'],
+      ['merriweather', 'Merriweather'],
+      ['kanit', 'Kanit'],
+      ['plusjakarta', 'Plus Jakarta Sans'],
+      ['bebasneue', 'Bebas Neue'],
+      ['lora', 'Lora'],
+      ['worksans', 'Work Sans'],
+      ['figtree', 'Figtree'],
+      ['archivoblack', 'Archivo Black'],
+      ['jetbrainsmono', 'JetBrains Mono']
     ];
 
     function sty() {
@@ -1165,13 +1285,47 @@
       return group(id, text, hint, h('div', { class: 'mr-range__row' }, range, num));
     }
 
+    // Fill a list with options. An entry written ['__group', 'Label'] starts a
+    // labelled group, and the options after it go inside that group.
+    function fillSelect(sel, options, cur) {
+      var into = sel;
+      options.forEach(function (o2) {
+        if (o2[0] === '__group') {
+          into = h('optgroup', { label: o2[1] });
+          sel.appendChild(into);
+          return;
+        }
+        into.appendChild(h('option', { value: o2[0], text: o2[1], selected: cur === o2[0] }));
+      });
+    }
+
     function selControl(id, text, key, options, hint) {
       var cur = sty()[key] || '';
       var sel = h('select', { class: 'dr-select dr-input--w', id: id });
-      options.forEach(function (o2) {
-        sel.appendChild(h('option', { value: o2[0], text: o2[1], selected: cur === o2[0] }));
-      });
+      fillSelect(sel, options, cur);
       sel.addEventListener('change', function () { setSty(key, sel.value); });
+      return group(id, text, hint, sel);
+    }
+
+    // Regular, Bold, Italic or Bold italic in one menu. It writes the same two
+    // keys the renderer already reads (a bold key and an italic key), and a key
+    // that matches its default is removed, so an untouched email is unchanged.
+    var STYLE_OPTS = [['regular', 'Regular'], ['bold', 'Bold'], ['italic', 'Italic'], ['bolditalic', 'Bold italic']];
+    function styleValue(bold, italic) { return bold ? (italic ? 'bolditalic' : 'bold') : (italic ? 'italic' : 'regular'); }
+    function styleControl(id, text, boldKey, italicKey, boldDefault, hint) {
+      var st = sty();
+      var bold = st[boldKey] === undefined ? boldDefault : !!st[boldKey];
+      var italic = st[italicKey] === undefined ? false : !!st[italicKey];
+      var sel = h('select', { class: 'dr-select dr-input--w', id: id });
+      fillSelect(sel, STYLE_OPTS, styleValue(bold, italic));
+      sel.addEventListener('change', function () {
+        var b2 = sel.value === 'bold' || sel.value === 'bolditalic';
+        var i2 = sel.value === 'italic' || sel.value === 'bolditalic';
+        var s2 = sty();
+        if (b2 === boldDefault) delete s2[boldKey]; else s2[boldKey] = b2;
+        if (i2) s2[italicKey] = true; else delete s2[italicKey];
+        changed(true);
+      });
       return group(id, text, hint, sel);
     }
 
@@ -1208,6 +1362,7 @@
       if (kind === 'title') {
         box.appendChild(selControl(pfx + '-t-font', 'Font', 't_font', fontOptions('Same as the rest of the email')));
         box.appendChild(sliderControl(pfx + '-t-size', 'Size of a large title', 't_size', 16, 40, 22));
+        box.appendChild(styleControl(pfx + '-t-style', 'Style', 't_bold', 't_italic', true));
         box.appendChild(colourControl(pfx + '-t-colour', 'Colour', 't_colour', '#1a1208'));
         box.appendChild(caseControl(pfx + '-t-case', 'Capitals', 't_case'));
         box.appendChild(h('h3', { class: 'mr-studio__h3', text: 'Spacing' }));
@@ -1216,6 +1371,7 @@
       } else if (kind === 'paragraph') {
         box.appendChild(selControl(pfx + '-p-font', 'Font', 'p_font', fontOptions('Same as the rest of the email')));
         box.appendChild(sliderControl(pfx + '-p-size', 'Size', 'p_size', 11, 28, 16));
+        box.appendChild(styleControl(pfx + '-p-style', 'Style', 'p_bold', 'p_italic', false));
         box.appendChild(colourControl(pfx + '-p-colour', 'Colour', 'p_colour', '#1a1208'));
         box.appendChild(caseControl(pfx + '-p-case', 'Capitals', 'p_case'));
         // An older choice of Tight or Roomy becomes the same line height as a number.
@@ -1226,8 +1382,7 @@
         box.appendChild(sliderControl(pfx + '-p-space', 'Letter spacing (pixels)', 'p_spacing', -2, 10, 0));
       } else if (kind === 'links') {
         box.appendChild(colourControl(pfx + '-link-colour', 'Colour', 'link_colour', accent, 'Empty uses the accent colour from your brand.'));
-        box.appendChild(toggleControl(pfx + '-link-bold', 'Bold', 'link_bold', false));
-        box.appendChild(toggleControl(pfx + '-link-italic', 'Italic', 'link_italic', false));
+        box.appendChild(styleControl(pfx + '-link-style', 'Style', 'link_bold', 'link_italic', false));
         box.appendChild(toggleControl(pfx + '-link-underline', 'Underline', 'link_underline', true));
       } else if (kind === 'button') {
         box.appendChild(colourControl(pfx + '-b-bg', 'Button colour', 'btn_bg', btnFill, 'Empty uses the button colour from your brand.'));
@@ -1235,7 +1390,7 @@
         box.appendChild(selControl(pfx + '-b-font', 'Font', 'btn_font', fontOptions('Same as the rest of the email')));
         box.appendChild(sliderControl(pfx + '-b-size', 'Size', 'btn_size', 11, 28, 16));
         box.appendChild(sliderControl(pfx + '-b-radius', 'Roundness', 'btn_radius', 0, 50, 24));
-        box.appendChild(toggleControl(pfx + '-b-bold', 'Bold', 'btn_bold', true));
+        box.appendChild(styleControl(pfx + '-b-style', 'Style', 'btn_bold', 'btn_italic', true));
         box.appendChild(caseControl(pfx + '-b-case', 'Capitals', 'btn_case'));
         box.appendChild(sliderControl(pfx + '-b-space', 'Letter spacing (pixels)', 'btn_spacing', -2, 10, 0));
         var more = h('details', { class: 'mr-studio__fold mr-studio__fold--more' });
@@ -1243,7 +1398,6 @@
         more.addEventListener('toggle', function () { styleUi.open['b-more'] = more.open; });
         more.appendChild(h('summary', { class: 'mr-studio__foldhead', text: 'More button options' }));
         var inner = h('div', { class: 'mr-studio__foldbody' });
-        inner.appendChild(toggleControl(pfx + '-b-italic', 'Italic', 'btn_italic', false));
         inner.appendChild(toggleControl(pfx + '-b-underline', 'Underline', 'btn_underline', false));
         inner.appendChild(sliderControl(pfx + '-b-width', 'Width in pixels', 'btn_width', 10, 600, 260));
         inner.appendChild(sliderControl(pfx + '-b-border', 'Border thickness', 'btn_border', 0, 6, 2));
@@ -1283,12 +1437,10 @@
         box.appendChild(sliderControl('mrs-width', 'Email width', 'width', 480, 700, 600,
           'On a phone the email always fills the screen.'));
         var font = h('select', { class: 'dr-select dr-input--w', id: 'mrs-font' });
-        FONT_OPTS.forEach(function (f) {
-          font.appendChild(h('option', { value: f[0], text: f[1], selected: (campaign.font_family || 'sans') === f[0] }));
-        });
+        fillSelect(font, FONT_OPTS, campaign.font_family || 'sans');
         font.addEventListener('change', function () { campaign.font_family = font.value; changed(true); });
         box.appendChild(group('mrs-font', 'Main font',
-          'Only fonts every device has, so the email looks the same everywhere.', font));
+          'Fonts every device has look the same everywhere. A Google font shows in mail apps that can load it. Gmail cannot load most of them, so readers there see a similar standard font instead.', font));
         box.appendChild(colourControl('mrs-page', 'Colour around the email', 'page', '#f3f2f1'));
         box.appendChild(colourControl('mrs-body', 'Colour of the email', 'body', '#ffffff'));
       });
@@ -2030,7 +2182,7 @@
         if (key === 'preview') {
           var box = h('div', { class: 'mr-preview', id: 'mr-preview' });
           body.appendChild(box);
-          MR.preview(box, function () { return campaign; }, function () { return account(); }, function () { return brandNow(); });
+          MR.preview(box, function () { return campaign; }, function () { return account(); }, function () { return brandNow(); }, o.getSender || null);
         } else if (key === 'test') {
           var remembered = '';
           try { remembered = localStorage.getItem('mr-test-addresses') || ''; } catch (e) { /* storage may be blocked */ }

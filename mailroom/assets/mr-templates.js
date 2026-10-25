@@ -327,10 +327,34 @@
     return blocks;
   }
 
+  // Sections. A block gets a section tag when it comes from a layout or a
+  // ready-made section, so the editor can set one font for the whole section.
+  // The tag is a label only: the email renderer ignores it, and a block can be
+  // moved or given a font of its own without losing it. A ready-made section is
+  // one section. A layout is split at each colour panel and each divider: a
+  // panel is a section by itself, and the blocks between two of them are one.
+  var sectionCount = 0;
+  function newSectionTag() {
+    sectionCount += 1;
+    return 'sec' + Date.now().toString(36) + sectionCount.toString(36) + Math.floor(Math.random() * 1296).toString(36);
+  }
+  MR.tagSections = function (blocks, whole) {
+    var tag = newSectionTag();
+    blocks.forEach(function (b, i) {
+      if (!b || typeof b !== 'object') return;
+      if (!whole) {
+        if (b.type === 'divider') { tag = newSectionTag(); return; }
+        if (b.type === 'panel') { tag = newSectionTag(); b.section = tag; tag = newSectionTag(); return; }
+      }
+      b.section = tag;
+    });
+    return blocks;
+  };
+
   MR.templateBlocks = function (id) {
     var t = MR.TEMPLATES.filter(function (x) { return x.id === id; })[0];
     if (!t) return [{ type: 'text', text: '' }];
-    return resolveImages(JSON.parse(JSON.stringify(t.blocks)));
+    return MR.tagSections(resolveImages(JSON.parse(JSON.stringify(t.blocks))), false);
   };
 
   /* ---------------- sample text ----------------
@@ -393,11 +417,32 @@
       if (b.blocks) standIns(b.blocks, n);
     });
   }
+  /* Real photographs for the preview only. tools/get-template-photos.sh puts
+     one photograph beside every drawing, under the same name. When
+     MR.templatePhotos is on, the preview shows the photograph in place of the
+     drawing. A campaign started from the layout still gets the drawing, so
+     nothing is ever sent with a photo nobody chose. */
+  var PHOTO_BASE = 'https://ami.abta.africa/mailroom/assets/templates/photos/';
+  MR.templatePhotoUrl = function (name) { return (window.MR_TEMPLATE_PHOTO_BASE || PHOTO_BASE) + name + '.jpg'; };
+  MR.templatePhotos = false;
+  function photoSwap(blocks) {
+    var base = imageBase();
+    blocks.forEach(function (b) {
+      ['url', 'thumb'].forEach(function (k) {
+        if (typeof b[k] === 'string' && b[k].indexOf(base) === 0 && /\.png$/.test(b[k])) {
+          b[k] = MR.templatePhotoUrl(b[k].slice(base.length).replace(/\.png$/, ''));
+        }
+      });
+      if (b.blocks) photoSwap(b.blocks);
+    });
+  }
+
   MR.templatePreviewHtml = function (id, account) {
     if (!MR.renderEmail) return '';
     var t = MR.TEMPLATES.filter(function (x) { return x.id === id; })[0];
     if (!t) return '';
     var blocks = MR.templateBlocks(id);
+    if (MR.templatePhotos) photoSwap(blocks);
     var n = { i: 0, map: {} };
     standIns(blocks, n);
     var html = MR.renderEmail({
@@ -510,6 +555,6 @@
     MR.SECTIONS.forEach(function (g) {
       g.items.forEach(function (x) { if (x.id === id) found = x; });
     });
-    return found ? JSON.parse(JSON.stringify(found.blocks)) : MR.templateBlocks(id);
+    return found ? MR.tagSections(JSON.parse(JSON.stringify(found.blocks)), true) : MR.templateBlocks(id);
   };
 })();
