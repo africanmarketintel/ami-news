@@ -724,10 +724,21 @@ a:hover, .dr-link:hover { color: var(--brand-hover); text-decoration-thickness: 
 .mr-int-how > summary { cursor: pointer; font-weight: 600; padding: .5rem 0; }
 .mr-int-status { min-height: 1.5em; font-weight: 600; }
 .mr-int-status--bad { color: #b42318; }
-.mr-stock { margin: 1.25rem 0; padding: 1rem; background: #f6f5f2; border-radius: 12px; }
-.mr-stock__tabs { display: inline-flex; gap: 4px; padding: 4px; background: #e8e5de; border-radius: 999px; margin: .5rem 0 1rem; }
-.mr-stock__tab { font: inherit; border: 0; background: transparent; border-radius: 999px; padding: .4rem 1.1rem; cursor: pointer; }
-.mr-stock__tab[aria-pressed="true"] { background: #1a1208; color: #fff; }
+.mr-stock { margin: 0; padding: 0; }
+/* The image picker: a title with a close button, three tabs, one panel at a time. */
+.mr-picker__head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; }
+.mr-picker__head h2 { margin: 0; }
+.mr-picker__close { font: inherit; font-size: 1.75rem; line-height: 1; width: 2.75rem; height: 2.75rem; border: 2px solid #1a1208; border-radius: 999px; background: #fff; cursor: pointer; }
+.mr-picker__close:focus-visible, .mr-picker__tab:focus-visible { outline: 3px solid #ffdd00; outline-offset: 2px; box-shadow: 0 0 0 3px #0b0c0c; }
+.mr-picker__tabs { display: flex; gap: 4px; padding: 4px; background: #e8e5de; border-radius: 999px; margin: 0 0 1rem; }
+.mr-picker__tab { flex: 1 1 0; min-height: 2.75rem; font: inherit; font-weight: 600; border: 0; background: transparent; color: #1a1208; border-radius: 999px; padding: .4rem .75rem; cursor: pointer; }
+.mr-picker__tab[aria-selected="true"] { background: #1a1208; color: #fff; }
+.mr-picker__panel[hidden] { display: none; }
+.mr-picker__drop { border: 2px dashed #1a1208; border-radius: 14px; padding: 1.5rem 1rem; text-align: center; background: #fff; margin-bottom: 1rem; }
+.mr-picker__drop.is-over { background: #fff7d6; border-style: solid; }
+.mr-picker__drop p { margin: .5rem 0 0; }
+.mr-picker__file { position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; }
+@media (max-width: 30rem) { .mr-picker__tab { padding: .4rem .25rem; font-size: .9rem; } }
 .mr-stock__form { display: flex; flex-wrap: wrap; gap: .5rem; align-items: end; }
 .mr-stock__form .dr-label { flex-basis: 100%; }
 .mr-stock__form .dr-input { flex: 1 1 14rem; }

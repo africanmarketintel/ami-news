@@ -392,10 +392,6 @@
       if (account && account.status === 'suspended') {
         MR.banner(wrap, 'Sending suspended', account.suspension_reason || 'Contact ami@abta.africa.', 'important');
       }
-      if (!brand && !MR.cfg.demo) {
-        MR.banner(wrap, 'Set up your look once',
-          'Your logo, colours and footer can be saved on the brand page and applied to every campaign after this one.');
-      }
 
       var form = MR.h('form', { id: 'mr-campaign-form', novalidate: true });
 
@@ -534,10 +530,6 @@
       }
       if (account && account.status === 'suspended') {
         keep(MR.banner(studio.notes(), 'Sending suspended', account.suspension_reason || 'Contact support to find out why.', 'important'));
-      }
-      if (!brand && !MR.cfg.demo) {
-        keep(MR.banner(studio.notes(), 'Set up your look once',
-          'Your logo, colours and footer can be saved on the brand page and applied to every campaign after this one.'));
       }
       function keep(box) { box.setAttribute('data-keep', ''); return box; }
     }

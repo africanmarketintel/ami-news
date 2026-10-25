@@ -1,6 +1,7 @@
 /* ==========================================================================
    AMI Mailroom – the image library
-   Upload an image, choose one already uploaded, and give it a description.
+   One dialog with three tabs: Your images (upload, or choose one already
+   uploaded), Stock photos and GIFs.
    Files go to Supabase Storage under the account's own folder. The bucket is
    public to read, because an image in an email has to load in a mail app
    with no session, so each file is named with a random id.
@@ -68,43 +69,81 @@
   /* ---------------- the picker ---------------- */
   MR.pickImage = function (accountId, onPick) {
     var back = document.activeElement;
-    var dialog = MR.h('dialog', { class: 'mr-dialog', 'aria-label': 'Your images' });
+    var dialog = MR.h('dialog', { class: 'mr-dialog mr-picker', 'aria-labelledby': 'mr-picker-h' });
     var grid = MR.h('div', { class: 'mr-image-grid' });
     var status = MR.h('p', { class: 'dr-small', role: 'status' });
+    var saving = false;
 
-    var fileInput = MR.h('input', {
-      class: 'dr-file-upload', id: 'mr-image-file', type: 'file',
-      accept: 'image/png,image/jpeg,image/gif,image/webp'
+    /* ---- header: title and a close button ---- */
+    dialog.appendChild(MR.h('div', { class: 'mr-picker__head' },
+      MR.h('h2', { id: 'mr-picker-h', text: 'Add an image' }),
+      MR.h('button', { type: 'button', class: 'mr-picker__close', 'aria-label': 'Close', text: '×',
+        onclick: function () { close(); } })));
+
+    /* ---- tabs ---- */
+    var TABS = [['mine', 'Your images'], ['photos', 'Stock photos'], ['gifs', 'GIFs']];
+    var tablist = MR.h('div', { class: 'mr-picker__tabs', role: 'tablist', 'aria-label': 'Where to get the image' });
+    var tabEls = [], panels = [];
+    TABS.forEach(function (t, i) {
+      var tab = MR.h('button', { type: 'button', class: 'mr-picker__tab', role: 'tab', id: 'mr-picker-t' + i,
+        'aria-controls': 'mr-picker-p' + i, 'aria-selected': i === 0 ? 'true' : 'false', tabindex: i === 0 ? '0' : '-1', text: t[1] });
+      tab.addEventListener('click', function () { show(i); });
+      tab.addEventListener('keydown', function (e) {
+        var n = null;
+        if (e.key === 'ArrowRight') n = (i + 1) % TABS.length;
+        else if (e.key === 'ArrowLeft') n = (i + TABS.length - 1) % TABS.length;
+        else if (e.key === 'Home') n = 0;
+        else if (e.key === 'End') n = TABS.length - 1;
+        if (n !== null) { e.preventDefault(); show(n, true); }
+      });
+      tabEls.push(tab); tablist.appendChild(tab);
     });
-    var altInput = MR.h('input', { class: 'dr-input', id: 'mr-image-alt', type: 'text' });
-    var uploadBtn = MR.h('button', {
-      type: 'button', class: 'dr-button', text: 'Upload',
-      onclick: function () { upload(); }
+    dialog.appendChild(tablist);
+
+    function show(n, focus) {
+      tabEls.forEach(function (t, i) {
+        t.setAttribute('aria-selected', i === n ? 'true' : 'false');
+        t.setAttribute('tabindex', i === n ? '0' : '-1');
+        panels[i].hidden = i !== n;
+      });
+      if (focus) tabEls[n].focus();
+    }
+
+    /* ---- tab 1: upload and the images already uploaded ---- */
+    var fileInput = MR.h('input', { class: 'mr-picker__file', id: 'mr-image-file', type: 'file',
+      accept: 'image/png,image/jpeg,image/gif,image/webp', tabindex: '-1', 'aria-hidden': 'true' });
+    var uploadBtn = MR.h('button', { type: 'button', class: 'dr-button', text: 'Upload an image',
+      onclick: function () { fileInput.click(); } });
+    var drop = MR.h('div', { class: 'mr-picker__drop' }, uploadBtn,
+      MR.h('p', { class: 'dr-small', text: 'or drag a file here. PNG, JPEG, GIF or WebP, up to 2MB. Aim for under 200KB.' }),
+      fileInput);
+    fileInput.addEventListener('change', function () { upload(fileInput.files && fileInput.files[0]); });
+    ['dragenter', 'dragover'].forEach(function (ev) {
+      drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.add('is-over'); });
+    });
+    ['dragleave', 'drop'].forEach(function (ev) {
+      drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.remove('is-over'); });
+    });
+    drop.addEventListener('drop', function (e) {
+      var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+      if (f) upload(f);
+    });
+    var mine = MR.h('div', { class: 'mr-picker__panel' }, drop, status,
+      MR.h('h3', { class: 'dr-h', text: 'Images you have uploaded' }), grid);
+
+    /* ---- tabs 2 and 3: stock photos and GIFs ---- */
+    panels.push(mine, stockPanel('photos'), stockPanel('gifs'));
+    panels.forEach(function (p, i) {
+      p.setAttribute('role', 'tabpanel'); p.id = 'mr-picker-p' + i;
+      p.setAttribute('aria-labelledby', 'mr-picker-t' + i);
+      p.hidden = i !== 0;
+      dialog.appendChild(p);
     });
 
-    dialog.appendChild(MR.h('h2', { text: 'Your images' }));
-    dialog.appendChild(MR.h('div', { class: 'dr-form-group' },
-      MR.h('label', { class: 'dr-label', for: 'mr-image-file', text: 'Upload an image' }),
-      MR.h('span', { class: 'dr-hint', text: 'PNG, JPEG, GIF or WebP, up to 2MB. Aim for under 200KB.' }),
-      fileInput));
-    dialog.appendChild(MR.h('div', { class: 'dr-form-group' },
-      MR.h('label', { class: 'dr-label', for: 'mr-image-alt', text: 'Default description (optional)' }),
-      MR.h('span', { class: 'dr-hint', text: 'Filled in each time you use this image, and you can change it there. Leave it empty if the image is only decoration.' }),
-      altInput));
-    dialog.appendChild(MR.h('div', { class: 'dr-button-group' }, uploadBtn,
-      MR.h('button', {
-        type: 'button', class: 'dr-button dr-button--secondary', text: 'Close',
-        onclick: function () { close(); }
-      })));
-    dialog.appendChild(status);
-    dialog.appendChild(stockSection());
-    dialog.appendChild(MR.h('h3', { class: 'dr-h', text: 'Images you have uploaded' }));
-    dialog.appendChild(grid);
     document.body.appendChild(dialog);
-
     if (dialog.showModal) dialog.showModal(); else dialog.setAttribute('open', '');
     dialog.addEventListener('cancel', function () { close(); });
-    fileInput.focus();
+    tabEls[0].focus();
 
     load();
 
@@ -113,36 +152,27 @@
       if (back && back.focus) back.focus();
     }
 
-    /* Free photos and GIFs. The search runs on our side with the platform's
-       own keys, so nobody has to register anywhere. A picture stays on the
-       service's address and is not copied, and the service is credited. Pixabay
-       pictures are the exception: Pixabay forbids permanent hotlinking, so the
-       one chosen is copied into the account's own images. */
-    function stockSection() {
-      var source = 'photos', page = 1, last = null, saving = false;
-      var box = MR.h('section', { class: 'mr-stock', 'aria-labelledby': 'mr-stock-h' });
+    /* Photos and GIFs. The search runs on our side with the platform's own
+       keys, so nobody has to register anywhere. Pexels and Unsplash pictures
+       stay on the service's address and are not copied. Pixabay forbids
+       permanent hotlinking, so the one chosen is copied into the account's own
+       images. Each service is credited. */
+    function stockPanel(source) {
+      var page = 1;
+      var isGif = source === 'gifs';
+      var box = MR.h('section', { class: 'mr-picker__panel mr-stock' });
       var results = MR.h('div', { class: 'mr-image-grid' });
       var note = MR.h('p', { class: 'dr-small', role: 'status' });
       var credit = MR.h('p', { class: 'dr-small' });
-      var q = MR.h('input', { class: 'dr-input', id: 'mr-stock-q', type: 'search', autocomplete: 'off' });
+      var qid = 'mr-stock-q-' + source;
+      var q = MR.h('input', { class: 'dr-input', id: qid, type: 'search', autocomplete: 'off' });
       var more = MR.h('button', { type: 'button', class: 'dr-button dr-button--secondary', text: 'Show more', hidden: true,
         onclick: function () { page += 1; search(true); } });
-      var tabs = MR.h('div', { class: 'mr-stock__tabs', role: 'group', 'aria-label': 'What to search' });
-      var tabButtons = {};
-      [['photos', 'Photos'], ['gifs', 'GIFs']].forEach(function (t) {
-        var b = MR.h('button', { type: 'button', class: 'mr-stock__tab', text: t[1],
-          'aria-pressed': t[0] === source ? 'true' : 'false',
-          onclick: function () { source = t[0]; page = 1; mark(); search(false); } });
-        tabButtons[t[0]] = b; tabs.appendChild(b);
-      });
-      function mark() {
-        Object.keys(tabButtons).forEach(function (k) { tabButtons[k].setAttribute('aria-pressed', k === source ? 'true' : 'false'); });
-      }
-      box.appendChild(MR.h('h3', { class: 'dr-h', id: 'mr-stock-h', text: 'Find a free photo or GIF' }));
-      box.appendChild(MR.h('p', { class: 'dr-hint', text: 'See your message with a real picture in it. Search by what the picture shows, such as “market stall” or “handshake”.' }));
-      box.appendChild(tabs);
+      box.appendChild(MR.h('p', { class: 'dr-hint', text: isGif
+        ? 'Add a moving picture. Search by feeling or action, such as “thank you” or “celebrate”.'
+        : 'See your message with a real picture in it. Search by what the picture shows, such as “market stall” or “handshake”.' }));
       box.appendChild(MR.h('form', { class: 'mr-stock__form', onsubmit: function (e) { e.preventDefault(); page = 1; search(false); } },
-        MR.h('label', { class: 'dr-label', for: 'mr-stock-q', text: 'Search' }), q,
+        MR.h('label', { class: 'dr-label', for: qid, text: isGif ? 'Search GIFs' : 'Search stock photos' }), q,
         MR.h('button', { type: 'submit', class: 'dr-button', text: 'Search' })));
       box.appendChild(note); box.appendChild(results); box.appendChild(more); box.appendChild(credit);
 
@@ -156,7 +186,6 @@
         if (MR.cfg.demo) { note.textContent = 'Preview only: search is switched off here.'; return; }
         note.textContent = 'Searching…';
         MR.fn('mailroom-media', { source: source, q: q.value.trim(), page: page }).then(function (r) {
-          last = r;
           if (!append) results.textContent = '';
           note.textContent = (r.results || []).length || append ? '' : 'Nothing found. Try a simpler word.';
           (r.results || []).forEach(function (p) {
@@ -219,22 +248,22 @@
       });
     }
 
-    function upload() {
-      var file = fileInput.files && fileInput.files[0];
+    function upload(file) {
       var problem = MR.checkImageFile(file);
-      if (problem) { status.textContent = problem; return; }
-      if (MR.cfg.demo) { status.textContent = 'Preview only: nothing is uploaded.'; return; }
+      if (problem) { status.textContent = problem; fileInput.value = ''; return; }
+      if (MR.cfg.demo) { status.textContent = 'Preview only: nothing is uploaded.'; fileInput.value = ''; return; }
       uploadBtn.disabled = true;
       status.textContent = 'Uploading…';
-      MR.uploadImage(accountId, file, altInput.value.trim()).then(function (row) {
+      // The description is asked for when the image is used in the email.
+      MR.uploadImage(accountId, file, '').then(function (row) {
         uploadBtn.disabled = false;
         status.textContent = 'Uploaded.';
         fileInput.value = '';
-        altInput.value = '';
         onPick(row);
         close();
       }).catch(function (err) {
         uploadBtn.disabled = false;
+        fileInput.value = '';
         status.textContent = MR.friendlyError(err, 'The upload failed. Try again.');
       });
     }
