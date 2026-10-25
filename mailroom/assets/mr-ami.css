@@ -179,3 +179,10 @@
 .mr-app .dr-tag { font-family: var(--font); font-weight: 600; letter-spacing: 0; }
 .mr-app main .mr-camps__name a { color: var(--ami-ink); }
 .mr-app main .mr-camps__name a:hover { color: var(--ami-green); }
+
+/* Home page: layout cards drawn live with the real layouts and photographs. */
+.hm-shot { position: relative; aspect-ratio: 640 / 820; overflow: hidden; border-radius: 12px; background: var(--bg, #e9e6df); }
+.hm-shot > img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.hm-shot__frame { position: absolute; top: 0; left: 0; width: 700px; height: 1500px; border: 0; transform-origin: top left; pointer-events: none; background: #fff; box-shadow: 0 6px 22px rgba(0, 0, 0, .18); }
+.ma-scene--1 .hm-shot { width: 31%; flex: 0 0 31%; box-shadow: 0 6px 14px rgba(26, 18, 8, .18); }
+.ma-scene--1 .hm-shot.pick { animation: ma-pick 12s infinite; }
