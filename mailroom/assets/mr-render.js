@@ -123,6 +123,16 @@
     return fallback;
   }
 
+  // Capital letters and letter spacing for one kind of text. Nothing is written
+  // when both are left alone, so an email set up before these existed is unchanged.
+  function caseKey(v) {
+    var k = String(v || '');
+    return k === 'upper' ? 'uppercase' : (k === 'lower' ? 'lowercase' : '');
+  }
+  function typeCss(spacing, tcase) {
+    return (spacing ? 'letter-spacing:' + spacing + 'px;' : '') + (tcase ? 'text-transform:' + tcase + ';' : '');
+  }
+
   function fontKey(v) {
     var k = String(v || '');
     return FONTS[k] ? k : '';
@@ -138,11 +148,18 @@
     // https only, and no character that could end the url() early.
     if (!/^https:\/\/[^\s'"()<>\\]+$/i.test(bgImage)) bgImage = '';
     var btnPct = num(s.btn_width, 10, 100, 0);
+    // Line height as a percentage of the text size. Empty keeps the old choices:
+    // the compact, normal and relaxed settings for paragraphs, size plus six for titles.
+    var pLead = num(s.p_leading, 100, 220, 0);
+    var tLead = num(s.t_leading, 100, 200, 0);
     return {
       width: width, pad: pad, inner: inner,
       page: colour(s.page, '#f3f2f1'), body: colour(s.body, '#ffffff'), bgImage: bgImage,
       pFont: fontKey(s.p_font), pSize: pSize,
-      pLine: Math.round(pSize * (LINES[String(s.line || '')] || LINES.normal)),
+      pLine: pLead ? Math.round(pSize * pLead / 100) : Math.round(pSize * (LINES[String(s.line || '')] || LINES.normal)),
+      pType: typeCss(num(s.p_spacing, -2, 10, 0), caseKey(s.p_case)),
+      tLead: tLead, tType: typeCss(num(s.t_spacing, -2, 10, 0), caseKey(s.t_case)),
+      btnType: typeCss(num(s.btn_spacing, -2, 10, 0), caseKey(s.btn_case)),
       pColour: colour(s.p_colour, ''),
       tFont: fontKey(s.t_font), tSize: num(s.t_size, 16, 40, 22), tColour: colour(s.t_colour, ''),
       rtl: s.dir === 'rtl',
@@ -477,15 +494,15 @@ footer(account, font, unsubscribe, preferences, brand) +
       return '<a href="' + safeUrl(url) + '"' + (EDIT ? ' data-mr-url="' + esc(url) + '"' : '') + ' style="' + linkCss(ctx) + '">' + labelText + '</a>';
     });
     return '<p' + (ed || '') + ' style="margin:0;font-family:' + bodyFont(font) + ';font-size:' + s.font + 'px;line-height:' + s.line + 'px;' +
-      'mso-line-height-rule:exactly;color:' + ctx.ink + '">' + html.replace(/\n/g, '<br>') + '</p>';
+      'mso-line-height-rule:exactly;' + (size ? '' : ST.pType) + 'color:' + ctx.ink + '">' + html.replace(/\n/g, '<br>') + '</p>';
   }
 
   function heading(b, font, ctx) {
     var small = b.level === 'small';
     var size = small ? Math.max(12, ST.tSize - 5) : ST.tSize;
-    var line = small ? size + 7 : size + 6;
+    var line = ST.tLead ? Math.round(size * ST.tLead / 100) : (small ? size + 7 : size + 6);
     return row('<h2' + ea('text', small ? 'Add a subheading' : 'Add a headline', 'line') + ' style="margin:0;font-family:' + titleFont(font) + ';font-size:' + size + 'px;line-height:' + line + 'px;' +
-      'mso-line-height-rule:exactly;font-weight:bold;color:' + ctx.title + '">' + esc(b.text) + '</h2>',
+      'mso-line-height-rule:exactly;font-weight:bold;' + ST.tType + 'color:' + ctx.title + '">' + esc(b.text) + '</h2>',
       small ? px(16, 4) : px(24, 8), align(b.align));
   }
 
@@ -501,7 +518,7 @@ footer(account, font, unsubscribe, preferences, brand) +
     var a = align(b.align);
     return '<tr><td class="rc-pad" align="' + a + '" style="' + rule + 'padding:' + px(14, 12) + ';text-align:' + a + '">' +
       '<h3' + ea('text', 'Story headline', 'line', 'url') + ' style="margin:0 0 4px;font-family:' + titleFont(font) + ';font-size:16px;line-height:22px;' +
-      'mso-line-height-rule:exactly;font-weight:bold;color:' + ctx.title + '">' + head + '</h3>' +
+      'mso-line-height-rule:exactly;font-weight:bold;' + ST.tType + 'color:' + ctx.title + '">' + head + '</h3>' +
       (b.detail || EDIT ? '<p' + ea('detail', 'One line underneath', 'line') + ' style="margin:0;font-family:' + bodyFont(font) + ';font-size:13px;line-height:19px;' +
         'mso-line-height-rule:exactly;color:' + ctx.muted + '">' + esc(b.detail) + '</p>' : '') +
       '</td></tr>';
@@ -547,7 +564,7 @@ footer(account, font, unsubscribe, preferences, brand) +
     var items = String(b.text || '').split('\n').filter(function (l) { return l.trim(); });
     if (!items.length) items = [''];
     return '<ul' + ea('text', 'Add a point', 'list') + ' style="margin:0;padding-' + startSide() + ':22px;font-family:' + bodyFont(font) + ';font-size:' + ST.pSize +
-      'px;line-height:' + ST.pLine + 'px;mso-line-height-rule:exactly;color:' + ctx.ink + ';text-align:' + startSide() + '">' +
+      'px;line-height:' + ST.pLine + 'px;mso-line-height-rule:exactly;' + ST.pType + 'color:' + ctx.ink + ';text-align:' + startSide() + '">' +
       items.map(function (l) { return '<li' + (EDIT ? ' data-mr-ph="Add a point"' : '') + ' style="margin:0 0 6px">' + esc(l.trim()) + '</li>'; }).join('') +
       '</ul>';
   }
@@ -676,8 +693,8 @@ footer(account, font, unsubscribe, preferences, brand) +
       .replace(/<!--[\s\S]*?-->/g, '')
       .replace(/<(script|style|iframe|object|embed|svg|math|form|textarea|title|head|noscript|template)\b[\s\S]*?<\/\1\s*>/gi, '');
     var base = 'font-family:' + bodyFont(font) + ';color:' + ctx.ink + ';mso-line-height-rule:exactly;';
-    var block = base + 'font-size:' + ST.pSize + 'px;line-height:' + ST.pLine + 'px;';
-    var head = 'font-family:' + titleFont(font) + ';color:' + ctx.title + ';mso-line-height-rule:exactly;';
+    var block = base + 'font-size:' + ST.pSize + 'px;line-height:' + ST.pLine + 'px;' + ST.pType;
+    var head = 'font-family:' + titleFont(font) + ';color:' + ctx.title + ';mso-line-height-rule:exactly;' + ST.tType;
     var side = startSide();
     var out = '';
     var open = [];
@@ -737,12 +754,12 @@ footer(account, font, unsubscribe, preferences, brand) +
     if (b.url || EDIT) rows += '<tr><td class="rc-pad" align="' + a + '" style="padding:' + px(8, 0) + '">' + image(b, ST.inner) + '</td></tr>';
     if (b.name || EDIT) {
       rows += '<tr><td class="rc-pad" align="' + a + '" style="padding:' + px(12, 0) + ';text-align:' + a + '">' +
-        '<h3' + ea('name', 'Product name', 'line') + ' style="margin:0;font-family:' + titleFont(font) + ';font-size:18px;line-height:24px;mso-line-height-rule:exactly;' +
+        '<h3' + ea('name', 'Product name', 'line') + ' style="margin:0;font-family:' + titleFont(font) + ';font-size:18px;line-height:24px;mso-line-height-rule:exactly;' + ST.tType +
         'font-weight:bold;color:' + ctx.title + '">' + esc(b.name) + '</h3></td></tr>';
     }
     if (b.price || EDIT) {
       rows += '<tr><td class="rc-pad" align="' + a + '" style="padding:' + px(4, 0) + ';text-align:' + a + '">' +
-        '<p' + ea('price', 'Price', 'line') + ' style="margin:0;font-family:' + bodyFont(font) + ';font-size:' + ST.pSize + 'px;line-height:' + ST.pLine + 'px;mso-line-height-rule:exactly;' +
+        '<p' + ea('price', 'Price', 'line') + ' style="margin:0;font-family:' + bodyFont(font) + ';font-size:' + ST.pSize + 'px;line-height:' + ST.pLine + 'px;mso-line-height-rule:exactly;' + ST.pType +
         'font-weight:bold;color:' + ctx.ink + '">' + esc(b.price) + '</p></td></tr>';
     }
     if (b.description || EDIT) {
@@ -798,7 +815,7 @@ footer(account, font, unsubscribe, preferences, brand) +
       '<a' + ea(ed.label, ed.ph, 'line', ed.link) + (EDIT && ed.ghost ? ' data-mr-ghost="1"' : '') + ' href="' + url + '"' + (ST.btnPct ? ' class="rc-btn"' : '') + ' style="background-color:' + fill + ';border:' + ST.btnBorder + 'px solid ' + edge +
       ';border-radius:' + radius + ';color:' + ink + ';display:inline-block;font-family:' + face +
       ';font-size:' + ST.btnSize + 'px;font-weight:' + weight + ';' + italic + 'line-height:' + (48 - 2 * ST.btnBorder) + 'px;' +
-      'mso-line-height-rule:exactly;text-align:center;text-decoration:' + (ST.btnUnderline ? 'underline' : 'none') +
+      'mso-line-height-rule:exactly;' + ST.btnType + 'text-align:center;text-decoration:' + (ST.btnUnderline ? 'underline' : 'none') +
       ';width:' + ST.btnWidth + 'px' + fit + '">' + labelText + '</a>' +
       '<!--<![endif]-->';
     var a = align(b.align);
