@@ -96,21 +96,36 @@
         var thumb = MR.h('div', { class: 'mr-tpl__thumb', 'aria-hidden': 'true', style: '--tpl-bg:' + PANELS[n % PANELS.length], onclick: function () { thumbAction(t); } }, frame);
         var facts = MR.h('p', { class: 'mr-tpl__facts' });
         layoutFacts(t).forEach(function (f) { facts.appendChild(MR.h('span', { text: f })); });
+        // The layout fills the width of the card with a thin outline and the name
+        // underneath. The two buttons sit over the bottom of the picture and show
+        // on hover or keyboard focus. A tap or click on the picture does the same job.
         var card = MR.h('div', { class: 'mr-tpl', 'data-group': t.category || '' },
-          thumb,
-          MR.h('div', { class: 'mr-tpl__body' },
-            t.category ? MR.h('span', { class: 'mr-tpl__cat', text: t.category }) : null,
-            MR.h('h2', { class: 'mr-tpl__name', text: t.name }),
-            MR.h('p', { class: 'dr-small', text: t.summary }),
-            facts,
+          MR.h('div', { class: 'mr-tpl__media' },
+            thumb,
             MR.h('div', { class: 'mr-tpl__actions' },
               useControl(t),
-              MR.h('button', { type: 'button', class: 'dr-button dr-button--secondary', 'aria-label': 'Preview the layout: ' + t.name, text: 'Preview', onclick: function () { preview(t); } }))));
+              MR.h('button', { type: 'button', class: 'dr-button dr-button--secondary', 'aria-label': 'Preview the layout: ' + t.name, text: 'Preview', onclick: function () { preview(t); } }))),
+          MR.h('div', { class: 'mr-tpl__body' },
+            MR.h('h2', { class: 'mr-tpl__name', text: t.name }),
+            t.category ? MR.h('span', { class: 'mr-tpl__cat', text: t.category }) : null,
+            MR.h('p', { class: 'dr-small', text: t.summary }),
+            facts));
         card._t = t; card._frame = frame;
         cards.push(card); grid.appendChild(card);
         if (seen) seen.observe(card); else frame.srcdoc = MR.templatePreviewHtml ? MR.templatePreviewHtml(t.id, account) : '';
       });
       wrap.appendChild(grid);
+      // The pictures are drawn at the full email width and shrunk to fit the card,
+      // so work out the scale from the width of one column.
+      function fitCards() {
+        var cs = window.getComputedStyle(grid);
+        var cols = cs.gridTemplateColumns.split(' ').length || 1;
+        var gap = parseFloat(cs.columnGap) || 0;
+        var w = (grid.clientWidth - gap * (cols - 1)) / cols;
+        if (w > 0) grid.style.setProperty('--tpl-scale', String(w / 600));
+      }
+      fitCards();
+      if (window.ResizeObserver) new ResizeObserver(fitCards).observe(grid); else window.addEventListener('resize', fitCards);
       var none = MR.h('p', { class: 'mr-tpl-none', hidden: true, text: 'No layouts match. Try a simpler word, or choose All layouts.' });
       wrap.appendChild(none);
 

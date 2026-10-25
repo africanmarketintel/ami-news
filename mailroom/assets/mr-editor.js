@@ -39,6 +39,12 @@
   // Everything except a panel, which cannot go inside another panel.
   var INNER_TYPES = TYPES.filter(function (t) { return t.value !== 'panel'; });
 
+  // The icons that come with the Mailroom, and the colours they come in.
+  var SOCIAL_NETWORKS = [['facebook', 'Facebook'], ['instagram', 'Instagram'], ['x', 'X'], ['pinterest', 'Pinterest'], ['spotify', 'Spotify'],
+    ['patreon', 'Patreon'], ['linkedin', 'LinkedIn'], ['youtube', 'YouTube'], ['tiktok', 'TikTok']];
+  var SOCIAL_COLOURS = [['dark', 'Black'], ['grey', 'Grey'], ['white', 'White'], ['clay', 'Terracotta'], ['green', 'Green'], ['blue', 'Blue'],
+    ['purple', 'Purple'], ['rose', 'Rose'], ['gold', 'Gold']];
+  function labelOf(key) { var n = SOCIAL_NETWORKS.filter(function (x) { return x[0] === key; })[0]; return n ? n[1] : ''; }
   var ALIGNABLE = ['heading', 'text', 'story', 'list', 'button', 'image', 'social', 'video', 'logo', 'product', 'navigation', 'dynamic'];
 
   function blank(type) {
@@ -268,6 +274,8 @@
           MR.h('label', { class: 'dr-label', for: id + '-side', text: 'Which side' }),
           MR.h('span', { class: 'dr-hint', text: 'On a phone the image always ends up above the text.' }), side));
       } else {
+        wrap.appendChild(checkbox(id + '-full', 'Full width, edge to edge', block.full === true,
+          function (on) { if (on) block.full = true; else delete block.full; api.changed(); }));
         wrap.appendChild(alignField(id, block, api));
       }
       return wrap;
@@ -346,8 +354,21 @@
       });
       wrap.appendChild(MR.h('button', {
         type: 'button', class: 'dr-button dr-button--secondary', text: 'Add another link',
-        onclick: function () { block.links.push({ label: '', url: '' }); api.redraw(); }
+        onclick: function () {
+          block.links.push(block.style === 'icons' ? { label: 'Facebook', url: '', network: 'facebook' } : { label: '', url: '' });
+          api.redraw();
+        }
       }));
+      if (block.style === 'icons') {
+        var col = MR.h('select', { class: 'dr-select dr-input--w', id: id + '-icol' });
+        SOCIAL_COLOURS.forEach(function (c) {
+          col.appendChild(MR.h('option', { value: c[0], text: c[1], selected: (block.icon_colour || 'dark') === c[0] }));
+        });
+        col.addEventListener('change', function () { if (col.value === 'dark') delete block.icon_colour; else block.icon_colour = col.value; api.changed(); });
+        wrap.appendChild(MR.h('div', { class: 'dr-form-group' },
+          MR.h('label', { class: 'dr-label', for: id + '-icol', text: 'Icon colour' }),
+          MR.h('span', { class: 'dr-hint', text: 'Applies to the built-in icons. A picture of your own keeps its own colours.' }), col));
+      }
       wrap.appendChild(alignField(id, block, api));
       return wrap;
     }
@@ -411,15 +432,31 @@
           field(id + '-l' + i + '-label', 'Name', 'text', link.label, function (v) { link.label = v; api.changed(); }),
           field(id + '-l' + i + '-url', 'Link', 'url', link.url, function (v) { link.url = v; api.changed(); }));
         if (block.style === 'icons') {
-          row.appendChild(field(id + '-l' + i + '-icon', 'Icon address', 'url', link.icon,
-            function (v) { link.icon = v; api.changed(); }));
-          if (api.images) {
-            row.appendChild(MR.h('button', {
-              type: 'button', class: 'dr-button dr-button--secondary', text: 'Choose an icon',
-              onclick: function () {
-                api.images(function (picked) { link.icon = picked.url; api.redraw(); });
-              }
-            }));
+          // One of the built-in networks, or a picture of the member's own.
+          var net = MR.h('select', { class: 'dr-select dr-input--w', id: id + '-l' + i + '-net', 'aria-label': 'Network for link ' + (i + 1) },
+            MR.h('option', { value: '', text: 'My own picture', selected: !link.network }));
+          SOCIAL_NETWORKS.forEach(function (n) {
+            net.appendChild(MR.h('option', { value: n[0], text: n[1], selected: link.network === n[0] }));
+          });
+          net.addEventListener('change', function () {
+            var was = link.network ? labelOf(link.network) : '';
+            link.network = net.value;
+            if (!link.label || link.label === was) link.label = net.value ? labelOf(net.value) : '';
+            api.redraw();
+          });
+          row.appendChild(MR.h('div', { class: 'dr-form-group' },
+            MR.h('label', { class: 'dr-label', for: id + '-l' + i + '-net', text: 'Network' }), net));
+          if (!link.network) {
+            row.appendChild(field(id + '-l' + i + '-icon', 'Icon address', 'url', link.icon,
+              function (v) { link.icon = v; api.changed(); }));
+            if (api.images) {
+              row.appendChild(MR.h('button', {
+                type: 'button', class: 'dr-button dr-button--secondary', text: 'Choose an icon',
+                onclick: function () {
+                  api.images(function (picked) { link.icon = picked.url; api.redraw(); });
+                }
+              }));
+            }
           }
         }
         row.appendChild(MR.h('button', {

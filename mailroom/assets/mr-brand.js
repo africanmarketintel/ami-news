@@ -181,8 +181,31 @@
       // every email; unticking removes it.
       form.appendChild(MR.h('h3', { class: 'dr-h', text: 'Social icons at the bottom of your emails' }));
       form.appendChild(MR.h('p', { class: 'dr-hint', text: 'Tick a network to show its icon above the unsubscribe line. Paste the full address of your page, starting with https://. Untick it to remove the icon.' }));
-      [['facebook', 'Facebook', 'https://www.facebook.com/yourpage'], ['x', 'X', 'https://x.com/yourname'],
-       ['instagram', 'Instagram', 'https://www.instagram.com/yourname'], ['pinterest', 'Pinterest', 'https://www.pinterest.com/yourname']
+      // One colour for the whole row. It is stored on each icon, so nothing
+      // new has to be saved.
+      var COLOURS = [['dark', 'Black'], ['grey', 'Grey'], ['white', 'White'], ['clay', 'Terracotta'], ['green', 'Green'], ['blue', 'Blue'],
+        ['purple', 'Purple'], ['rose', 'Rose'], ['gold', 'Gold']];
+      function iconColour() {
+        var first = (brand.social_links || []).filter(function (l) { return l.icon; })[0];
+        return (first && first.colour) || 'dark';
+      }
+      var colourSel = MR.h('select', { class: 'dr-select dr-input--w', id: 'b-ico-colour' });
+      COLOURS.forEach(function (c) { colourSel.appendChild(MR.h('option', { value: c[0], text: c[1], selected: iconColour() === c[0] })); });
+      colourSel.addEventListener('change', function () {
+        (brand.social_links || []).forEach(function (l) {
+          if (!l.icon) return;
+          if (colourSel.value === 'dark') delete l.colour; else l.colour = colourSel.value;
+        });
+        refresh();
+      });
+      form.appendChild(MR.h('div', { class: 'dr-form-group' },
+        MR.h('label', { class: 'dr-label', for: 'b-ico-colour', text: 'Icon colour' }),
+        MR.h('span', { class: 'dr-hint', text: 'Pick a colour that suits your emails. White is for a dark footer.' }), colourSel));
+      [['facebook', 'Facebook', 'https://www.facebook.com/yourpage'], ['instagram', 'Instagram', 'https://www.instagram.com/yourname'],
+       ['x', 'X', 'https://x.com/yourname'], ['pinterest', 'Pinterest', 'https://www.pinterest.com/yourname'],
+       ['spotify', 'Spotify', 'https://open.spotify.com/user/yourname'], ['patreon', 'Patreon', 'https://www.patreon.com/yourname'],
+       ['linkedin', 'LinkedIn', 'https://www.linkedin.com/company/yourname'], ['youtube', 'YouTube', 'https://www.youtube.com/@yourname'],
+       ['tiktok', 'TikTok', 'https://www.tiktok.com/@yourname']
       ].forEach(function (n) {
         var kept = '';
         function entry() {
@@ -198,7 +221,9 @@
         box.addEventListener('change', function () {
           if (!Array.isArray(brand.social_links)) brand.social_links = [];
           if (box.checked) {
-            brand.social_links.push({ label: n[1], url: url.value.trim(), icon: n[0] });
+            var made = { label: n[1], url: url.value.trim(), icon: n[0] };
+            if (iconColour() !== 'dark') made.colour = iconColour();
+            brand.social_links.push(made);
           } else {
             brand.social_links = brand.social_links.filter(function (l) { return l.icon !== n[0]; });
           }

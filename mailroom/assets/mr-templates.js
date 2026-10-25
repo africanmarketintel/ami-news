@@ -431,6 +431,15 @@
   MR.templatePhotoUrl = function (name) { return (window.MR_TEMPLATE_PHOTO_BASE || PHOTO_BASE) + name + '.jpg'; };
   MR.templatePhotos = true;
 
+  // The previews show the footer as it looks once a member has ticked some
+  // social icons in their brand settings.
+  var PREVIEW_BRAND = { social_links: [
+    { label: 'Facebook', url: 'https://example.com', icon: 'facebook', colour: 'clay' },
+    { label: 'Instagram', url: 'https://example.com', icon: 'instagram', colour: 'clay' },
+    { label: 'X', url: 'https://example.com', icon: 'x', colour: 'clay' },
+    { label: 'Pinterest', url: 'https://example.com', icon: 'pinterest', colour: 'clay' },
+    { label: 'Spotify', url: 'https://example.com', icon: 'spotify', colour: 'clay' },
+    { label: 'Patreon', url: 'https://example.com', icon: 'patreon', colour: 'clay' }] };
   MR.templatePreviewHtml = function (id, account) {
     if (!MR.renderEmail) return '';
     var t = MR.TEMPLATES.filter(function (x) { return x.id === id; })[0];
@@ -441,7 +450,7 @@
     var html = MR.renderEmail({
       subject: t.name, from_name: (account && account.name) || 'Your organisation', body_blocks: blocks,
       style: MR.templateStyle(id) || {}, header_colour: MR.templateHeader(id)
-    }, account || { name: 'Your organisation', postal_address: 'Your postal address' }, { noPlaceholders: true });
+    }, account || { name: 'Your organisation', postal_address: 'Your postal address' }, { noPlaceholders: true, brand: PREVIEW_BRAND });
     Object.keys(n.map).forEach(function (k) { html = html.split(k).join(n.map[k]); });
     return html;
   };

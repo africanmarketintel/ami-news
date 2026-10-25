@@ -646,6 +646,8 @@ footer(account, font, unsubscribe, preferences, brand) +
       case 'button':
         return button(b, font, outlook, brand, ctx);
       case 'image':
+        // "Full width" runs the picture from edge to edge of the email, with no side margin.
+        if (b.full === true) return '<tr><td style="padding:0;font-size:0;line-height:0">' + image(b, ST.width) + '</td></tr>';
         return row(image(b, ST.inner), px(8), align(b.align));
       case 'divider':
         return '<tr><td style="padding:' + px(8) + '"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">' +
@@ -799,12 +801,17 @@ footer(account, font, unsubscribe, preferences, brand) +
     if (b.style === 'icons') {
       // Icons are images, and most mail apps block images by default, so the
       // description is what a reader sees first. It is required.
+      // A link can name one of the built-in networks, or give the address of a
+      // picture of its own. The colour applies to the built-in pictures.
       inner = links.map(function (l) {
+        var own = !!(l.network && SOCIAL_ICONS[l.network]);
+        var src = own ? socialIconUrl(l.network, b.icon_colour) : safeUrl(l.icon);
+        var alt = l.label || (own ? SOCIAL_ICONS[l.network] : '');
         return '<a href="' + safeUrl(l.url) + '" style="text-decoration:none">' +
-          '<img src="' + safeUrl(l.icon) + '" alt="' + esc(l.label || '') + '" width="24" height="24" ' +
-          'style="display:inline-block;width:24px;height:24px;border:0;outline:none;vertical-align:middle">' +
+          '<img src="' + src + '" alt="' + esc(alt) + '" width="28" height="28" ' +
+          'style="display:inline-block;width:28px;height:28px;border:0;outline:none;vertical-align:middle">' +
           '</a>';
-      }).join('<span style="font-size:1px">&nbsp;&nbsp;&nbsp;</span>');
+      }).join('<span style="font-size:1px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
     } else {
       inner = links.map(function (l, i) {
         return '<a' + ea('links.' + i + '.label', 'Link name', 'line', 'links.' + i + '.url') + ' href="' + safeUrl(l.url) + '" style="color:' + ctx.link +
@@ -1027,7 +1034,14 @@ footer(account, font, unsubscribe, preferences, brand) +
   // line about the platform. An account on a plan that allows it may add a
   // line of its own, which is printed at the very bottom.
   var SOCIAL_ICON_BASE = 'https://ami.abta.africa/mailroom/assets/social/';
-  var SOCIAL_ICONS = { facebook: 'Facebook', x: 'X', instagram: 'Instagram', pinterest: 'Pinterest' };
+  var SOCIAL_ICONS = { facebook: 'Facebook', instagram: 'Instagram', x: 'X', pinterest: 'Pinterest', spotify: 'Spotify',
+    patreon: 'Patreon', linkedin: 'LinkedIn', youtube: 'YouTube', tiktok: 'TikTok' };
+  // The icon pictures come in these colours. A name that is not here gives the
+  // default (near black).
+  var SOCIAL_COLOURS = { dark: 1, grey: 1, white: 1, clay: 1, green: 1, blue: 1, purple: 1, rose: 1, gold: 1 };
+  function socialIconUrl(icon, colour) {
+    return SOCIAL_ICON_BASE + icon + (SOCIAL_COLOURS[colour] && colour !== 'dark' ? '-' + colour : '') + '.png';
+  }
   function footer(account, font, unsubscribe, preferences, brand) {
     var small = 'font-family:' + font + ';font-size:13px;line-height:20px;mso-line-height-rule:exactly;color:' + MUTED + ';text-align:center';
     var fine = 'font-family:' + font + ';font-size:12px;line-height:18px;mso-line-height-rule:exactly;color:' + MUTED + ';text-align:center';
@@ -1039,11 +1053,11 @@ footer(account, font, unsubscribe, preferences, brand) +
       return '<a href="' + safeUrl(l.url) + '" style="color:' + brand.accent_colour + ';text-decoration:underline">' + esc(l.label || l.url) + '</a>';
     }).join(' &nbsp;&middot;&nbsp; ');
     var iconCells = all.filter(function (l) { return SOCIAL_ICONS[l.icon]; }).map(function (l) {
-      return '<td style="padding:0 9px"><a href="' + safeUrl(l.url) + '" style="text-decoration:none">' +
-        '<img src="' + SOCIAL_ICON_BASE + l.icon + '.png" width="24" height="24" alt="' + esc(SOCIAL_ICONS[l.icon]) +
-        '" style="display:block;border:0;width:24px;height:24px"></a></td>';
+      return '<td style="padding:0 14px"><a href="' + safeUrl(l.url) + '" style="text-decoration:none">' +
+        '<img src="' + socialIconUrl(l.icon, l.colour) + '" width="28" height="28" alt="' + esc(SOCIAL_ICONS[l.icon]) +
+        '" style="display:block;border:0;width:28px;height:28px"></a></td>';
     }).join('');
-    var icons = iconCells ? '<table role="presentation" align="center" cellpadding="0" cellspacing="0" border="0" style="margin:0 auto 16px"><tr>' + iconCells + '</tr></table>\n' : '';
+    var icons = iconCells ? '<table role="presentation" align="center" cellpadding="0" cellspacing="0" border="0" style="margin:0 auto 22px"><tr>' + iconCells + '</tr></table>\n' : '';
     // Who sent it, and where they are. Both are required in a marketing email.
     var who = esc(account && account.name);
     if (hasAddress(account)) who += ', ' + esc(String(account.postal_address).replace(/\s+/g, ' ').trim());
@@ -1056,7 +1070,7 @@ footer(account, font, unsubscribe, preferences, brand) +
     return '<tr><td class="rc-pad" align="center" style="padding:' + allPad(24) + '">\n' +
       '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">\n' +
       '<tr><td align="center" style="padding-top:20px;border-top:1px solid ' + RULE + ';' + small + '">\n' +
-      (links || icons ? '<p style="margin:0 0 12px;' + heading + '">Follow us</p>\n' + icons : '') +
+      (links ? '<p style="margin:0 0 12px;' + heading + '">Follow us</p>\n' : '') + icons +
       (links ? '<p style="margin:0 0 20px;' + small + '">' + links + '</p>\n' : (icons ? '<p style="margin:0;font-size:1px;line-height:4px">&nbsp;</p>\n' : '')) +
       '<p style="margin:0 0 8px">' + who + '</p>\n' +
       (brand.footer_note ? '<p style="margin:0 0 8px">' + esc(brand.footer_note) + '</p>\n' : '') +

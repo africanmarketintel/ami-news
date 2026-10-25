@@ -13,10 +13,6 @@
     var wrap = document.getElementById('mr-templates-page');
     if (!wrap || !MR.templateGallery) return;
     var all = (MR.TEMPLATES || []).filter(function (t) { return t.id !== 'blank'; });
-    var lead = document.getElementById('mr-templates-lead');
-    if (lead) {
-      lead.textContent = all.length + ' ready-made layouts for the emails organisations send most, grouped by what you want to do. Preview any of them, then use one to start a campaign.';
-    }
     var account = MR.sampleAccount || { name: 'Your organisation', postal_address: '1 Example Road, London, United Kingdom' };
     var signedIn = !!(MR.cfg && MR.cfg.demo) || !!(MR.auth && MR.auth.signedIn && MR.auth.signedIn());
     MR.templateGallery({

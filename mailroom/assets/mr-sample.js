@@ -45,7 +45,14 @@
     logo_url: '', logo_alt: 'Sample Member Ltd', logo_width: 180,
     accent_colour: '#6b7280', button_colour: '#222222', button_text: '#ffffff',
     font_family: 'sans', footer_note: 'Registered in England and Wales, number 00000000.', footer_credit: '',
-    social_links: [{ label: 'LinkedIn', url: 'https://example.com' }]
+    social_links: [
+      { label: 'Facebook', url: 'https://example.com', icon: 'facebook', colour: 'clay' },
+      { label: 'Instagram', url: 'https://example.com', icon: 'instagram', colour: 'clay' },
+      { label: 'X', url: 'https://example.com', icon: 'x', colour: 'clay' },
+      { label: 'Pinterest', url: 'https://example.com', icon: 'pinterest', colour: 'clay' },
+      { label: 'Spotify', url: 'https://example.com', icon: 'spotify', colour: 'clay' },
+      { label: 'Patreon', url: 'https://example.com', icon: 'patreon', colour: 'clay' }
+    ]
   };
 
   MR.sampleImages = [
