@@ -839,7 +839,7 @@
       if (!isPanel) {
         var lo = isButton ? 11 : 10, hi = isButton ? 28 : 60;
         var size = h('input', { class: 'dr-input dr-input--w', id: 'bt-own-size', type: 'number', min: String(lo), max: String(hi),
-          step: '1', inputmode: 'numeric', value: block.size ? String(block.size) : '', placeholder: 'Same as the email' });
+          step: '1', inputmode: 'numeric', value: block.size ? String(block.size) : '', placeholder: 'Email size' });
         size.addEventListener('input', function () {
           var v = size.value.trim();
           if (v === '') { delete block.size; changed(true); return; }
@@ -847,7 +847,6 @@
           if (isFinite(n)) { block.size = Math.max(lo, Math.min(hi, n)); changed(true); }
         });
         size.addEventListener('blur', function () { size.value = block.size ? String(block.size) : ''; });
-        box.appendChild(group('bt-own-size', 'Text size', 'Type a number from ' + lo + ' to ' + hi + '. A normal paragraph is 16. Leave empty to match the rest of the email.', size));
         // Style for this block: same as the email, or one of the four.
         var boldDefault = isButton || block.type === 'heading' || block.type === 'story';
         var st = h('select', { class: 'dr-select dr-input--w', id: 'bt-own-style' });
@@ -855,13 +854,29 @@
         if (block.bold !== undefined || block.italic !== undefined) {
           cur = styleValue(block.bold === undefined ? boldDefault : !!block.bold, !!block.italic);
         }
-        fillSelect(st, [['', 'Same as the rest of the email']].concat(STYLE_OPTS), cur);
+        fillSelect(st, [['', 'Same as email']].concat(STYLE_OPTS), cur);
         st.addEventListener('change', function () {
           if (!st.value) { delete block.bold; delete block.italic; }
           else { block.bold = st.value === 'bold' || st.value === 'bolditalic'; block.italic = st.value === 'italic' || st.value === 'bolditalic'; }
           changed(true);
         });
-        box.appendChild(group('bt-own-style', 'Style', 'Some fonts have no italic of their own, so the mail app slants the regular letters.', st));
+        box.appendChild(twoUp(group('bt-own-size', 'Size', null, size), group('bt-own-style', 'Style', null, st),
+          'Size is in pixels, ' + lo + ' to ' + hi + '. A normal paragraph is 16. Leave size and style empty to match the rest of the email. Some fonts have no italic of their own, so the mail app slants the regular letters.'));
+        // Where the text sits. Same setting as Position on the Block tab.
+        if (['text', 'heading', 'story', 'list', 'button'].indexOf(block.type) > -1) {
+          var curAlign = block.align || 'left';
+          var seg = h('div', { class: 'mr-seg', role: 'group', id: 'bt-own-align', 'aria-labelledby': 'bt-own-align-label' });
+          [['left', 'Left'], ['center', 'Centre'], ['right', 'Right']].forEach(function (o2) {
+            var bb = h('button', { type: 'button', class: 'mr-seg__btn mr-seg__btn--text', 'aria-pressed': curAlign === o2[0] ? 'true' : 'false', text: o2[1] });
+            bb.addEventListener('click', function () {
+              if (o2[0] === 'left') delete block.align; else block.align = o2[0];
+              Array.prototype.forEach.call(seg.children, function (c) { c.setAttribute('aria-pressed', c === bb ? 'true' : 'false'); });
+              changed(true);
+            });
+            seg.appendChild(bb);
+          });
+          box.appendChild(h('div', { class: 'dr-form-group mr-field--inline' }, h('span', { class: 'dr-label', id: 'bt-own-align-label', text: 'Alignment' }), seg));
+        }
       }
       return box;
     }
@@ -1313,6 +1328,42 @@
       return group(id, text, hint, sel);
     }
 
+    // A size in pixels as a plain number box. Empty means the email-wide default,
+    // so the setting is removed rather than stored.
+    function sizeControl(id, text, key, min, max, def) {
+      var cur = sty()[key];
+      var num = h('input', { type: 'number', class: 'dr-input dr-input--w', id: id, min: String(min), max: String(max), step: '1',
+        inputmode: 'numeric', value: cur === undefined ? '' : String(cur), placeholder: String(def) });
+      num.addEventListener('input', function () {
+        var v = num.value.trim();
+        if (v === '') { setSty(key, ''); return; }
+        var n = parseInt(v, 10);
+        if (isFinite(n)) setSty(key, Math.max(min, Math.min(max, n)));
+      });
+      num.addEventListener('blur', function () { var v = sty()[key]; num.value = v === undefined ? '' : String(v); });
+      return group(id, text, null, num);
+    }
+
+    // Two short controls side by side, with one hint underneath.
+    function twoUp(a, b, hint) {
+      var row = h('div', { class: 'mr-studio__two' }, a, b);
+      var wrap = h('div', null, row);
+      if (hint) wrap.appendChild(h('p', { class: 'mr-studio__hint', text: hint }));
+      return wrap;
+    }
+
+    // Spacing choices tucked away under one heading, closed until opened.
+    function spacingFold(box, name, build) {
+      var d = h('details', { class: 'mr-studio__fold mr-studio__fold--more' });
+      d.open = !!styleUi.open[name];
+      d.addEventListener('toggle', function () { styleUi.open[name] = d.open; });
+      d.appendChild(h('summary', { class: 'mr-studio__foldhead', text: 'Spacing' }));
+      var inner = h('div', { class: 'mr-studio__foldbody' });
+      build(inner);
+      d.appendChild(inner);
+      box.appendChild(d);
+    }
+
     // Regular, Bold, Italic or Bold italic in one menu. It writes the same two
     // keys the renderer already reads (a bold key and an italic key), and a key
     // that matches its default is removed, so an untouched email is unchanged.
@@ -1367,25 +1418,29 @@
       var btnInk = hexOk(brand.button_text) ? brand.button_text : DB.button_text;
       if (kind === 'title') {
         box.appendChild(selControl(pfx + '-t-font', 'Font', 't_font', fontOptions('Same as the rest of the email')));
-        box.appendChild(sliderControl(pfx + '-t-size', 'Size of a large title', 't_size', 16, 40, 22));
-        box.appendChild(styleControl(pfx + '-t-style', 'Style', 't_bold', 't_italic', true));
+        box.appendChild(twoUp(sizeControl(pfx + '-t-size', 'Size', 't_size', 16, 40, 22),
+          styleControl(pfx + '-t-style', 'Style', 't_bold', 't_italic', true),
+          'Size is in pixels, 16 to 40. Leave it empty to use 22.'));
         box.appendChild(colourControl(pfx + '-t-colour', 'Colour', 't_colour', '#1a1208'));
         box.appendChild(caseControl(pfx + '-t-case', 'Capitals', 't_case'));
-        box.appendChild(h('h3', { class: 'mr-studio__h3', text: 'Spacing' }));
-        box.appendChild(sliderControl(pfx + '-t-lead', 'Line height (per cent)', 't_leading', 100, 200, 127));
-        box.appendChild(sliderControl(pfx + '-t-space', 'Letter spacing (pixels)', 't_spacing', -2, 10, 0));
+        spacingFold(box, pfx + '-t-spacing', function (inner) {
+          inner.appendChild(sliderControl(pfx + '-t-lead', 'Line height (per cent)', 't_leading', 100, 200, 127));
+          inner.appendChild(sliderControl(pfx + '-t-space', 'Letter spacing (pixels)', 't_spacing', -2, 10, 0));
+        });
       } else if (kind === 'paragraph') {
         box.appendChild(selControl(pfx + '-p-font', 'Font', 'p_font', fontOptions('Same as the rest of the email')));
-        box.appendChild(sliderControl(pfx + '-p-size', 'Size', 'p_size', 11, 28, 16));
-        box.appendChild(styleControl(pfx + '-p-style', 'Style', 'p_bold', 'p_italic', false));
+        box.appendChild(twoUp(sizeControl(pfx + '-p-size', 'Size', 'p_size', 11, 28, 16),
+          styleControl(pfx + '-p-style', 'Style', 'p_bold', 'p_italic', false),
+          'Size is in pixels, 11 to 28. Leave it empty to use 16.'));
         box.appendChild(colourControl(pfx + '-p-colour', 'Colour', 'p_colour', '#1a1208'));
         box.appendChild(caseControl(pfx + '-p-case', 'Capitals', 'p_case'));
         // An older choice of Tight or Roomy becomes the same line height as a number.
         var legacy = { compact: 130, relaxed: 175 }[sty().line];
         if (legacy && sty().p_leading === undefined) { sty().p_leading = legacy; delete sty().line; }
-        box.appendChild(h('h3', { class: 'mr-studio__h3', text: 'Spacing' }));
-        box.appendChild(sliderControl(pfx + '-p-lead', 'Line height (per cent)', 'p_leading', 100, 220, 150));
-        box.appendChild(sliderControl(pfx + '-p-space', 'Letter spacing (pixels)', 'p_spacing', -2, 10, 0));
+        spacingFold(box, pfx + '-p-spacing', function (inner) {
+          inner.appendChild(sliderControl(pfx + '-p-lead', 'Line height (per cent)', 'p_leading', 100, 220, 150));
+          inner.appendChild(sliderControl(pfx + '-p-space', 'Letter spacing (pixels)', 'p_spacing', -2, 10, 0));
+        });
       } else if (kind === 'links') {
         box.appendChild(colourControl(pfx + '-link-colour', 'Colour', 'link_colour', accent, 'Empty uses the accent colour from your brand.'));
         box.appendChild(styleControl(pfx + '-link-style', 'Style', 'link_bold', 'link_italic', false));
@@ -1394,9 +1449,10 @@
         box.appendChild(colourControl(pfx + '-b-bg', 'Button colour', 'btn_bg', btnFill, 'Empty uses the button colour from your brand.'));
         box.appendChild(colourControl(pfx + '-b-text', 'Words colour', 'btn_text', btnInk));
         box.appendChild(selControl(pfx + '-b-font', 'Font', 'btn_font', fontOptions('Same as the rest of the email')));
-        box.appendChild(sliderControl(pfx + '-b-size', 'Size', 'btn_size', 11, 28, 16));
+        box.appendChild(twoUp(sizeControl(pfx + '-b-size', 'Size', 'btn_size', 11, 28, 16),
+          styleControl(pfx + '-b-style', 'Style', 'btn_bold', 'btn_italic', true),
+          'Size is in pixels, 11 to 28. Leave it empty to use 16.'));
         box.appendChild(sliderControl(pfx + '-b-radius', 'Roundness', 'btn_radius', 0, 50, 24));
-        box.appendChild(styleControl(pfx + '-b-style', 'Style', 'btn_bold', 'btn_italic', true));
         box.appendChild(caseControl(pfx + '-b-case', 'Capitals', 'btn_case'));
         box.appendChild(sliderControl(pfx + '-b-space', 'Letter spacing (pixels)', 'btn_spacing', -2, 10, 0));
         var more = h('details', { class: 'mr-studio__fold mr-studio__fold--more' });

@@ -147,12 +147,10 @@
   };
   MR.DEFAULT_BRAND = DEFAULT_BRAND;
 
-  // The line at the foot of every email. An account on a paid plan may replace
-  // it with its own, or remove it, but only on emails sent from its own
-  // verified domain. The sending code passes brand.footer_credit on only then.
-  // NO_CREDIT is the stored value for "no line".
-  var PLATFORM_CREDIT_TEXT = 'Sent through AMI Mailroom, a service of the African Business Trade Association.';
-  var PLATFORM_URL = 'https://ami.abta.africa/mailroom/';
+  // A line of its own at the very foot of the email. There is no platform line:
+  // an account on a plan that allows it may add one, but only on emails sent
+  // from its own verified domain. The sending code passes brand.footer_credit
+  // on only then. NO_CREDIT is the stored value for "no line".
   var NO_CREDIT = '[none]';
 
   // An account row can hold the placeholder "ADDRESS NOT SET", which is not an
@@ -992,35 +990,38 @@ footer(account, font, unsubscribe, preferences, brand) +
       '</td></tr>';
   }
 
+  // The foot of the email, centred: a short "Follow us" heading and the links,
+  // who sent it and where, then Unsubscribe or Manage preferences. There is no
+  // line about the platform. An account on a plan that allows it may add a
+  // line of its own, which is printed at the very bottom.
   function footer(account, font, unsubscribe, preferences, brand) {
-    var small = 'font-family:' + font + ';font-size:13px;line-height:20px;mso-line-height-rule:exactly;color:' + MUTED;
-    var fine = 'font-family:' + font + ';font-size:12px;line-height:18px;mso-line-height-rule:exactly;color:' + MUTED;
+    var small = 'font-family:' + font + ';font-size:13px;line-height:20px;mso-line-height-rule:exactly;color:' + MUTED + ';text-align:center';
+    var fine = 'font-family:' + font + ';font-size:12px;line-height:18px;mso-line-height-rule:exactly;color:' + MUTED + ';text-align:center';
+    var heading = 'font-family:' + font + ';font-size:12px;line-height:18px;mso-line-height-rule:exactly;letter-spacing:3px;text-transform:uppercase;color:' + INK + ';text-align:center';
     var links = (brand.social_links || []).map(function (l) {
-      return '<a href="' + safeUrl(l.url) + '" style="color:' + brand.accent_colour + '">' + esc(l.label || l.url) + '</a>';
-    }).join(' &middot; ');
+      return '<a href="' + safeUrl(l.url) + '" style="color:' + brand.accent_colour + ';text-decoration:underline">' + esc(l.label || l.url) + '</a>';
+    }).join(' &nbsp;&middot;&nbsp; ');
     // Who sent it, and where they are. Both are required in a marketing email.
     var who = esc(account && account.name);
     if (hasAddress(account)) who += ', ' + esc(String(account.postal_address).replace(/\s+/g, ' ').trim());
     else if (PH) {
       who += ', <span style="background-color:#fff3cd;color:#594300">[postal address needed: add it in your account settings]</span>';
     }
-    // The platform's own line, shown unless the account's plan lets it
-    // replace or remove it. The name links to the product page.
-    var credit = brand.footer_credit === NO_CREDIT ? ''
-      : brand.footer_credit
-        ? esc(brand.footer_credit)
-        : 'Sent through <a href="' + PLATFORM_URL + '" style="color:' + MUTED + '">AMI Mailroom</a>, a service of the African Business Trade Association.';
-    return '<tr><td class="rc-pad" style="padding:' + allPad(24) + '">\n' +
+    // An account's own line, only when it has one. NO_CREDIT is "no line".
+    var credit = brand.footer_credit && brand.footer_credit !== NO_CREDIT ? esc(brand.footer_credit) : '';
+    var link = 'color:' + MUTED + ';text-decoration:underline';
+    return '<tr><td class="rc-pad" align="center" style="padding:' + allPad(24) + '">\n' +
       '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">\n' +
-      '<tr><td style="padding-top:14px;border-top:1px solid ' + RULE + ';' + small + '">\n' +
+      '<tr><td align="center" style="padding-top:20px;border-top:1px solid ' + RULE + ';' + small + '">\n' +
+      (links ? '<p style="margin:0 0 10px;' + heading + '">Follow us</p>\n<p style="margin:0 0 20px;' + small + '">' + links + '</p>\n' : '') +
       '<p style="margin:0 0 8px">' + who + '</p>\n' +
       (brand.footer_note ? '<p style="margin:0 0 8px">' + esc(brand.footer_note) + '</p>\n' : '') +
-      (links ? '<p style="margin:0 0 8px">' + links + '</p>\n' : '') +
       '<p style="margin:0 0 8px">You are receiving this because you subscribed to updates from ' +
       esc(account && account.name) + '.</p>\n' +
-      '<p style="margin:0"><a href="' + unsubscribe + '" style="color:' + brand.accent_colour + '">Unsubscribe</a></p>\n' +
+      '<p style="margin:0"><a href="' + unsubscribe + '" style="' + link + '">Unsubscribe</a> or ' +
+      '<a href="' + preferences + '" style="' + link + '">Manage preferences</a></p>\n' +
       '</td></tr>\n' +
-      (credit ? '<tr><td style="padding-top:14px;' + fine + '">' + credit + '</td></tr>\n' : '') +
+      (credit ? '<tr><td align="center" style="padding-top:14px;' + fine + '">' + credit + '</td></tr>\n' : '') +
       '</table></td></tr>';
   }
 
@@ -1032,8 +1033,8 @@ footer(account, font, unsubscribe, preferences, brand) +
       '\nUnsubscribe: ' + (unsubscribeUrl || '') + creditText(brandOf(brand));
 
     function creditText(b) {
-      if (b.footer_credit === NO_CREDIT) return '';
-      return '\n' + (b.footer_credit || (PLATFORM_CREDIT_TEXT + ' ' + PLATFORM_URL));
+      if (!b.footer_credit || b.footer_credit === NO_CREDIT) return '';
+      return '\n' + b.footer_credit;
     }
 
     function one(b) {

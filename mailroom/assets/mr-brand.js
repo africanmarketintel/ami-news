@@ -134,31 +134,30 @@
         function (v) { brand.footer_note = v; refresh(); },
         'Your postal address is added automatically. A UK company should also give its registered name, number, place of registration and registered office here, as plain text. For example: Registered in England and Wales, number 00000000. Or add a charity registration.').group);
 
-      /* the credit line: the platform's own, or a paid plan's own line or none.
-         Only emails sent from the account's own verified domain can change it. */
-      var STANDARD = MR.PLATFORM_CREDIT_TEXT;
+      /* a line of your own at the very bottom. There is no platform line, so
+         this is empty unless a plan that allows it adds one. Only emails sent
+         from the account's own verified domain print it. */
       var canCredit = !!account.allows_custom_footer;
-      form.appendChild(MR.h('h3', { class: 'dr-h', text: 'Credit line' }));
       if (canCredit) {
-        var mode = brand.footer_credit === MR.NO_CREDIT ? 'none' : (brand.footer_credit ? 'own' : 'standard');
+        form.appendChild(MR.h('h3', { class: 'dr-h', text: 'Line at the very bottom' }));
+        var mode = brand.footer_credit && brand.footer_credit !== MR.NO_CREDIT ? 'own' : 'none';
         var ownInput = MR.h('input', { class: 'dr-input', id: 'b-credit', type: 'text', maxlength: '160',
           value: mode === 'own' ? brand.footer_credit : '' });
         var ownBox = MR.h('div', { class: 'dr-form-group', hidden: mode !== 'own' },
-          MR.h('label', { class: 'dr-label', for: 'b-credit', text: 'Your own credit line' }),
+          MR.h('label', { class: 'dr-label', for: 'b-credit', text: 'Your line' }),
           MR.h('span', { class: 'dr-hint', text: 'Up to 160 characters, plain text.' }), ownInput);
         var set = function (m) {
           mode = m;
           ownBox.hidden = m !== 'own';
-          brand.footer_credit = m === 'none' ? MR.NO_CREDIT : (m === 'own' ? ownInput.value : '');
+          brand.footer_credit = m === 'own' ? ownInput.value : '';
           refresh();
         };
         ownInput.addEventListener('input', function () { brand.footer_credit = ownInput.value; refresh(); });
         var creditGroup = MR.h('fieldset', { class: 'dr-form-group' },
-          MR.h('legend', { class: 'dr-label', text: 'The line at the very bottom of your emails' }));
+          MR.h('legend', { class: 'dr-label', text: 'Do you want a line under the footer?' }));
         [
-          { id: 'standard', label: 'The standard line', hint: STANDARD },
-          { id: 'own', label: 'My own line', hint: 'Replaces the standard line with text you write.' },
-          { id: 'none', label: 'No line', hint: 'Nothing is printed at the bottom.' }
+          { id: 'none', label: 'No line', hint: 'Nothing is printed at the bottom.' },
+          { id: 'own', label: 'My own line', hint: 'A short line of text you write, printed under the footer.' }
         ].forEach(function (opt) {
           var rid = 'b-credit-' + opt.id;
           var radio = MR.h('input', { class: 'dr-choice__input', type: 'radio', id: rid, name: 'b-credit-mode',
@@ -171,14 +170,10 @@
         form.appendChild(creditGroup);
         form.appendChild(ownBox);
         form.appendChild(MR.h('p', { class: 'dr-hint' },
-          'This applies only to emails sent from your own verified domain. Emails sent from the shared ABTA address always carry the standard line, so readers can see who is behind the sender. ',
+          'This line is printed only on emails sent from your own verified domain. ',
           MR.h('a', { href: 'domain.html', text: 'Set up your own domain' }), '.'));
       } else {
         brand.footer_credit = '';
-        form.appendChild(MR.h('p', { class: 'dr-body', text: STANDARD }));
-        form.appendChild(MR.h('p', { class: 'dr-hint' },
-          'To change or remove this line, choose a paid plan and send from your own domain. ',
-          MR.h('a', { href: 'pricing.html', text: 'See the plans' }), '.'));
       }
 
       form.appendChild(MR.h('h3', { class: 'dr-h', text: 'Links in the footer' }));
@@ -268,11 +263,11 @@
         }
       });
       if (account.allows_custom_footer && brand.footer_credit !== MR.NO_CREDIT && String(brand.footer_credit || '').trim().length > 160) {
-        errors.push({ id: 'b-credit', message: 'Keep the credit line to 160 characters or fewer' });
+        errors.push({ id: 'b-credit', message: 'Keep the line to 160 characters or fewer' });
       }
       var picked = form.querySelector('input[name="b-credit-mode"]:checked');
       if (picked && picked.value === 'own' && !String(brand.footer_credit || '').trim()) {
-        errors.push({ id: 'b-credit', message: 'Write your credit line, or choose the standard line or no line' });
+        errors.push({ id: 'b-credit', message: 'Write your line, or choose no line' });
       }
       var w = parseInt(brand.logo_width, 10);
       if (!(w >= 60 && w <= 552)) errors.push({ id: 'b-logo-width', message: 'Enter a width between 60 and 552' });
