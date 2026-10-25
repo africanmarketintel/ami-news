@@ -89,8 +89,8 @@
 
     /* ---------------- prompts ---------------- */
 
-    // Free plan. Deliberately not framed as a feature being withheld: the
-    // reason free accounts stay on the shared address is that the shared
+    // Trial account. Deliberately not framed as a feature being withheld: the
+    // reason trial accounts stay on the shared address is that the shared
     // address is where the content and import checks do their work.
     function upgradePrompt() {
       return MR.h('div', { class: 'mr-aside', id: 'mr-domain-upgrade' },

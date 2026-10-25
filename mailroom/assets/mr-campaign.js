@@ -968,6 +968,9 @@
       if (/domain_not_verified|not verified yet/i.test(m)) return 'That sending domain is not verified yet. Publish its DNS records, then check it on the sending domains page.';
       if (/domain_suspended|Sending from/i.test(m)) return 'Sending from that domain is suspended. Check the sending domains page for the reason.';
       if (/domain_not_yours|does not belong to this account/i.test(m)) return 'That sending domain does not belong to your account.';
+      if (/trial has ended/i.test(m)) return 'Your 14-day trial has ended, so sending is switched off. Your campaigns and lists are safe. Email ami@abta.africa to choose a plan.';
+      if (/trial ends before/i.test(m)) return 'Your trial ends before that time. Choose an earlier time, or email ami@abta.africa to choose a plan.';
+      if (/trial covers/i.test(m)) return 'The trial covers 1,000 emails in total. Email ami@abta.africa to choose a plan and send more.';
       if (/monthly limit/i.test(m)) return 'This send would pass your monthly limit.';
       if (/invalid_test_address/i.test(m)) return 'One of those is not a valid email address. Check them and try again.';
       if (/too_many_test_addresses/i.test(m)) return 'A test can go to five addresses at most.';

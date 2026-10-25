@@ -158,26 +158,33 @@
       MR.h('h2', { class: 'dr-h', text: 'Your plan' }));
 
     box.appendChild(MR.h('p', null,
-      MR.h('strong', { text: (plan && plan.name) || 'Free' }),
+      MR.h('strong', { text: (plan && plan.name) || (account.plan_code === 'trial' ? 'Trial' : 'Your plan') }),
       plan && plan.price_minor
         ? MR.h('span', { text: ' \u00b7 ' + (plan.currency || 'GBP') + ' ' +
             (plan.price_minor / 100).toFixed(2) + (plan.interval === 'year' ? ' a year' : ' a month') })
-        : MR.h('span', { class: 'dr-small', text: ' \u00b7 nothing extra to pay' })));
+        : MR.h('span', { class: 'dr-small', text: account.plan_code === 'trial' ? ' \u00b7 14-day trial, no card' : '' })));
 
-    // The opening fortnight. Say what happens when it ends, in the same
-    // breath as saying it is running: a trial nobody saw coming to an end is
-    // how you lose somebody who would have paid.
-    if (account.trial_ends_at) {
+    // The 14-day trial. Say what happens when it ends in the same breath as
+    // saying it is running: a trial nobody saw coming to an end is how you
+    // lose somebody who would have paid. Nothing is deleted when it ends.
+    if (account.plan_code === 'trial' && account.trial_ends_at) {
       var ends = new Date(account.trial_ends_at);
       var daysLeft = Math.max(0, Math.ceil((ends - new Date()) / 86400000));
+      var contact = MR.h('a', { href: 'mailto:ami@abta.africa', text: 'ami@abta.africa' });
       if (daysLeft > 0) {
         box.appendChild(MR.h('p', { class: 'mr-trial', id: 'mr-trial' },
-          MR.h('strong', { text: daysLeft === 1 ? 'Last day of your opening fortnight'
-                                                : daysLeft + ' days left of your opening fortnight' }),
-          MR.h('span', { class: 'dr-small', text:
-            ' You are on the Starter allowance until ' + MR.date(account.trial_ends_at) +
-            '. After that you keep your account and drop to the free allowance ' +
-            'of 1,000 emails a month. Nothing is deleted and nothing stops working.' })));
+          MR.h('strong', { text: daysLeft === 1 ? 'Last day of your trial'
+                                                : daysLeft + ' days left of your trial' }),
+          MR.h('span', { class: 'dr-small' },
+            ' Your trial includes up to 1,000 emails in total and ends on ' + MR.date(account.trial_ends_at) +
+            '. After that sending stops until you choose a plan. Your account, lists and campaigns stay as they are. To choose a plan, email ',
+            contact, '.')));
+      } else {
+        box.appendChild(MR.h('p', { class: 'mr-trial', id: 'mr-trial' },
+          MR.h('strong', { text: 'Your trial has ended' }),
+          MR.h('span', { class: 'dr-small' },
+            ' Sending is switched off. Your account, lists and campaigns stay as they are. To choose a plan and start sending again, email ',
+            contact, '.')));
       }
     }
 
@@ -576,7 +583,7 @@
           return Promise.all([
             account,
             MR.api.select('mailroom_reply_addresses?select=id,email,status&order=email'),
-            MR.api.select('mailroom_plans?select=*&code=eq.' + encodeURIComponent(account.plan_code || 'included')),
+            MR.api.select('mailroom_plans?select=*&code=eq.' + encodeURIComponent(account.plan_code || 'trial')),
             MR.api.select('mailroom_subscribers?select=id&status=eq.subscribed'),
             MR.api.select('mailroom_campaigns?select=status,sent_at,recipients&status=eq.sent&order=sent_at.desc&limit=200')
           ]);
@@ -630,7 +637,7 @@
             MR.api.select('mailroom_lists?select=id,name,consent_status'),
             MR.api.select('mailroom_domains?select=id,domain,from_local,status,is_default,sending_status,trust_level,clean_campaigns'),
             MR.api.select('mailroom_reply_addresses?select=id,email,status&order=email'),
-            MR.api.select('mailroom_plans?select=*&code=eq.' + encodeURIComponent(account.plan_code || 'included')),
+            MR.api.select('mailroom_plans?select=*&code=eq.' + encodeURIComponent(account.plan_code || 'trial')),
             MR.api.select('mailroom_subscribers?select=id&status=eq.subscribed&limit=1'),
             MR.api.select('mailroom_brand?select=account_id&limit=1')
           ]);

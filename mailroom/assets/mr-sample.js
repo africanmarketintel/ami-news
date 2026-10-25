@@ -12,7 +12,7 @@
     return d.toISOString();
   }
 
-  // Preview mode only. ?plan=free on any page shows the free-plan version of
+  // Preview mode only. ?plan=free on any page shows the trial-account version of
   // it, which is how the domain page's upgrade prompt is seen without a login.
   var previewFree = /[?&]plan=free\b/.test(location.search);
 
@@ -20,9 +20,9 @@
     id: 'sample', name: 'Sample Member Ltd', status: 'active', trust_level: 2,
     sender_local: 'sample-member-4821', timezone: 'Europe/London',
     postal_address: '12 Example Road, London, EC1A 1AA, United Kingdom',
-    max_subscribers: 500, monthly_send_limit: 1000,
-    trial_ends_at: previewFree ? null : days(9),
-    plan_code: previewFree ? 'free' : 'starter',
+    max_subscribers: previewFree ? 500 : 5000, monthly_send_limit: previewFree ? 1000 : 10000,
+    trial_ends_at: previewFree ? days(9) : null,
+    plan_code: previewFree ? 'trial' : 'basic',
     allows_own_domain: !previewFree,
     allows_custom_footer: !previewFree
   };
@@ -68,11 +68,23 @@
   ];
 
   MR.samplePlans = [
-    { code: 'free', name: 'Free',
-      summary: 'Send a real campaign and see how it works. No card needed.',
-      price_minor: 0, currency: 'GBP', interval: 'month',
-      monthly_send_limit: 1000, max_subscribers: 500 }
+    { code: 'basic', name: 'Basic', summary: 'For a growing list and regular campaigns.',
+      price_minor: 500, currency: 'GBP', interval: 'month',
+      monthly_send_limit: 10000, max_subscribers: 5000 },
+    { code: 'plus', name: 'Plus', summary: 'For frequent senders with a larger list.',
+      price_minor: 1200, currency: 'GBP', interval: 'month',
+      monthly_send_limit: 40000, max_subscribers: 20000 },
+    { code: 'max', name: 'Max', summary: 'For the largest senders on the platform.',
+      price_minor: 2900, currency: 'GBP', interval: 'month',
+      monthly_send_limit: 120000, max_subscribers: 100000 }
   ];
+  // The trial plan is not offered on the pricing page, but an account on it
+  // still has one. Preview mode puts it first so the plan box can name it.
+  if (previewFree) {
+    MR.samplePlans.unshift({ code: 'trial', name: 'Trial', summary: '14 days, no card.',
+      price_minor: 0, currency: 'GBP', interval: 'month',
+      monthly_send_limit: 1000, max_subscribers: 500 });
+  }
 
   MR.sampleForm = {
     slug: 'sample-member', name: 'Website footer', sender_name: 'Sample Member Ltd',

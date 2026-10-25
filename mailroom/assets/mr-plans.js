@@ -16,7 +16,7 @@
 
   function money(plan) {
     if (plan.price_minor === null || plan.price_minor === undefined) return 'Talk to us';
-    if (plan.price_minor === 0) return 'Included';
+    if (plan.price_minor === 0) return plan.code === 'trial' ? '14 days free' : 'Included';
     var amount = plan.price_minor / 100;
     try {
       return new Intl.NumberFormat('en-GB', {
@@ -44,7 +44,7 @@
       box.appendChild(MR.h('p', { class: 'dr-small', text: plan.summary }));
     }
     box.appendChild(MR.h('ul', { class: 'dr-list' },
-      MR.h('li', { text: MR.number(plan.monthly_send_limit) + ' emails a month' }),
+      MR.h('li', { text: MR.number(plan.monthly_send_limit) + (plan.code === 'trial' ? ' emails in total' : ' emails a month') }),
       MR.h('li', { text: MR.number(plan.max_subscribers) + ' subscribers held' }),
       MR.h('li', { text: 'No daily cap' })));
     return box;
