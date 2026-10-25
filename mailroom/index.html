@@ -16,6 +16,17 @@
 <script src="assets/mr-sample.js"></script>
 <script src="assets/mr-render.js" defer></script>
 <script src="assets/mr-templates.js" defer></script>
+<script src="assets/mr-templates-more.js" defer></script>
+<script src="assets/mr-templates-arch.js" defer></script>
+<script src="assets/mr-templates-x1.js" defer></script>
+<script src="assets/mr-templates-x2.js" defer></script>
+<script src="assets/mr-templates-x3.js" defer></script>
+<script src="assets/mr-templates-x4.js" defer></script>
+<script src="assets/mr-templates-x5.js" defer></script>
+<script src="assets/mr-templates-x6.js" defer></script>
+<script src="assets/mr-templates-x7.js" defer></script>
+<script src="assets/mr-templates-x8.js" defer></script>
+<script src="assets/mr-templates-x9.js" defer></script>
 <script src="assets/mr-home.js" defer></script>
 
 </head>
@@ -40,7 +51,7 @@
     <div>
       <p class="mr-hero__eyebrow">AMI Mailroom for ABTA members</p>
       <h1 id="hero-title">Send email your subscribers asked for</h1>
-      <p class="dr-hero__sub">Pick a ready-made layout, add your people and send. Every list records how its subscribers agreed to hear from you.</p>
+      <p class="dr-hero__sub">Pick a ready-made template, add your people and send. Every list records how its subscribers agreed to hear from you.</p>
       <p class="dr-button-group"><a class="dr-button dr-button--start" data-mr-start href="create-account.html">Create a sender account</a>
          <a class="dr-button dr-button--secondary" href="how-it-works.html">See how it works</a></p>
       <p class="mr-hero__note">14-day trial, no card needed. Confirm your email address and you can send.</p>
@@ -51,22 +62,25 @@
         <li><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Spam reports watched across the platform</li>
       </ul>
     </div>
-    <div class="ma-demo" role="img" aria-label="Animated example: pick a layout, change the text, then send a test email to yourself.">
+    <div class="ma-demo" role="img" aria-label="Animated example: pick a template, change the text, then send a test email to yourself.">
       <div class="ma-demo__bar" aria-hidden="true"><i></i><i></i><i></i><span>Write a campaign</span></div>
-      <ol class="ma-demo__steps" aria-hidden="true"><li class="s1">1 Pick a layout</li><li class="s2">2 Make it yours</li><li class="s3">3 Send</li></ol>
+      <ol class="ma-demo__steps" aria-hidden="true"><li class="s1">1 Pick a template</li><li class="s2">2 Make it yours</li><li class="s3">3 Send</li></ol>
       <div class="ma-demo__stage" aria-hidden="true">
         <div class="ma-scene ma-scene--1">
-          <div class="hm-shot" data-home-layout="newsletter" style="--bg:#c9c0f2"><img src="assets/home/newsletter.jpg" width="640" height="820" alt=""></div>
-          <div class="hm-shot pick" data-home-layout="event" style="--bg:#b4b57a"><img src="assets/home/event.jpg" width="640" height="820" alt=""></div>
-          <div class="hm-shot" data-home-layout="offer" style="--bg:#efd56b"><img src="assets/home/offer.jpg" width="640" height="820" alt=""></div>
+          <div class="hm-shot" data-home-layout="promote-class" style="--bg:#efd56b"><img src="assets/home/heroclass.jpg" width="480" height="615" alt=""></div>
+          <div class="hm-shot pick" data-home-layout="join-us-event" style="--bg:#b4b57a"><img src="assets/home/herojoin.jpg" width="480" height="615" alt=""></div>
+          <div class="hm-shot" data-home-layout="colour-band-sale" style="--bg:#8091bd"><img src="assets/home/herosale.jpg" width="480" height="615" alt=""></div>
           <svg class="ma-cursor" viewBox="0 0 24 24" width="28" height="28"><path d="M4 2l15 9-6.5 1.6L9.5 19z" fill="#1a1208" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg>
         </div>
         <div class="ma-scene ma-scene--2">
           <div class="ma-mail">
-            <small>Spring update | Issue 12</small>
-            <h4><span class="ma-type">What we learned from our first full year</span></h4>
-            <p class="bar"></p><p class="bar short"></p>
-            <b>Read the full story</b>
+            <img class="ma-pic" src="assets/home/hero-pic.jpg" width="520" height="243" alt="">
+            <div class="ma-band">
+              <h4><span class="ma-type">Join us on Thursday</span></h4>
+              <p class="bar"></p><p class="bar short"></p>
+              <b>Register</b>
+            </div>
+            <small>Doors open at 18:00. Food and drink are included.</small>
           </div>
           <div class="ma-tools"><span>Text</span><span>Picture</span><span>Button</span><span class="sw"></span><span class="sw sw2"></span><span class="sw sw3"></span></div>
         </div>
@@ -85,7 +99,7 @@
 
 <section class="ma-facts" aria-label="The product in four facts">
   <ul class="dr-width">
-    <li><strong>200+</strong><span>ready-made layouts</span></li>
+    <li><strong>300+</strong><span>ready-made templates</span></li>
     <li><strong>1 click</strong><span>to unsubscribe, in every email</span></li>
     <li><strong>0</strong><span>bought or scraped lists accepted</span></li>
     <li><strong>14 days</strong><span>trial, no card needed</span></li>
@@ -94,16 +108,16 @@
 
 <section class="mr-home mr-home--layouts" aria-labelledby="home-layouts">
   <div class="dr-width">
-    <h2 id="home-layouts">Start from a layout that is already written</h2>
-    <p class="mr-home__lead">Each layout comes with its own text, pictures and colours. Edit what you want, delete what you do not, and send.</p>
+    <h2 id="home-layouts">Start from a template that is already written</h2>
+    <p class="mr-home__lead">Each template comes with its own text, pictures and colours. Edit what you want, delete what you do not, and send.</p>
   </div>
-  <ul class="mr-home__row" aria-label="Some of the layouts">
-    <li><div class="hm-shot" data-home-layout="newsletter" style="--bg:#c9c0f2" role="img" aria-label="The Newsletter layout: a headline, a large picture, a button and two short items side by side."><img src="assets/home/newsletter.jpg" width="640" height="820" alt="" loading="lazy"></div><span>Newsletter</span></li>
-    <li><div class="hm-shot" data-home-layout="feature" style="--bg:#e8795e" role="img" aria-label="The Feature story layout: a headline, a picture, a pull quote and a short list."><img src="assets/home/feature.jpg" width="640" height="820" alt="" loading="lazy"></div><span>Feature story</span></li>
-    <li><div class="hm-shot" data-home-layout="event" style="--bg:#b4b57a" role="img" aria-label="The Event invitation layout: a picture, the date and place, and a button to reserve a place."><img src="assets/home/event.jpg" width="640" height="820" alt="" loading="lazy"></div><span>Event invitation</span></li>
-    <li><div class="hm-shot" data-home-layout="offer" style="--bg:#efd56b" role="img" aria-label="The Offer or sale layout: an offer, a code and two products."><img src="assets/home/offer.jpg" width="640" height="820" alt="" loading="lazy"></div><span>Offer or sale</span></li>
-    <li><div class="hm-shot" data-home-layout="launch" style="--bg:#8091bd" role="img" aria-label="The Product launch layout: a large picture, what it is and where to get it."><img src="assets/home/launch.jpg" width="640" height="820" alt="" loading="lazy"></div><span>Product launch</span></li>
-    <li><div class="hm-shot" data-home-layout="welcome" style="--bg:#e9b9a0" role="img" aria-label="The Welcome layout: a warm greeting and three first steps."><img src="assets/home/welcome.jpg" width="640" height="820" alt="" loading="lazy"></div><span>Welcome</span></li>
+  <ul class="mr-home__row" aria-label="Some of the templates">
+    <li><div class="hm-shot" data-home-layout="featured-this-week" style="--bg:#c9c0f2" role="img" aria-label="The Weekly newsletter template: a band naming the feature, a full-width picture and three short stories."><img src="assets/home/featured.jpg" width="640" height="820" alt="" loading="lazy"></div><span>Weekly newsletter</span></li>
+    <li><div class="hm-shot" data-home-layout="promote-class" style="--bg:#e8795e" role="img" aria-label="The Class or workshop template: a deep colour band with a headline, a full-width picture and a button."><img src="assets/home/class.jpg" width="640" height="820" alt="" loading="lazy"></div><span>Class or workshop</span></li>
+    <li><div class="hm-shot" data-home-layout="join-us-event" style="--bg:#b4b57a" role="img" aria-label="The Event invitation template: a full-width picture, then a band with the date and a button to register."><img src="assets/home/join.jpg" width="640" height="820" alt="" loading="lazy"></div><span>Event invitation</span></li>
+    <li><div class="hm-shot" data-home-layout="bold-sale" style="--bg:#efd56b" role="img" aria-label="The Offer or sale template: a big headline on a band of colour, a full-width picture and one button."><img src="assets/home/sale.jpg" width="640" height="820" alt="" loading="lazy"></div><span>Offer or sale</span></li>
+    <li><div class="hm-shot" data-home-layout="cookbook-preorder" style="--bg:#8091bd" role="img" aria-label="The Product launch template: a bold title on a warm band, a full-width picture and a pre-order button."><img src="assets/home/cookbook.jpg" width="640" height="820" alt="" loading="lazy"></div><span>Product launch</span></li>
+    <li><div class="hm-shot" data-home-layout="first-order" style="--bg:#e9b9a0" role="img" aria-label="The Welcome offer template: a full-width picture and a discount code on a band of colour."><img src="assets/home/firstorder.jpg" width="640" height="820" alt="" loading="lazy"></div><span>Welcome offer</span></li>
   </ul>
 </section>
 
@@ -113,7 +127,7 @@
     <ol class="ma-steps">
       <li><span class="ma-steps__n" aria-hidden="true">1</span><h3>Create a sender account</h3><p>Confirm your email address and you can send. There is no approval queue.</p></li>
       <li><span class="ma-steps__n" aria-hidden="true">2</span><h3>Add your people</h3><p>Upload a file or use a signup form on your website. Say how each list agreed to hear from you.</p></li>
-      <li><span class="ma-steps__n" aria-hidden="true">3</span><h3>Write and send</h3><p>Pick a layout, make it yours, send a test to yourself and send it.</p></li>
+      <li><span class="ma-steps__n" aria-hidden="true">3</span><h3>Write and send</h3><p>Pick a template, make it yours, send a test to yourself and send it.</p></li>
     </ol>
   </div>
 </section>
@@ -186,7 +200,7 @@
 <section class="mr-cta" aria-labelledby="cta-title">
   <div class="dr-width">
     <h2 id="cta-title">Send your first campaign</h2>
-    <p>Create a sender account, add the people who asked to hear from you and start from a layout that is already written.</p>
+    <p>Create a sender account, add the people who asked to hear from you and start from a template that is already written.</p>
     <p><a class="dr-button dr-button--start" data-mr-start href="create-account.html">Create a sender account</a></p>
   </div>
 </section>
