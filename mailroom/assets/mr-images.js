@@ -115,9 +115,11 @@
 
     /* Free photos and GIFs. The search runs on our side with the platform's
        own keys, so nobody has to register anywhere. A picture stays on the
-       service's address and is not copied, and the service is credited. */
+       service's address and is not copied, and the service is credited. Pixabay
+       pictures are the exception: Pixabay forbids permanent hotlinking, so the
+       one chosen is copied into the account's own images. */
     function stockSection() {
-      var source = 'photos', page = 1, last = null;
+      var source = 'photos', page = 1, last = null, saving = false;
       var box = MR.h('section', { class: 'mr-stock', 'aria-labelledby': 'mr-stock-h' });
       var results = MR.h('div', { class: 'mr-image-grid' });
       var note = MR.h('p', { class: 'dr-small', role: 'status' });
@@ -160,6 +162,23 @@
           (r.results || []).forEach(function (p) {
             results.appendChild(MR.h('button', { type: 'button', class: 'mr-image-tile',
               onclick: function () {
+                // Pixabay does not allow permanent hotlinking, so its picture
+                // is copied into this account's own images first.
+                if (p.save) {
+                  if (saving) return;
+                  saving = true;
+                  note.textContent = 'Saving the picture to your images…';
+                  MR.fn('mailroom-media', { source: 'photos', save: { id: p.save, account_id: accountId } }).then(function (s) {
+                    onPick({ url: s.url, alt: s.alt || p.alt || '', credit: s.credit || p.credit, credit_url: s.credit_url || p.credit_url, stock: true });
+                    close();
+                  }).catch(function (err) {
+                    saving = false;
+                    note.textContent = err && err.message === 'too_big'
+                      ? 'That picture is over 2MB. Choose another.'
+                      : 'The picture could not be saved. Try again or choose another.';
+                  });
+                  return;
+                }
                 if (p.track) MR.fn('mailroom-media', { source: 'photos', track: p.track }).catch(function () {});
                 onPick({ url: p.url, alt: p.alt || '', credit: p.credit, credit_url: p.credit_url, stock: true }); close(); } },
               MR.h('img', { src: p.thumb, alt: p.alt || '', loading: 'lazy' }),
