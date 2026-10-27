@@ -440,6 +440,18 @@
     var form = document.getElementById('mr-account-form');
     if (!form) return;
 
+    // Whoever signs in with an address that already has a sender account has
+    // nothing to create. They go to their mailroom, both when they arrive here
+    // already signed in and when the code they enter signs them in.
+    var hasAccount = function () {
+      return MR.api.select('mailroom_account_users?select=account_id&limit=1')
+        .then(function (rows) { return !!(rows && rows.length); })
+        .catch(function () { return false; });
+    };
+    if (!MR.cfg.demo && MR.auth.signedIn()) {
+      hasAccount().then(function (yes) { if (yes) location.replace('account.html'); });
+    }
+
     var signedInEmail = !MR.cfg.demo && MR.auth.signedIn() && MR.auth.email();
     if (signedInEmail) {
       var emailField = form.querySelector('#m-email');
@@ -525,7 +537,15 @@
             onclick: function () {
               status.textContent = 'Checking…';
               MR.auth.verifyCode(v.email, code.value.trim())
-                .then(function () { panel.remove(); return finish(true); })
+                .then(function () {
+                  return hasAccount().then(function (yes) {
+                    // This address already has an account and the code has
+                    // signed them in: no second account, no password offer.
+                    if (yes) { location.href = 'account.html'; return; }
+                    panel.remove();
+                    return finish(true);
+                  });
+                })
                 .catch(function (err) {
                   status.textContent = err && err.stage === 'account'
                     ? MR.friendlyError(err, 'Your email address is confirmed but the account could not be set up. Try again, and if it keeps happening contact ABTA.')
