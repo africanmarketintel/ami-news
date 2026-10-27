@@ -86,6 +86,7 @@
         MR.h('p', { class: 'dr-small', text: 'Neither the Mailroom nor your own domain has a daily cap. A domain nobody has heard of is treated with more suspicion at first, though, so build up over a few sends rather than mailing your whole list from it on day one.' })));
 
       domains.forEach(function (d) { wrap.appendChild(card(d)); });
+      wrap.appendChild(deliveryHelp());
 
       if (!account.allows_own_domain) {
         // The rule is enforced in the database. This is here so the page says
@@ -102,6 +103,43 @@
 
       wrap.appendChild(MR.h('p', null,
         MR.h('a', { class: 'dr-button dr-button--secondary', href: 'account.html', text: 'Back to your mailroom' })));
+    }
+
+    /* ---------------- how a free address is handled ---------------- */
+
+    // Same rule as aliasLocal in the mailroom-domain function. Keep the two alike.
+    function aliasLocal(email) {
+      var s = String(email == null ? '' : email).trim().toLowerCase()
+        .replace(/@/g, '.')
+        .replace(/[^a-z0-9._-]+/g, '-')
+        .replace(/\.{2,}/g, '.')
+        .replace(/^[^a-z0-9]+/, '');
+      if (s.length > 64) s = s.slice(0, 64);
+      s = s.replace(/[^a-z0-9]+$/, '');
+      return /^[a-z0-9]([a-z0-9._-]{0,62}[a-z0-9])?$/.test(s) ? s : 'hello';
+    }
+
+    // Says what the automatic change is, with the member's own address as the
+    // example when the alias was built from the address they signed up with.
+    function deliveryHelp() {
+      var alias = domains.filter(function (d) { return d.kind === 'alias'; })[0];
+      var suffix = alias ? alias.domain : '12345678.mail.abta.africa';
+      var original = 'name@gmail.com';
+      var changed = 'name.gmail.com@' + suffix;
+      if (alias && account && account.contact_email && aliasLocal(account.contact_email) === alias.from_local) {
+        original = String(account.contact_email).toLowerCase();
+        changed = alias.from_local + '@' + alias.domain;
+      }
+      return MR.h('div', { class: 'mr-aside', id: 'mr-delivery-help' },
+        MR.h('h2', { class: 'dr-h', text: 'How AMI Mailroom helps your delivery rates' }),
+        MR.h('p', null, 'If you use a free address that could have delivery issues, such as Gmail or Yahoo, we automatically make a small change to your email address each time you send an email. All the changes are on our side, so you can keep using your free address and we handle the rest.'),
+        MR.h('p', null, 'We use a subdomain of mail.abta.africa as the From domain for your address. When receiving servers look at your email, the From address matches the domain the email is sent from, so it should pass the DMARC check. Replies from recipients still go to your own address.'),
+        MR.h('p', null, 'Here is an example of what a From address looks like with the subdomain added.'),
+        MR.h('p', { class: 'dr-small' }, 'Original',
+          MR.h('br'), MR.h('strong', { text: original })),
+        MR.h('p', { class: 'dr-small' }, 'With our change',
+          MR.h('br'), MR.h('strong', { text: changed })),
+        MR.h('p', { class: 'dr-small', text: 'The part after the @ stays the same for your account, even if you change the address in front of it.' }));
     }
 
     /* ---------------- prompts ---------------- */
@@ -278,7 +316,7 @@
         MR.h('label', { class: 'dr-label', for: 'a-email', text: 'Your address' }),
         MR.h('span', { class: 'dr-hint', text: 'It must be an address you can open.' }),
         input));
-      form.appendChild(MR.h('p', { class: 'dr-small', text: 'A business address is shown to readers exactly as you type it, though some inboxes may be cautious until you add your domain. A free address such as Gmail cannot be shown as it is, because Gmail and Yahoo refuse email they did not send themselves. We make a small change to the part readers see, and replies still come to you.' }));
+      form.appendChild(MR.h('p', { class: 'dr-small', text: 'A business address is shown to readers exactly as you type it, though some inboxes may be cautious until you add your domain. A free address is changed as described above.' }));
       var steps = MR.h('div', { id: 'a-steps' });
       form.appendChild(steps);
       var button = MR.h('button', { class: 'dr-button', type: 'submit', text: 'Continue' });
@@ -321,14 +359,14 @@
               MR.fn('mailroom-reply-address', { action: 'check', account_id: account.id, email: email, code: code.value.trim() })
                 .then(function () { return ask(email); })
                 .then(done)
-                .catch(function (err) { confirm.disabled = false; status.textContent = message(err); });
+                .catch(function (err) { confirm.disabled = false; status.textContent = message(err, 'address'); });
             }
           });
           steps.appendChild(MR.h('div', { class: 'dr-form-group' },
             MR.h('label', { class: 'dr-label', for: 'a-code', text: 'Code from the email' }), code, confirm));
           button.hidden = true;
           code.focus();
-        }).catch(function (err) { status.textContent = message(err); reset(); });
+        }).catch(function (err) { status.textContent = message(err, 'address'); reset(); });
       }
 
       form.addEventListener('submit', function (e) {
@@ -347,7 +385,7 @@
           done(r);
         }).catch(function (err) {
           reset();
-          MR.errors.show(form, [{ id: 'a-email', message: message(err) }]);
+          MR.errors.show(form, [{ id: 'a-email', message: message(err, 'address') }]);
         });
       });
       return form;
@@ -537,11 +575,13 @@
       });
     }
 
-    function message(err) {
+    function message(err, where) {
       var m = String((err && err.message) || '');
       if (/not_a_domain/.test(m)) return 'That does not look like a domain. Try news.example.com.';
       if (/public_mailbox/.test(m)) return 'Free domains such as gmail.com cannot be added as a sending domain. Use "Send from a different address" to send with a free address, or add a domain your organisation owns.';
-      if (/abta_domain/.test(m)) return 'That domain belongs to ABTA. Choose the ABTA subdomain option instead.';
+      if (/abta_domain/.test(m)) return where === 'address'
+        ? 'Addresses at abta.africa are for ABTA\u2019s own accounts. Use a different address.'
+        : 'That domain belongs to ABTA. Choose the ABTA subdomain option instead.';
       if (/already_added/.test(m)) return 'That domain is already on your account.';
       if (/taken/.test(m)) return 'That domain is already in use by another sender.';
       if (/wrong_code/.test(m)) return 'That code was not right. Check it and try again.';
