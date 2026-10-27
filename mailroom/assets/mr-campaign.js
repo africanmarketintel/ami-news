@@ -177,6 +177,13 @@
       if (preferred) campaign.sending_domain_id = preferred.id;
     }
 
+    // The member's own address behind an alias, when it is one they have
+    // confirmed: the alias is built from it, so the two match.
+    function aliasSource(d) {
+      if (!d || d.kind !== 'alias') return '';
+      return replyAddresses.filter(function (e) { return aliasLocal(e) === d.from_local; })[0] || '';
+    }
+
     function chosenDomain() {
       return domains.filter(function (d) { return d.id === campaign.sending_domain_id; })[0] || null;
     }
@@ -279,7 +286,7 @@
       domains.forEach(function (d) {
         domainSelect.appendChild(MR.h('option', {
           value: d.id, selected: campaign.sending_domain_id === d.id,
-          text: d.from_local + '@' + d.domain
+          text: aliasSource(d) ? aliasSource(d) + ' (we make a small change when sending)' : d.from_local + '@' + d.domain
         }));
       });
       domainSelect.addEventListener('change', function () {
@@ -313,8 +320,10 @@
           seeNote.appendChild(MR.h('a', { href: 'domain.html', text: 'Add your domain to sign them' }));
           seeNote.appendChild(document.createTextNode('.'));
         } else if (r.alias) {
+          var src = aliasSource(chosenDomain());
           seeNote.appendChild(document.createTextNode(
-            'We build this address from yours so that it delivers well. Replies still reach ' + (campaign.reply_to || 'your reply address') + '. Every email sent from it carries a line at the bottom saying it was sent through AMI Mailroom. '));
+            (src ? 'Mail apps refuse email sent for ' + src.split('@')[1] + ' through another service, so we make a small change to the address readers see. ' : 'We build this address from yours so that it delivers well. ') +
+            'Replies still reach ' + (campaign.reply_to || 'your reply address') + '. Every email sent from it carries a line at the bottom saying it was sent through AMI Mailroom. '));
           seeNote.appendChild(MR.h('a', { href: 'domain.html', text: 'Use your own address' }));
           seeNote.appendChild(document.createTextNode('.'));
         } else {
