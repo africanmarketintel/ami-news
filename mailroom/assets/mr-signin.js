@@ -36,7 +36,7 @@
       codeGroup.hidden = true;
       submit.textContent = code ? 'Send me a code' : 'Sign in';
       modeLink.textContent = code ? 'Use my password instead' : 'Email me a code instead';
-      lead.textContent = code ? 'We send a six-digit code to your email address.' : 'Use your AMI email address and password. The same sign-in works on AMI News, the Dealroom, the Mailroom and Recruiter.';
+      lead.textContent = code ? 'We send a six-digit code to your email address.' : 'Use your AMI email address and password. The same sign-in works on AMI News, the Dealroom and the Mailroom.';
       MR.errors.clear(form);
     }
     modeLink.addEventListener('click', function (e) { e.preventDefault(); setMode(!useCode); });
