@@ -142,7 +142,7 @@
         d.kind === 'abta_subdomain'
           ? ' ABTA publishes the records for this one, so there is nothing for you to do.'
           : d.kind === 'alias'
-            ? ' We built this address from your own address, so there is nothing to set up. Replies still go to your own address. Use your own address below to change it, or add a domain to send as the exact address.'
+            ? ' We built this address from your own address, so there is nothing to set up. Replies still go to your own address. Use the form below to send from a different address, or add a domain to send as the exact address.'
             : d.kind === 'address' && d.status === 'verified'
               ? ' This is the exact address you confirmed. Replies go to your own reply-to address.'
               : ''));
@@ -271,14 +271,14 @@
     // side, with replies coming to the address itself. Same as Mailchimp does.
     function addressForm() {
       var form = MR.h('form', { id: 'mr-address-form', novalidate: true, class: 'mr-aside' });
-      form.appendChild(MR.h('h2', { class: 'dr-h', text: 'Use your own address now' }));
-      form.appendChild(MR.h('p', null, 'Enter the address you want to use, including a free one such as Gmail. We confirm it is yours with an email, and there is nothing to publish and nobody to ask.'));
+      form.appendChild(MR.h('h2', { class: 'dr-h', text: 'Send from a different address' }));
+      form.appendChild(MR.h('p', null, 'You are already set up and can send now. Use this only to send from a different address. We confirm it is yours with an email or a code, and there is nothing to publish and nobody to ask.'));
       var input = MR.h('input', { class: 'dr-input', id: 'a-email', type: 'email', placeholder: 'hello@yourorganisation.org', autocomplete: 'off' });
       form.appendChild(MR.h('div', { class: 'dr-form-group' },
         MR.h('label', { class: 'dr-label', for: 'a-email', text: 'Your address' }),
         MR.h('span', { class: 'dr-hint', text: 'It must be an address you can open.' }),
         input));
-      form.appendChild(MR.h('p', { class: 'dr-small', text: 'Business address: readers see it exactly, though some inboxes may be cautious until you add your domain below. Free address: Gmail, Yahoo and others refuse email they did not send themselves, so we automatically change the part readers see to an address built from yours. Replies still come to you.' }));
+      form.appendChild(MR.h('p', { class: 'dr-small', text: 'A business address is shown to readers exactly as you type it, though some inboxes may be cautious until you add your domain. A free address such as Gmail cannot be shown as it is, because Gmail and Yahoo refuse email they did not send themselves. We make a small change to the part readers see, and replies still come to you.' }));
       var steps = MR.h('div', { id: 'a-steps' });
       form.appendChild(steps);
       var button = MR.h('button', { class: 'dr-button', type: 'submit', text: 'Continue' });
@@ -540,7 +540,7 @@
     function message(err) {
       var m = String((err && err.message) || '');
       if (/not_a_domain/.test(m)) return 'That does not look like a domain. Try news.example.com.';
-      if (/public_mailbox/.test(m)) return 'Free domains such as gmail.com cannot be added as a sending domain. Use "Use your own address now" to send with a free address, or add a domain your organisation owns.';
+      if (/public_mailbox/.test(m)) return 'Free domains such as gmail.com cannot be added as a sending domain. Use "Send from a different address" to send with a free address, or add a domain your organisation owns.';
       if (/abta_domain/.test(m)) return 'That domain belongs to ABTA. Choose the ABTA subdomain option instead.';
       if (/already_added/.test(m)) return 'That domain is already on your account.';
       if (/taken/.test(m)) return 'That domain is already in use by another sender.';

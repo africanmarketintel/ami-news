@@ -324,12 +324,12 @@
           seeNote.appendChild(document.createTextNode(
             (src ? 'Mail apps refuse email sent for ' + src.split('@')[1] + ' through another service, so we make a small change to the address readers see. ' : 'We build this address from yours so that it delivers well. ') +
             'Replies still reach ' + (campaign.reply_to || 'your reply address') + '. Every email sent from it carries a line at the bottom saying it was sent through AMI Mailroom. '));
-          seeNote.appendChild(MR.h('a', { href: 'domain.html', text: 'Use your own address' }));
+          seeNote.appendChild(MR.h('a', { href: 'domain.html', text: 'Send from a different address' }));
           seeNote.appendChild(document.createTextNode('.'));
         } else {
           seeNote.appendChild(document.createTextNode(
             (r.sub ? 'This address is on a subdomain ABTA sets up for you.' : 'This is the shared ABTA address.') + ' Every email sent from it carries a line at the bottom saying it was sent through AMI Mailroom. '));
-          seeNote.appendChild(MR.h('a', { href: 'domain.html', text: 'Use your own address' }));
+          seeNote.appendChild(MR.h('a', { href: 'domain.html', text: 'Send from a different address' }));
           seeNote.appendChild(document.createTextNode('.'));
         }
       }
