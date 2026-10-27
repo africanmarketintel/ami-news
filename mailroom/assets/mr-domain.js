@@ -91,6 +91,9 @@
         // The rule is enforced in the database. This is here so the page says
         // so before somebody fills in a form that will be refused.
         wrap.appendChild(upgradePrompt());
+        // A free address (Gmail and the like) only changes the alias, so it is
+        // open on every plan.
+        if (domains.filter(function (d) { return d.kind === 'address'; }).length < 3) wrap.appendChild(addressForm());
       } else {
         if (!chosen.length) wrap.appendChild(movePrompt());
         if (domains.filter(function (d) { return d.kind === 'address'; }).length < 3) wrap.appendChild(addressForm());
@@ -547,7 +550,7 @@
       if (/too_soon/.test(m)) return 'A code was sent a moment ago. Give it a minute, then check your junk folder.';
       if (/could_not_send/.test(m)) return 'We could not send the code. Try again shortly.';
       if (/too_many_addresses/.test(m)) return 'An account can hold three confirmed addresses. Remove one first.';
-      if (/^plan$/.test(m)) return 'Using your own address comes with any paid plan.';
+      if (/^plan$/.test(m)) return 'An exact address on a domain of your own comes with any paid plan. A free address such as Gmail works on every plan.';
       if (/not_supported/.test(m)) return 'This is not switched on for your account yet.';
       if (/alias_cannot_be_removed/.test(m)) return 'This address was made for your account and cannot be removed.';
       if (/too_many_domains/.test(m)) return 'An account can hold three sending domains. Remove one first.';
