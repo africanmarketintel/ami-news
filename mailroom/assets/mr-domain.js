@@ -22,6 +22,15 @@
     failed: 'red', temporary_failure: 'yellow'
   };
 
+  // An address waits for a click, not for DNS, so it has its own wording.
+  function statusText(d) {
+    if (d.kind === 'address') {
+      return { not_started: 'Waiting for you to confirm', pending: 'Waiting for you to confirm',
+        verified: 'Confirmed', failed: 'Not confirmed', temporary_failure: 'Not confirmed yet' }[d.status] || d.status;
+    }
+    return STATUS_TEXT[d.status] || d.status;
+  }
+
   MR.domainLabel = function (d) {
     if (!d) return 'the AMI Mailroom address';
     return d.from_local + '@' + d.domain;
@@ -47,6 +56,7 @@
     }).then(function (rows) {
       domains = rows || [];
       render();
+      afterLink();
     }).catch(function (err) {
       return MR.loadFailed(wrap, err);
     });
@@ -56,9 +66,12 @@
       wrap.textContent = '';
       wrap.appendChild(MR.h('h1', { text: 'Where your email comes from' }));
       wrap.appendChild(MR.h('p', { class: 'dr-lead' },
-        'Every campaign leaves from a domain. Until you add one of your own, yours go out from the shared AMI Mailroom address, and readers see your organisation name in front of it.'));
+        'Every campaign leaves from an address. Until you choose one of your own, yours go out from an address we build from your sign-up address, and readers see your organisation name in front of it.'));
 
       var verified = domains.filter(function (d) { return d.status === 'verified'; });
+      // An alias is made for the account, so it does not count as a domain the
+      // member chose: the page still invites them to add one of their own.
+      var chosen = verified.filter(function (d) { return d.kind !== 'alias'; });
       if (verified.length) {
         wrap.appendChild(MR.h('p', null, 'Campaigns can be sent from ',
           MR.h('strong', { text: verified.map(MR.domainLabel).join(', ') }), '.'));
@@ -79,8 +92,9 @@
         // so before somebody fills in a form that will be refused.
         wrap.appendChild(upgradePrompt());
       } else {
-        if (!verified.length) wrap.appendChild(movePrompt());
-        if (domains.length < 3) wrap.appendChild(addForm());
+        if (!chosen.length) wrap.appendChild(movePrompt());
+        if (domains.filter(function (d) { return d.kind === 'address'; }).length < 3) wrap.appendChild(addressForm());
+        if (domains.filter(function (d) { return d.kind !== 'alias' && d.kind !== 'address'; }).length < 3) wrap.appendChild(addForm());
       }
 
       wrap.appendChild(MR.h('p', null,
@@ -89,13 +103,13 @@
 
     /* ---------------- prompts ---------------- */
 
-    // Trial account. Deliberately not framed as a feature being withheld: the
-    // reason trial accounts stay on the shared address is that the shared
-    // address is where the content and import checks do their work.
+    // Trial account. Deliberately not framed as a feature being withheld. A
+    // trial account has the same alias address as a paid one; only a domain of
+    // its own waits for a paid plan.
     function upgradePrompt() {
       return MR.h('div', { class: 'mr-aside', id: 'mr-domain-upgrade' },
         MR.h('h2', { class: 'dr-h', text: 'Sending from your own domain' }),
-        MR.h('p', null, 'Your campaigns go out from the shared AMI Mailroom address, with your organisation name in front of it. That works, and there is nothing you need to set up.'),
+        MR.h('p', null, 'Your campaigns go out from an address we build from your sign-up address, with your organisation name in front of it. That works, and there is nothing you need to set up.'),
         MR.h('p', null, 'A sending domain of your own comes with ',
           MR.h('strong', { text: 'any paid plan' }),
           ', at no extra charge. It is not an add-on, because a sender on their own domain carries their own delivery record, and that is better for everybody.'),
@@ -115,14 +129,20 @@
     /* ---------------- one domain ---------------- */
     function card(d) {
       var box = MR.h('div', { class: 'mr-aside' });
-      box.appendChild(MR.h('h2', { class: 'dr-h' }, d.domain, ' ',
+      box.appendChild(MR.h('h2', { class: 'dr-h' }, d.kind === 'address' ? MR.domainLabel(d) : d.domain, ' ',
         MR.h('span', { class: 'dr-tag dr-tag--' + (STATUS_TAG[d.status] || 'grey'),
-          text: STATUS_TEXT[d.status] || d.status })));
+          text: statusText(d) })));
 
-      box.appendChild(MR.h('p', null, 'Campaigns go out as ',
-        MR.h('strong', { text: MR.domainLabel(d) }), '.',
+      box.appendChild(MR.h('p', null,
+        d.kind === 'address' && d.status !== 'verified' ? 'Campaigns can go out as ' : 'Campaigns go out as ',
+        MR.h('strong', { text: MR.domainLabel(d) }), d.kind === 'address' && d.status !== 'verified' ? ' once you confirm it.' : '.',
         d.kind === 'abta_subdomain'
-          ? ' ABTA publishes the records for this one, so there is nothing for you to do.' : ''));
+          ? ' ABTA publishes the records for this one, so there is nothing for you to do.'
+          : d.kind === 'alias'
+            ? ' We built this address from your own address, so there is nothing to set up. Replies still go to your own address. Use your own address below to change it, or add a domain to send as the exact address.'
+            : d.kind === 'address' && d.status === 'verified'
+              ? ' This is the exact address you confirmed. Replies go to your own reply-to address.'
+              : ''));
 
       if (d.sending_status === 'suspended') {
         box.appendChild(MR.h('p', { class: 'dr-error-message',
@@ -134,6 +154,10 @@
           text: MR.number(d.clean_campaigns || 0) + ' clean campaign' +
                 ((d.clean_campaigns || 0) === 1 ? '' : 's') + ' from this domain. ' +
                 'There is no daily limit. Complaints and bounces are what stop a domain sending.' }));
+        if (d.kind === 'address') {
+          box.appendChild(MR.h('p', { class: 'dr-small', text:
+            'Your domain has not signed these emails, so some inboxes may treat them with caution. If a campaign lands in spam, add your domain below to sign them yourself.' }));
+        }
         if (!d.is_default) {
           box.appendChild(MR.h('button', {
             class: 'dr-button dr-button--secondary', type: 'button',
@@ -143,6 +167,28 @@
         } else {
           box.appendChild(MR.h('p', { class: 'dr-small', text: 'New campaigns use this domain unless you choose another.' }));
         }
+      } else if (d.kind === 'address') {
+        box.appendChild(MR.h('p', null, 'We sent an email to ', MR.h('strong', { text: d.from_local + '@' + d.domain }),
+          '. Select the confirmation link in it. It can take a minute to arrive, and it may be in your junk folder.'));
+        box.appendChild(MR.h('div', { class: 'dr-button-group' },
+          MR.h('button', {
+            class: 'dr-button', type: 'button', text: 'I have selected the link',
+            onclick: function (e) { check(d, e.target, 'I have selected the link'); }
+          }),
+          MR.h('button', {
+            class: 'dr-button dr-button--secondary', type: 'button', text: 'Send it again',
+            onclick: function (e) { resend(d, e.target); }
+          })));
+        box.appendChild(MR.h('p', { class: 'dr-small',
+          text: d.last_checked_at ? 'Last sent or checked ' + MR.date(d.last_checked_at) + '.' : '' }));
+      } else if (d.kind === 'alias') {
+        box.appendChild(MR.h('p', { class: 'dr-small',
+          text: 'This address is still being set up. Until it is ready your campaigns go from the shared address.' }));
+        box.appendChild(MR.h('div', { class: 'dr-button-group' },
+          MR.h('button', {
+            class: 'dr-button', type: 'button', text: 'Check now',
+            onclick: function (e) { check(d, e.target); }
+          })));
       } else {
         box.appendChild(records(d));
         box.appendChild(MR.h('div', { class: 'dr-button-group' },
@@ -156,10 +202,12 @@
             : 'DNS changes can take a few hours to spread, so a first check often comes back unverified.' }));
       }
 
-      box.appendChild(MR.h('p', null, MR.h('button', {
-        class: 'dr-button dr-button--warning', type: 'button', text: 'Remove this domain',
-        onclick: function () { remove(d); }
-      })));
+      if (d.kind !== 'alias') {
+        box.appendChild(MR.h('p', null, MR.h('button', {
+          class: 'dr-button dr-button--warning', type: 'button', text: d.kind === 'address' ? 'Remove this address' : 'Remove this domain',
+          onclick: function () { remove(d); }
+        })));
+      }
       return box;
     }
 
@@ -209,6 +257,97 @@
         }
       });
       return btn;
+    }
+
+    /* ---------------- use your own address ---------------- */
+    // For a member who wants their own address to be the one they use before any
+    // DNS is done. A business address is confirmed with one click on an email.
+    // A free address (Gmail, Yahoo) or one whose domain would turn away mail it
+    // did not sign cannot be sent from as itself, so it is confirmed with a
+    // six-digit code and the sender shown to readers is built from it on our
+    // side, with replies coming to the address itself. Same as Mailchimp does.
+    function addressForm() {
+      var form = MR.h('form', { id: 'mr-address-form', novalidate: true, class: 'mr-aside' });
+      form.appendChild(MR.h('h2', { class: 'dr-h', text: 'Use your own address now' }));
+      form.appendChild(MR.h('p', null, 'Enter the address you want to use, including a free one such as Gmail. We confirm it is yours with an email, and there is nothing to publish and nobody to ask.'));
+      var input = MR.h('input', { class: 'dr-input', id: 'a-email', type: 'email', placeholder: 'hello@yourorganisation.org', autocomplete: 'off' });
+      form.appendChild(MR.h('div', { class: 'dr-form-group' },
+        MR.h('label', { class: 'dr-label', for: 'a-email', text: 'Your address' }),
+        MR.h('span', { class: 'dr-hint', text: 'It must be an address you can open.' }),
+        input));
+      form.appendChild(MR.h('p', { class: 'dr-small', text: 'Business address: readers see it exactly, though some inboxes may be cautious until you add your domain below. Free address: Gmail, Yahoo and others refuse email they did not send themselves, so we automatically change the part readers see to an address built from yours. Replies still come to you.' }));
+      var steps = MR.h('div', { id: 'a-steps' });
+      form.appendChild(steps);
+      var button = MR.h('button', { class: 'dr-button', type: 'submit', text: 'Continue' });
+      form.appendChild(button);
+
+      function reset(label) { button.disabled = false; button.textContent = label || 'Continue'; }
+
+      // The address came back as a sender. Put the new row in place and say what changed.
+      function done(r) {
+        domains = domains.filter(function (x) { return x.id !== r.domain.id; });
+        domains.push(r.domain);
+        render();
+        if (r.mode === 'automatic') {
+          MR.banner(wrap, 'Your address is set',
+            'We send as ' + MR.domainLabel(r.domain) + ' and replies come to ' + r.address + '. ' +
+            (r.reason === 'strict_policy'
+              ? 'That domain tells inboxes to refuse email it has not signed, so we changed the sender for you. Add the domain below to send as the exact address.'
+              : 'Free addresses cannot be used as they are, so we changed the sender for you.'));
+        }
+        MR.announce(r.domain.status === 'verified' ? 'Address ready' : 'Confirmation email sent');
+      }
+
+      function ask(email) {
+        return MR.fn('mailroom-domain', { action: 'address', account_id: account.id, email: email });
+      }
+
+      // A free address: prove it with a code, then ask again.
+      function codeStep(email) {
+        steps.textContent = '';
+        var status = MR.h('p', { class: 'dr-small', role: 'status', text: 'Sending a code to ' + email + '…' });
+        steps.appendChild(status);
+        MR.fn('mailroom-reply-address', { action: 'send', account_id: account.id, email: email }).then(function (r) {
+          if (r.already_verified) { return ask(email).then(done); }
+          status.textContent = 'We sent a six-digit code to ' + email + '. It lasts 30 minutes.';
+          var code = MR.h('input', { class: 'dr-input dr-input--w', id: 'a-code', inputmode: 'numeric', autocomplete: 'one-time-code' });
+          var confirm = MR.h('button', {
+            type: 'button', class: 'dr-button', text: 'Confirm',
+            onclick: function () {
+              confirm.disabled = true;
+              MR.fn('mailroom-reply-address', { action: 'check', account_id: account.id, email: email, code: code.value.trim() })
+                .then(function () { return ask(email); })
+                .then(done)
+                .catch(function (err) { confirm.disabled = false; status.textContent = message(err); });
+            }
+          });
+          steps.appendChild(MR.h('div', { class: 'dr-form-group' },
+            MR.h('label', { class: 'dr-label', for: 'a-code', text: 'Code from the email' }), code, confirm));
+          button.hidden = true;
+          code.focus();
+        }).catch(function (err) { status.textContent = message(err); reset(); });
+      }
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var value = input.value.trim().toLowerCase();
+        if (MR.errors.show(form, /^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(value) ? [] :
+          [{ id: 'a-email', message: 'Enter a full email address, such as hello@yourorganisation.org' }])) return;
+        if (MR.cfg.demo) {
+          MR.banner(wrap, 'Preview only', 'On the live service an email would be sent to ' + value + '.');
+          return;
+        }
+        button.disabled = true;
+        button.textContent = 'Checking…';
+        ask(value).then(function (r) {
+          if (r.needs_code) { button.textContent = 'Continue'; return codeStep(value); }
+          done(r);
+        }).catch(function (err) {
+          reset();
+          MR.errors.show(form, [{ id: 'a-email', message: message(err) }]);
+        });
+      });
+      return form;
     }
 
     /* ---------------- add a domain ---------------- */
@@ -316,7 +455,7 @@
     }
 
     /* ---------------- actions ---------------- */
-    function check(d, button) {
+    function check(d, button, label) {
       if (MR.cfg.demo) { MR.banner(wrap, 'Preview only', 'Nothing is checked in preview mode.'); return; }
       button.disabled = true;
       button.textContent = 'Checking…';
@@ -326,8 +465,47 @@
         MR.announce(r.verified ? 'Domain verified' : 'Not verified yet');
       }).catch(function (err) {
         button.disabled = false;
-        button.textContent = 'Check the records now';
+        button.textContent = label || 'Check the records now';
         MR.banner(wrap, 'Could not check', message(err), 'important');
+      });
+    }
+
+    function resend(d, button) {
+      if (MR.cfg.demo) { MR.banner(wrap, 'Preview only', 'Nothing is sent in preview mode.'); return; }
+      button.disabled = true;
+      button.textContent = 'Sending…';
+      MR.fn('mailroom-domain', { action: 'address', account_id: account.id, email: d.from_local + '@' + d.domain }).then(function (r) {
+        domains = domains.map(function (x) { return x.id === d.id ? r.domain : x; });
+        render();
+        MR.announce(r.wait ? 'An email was sent a moment ago. Give it a minute.' : 'Confirmation email sent again');
+        if (r.wait) MR.banner(wrap, 'Sent a moment ago', 'The email was sent less than a minute ago. Give it a minute, then check your junk folder before sending it again.');
+      }).catch(function (err) {
+        button.disabled = false;
+        button.textContent = 'Send it again';
+        MR.banner(wrap, 'Could not send it', message(err), 'important');
+      });
+    }
+
+    // SES sends the person back here after the link. The page then asks it
+    // whether the address is confirmed, so they see the answer straight away.
+    function afterLink() {
+      var back = MR.qs('address');
+      if (!back || MR.cfg.demo) return;
+      if (back === 'failed') {
+        MR.banner(wrap, 'The address was not confirmed', 'The link did not work, or it has expired. Send the email again from the address below.', 'important');
+        return;
+      }
+      var waiting = domains.filter(function (d) { return d.kind === 'address' && d.status !== 'verified'; });
+      Promise.all(waiting.map(function (d) {
+        return MR.fn('mailroom-domain', { action: 'check', domain_id: d.id }).then(function (r) {
+          domains = domains.map(function (x) { return x.id === d.id ? r.domain : x; });
+        }).catch(function () { /* the button on the card still works */ });
+      })).then(function () {
+        render();
+        var ok = domains.some(function (d) { return d.kind === 'address' && d.status === 'verified'; });
+        MR.banner(wrap, ok ? 'Address confirmed' : 'Not confirmed yet',
+          ok ? 'You can now choose it under Sent from when you write a campaign.'
+             : 'We could not see the confirmation yet. Give it a minute and select I have selected the link.');
       });
     }
 
@@ -345,7 +523,7 @@
     }
 
     function remove(d) {
-      if (!confirm('Remove ' + d.domain + '? Campaigns already sent keep their record, and new ones go out from the shared address until you add another domain.')) return;
+      if (!confirm('Remove ' + (d.kind === 'address' ? MR.domainLabel(d) : d.domain) + '? Campaigns already sent keep their record, and new ones go out from the shared address until you add another domain.')) return;
       if (MR.cfg.demo) { MR.banner(wrap, 'Preview only', 'Nothing is removed in preview mode.'); return; }
       MR.fn('mailroom-domain', { action: 'remove', domain_id: d.id }).then(function () {
         domains = domains.filter(function (x) { return x.id !== d.id; });
@@ -359,10 +537,19 @@
     function message(err) {
       var m = String((err && err.message) || '');
       if (/not_a_domain/.test(m)) return 'That does not look like a domain. Try news.example.com.';
-      if (/public_mailbox/.test(m)) return 'You cannot send from a free mailbox domain such as gmail.com. Use a domain your organisation owns.';
+      if (/public_mailbox/.test(m)) return 'Free domains such as gmail.com cannot be added as a sending domain. Use "Use your own address now" to send with a free address, or add a domain your organisation owns.';
       if (/abta_domain/.test(m)) return 'That domain belongs to ABTA. Choose the ABTA subdomain option instead.';
       if (/already_added/.test(m)) return 'That domain is already on your account.';
       if (/taken/.test(m)) return 'That domain is already in use by another sender.';
+      if (/wrong_code/.test(m)) return 'That code was not right. Check it and try again.';
+      if (/code_expired/.test(m)) return 'That code has expired. Enter your address again for a new one.';
+      if (/too_many_attempts/.test(m)) return 'Too many wrong codes. Enter your address again for a new one.';
+      if (/too_soon/.test(m)) return 'A code was sent a moment ago. Give it a minute, then check your junk folder.';
+      if (/could_not_send/.test(m)) return 'We could not send the code. Try again shortly.';
+      if (/too_many_addresses/.test(m)) return 'An account can hold three confirmed addresses. Remove one first.';
+      if (/^plan$/.test(m)) return 'Using your own address comes with any paid plan.';
+      if (/not_supported/.test(m)) return 'This is not switched on for your account yet.';
+      if (/alias_cannot_be_removed/.test(m)) return 'This address was made for your account and cannot be removed.';
       if (/too_many_domains/.test(m)) return 'An account can hold three sending domains. Remove one first.';
       if (/label_too_short/.test(m)) return 'Enter at least three letters or numbers.';
       if (/not_an_address/.test(m)) return 'Enter the part before the @, such as hello.';

@@ -440,6 +440,12 @@
     var form = document.getElementById('mr-account-form');
     if (!form) return;
 
+    var signedInEmail = !MR.cfg.demo && MR.auth.signedIn() && MR.auth.email();
+    if (signedInEmail) {
+      var emailField = form.querySelector('#m-email');
+      if (emailField) { emailField.value = signedInEmail; emailField.readOnly = true; }
+    }
+
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       // Only the three answers the account cannot exist without. The postal
@@ -465,7 +471,11 @@
         return;
       }
 
-      var finish = function () {
+      var onward = function () { location.href = 'import.html?start=1'; };
+
+      // offer: the member has just entered a code, so a password can be offered
+      // before they move on. Not offered to someone who was already signed in.
+      var finish = function (offer) {
         // The account is created with an id made here and nothing asked back.
         // Asking for the new row back fails for a new member, because they
         // can only read an account once they are listed as a user of it, and
@@ -484,7 +494,8 @@
           // was knowing the URL. Go straight to the dashboard instead and
           // show the message there. Not a timed redirect, which would fail
           // WCAG 2.2.1 unless the member could stop it. 14 October 2026.
-          location.href = 'import.html?start=1';
+          if (offer) return offerPassword(form.parentNode, onward);
+          onward();
         }).catch(function (err) {
           err.stage = 'account';
           throw err;
@@ -498,7 +509,9 @@
         });
       }
 
-      if (MR.auth.signedIn()) { finish().catch(fail); return; }
+      // Already signed in: the account belongs to the address they signed in
+      // with, whatever is typed in the form. The database enforces the same.
+      if (MR.auth.signedIn()) { v.email = MR.auth.email() || v.email; finish(false).catch(fail); return; }
       MR.auth.sendCode(v.email).then(function () {
         var code = MR.h('input', { class: 'dr-input dr-input--w', id: 'mr-code' });
         var status = MR.h('p', { class: 'dr-small', role: 'status' });
@@ -512,7 +525,7 @@
             onclick: function () {
               status.textContent = 'Checking…';
               MR.auth.verifyCode(v.email, code.value.trim())
-                .then(function () { panel.remove(); return finish(); })
+                .then(function () { panel.remove(); return finish(true); })
                 .catch(function (err) {
                   status.textContent = err && err.stage === 'account'
                     ? MR.friendlyError(err, 'Your email address is confirmed but the account could not be set up. Try again, and if it keeps happening contact ABTA.')
@@ -531,6 +544,55 @@
       }
     });
   }
+
+  /* ---------------- optional password ----------------
+     Offered once, straight after the sign-up code, so the next sign-in does not
+     need another email. It can be skipped, and it can be set later from the
+     sign-in page. */
+  function offerPassword(wrap, go) {
+    var h = MR.h;
+    document.title = 'Set a password – AMI Mailroom';
+    while (wrap.firstChild) wrap.removeChild(wrap.firstChild);
+    var pw = h('input', { class: 'dr-input', id: 'np-password', type: 'password', autocomplete: 'new-password' });
+    var pw2 = h('input', { class: 'dr-input', id: 'np-confirm', type: 'password', autocomplete: 'new-password' });
+    var show = h('button', { type: 'button', class: 'dr-button dr-button--secondary', style: 'margin-top:.6rem', text: 'Show passwords' });
+    var save = h('button', { class: 'dr-button', type: 'submit', text: 'Save password' });
+    var skip = h('a', { href: '#', id: 'np-skip', text: 'Skip for now' });
+    var f = h('form', { novalidate: 'novalidate' },
+      h('div', { class: 'dr-form-group' },
+        h('label', { class: 'dr-label', for: 'np-password', text: 'New password' }),
+        h('span', { class: 'dr-hint', text: 'At least 8 characters.' }), pw),
+      h('div', { class: 'dr-form-group' },
+        h('label', { class: 'dr-label', for: 'np-confirm', text: 'Repeat the password' }), pw2, show),
+      save);
+    wrap.appendChild(h('h1', { text: 'Set a password' }));
+    wrap.appendChild(h('p', { class: 'dr-lead', text: 'Your email address is confirmed. Add a password so you can sign in next time without waiting for a code. The same password works across AMI. You can skip this and set one later.' }));
+    wrap.appendChild(f);
+    wrap.appendChild(h('p', { class: 'dr-small' }, skip));
+    pw.focus();
+    show.addEventListener('click', function () {
+      var on = pw.type === 'password';
+      pw.type = pw2.type = on ? 'text' : 'password';
+      show.textContent = on ? 'Hide passwords' : 'Show passwords';
+    });
+    skip.addEventListener('click', function (e) { e.preventDefault(); go(); });
+    f.addEventListener('submit', function (e) {
+      e.preventDefault();
+      MR.errors.clear(f);
+      if (pw.value.length < 8) { MR.errors.show(f, [{ id: 'np-password', message: 'Use at least 8 characters' }]); return; }
+      if (pw.value !== pw2.value) { MR.errors.show(f, [{ id: 'np-confirm', message: 'The two passwords are not the same' }]); return; }
+      save.setAttribute('aria-disabled', 'true');
+      MR.auth.setPassword(pw.value).then(go).catch(function (err) {
+        save.removeAttribute('aria-disabled');
+        console.error(err);
+        var why = (err && err.reasons) || [];
+        MR.errors.show(f, [{ id: 'np-password', message: (err && err.code === 'weak_password') || why.length
+          ? 'That password is not strong enough. Try a longer or less common one, or skip and do this later.'
+          : 'We could not save that password. Try a different one, or skip and do this later.' }]);
+      });
+    });
+  }
+  MR.offerPassword = offerPassword;
 
   /* ---------------- dashboard ---------------- */
 

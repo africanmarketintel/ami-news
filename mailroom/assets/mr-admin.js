@@ -126,7 +126,7 @@
         dBody.appendChild(MR.h('tr', null,
           MR.h('td', null, MR.h('span', { text: d.domain }), MR.h('br'),
             MR.h('span', { class: 'dr-small', text: (d.mailroom_accounts && d.mailroom_accounts.name) || '' })),
-          MR.h('td', { text: d.kind === 'abta_subdomain' ? 'ABTA publishes these' : 'The member publishes these' }),
+          MR.h('td', { text: d.kind === 'abta_subdomain' ? 'ABTA publishes these' : d.kind === 'alias' ? 'Nobody: an alias takes the keys of mail.abta.africa. If it stays pending, check the provider.' : d.kind === 'address' ? 'Nobody: one address confirmed by an emailed link. Sent through ABTA’s servers without the domain’s signature.' : 'The member publishes these' }),
           MR.h('td', null, recs.length ? lines : MR.h('span', { class: 'dr-small', text: 'No records returned yet.' })),
           MR.h('td', { text: d.status }),
           MR.h('td', null, d.kind === 'abta_subdomain'

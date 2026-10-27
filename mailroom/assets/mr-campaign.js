@@ -13,6 +13,18 @@
   var MR = window.MR;
   if (!MR) return;
 
+  // Same rule as aliasLocal in the mailroom-domain function. Keep the two alike.
+  function aliasLocal(email) {
+    var s = String(email == null ? '' : email).trim().toLowerCase()
+      .replace(/@/g, '.')
+      .replace(/[^a-z0-9._-]+/g, '-')
+      .replace(/\.{2,}/g, '.')
+      .replace(/^[^a-z0-9]+/, '');
+    if (s.length > 64) s = s.slice(0, 64);
+    s = s.replace(/[^a-z0-9]+$/, '');
+    return /^[a-z0-9]([a-z0-9._-]{0,62}[a-z0-9])?$/.test(s) ? s : 'hello';
+  }
+
   var DEMO_CAMPAIGN = {
     subject: 'Sample: April market outlook',
     preheader: 'What moved this month, and what to watch',
@@ -84,13 +96,28 @@
       savedBlocks = res[4] || [];
       replyAddresses = (res[5] || []).map(function (r) { return r.email; });
       if (res[1] && res[1][0]) campaign = res[1][0];
+      return ensureAlias();
+    }).then(function () {
       if (!campaign.id && !campaign.sending_domain_id) {
-        var preferred = domains.filter(function (d) { return d.is_default; })[0] || domains[0];
+        // The account's chosen default, then its own domain, then the alias
+        // made for it, then anything else that is verified.
+        var preferred = domains.filter(function (d) { return d.is_default; })[0] ||
+          domains.filter(function (d) { return d.kind === 'own_domain'; })[0] ||
+          domains.filter(function (d) { return d.kind === 'address'; })[0] ||
+          domains.filter(function (d) { return d.kind === 'alias'; })[0] || domains[0];
         if (preferred) campaign.sending_domain_id = preferred.id;
       }
       if (!campaign.from_name) campaign.from_name = account.name;
       defaultList();
-      if (!campaign.reply_to) campaign.reply_to = replyAddresses[0] || account.contact_email;
+      if (!campaign.reply_to) {
+        // An alias built from a member's own address sends replies back to
+        // that same address, so pick it when it is confirmed.
+        var chosen = domains.filter(function (d) { return d.id === campaign.sending_domain_id; })[0];
+        var source = chosen && chosen.kind === 'alias' ? replyAddresses.filter(function (e) {
+          return aliasLocal(e) === chosen.from_local;
+        })[0] : '';
+        campaign.reply_to = source || replyAddresses[0] || account.contact_email;
+      }
       if (!campaign.font_family) campaign.font_family = (brand && brand.font_family) || 'sans';
       if (campaign.id) return loadVersions().then(render);
       render();
@@ -131,6 +158,19 @@
         area, status);
     }
 
+    // An account without a domain of its own, trial included, is given an alias
+    // address built from its sign-up address, so nobody has to set anything up
+    // before sending. The function does nothing if one exists. If anything goes
+    // wrong the shared address still works, so this never stops the editor opening.
+    function ensureAlias() {
+      var have = domains.some(function (d) { return d.kind === 'alias'; });
+      if (have) return Promise.resolve();
+      return MR.fn('mailroom-domain', { action: 'alias', account_id: account.id }).then(function (r) {
+        var d = r && r.domain;
+        if (d && d.status === 'verified' && d.sending_status === 'active') domains.push(d);
+      }).catch(function () { /* the shared address still works */ });
+    }
+
     // The domain this campaign will leave from, or null for the shared address.
     function chosenDomain() {
       return domains.filter(function (d) { return d.id === campaign.sending_domain_id; })[0] || null;
@@ -154,7 +194,8 @@
       var address = d ? d.from_local + '@' + d.domain
         : (account.sender_local || 'mailroom') + '@mail.abta.africa';
       return { name: String(campaign.from_name || '').trim() || account.name, address: address,
-        own: !!d && d.kind === 'own_domain', sub: !!d && d.kind !== 'own_domain' };
+        own: !!d && d.kind === 'own_domain', alias: !!d && d.kind === 'alias', address: !!d && d.kind === 'address',
+        sub: !!d && d.kind === 'abta_subdomain' };
     }
 
     function loadVersions() {
@@ -238,9 +279,11 @@
       });
       form.appendChild(MR.h('div', { class: 'dr-form-group' },
         MR.h('label', { class: 'dr-label', for: 'c-domain', text: 'Sent from' }),
-        MR.h('span', { class: 'dr-hint' }, domains.length
-          ? 'Your own domain puts your real address in front of readers and carries its own delivery record.'
-          : 'You have no verified domain of your own yet. ',
+        MR.h('span', { class: 'dr-hint' }, domains.some(function (d) { return d.kind === 'alias'; }) && !domains.some(function (d) { return d.kind === 'own_domain' || d.kind === 'address'; })
+          ? 'We have set up a sending address for you. Replies still come to you. For your own address in front of readers, authenticate a domain.'
+          : domains.length
+            ? 'Your own domain puts your real address in front of readers and carries its own delivery record.'
+            : 'You have no verified domain of your own yet. ',
           domains.length ? null : MR.h('a', { href: 'domain.html', text: 'Send from your own domain instead' })),
         domainSelect));
 
@@ -254,6 +297,16 @@
         seeNote.textContent = '';
         if (r.own) {
           seeNote.appendChild(document.createTextNode('This is your own address.'));
+        } else if (r.address) {
+          seeNote.appendChild(document.createTextNode(
+            'This is the exact address you confirmed. Replies reach ' + (campaign.reply_to || 'your reply address') + '. Your domain has not signed these emails, so some inboxes may treat them with caution. '));
+          seeNote.appendChild(MR.h('a', { href: 'domain.html', text: 'Add your domain to sign them' }));
+          seeNote.appendChild(document.createTextNode('.'));
+        } else if (r.alias) {
+          seeNote.appendChild(document.createTextNode(
+            'We build this address from yours so that it delivers well. Replies still reach ' + (campaign.reply_to || 'your reply address') + '. Every email sent from it carries a line at the bottom saying it was sent through AMI Mailroom. '));
+          seeNote.appendChild(MR.h('a', { href: 'domain.html', text: 'Use your own address' }));
+          seeNote.appendChild(document.createTextNode('.'));
         } else {
           seeNote.appendChild(document.createTextNode(
             (r.sub ? 'This address is on a subdomain ABTA sets up for you.' : 'This is the shared ABTA address.') + ' Every email sent from it carries a line at the bottom saying it was sent through AMI Mailroom. '));
