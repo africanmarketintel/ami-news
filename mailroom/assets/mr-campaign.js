@@ -146,8 +146,8 @@
       };
       area.addEventListener('change', save);
       return MR.h('div', { class: 'dr-form-group' },
-        MR.h('label', { class: 'dr-label', for: 'c-address', text: 'Your postal address' }),
-        MR.h('span', { class: 'dr-hint', text: 'Required by law in every marketing email. It is printed in the footer and saved to your account, so you only enter it once. A street address, or a PO box or private mailbox registered to you.' }),
+        MR.h('label', { class: 'dr-label', for: 'c-address', text: 'Your postal address (optional)' }),
+        MR.h('span', { class: 'dr-hint', text: 'Optional. In some countries the law requires one in marketing email to people in that country. It is printed in the footer and saved to your account, so you only enter it once. A street address, or a PO box or private mailbox registered to you.' }),
         area, status);
     }
 
@@ -698,6 +698,49 @@
       });
     }
 
+    /* ---------------- sample text ----------------
+       A layout comes written out with invented facts (dates, places, prices).
+       It can be sent as it is, so this does not stop a send. It tells the
+       sender before they confirm, so nobody mails invented facts by accident. */
+    function sampleNote() {
+      if (!MR.sampleTextLeft) return '';
+      var left = MR.sampleTextLeft(campaign);
+      if (!left.length) return '';
+      var blocks = left.map(function (f) { return Number(f.path) + 1; });
+      return 'This email still has the sample text that came with the ' + left[0].layout + ' layout, in block' +
+        (blocks.length > 1 ? 's ' : ' ') + blocks.join(', ') + '. Check it is right for your readers.';
+    }
+
+    /* ---------------- links still empty ----------------
+       A button, page link or social icon with no link is not a mistake that
+       stops a send. It is listed before the sender confirms, so they can add
+       the link or remove the item, or send as it is. */
+    function linkNote() {
+      var empty = [];
+      var blank = function (u) { return !String(u || '').trim(); };
+      (campaign.body_blocks || []).forEach(function (b, i) {
+        if (b.type === 'button' && blank(b.url) && String(b.label || '').trim()) empty.push('button ' + (i + 1));
+        if (b.type === 'navigation' || b.type === 'social') {
+          (b.links || []).forEach(function (l) {
+            if (blank(l.url) && String(l.label || '').trim()) {
+              empty.push(b.type === 'social' && b.style === 'icons' ? 'the ' + l.label + ' icon' : '"' + l.label + '"');
+            }
+          });
+        }
+      });
+      if (!empty.length) return '';
+      return 'These have no link yet: ' + empty.join(', ') + '. Nothing happens when a reader selects them. Add a link in the editor, or remove them.';
+    }
+
+    /* ---------------- postal address ----------------
+       Optional. Marketing email to recipients in some countries has to carry a
+       physical postal address, so a sender without one is told before they
+       confirm, and can still send. */
+    function addressNote() {
+      if (MR.hasAddress(account)) return '';
+      return 'There is no postal address in this email. In some countries the law requires one in marketing email to people in that country. You can add it in your account settings.';
+    }
+
     /* ---------------- validation ---------------- */
     function validate(forSend) {
       var errors = [];
@@ -707,27 +750,12 @@
         errors.push({ id: 'c-reply', message: 'Enter a reply-to address' });
       }
       if (forSend && !campaign.list_id) errors.push({ id: 'c-list', message: 'Choose a list to send to' });
-      if (forSend && !MR.hasAddress(account)) {
-        errors.push({ id: document.getElementById('c-address') ? 'c-address' : 'c-from',
-          message: 'Add your postal address. Every marketing email has to carry one' });
-      }
       var hasContent = campaign.body_blocks.some(function (b) {
         return (b.text && b.text.trim()) || (b.left && b.left.trim()) ||
                (b.right && b.right.trim()) || (b.url && b.url.trim()) ||
                (b.html && b.html.trim()) || (b.name && b.name.trim());
       });
       if (!hasContent) errors.push({ id: 'c-subject', message: 'Add some content before sending' });
-      // A layout comes written out with invented facts. Hold the send until
-      // each of those lines has been changed, or deleted.
-      if (forSend && MR.sampleTextLeft) {
-        var left = MR.sampleTextLeft(campaign);
-        left.slice(0, 5).forEach(function (f) {
-          errors.push({ id: 'b' + f.path, path: f.path,
-            message: 'Replace the sample text in block ' + (Number(f.path) + 1) + ': \u201c' + f.text + '\u201d. It came with the ' + f.layout + ' layout' });
-        });
-        if (left.length > 5) errors.push({ id: 'b' + left[5].path, path: left[5].path,
-          message: (left.length - 5) + ' more blocks still have sample text from the layout' });
-      }
       campaign.body_blocks.forEach(function (b, i) {
         var needsImage = b.type === 'image' || b.type === 'imagetext';
         // A description, or the tick that says the picture is only decoration.
@@ -737,9 +765,6 @@
         }
         if (needsImage && !String(b.url || '').trim()) {
           errors.push({ id: 'b' + i + '-url', path: String(i), message: 'Choose or upload image ' + (i + 1) });
-        }
-        if (b.type === 'button' && !String(b.url || '').trim()) {
-          errors.push({ id: 'b' + i + '-url', path: String(i), message: 'Give the link for button ' + (i + 1) });
         }
         if (b.type === 'video') {
           if (!String(b.url || '').trim()) {
@@ -764,20 +789,6 @@
           if (String(b.url || '').trim() && !told) {
             errors.push({ id: 'b' + i + '-alt', path: String(i), message: 'Describe the image of product ' + (i + 1) + ', or tick that it is only decoration' });
           }
-        }
-        if (b.type === 'navigation') {
-          (b.links || []).forEach(function (l, j) {
-            if (String(l.label || '').trim() && !String(l.url || '').trim()) {
-              errors.push({ id: 'b' + i + '-l' + j + '-url', path: String(i), message: 'Give the link for ' + l.label });
-            }
-          });
-        }
-        if (b.type === 'social') {
-          (b.links || []).forEach(function (l, j) {
-            if (String(l.label || '').trim() && !String(l.url || '').trim()) {
-              errors.push({ id: 'b' + i + '-l' + j + '-url', path: String(i), message: 'Give the link for ' + l.label });
-            }
-          });
         }
       });
       return errors;
@@ -895,6 +906,8 @@
         errors.push({ id: 'c-date', message: 'That time has already passed. Choose a time in the future.' });
       }
       if (showErrors(form, errors)) return;
+      var heads = [sampleNote(), linkNote(), addressNote()].filter(Boolean).join('\n\n');
+      if (heads && !confirm(heads + '\n\nSchedule it anyway?')) return;
 
       if (MR.cfg.demo) {
         MR.banner(notes(), 'Preview only',
@@ -995,7 +1008,8 @@
           'Your campaign passed every check. On the live service it would send now, with no approval step.');
         return;
       }
-      if (!confirm('Send this campaign now? Once it starts it cannot be recalled.')) return;
+      var notes_ = [sampleNote(), linkNote(), addressNote()].filter(Boolean).join('\n\n');
+      if (!confirm((notes_ ? notes_ + '\n\n' : '') + 'Send this campaign now? Once it starts it cannot be recalled.')) return;
 
       save('draft').then(function (saved) {
         if (!saved) return;

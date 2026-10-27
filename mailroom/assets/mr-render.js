@@ -807,10 +807,12 @@ footer(account, font, unsubscribe, preferences, brand) +
         var own = !!(l.network && SOCIAL_ICONS[l.network]);
         var src = own ? socialIconUrl(l.network, b.icon_colour) : safeUrl(l.icon);
         var alt = l.label || (own ? SOCIAL_ICONS[l.network] : '');
-        return '<a href="' + safeUrl(l.url) + '" style="text-decoration:none">' +
-          '<img src="' + src + '" alt="' + esc(alt) + '" width="28" height="28" ' +
-          'style="display:inline-block;width:28px;height:28px;border:0;outline:none;vertical-align:middle">' +
-          '</a>';
+        // With no link the icon is a plain picture, so it does not point
+        // readers at a dead '#'.
+        var pic = '<img src="' + src + '" alt="' + esc(alt) + '" width="28" height="28" ' +
+          'style="display:inline-block;width:28px;height:28px;border:0;outline:none;vertical-align:middle">';
+        if (!String(l.url || '').trim()) return pic;
+        return '<a href="' + safeUrl(l.url) + '" style="text-decoration:none">' + pic + '</a>';
       }).join('<span style="font-size:1px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
     } else {
       inner = links.map(function (l, i) {
@@ -1058,12 +1060,9 @@ footer(account, font, unsubscribe, preferences, brand) +
         '" style="display:block;border:0;width:28px;height:28px"></a></td>';
     }).join('');
     var icons = iconCells ? '<table role="presentation" align="center" cellpadding="0" cellspacing="0" border="0" style="margin:0 auto 22px"><tr>' + iconCells + '</tr></table>\n' : '';
-    // Who sent it, and where they are. Both are required in a marketing email.
+    // Who sent it and, when the sender has given one, where they are.
     var who = esc(account && account.name);
     if (hasAddress(account)) who += ', ' + esc(String(account.postal_address).replace(/\s+/g, ' ').trim());
-    else if (PH) {
-      who += ', <span style="background-color:#fff3cd;color:#594300">[postal address needed: add it in your account settings]</span>';
-    }
     // An account's own line, only when it has one. NO_CREDIT is "no line".
     var credit = brand.footer_credit && brand.footer_credit !== NO_CREDIT ? esc(brand.footer_credit) : '';
     var link = 'color:' + MUTED + ';text-decoration:underline';

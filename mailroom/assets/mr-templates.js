@@ -60,7 +60,11 @@
 
   function story(t, d, rule) { return { type: 'story', text: t, detail: d, url: '', align: 'left', rule: rule !== false }; }
   function bullets(t, align) { return { type: 'list', text: t, align: align || 'left' }; }
-  function social() { return { type: 'social', style: 'text', align: 'center', links: [{ label: 'LinkedIn', url: '' }, { label: 'Website', url: '' }] }; }
+  // Icons come ready to use with no links. The sender adds a link to each one
+  // or removes the ones they do not use. An icon with no link is drawn, but
+  // does nothing when selected.
+  var SOCIAL_DEFAULT = [{ label: 'LinkedIn', url: '', network: 'linkedin' }, { label: 'Facebook', url: '', network: 'facebook' }, { label: 'Instagram', url: '', network: 'instagram' }, { label: 'X', url: '', network: 'x' }];
+  function social() { return { type: 'social', style: 'icons', align: 'center', links: SOCIAL_DEFAULT.map(function (l) { return { label: l.label, url: l.url, network: l.network }; }) }; }
 
   // The looks. Colours are chosen so text on each background passes 4.5:1.
   var LOOK = {
@@ -524,7 +528,7 @@
       id: 'headers', name: 'Headers', items: [
         { id: 's-head-logo', name: 'Logo and rule', blocks: [logo('center'), divider()] },
         { id: 's-head-social', name: 'Logo and social links', blocks: [
-          logo('center'), { type: 'social', style: 'text', align: 'center', links: [{ label: 'LinkedIn', url: '' }, { label: 'Website', url: '' }] }] },
+          logo('center'), social()] },
         { id: 's-head-nav', name: 'Logo and page links', blocks: [
           logo('center'),
           { type: 'navigation', align: 'center', links: [{ label: 'Home', url: '' }, { label: 'About', url: '' }, { label: 'Contact', url: '' }] },
@@ -534,7 +538,7 @@
     {
       id: 'footers', name: 'Footers and sign-offs', items: [
         { id: 's-foot-social', name: 'Social links and address', blocks: [
-          divider(), { type: 'social', style: 'text', align: 'center', links: [{ label: 'LinkedIn', url: '' }, { label: 'Website', url: '' }] },
+          divider(), social(),
           text('Your organisation\n00 Street name, City, Country', 'center')] },
         { id: 's-foot-contact', name: 'Contact details on a grey panel', blocks: [
           panel('light', [heading('Your organisation', 'left', 'small'), text('Email address\nTelephone number\n00 Street name, City, Country', 'left'),

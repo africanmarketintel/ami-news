@@ -425,7 +425,7 @@
       style.addEventListener('change', function () { block.style = style.value; api.redraw(); });
       wrap.appendChild(MR.h('div', { class: 'dr-form-group' },
         MR.h('label', { class: 'dr-label', for: id + '-style', text: 'How they look' }),
-        MR.h('span', { class: 'dr-hint', text: 'Icons are images, and most mail apps block images by default. The description is what a reader sees until they load them, so it has to say which service it is.' }),
+        MR.h('span', { class: 'dr-hint', text: 'Icons are images, and most mail apps block images by default. The description is what a reader sees until they load them, so it has to say which service it is. Add a link to each icon you use and remove the ones you do not. An icon with no link is shown but does nothing when selected.' }),
         style));
       block.links.forEach(function (link, i) {
         var row = MR.h('div', { class: 'mr-social-row' },
@@ -467,7 +467,10 @@
       });
       wrap.appendChild(MR.h('button', {
         type: 'button', class: 'dr-button dr-button--secondary', text: 'Add another link',
-        onclick: function () { block.links.push({ label: '', url: '' }); api.redraw(); }
+        onclick: function () {
+          block.links.push(block.style === 'icons' ? { label: 'Facebook', url: '', network: 'facebook' } : { label: '', url: '' });
+          api.redraw();
+        }
       }));
       wrap.appendChild(alignField(id, block, api));
       return wrap;
