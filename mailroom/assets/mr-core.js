@@ -436,6 +436,44 @@
 
   // Plain words for a failed sign-in code request, with the cause where the
   // service gives one. Used by the sign-up page and the sign-in page.
+  // A button that sends a new code to an address. Supabase allows one a
+  // minute, so the button waits that long between sends. The newest code is
+  // the one to use. `status` is a paragraph that says what happened.
+  MR.resendCode = function (getEmail, status) {
+    var button = MR.h('button', { type: 'button', class: 'dr-button dr-button--secondary', text: 'Send a new code' });
+    var timer = null;
+    function wait(seconds) {
+      var left = seconds;
+      button.disabled = true;
+      button.textContent = 'Send a new code (' + left + 's)';
+      clearInterval(timer);
+      timer = setInterval(function () {
+        left -= 1;
+        if (left <= 0) {
+          clearInterval(timer);
+          button.disabled = false;
+          button.textContent = 'Send a new code';
+        } else {
+          button.textContent = 'Send a new code (' + left + 's)';
+        }
+      }, 1000);
+    }
+    button.addEventListener('click', function () {
+      var email = getEmail();
+      status.textContent = 'Sending…';
+      button.disabled = true;
+      MR.auth.sendCode(email).then(function () {
+        status.textContent = 'A new code has been sent to ' + email + '. Use the newest one.';
+        MR.announce('A new code has been sent');
+        wait(60);
+      }).catch(function (err) {
+        status.textContent = MR.codeError(err);
+        wait(60);
+      });
+    });
+    return button;
+  };
+
   MR.codeError = function (err) {
     var code = String((err && err.code) || '');
     var msg = String((err && err.message) || '');
@@ -577,7 +615,7 @@
             console.error('Code check failed:', r.status, b);
             var ve = new Error(r.status === 429
               ? 'Too many attempts. Wait a few minutes and try again.'
-              : 'That code was not accepted. Check it, or ask for a new one.');
+              : 'That code was not accepted. Check it, or send a new code.');
             ve.status = r.status;
             throw ve;
           }

@@ -532,7 +532,7 @@
                     : err.message;
                 });
             }
-          }), status);
+          }), ' ', MR.resendCode(function () { return v.email; }, status), status);
         form.parentNode.insertBefore(panel, form);
       }).catch(fail);
 

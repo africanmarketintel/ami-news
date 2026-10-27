@@ -163,6 +163,13 @@
       if (codeGroup.hidden) {
         MR.auth.sendCode(email).then(function () {
           codeGroup.hidden = false;
+          if (!document.getElementById('si-resend')) {
+            var note = MR.h('p', { class: 'dr-small', id: 'si-resend-note', role: 'status' });
+            var again = MR.resendCode(function () { return (document.getElementById('si-email').value || '').trim(); }, note);
+            again.id = 'si-resend';
+            codeGroup.appendChild(MR.h('p', null, again));
+            codeGroup.appendChild(note);
+          }
           codeField.focus();
           submit.textContent = 'Sign in';
           MR.announce('A code has been sent to ' + email);
@@ -175,7 +182,7 @@
       MR.auth.verifyCode(email, codeField.value.trim(), keep).then(function () {
         offerPassword(function () { location.href = next; });
       }).catch(function () {
-        MR.errors.show(form, [{ id: 'si-code', message: 'That code was not accepted. Check it or ask for a new one.' }]);
+        MR.errors.show(form, [{ id: 'si-code', message: 'That code was not accepted. Check it, or send a new code.' }]);
       });
     });
   });
