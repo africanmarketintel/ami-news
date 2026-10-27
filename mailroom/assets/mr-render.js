@@ -1030,7 +1030,7 @@ footer(account, font, unsubscribe, preferences, brand) +
   }
 
   // The foot of the email, centred: a short "Follow us" heading and the links,
-  // who sent it and where, then Unsubscribe or Manage preferences. There is no
+  // who sent it and where, then Unsubscribe. There is no
   // line about the platform. An account on a plan that allows it may add a
   // line of its own, which is printed at the very bottom.
   var SOCIAL_ICON_BASE = 'https://ami.abta.africa/mailroom/assets/social/';
@@ -1076,8 +1076,7 @@ footer(account, font, unsubscribe, preferences, brand) +
       (brand.footer_note ? '<p style="margin:0 0 8px">' + esc(brand.footer_note) + '</p>\n' : '') +
       '<p style="margin:0 0 8px">You are receiving this because you subscribed to updates from ' +
       esc(account && account.name) + '.</p>\n' +
-      '<p style="margin:0"><a href="' + unsubscribe + '" style="' + link + '">Unsubscribe</a> or ' +
-      '<a href="' + preferences + '" style="' + link + '">Manage preferences</a></p>\n' +
+      '<p style="margin:0"><a href="' + unsubscribe + '" style="' + link + '">Unsubscribe</a></p>\n' +
       '</td></tr>\n' +
       (credit ? '<tr><td align="center" style="padding-top:14px;' + fine + '">' + credit + '</td></tr>\n' : '') +
       '</table></td></tr>';

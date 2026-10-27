@@ -112,9 +112,6 @@
 
       wrap.appendChild(form);
       wrap.appendChild(MR.h('p', { class: 'dr-small', text: 'Your address is held by the sender, with ABTA as its service provider. You can ask either of us for a copy of what is held or for it to be deleted.' }));
-      wrap.appendChild(MR.h('p', null,
-        MR.h('a', { id: 'mr-prefs-hub-link', href: 'hub.html?token=' + encodeURIComponent(MR.qs('token') || ''),
-                    text: 'See everyone on AMI Mailroom who emails you' })));
 
       function act(body, message) {
         if (MR.cfg.demo) { MR.banner(wrap, 'Preview only', 'Nothing was changed.'); return; }
