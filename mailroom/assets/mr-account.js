@@ -67,7 +67,7 @@
 
   /* ---------------- the postal address ----------------
      Printed in the footer of every email. The law in the UK and the US asks
-     for one, so a campaign cannot be sent without it. It could only be set
+     for one, so a sender without one is warned before sending. It could only be set
      when the account was created, so an account made with a placeholder had
      no way to fix it. */
   function addressBox(account) {
@@ -75,7 +75,7 @@
     var box = MR.h('div', { class: 'mr-aside', id: 'mr-address-box' },
       MR.h('h2', { class: 'dr-h', text: 'Postal address' }),
       MR.h('p', { class: 'dr-small', text: missing
-        ? 'Your account has no postal address yet. Every marketing email has to carry one, so you cannot send until you add it.'
+        ? 'Optional. In some countries the law requires a postal address in marketing email to people in that country. You can send without one, but add it if any of your readers are in a country with this rule.'
         : 'Printed in the footer of every email, after your organisation name. Use an address where post reaches you: a street address, or a PO box or private mailbox that is registered to you.' }));
     var area = MR.h('textarea', { class: 'dr-textarea', id: 'mr-address', rows: '3' });
     area.value = missing ? '' : String(account.postal_address || '');
@@ -1424,16 +1424,19 @@
         .then(function (r) {
           progress.textContent = '';
           // Confirmation page, not a cleared form. See MR.done.
-          var main = document.getElementById('main') || form.parentNode;
+          // The page's own container, not <main>: replacing <main> removes the
+          // wrapper that gives the page its width and side padding.
+          var main = document.querySelector('.mr-import') || form.parentNode;
+          var first = newList && MR.qs('start') === '1';
           MR.done(main, {
             title: newList && MR.qs('start') === '1' ? 'Step 1 of 3 done: your subscribers are added' : 'Import finished',
             lead: r.added + (r.added === 1 ? ' address added to' : ' addresses added to'),
             detail: listName || 'your list',
-            next: [
+            next: (first ? ['Next is step 2 of 3: write your email. Step 3 is sending it.'] : []).concat([
               'The addresses are on the list now and can be mailed.',
               'How you said they were collected is saved against each one, with today\u2019s date, so every person has a record of their own.',
               'Addresses blocked on the platform or on your account were left off: addresses that do not exist, spam reports and requests to stop all AMI Mailroom email. Anyone who had unsubscribed from your list stays unsubscribed.'
-            ],
+            ]),
             actions: [
               ['campaign.html?list=' + encodeURIComponent(listId) + (MR.qs('start') === '1' ? '&start=1' : ''), 'Write your email'],
               ['lists.html', 'Back to your lists'],

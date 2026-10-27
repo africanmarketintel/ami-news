@@ -1499,6 +1499,10 @@
       }
       list.appendChild(h('dt', { text: 'Logo' }));
       list.appendChild(h('dd', { text: brand.logo_url ? 'Set' : 'Not set yet' }));
+      // The footer draws an icon for each social page set on the Brand page.
+      var icons = (brand.social_links || []).filter(function (l) { return l && l.url; }).length;
+      list.appendChild(h('dt', { text: 'Social icons' }));
+      list.appendChild(h('dd', { text: icons ? icons + ' shown in the footer' : 'None set yet. Add them on the Brand page' }));
       swatch('Accent colour', hexOk(brand.accent_colour) ? brand.accent_colour : '');
       swatch('Button colour', hexOk(brand.button_colour) ? brand.button_colour : '');
       lib.appendChild(list);
