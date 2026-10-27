@@ -74,6 +74,7 @@
       domains = (MR.sampleDomains || []).filter(function (d) { return d.status === 'verified'; });
       savedBlocks = MR.sampleSavedBlocks || [];
       replyAddresses = [DEMO_CAMPAIGN.reply_to];
+      pickDefaultDomain();
       defaultList();
       render();
       return;
@@ -98,15 +99,7 @@
       if (res[1] && res[1][0]) campaign = res[1][0];
       return ensureAlias();
     }).then(function () {
-      if (!campaign.id && !campaign.sending_domain_id) {
-        // The account's chosen default, then its own domain, then the alias
-        // made for it, then anything else that is verified.
-        var preferred = domains.filter(function (d) { return d.is_default; })[0] ||
-          domains.filter(function (d) { return d.kind === 'own_domain'; })[0] ||
-          domains.filter(function (d) { return d.kind === 'address'; })[0] ||
-          domains.filter(function (d) { return d.kind === 'alias'; })[0] || domains[0];
-        if (preferred) campaign.sending_domain_id = preferred.id;
-      }
+      pickDefaultDomain();
       if (!campaign.from_name) campaign.from_name = account.name;
       defaultList();
       if (!campaign.reply_to) {
@@ -172,6 +165,18 @@
     }
 
     // The domain this campaign will leave from, or null for the shared address.
+    // The account's chosen default, then its own domain, then the address
+    // confirmed by a click, then the alias made for it, then anything else
+    // that is verified.
+    function pickDefaultDomain() {
+      if (campaign.sending_domain_id) return;
+      var preferred = domains.filter(function (d) { return d.is_default; })[0] ||
+        domains.filter(function (d) { return d.kind === 'own_domain'; })[0] ||
+        domains.filter(function (d) { return d.kind === 'address'; })[0] ||
+        domains.filter(function (d) { return d.kind === 'alias'; })[0] || domains[0];
+      if (preferred) campaign.sending_domain_id = preferred.id;
+    }
+
     function chosenDomain() {
       return domains.filter(function (d) { return d.id === campaign.sending_domain_id; })[0] || null;
     }
@@ -194,7 +199,7 @@
       var address = d ? d.from_local + '@' + d.domain
         : (account.sender_local || 'mailroom') + '@mail.abta.africa';
       return { name: String(campaign.from_name || '').trim() || account.name, address: address,
-        own: !!d && d.kind === 'own_domain', alias: !!d && d.kind === 'alias', address: !!d && d.kind === 'address',
+        own: !!d && d.kind === 'own_domain', alias: !!d && d.kind === 'alias', exact: !!d && d.kind === 'address',
         sub: !!d && d.kind === 'abta_subdomain' };
     }
 
@@ -261,11 +266,16 @@
       form.appendChild(field('c-from', 'From name', campaign.from_name, function (v) { campaign.from_name = v; refresh(); showSender(); },
         'Your organisation name. It appears in front of the sending address below.'));
 
-      var domainSelect = MR.h('select', { class: 'dr-select', id: 'c-domain' },
-        MR.h('option', {
+      // The shared address is only offered when the account has nothing else.
+      // Every account is given an address built from its own, so in practice
+      // this is the fallback for a campaign saved before that existed.
+      var domainSelect = MR.h('select', { class: 'dr-select', id: 'c-domain' });
+      if (!domains.length || !campaign.sending_domain_id) {
+        domainSelect.appendChild(MR.h('option', {
           value: '', selected: !campaign.sending_domain_id,
           text: 'The shared sending address'
         }));
+      }
       domains.forEach(function (d) {
         domainSelect.appendChild(MR.h('option', {
           value: d.id, selected: campaign.sending_domain_id === d.id,
@@ -297,7 +307,7 @@
         seeNote.textContent = '';
         if (r.own) {
           seeNote.appendChild(document.createTextNode('This is your own address.'));
-        } else if (r.address) {
+        } else if (r.exact) {
           seeNote.appendChild(document.createTextNode(
             'This is the exact address you confirmed. Replies reach ' + (campaign.reply_to || 'your reply address') + '. Your domain has not signed these emails, so some inboxes may treat them with caution. '));
           seeNote.appendChild(MR.h('a', { href: 'domain.html', text: 'Add your domain to sign them' }));
