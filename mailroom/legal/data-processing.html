@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://*.supabase.co https://open.er-api.com; form-action 'self'; base-uri 'self'; object-src 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta name="robots" content="noindex, nofollow">
-<meta name="description" content="Data processing terms for AMI Mailroom.">
+<meta name="description" content="How ABTA processes subscriber data on behalf of senders using AMI Mailroom.">
 <title>Data processing terms – AMI Mailroom</title>
 <link rel="stylesheet" href="../assets/mr.css">
 <link rel="stylesheet" href="../assets/mr-ami.css">
@@ -31,39 +30,55 @@
 </header>
 
 <main id="main">
-
 <div class="dr-width dr-narrow">
   <nav class="dr-breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">AMI Mailroom</a> <span>Data processing terms</span></nav>
   <h1>Data processing terms</h1>
-  <p class="dr-caption">Version 0.1 draft · 14 September 2026</p>
-    <div class="dr-plain-terms">
+  <p class="dr-caption">Version 1.0 · Effective 28 October 2026</p>
+  <div class="dr-plain-terms">
     <h2>In plain terms</h2>
-    <p>Your subscribers are your data. ABTA processes it only to send what you ask it to send, keeps it secure, and hands it back or deletes it when you leave.</p>
+    <p>Your subscribers are your data. ABTA processes it only to send what you ask it to send, keeps it secure, tells you quickly if something goes wrong, and hands it back or deletes it when you leave.</p>
   </div>
-  <h2>1. Roles</h2>
-  <p>For subscriber data uploaded by a sender, the sender is the controller and ABTA is the processor.</p>
-  <p>For sender account data, and for platform-wide suppression records, ABTA is the controller in its own right.</p>
-  <h2>2. Subject matter and duration</h2>
-  <p>Processing lasts for as long as the sender has an account, and for the retention periods set out below.</p>
-  <p>The processing is: storing subscriber records, segmenting them, sending campaigns, recording delivery events, and handling unsubscribes.</p>
-  <h2>3. Types of data and people</h2>
-  <p>Contact details and preferences of the sender’s subscribers: name, email address, organisation, country, chosen topics and frequency, and the record of their consent.</p>
-  <p>No special category data may be uploaded to AMI Mailroom.</p>
+  <h2>1. Scope and roles</h2>
+  <p>These terms are part of the <a href="sender-terms.html">terms for senders</a> and apply whenever African Business Trade Association Limited (“ABTA”) processes personal data on behalf of a sender (“you”). They are written to meet Article 28 of the UK GDPR and the equivalent rules in the EU GDPR.</p>
+  <p>For subscriber data that you upload or collect through AMI Mailroom, you are the controller and ABTA is your processor.</p>
+  <p>For sender account data, for platform-wide suppression records and for what it needs to detect abuse and protect the service, ABTA is a controller in its own right. This is described in the <a href="privacy-notice.html">privacy policy</a>.</p>
+  <h2>2. What the processing is</h2>
+  <p><strong>Subject matter and purpose:</strong> storing subscriber records, organising them into lists and segments, sending campaigns you create, recording delivery events and handling unsubscribes.</p>
+  <p><strong>Duration:</strong> for as long as you have an account, and for the retention periods in section 8.</p>
+  <p><strong>People:</strong> your subscribers and the contacts you upload.</p>
+  <p><strong>Types of data:</strong> name, email address, organisation, country, chosen topics and frequency, the record of how and when the person joined, and delivery events for each email (delivered, bounced, reported as spam, link clicked, unsubscribed). No special category data may be uploaded to AMI Mailroom.</p>
+  <h2>3. Your instructions</h2>
+  <p>ABTA will process personal data only on your documented instructions. These terms, your use of the platform and the settings you choose are your instructions. ABTA will tell you if it believes an instruction breaches data protection law.</p>
+  <p>You must make sure you have a lawful basis for the processing, that your subscribers have been given the information the law requires, and that your instructions comply with the law.</p>
   <h2>4. ABTA’s obligations</h2>
-  <p>Process only on the sender’s documented instructions, which these terms and use of the platform constitute.</p>
-  <p>Keep the data secure, with access limited to staff who need it.</p>
-  <p>Assist the sender with subscriber requests, and with any consultation or breach notification the sender must make.</p>
-  <p>Tell the sender without undue delay on becoming aware of a personal data breach affecting their data.</p>
+  <p>ABTA will make sure that everyone who can access the data is bound by a duty of confidence and has access only where they need it.</p>
+  <p>ABTA will keep the data secure, using measures appropriate to the risk. These include access limited to staff who need it, separation of each sender’s data from other senders’, encryption of data in transit.</p>
+  <p>ABTA will help you respond to requests from people exercising their rights, and with any data protection impact assessment or consultation with a regulator that concerns your use of the platform, taking into account the information ABTA holds.</p>
+  <p>ABTA will tell you without undue delay, and in any event within 48 hours, after becoming aware of a personal data breach affecting your data. The notice will describe what happened, the data and people affected where known and what ABTA is doing about it.</p>
   <h2>5. Sub-processors</h2>
-  <p>ABTA uses providers for cloud hosting and database services, and for email delivery. A current list is available on request, and ABTA will tell senders before adding or replacing one.</p>
+  <p>You give ABTA general authority to use the sub-processors below. ABTA has a contract with each that requires the same level of protection as these terms, and remains responsible for their performance.</p>
+  <div class="dr-table-wrap"><table class="dr-table"><caption class="dr-visually-hidden">Sub-processors used by AMI Mailroom</caption><thead><tr><th scope="col">Sub-processor</th><th scope="col">What it does</th><th scope="col">Where</th></tr></thead><tbody><tr><td>Supabase</td><td>Database, sign-in and server functions. Holds your account, lists, subscribers, campaigns and delivery records.</td><td>Given on request</td></tr><tr><td>Amazon Web Services (Amazon SES)</td><td>Delivers your campaigns and reports whether each was delivered, bounced or reported as spam.</td><td>Stockholm, Sweden (eu-north-1)</td></tr><tr><td>GitHub (Pages)</td><td>Serves the AMI Mailroom web pages. It does not hold subscriber data.</td><td>Provider’s global network</td></tr></tbody></table></div>
+  <p>Photo and GIF search, where you choose to use it, sends only the search words you type to the image provider (Pexels, Unsplash, Pixabay or Giphy). It does not send subscriber data.</p>
+  <p>ABTA will give you at least 30 days’ notice by email before adding or replacing a sub-processor. If you object on reasonable data protection grounds, you can close your account within the notice period and your data will be returned and deleted under section 8.</p>
+  <p>ABTA will give you the location of each sub-processor’s servers, and a copy of the safeguards that apply, on request to <a href="mailto:ami@abta.africa">ami@abta.africa</a>.</p>
   <h2>6. International transfers</h2>
-  <p>Data may be processed outside the United Kingdom. Where it is, ABTA relies on appropriate safeguards.</p>
+  <p>ABTA is based in the United Kingdom. Some sub-processors store or process data outside the United Kingdom, including in the European Economic Area and the United States.</p>
+  <p>ABTA will transfer personal data only where the transfer is covered by UK adequacy regulations or by an appropriate safeguard recognised by UK law, such as the International Data Transfer Agreement or the UK Addendum to the EU standard contractual clauses. Where your data is subject to the EU GDPR, the EU standard contractual clauses apply in the same way.</p>
   <h2>7. Suppression records</h2>
-  <p>When someone unsubscribes or complains, ABTA keeps their address in a suppression record so that no sender mails them again. That record is kept indefinitely, as the only way to honour the request, and holds nothing beyond the address, the reason and the date.</p>
+  <p>When someone unsubscribes, a sender’s emails to an address bounce permanently, or someone reports a campaign as spam, ABTA keeps the address in a suppression record so that it is not mailed again. The record holds the address, the reason and the date, and nothing else.</p>
+  <p>ABTA keeps suppression records for as long as is needed to honour the person’s request. This is the only way to do so, because deleting the address would allow it to be mailed again. ABTA is the controller of these records.</p>
   <h2>8. Return and deletion</h2>
-  <p>On request, or when an account closes, ABTA returns the sender’s subscriber data in a portable format and deletes it, except the suppression records above and what it must keep by law.</p>
-  <h2>9. Audit</h2>
-  <p>ABTA will provide the information needed to show compliance with these terms, and allow an audit on reasonable notice.</p>
+  <p>You can export your subscriber data at any time from your account.</p>
+  <p>Send and delivery records are deleted 24 months after they were created. When an account is closed, ABTA deletes the subscriber data, lists, send and delivery records, drafts, images and saved blocks for that account straight away. Sent campaigns stay in the archive unless you ask for them to be removed.</p>
+  <p>Data may stay in the backups of a sub-processor until they expire in the ordinary way. It is not used for any other purpose in that time.</p>
+  <p>ABTA may keep personal data where the law requires it, and the suppression records described above.</p>
+  <h2>9. Audit and information</h2>
+  <p>ABTA will give you the information you reasonably need to show that these terms are being followed, and will allow audits, including inspections, by you or an auditor you appoint, on reasonable notice and during working hours, no more than once a year unless a breach has occurred or a regulator requires it. You bear the cost.</p>
+  <h2>10. Regulators and requests</h2>
+  <p>If ABTA receives a request or complaint about your subscribers’ data directly, it will tell you promptly and will not respond except to say that it has passed it on, unless the law requires otherwise or you have asked it to.</p>
+  <h2>11. Liability, law and changes</h2>
+  <p>Liability under these terms is subject to the limits in the <a href="sender-terms.html">terms for senders</a>. They are governed by the law of England and Wales.</p>
+  <p>ABTA may update these terms where the law or its practice changes, by giving senders at least 30 days’ notice by email. The version and date at the top show which one applies.</p>
 </div>
 </main>
 <footer class="dr-footer">
