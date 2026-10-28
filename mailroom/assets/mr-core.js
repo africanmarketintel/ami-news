@@ -277,6 +277,7 @@
     disposable_domains: 'A list you imported contained throwaway addresses, which were skipped.',
     large_import: 'A large list was imported into a new account, which is worth a look before it is mailed.',
     rates_rising: 'Complaints or bounces on a recent campaign were higher than usual. Another like it and sending stops.',
+    complaints_warning: 'Readers are reporting a campaign as spam at more than 0.1 per cent. Sending stops above 0.2 per cent.',
     domain_awaiting_dns: 'A sending subdomain is waiting for ABTA to publish its DNS records.',
     schedule_failed: 'A scheduled campaign could not be sent when its time came, and has gone back to the sender as a draft.',
     high_complaints: 'Complaints or bounces on a recent campaign were above the limit, so sending from that domain has stopped.'

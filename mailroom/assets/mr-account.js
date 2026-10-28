@@ -785,7 +785,7 @@
         card('Delivered', MR.number(delivered),
              recipients ? MR.percent(delivered, recipients) + ' of everything queued' : 'Nothing queued yet'),
         card('Complaint rate', MR.percent(complaints, recipients),
-             'Sending is suspended above 0.3%')));
+             'Sending stops above 0.2%')));
 
       if (account.status === 'suspended') {
         MR.banner(wrap, 'Sending suspended', account.suspension_reason || 'Contact ami@abta.africa.', 'important');

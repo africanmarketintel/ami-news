@@ -192,7 +192,7 @@
             text: MR.percent(c.bounced, c.recipients)
           })),
           MR.h('td', null, MR.h('span', {
-            class: 'dr-tag dr-tag--' + (complaintRate > 0.003 ? 'red' : complaintRate > 0.001 ? 'yellow' : 'green'),
+            class: 'dr-tag dr-tag--' + (complaintRate > 0.002 ? 'red' : complaintRate > 0.001 ? 'yellow' : 'green'),
             text: MR.percent(c.complained, c.recipients)
           })),
           MR.h('td', { text: MR.percent(c.unsubscribed, c.recipients) })));
@@ -200,7 +200,7 @@
       wrap.appendChild(section('Recent campaigns', recent.length
         ? table(['Campaign', 'Recipients', 'Delivered', 'Bounces', 'Complaints', 'Unsubscribes'], rBody)
         : MR.h('p', { class: 'dr-empty', text: 'Nothing sent yet.' })));
-      wrap.appendChild(MR.h('p', { class: 'dr-small', text: 'Mailbox providers expect complaints below 0.3 per cent. An account passing that, or 5 per cent hard bounces, is suspended automatically the day after the campaign. Reinstating an account lets it send again straight away, so be sure the problem is fixed.' }));
+      wrap.appendChild(MR.h('p', { class: 'dr-small', text: 'A warning is raised above 0.1 per cent complaints on a campaign. Sending stops above 0.2 per cent once a campaign has at least two complaints, and above 5 per cent hard bounces. Gmail and Yahoo treat 0.3 per cent as the ceiling. Reinstating an account lets it send again straight away, so be sure the problem is fixed.' }));
 
       /* ---- suspended ---- */
       var suspBody = MR.h('tbody');
