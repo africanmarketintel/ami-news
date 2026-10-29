@@ -396,3 +396,45 @@ html.mr-studio-on body > *:not(.mr-studio):not(dialog) { display: none !importan
 
 .mr-studio__two { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin-bottom: .9rem; }
 .mr-studio__two .dr-form-group { margin-bottom: 0; }
+
+
+/* ==========================================================================
+   Phones (under 700 pixels)
+   The email takes the width of the screen. The panel becomes a sheet along
+   the bottom: its three tabs are always showing, and the rest rises when a
+   tab is pressed or a block is tapped. Dragging does not work by touch, so
+   the drag handle is hidden; Move up and Move down do the same job.
+   ========================================================================== */
+@media (max-width: 700px) {
+  .mr-studio__bar { gap: .25rem; padding: 0 .5rem; min-height: 52px; overflow-x: auto; }
+  .mr-studio__home span, .mr-studio__title, .mr-studio__status, .mr-studio__seg { display: none; }
+  .mr-studio__home { padding: .35rem; }
+  .mr-studio__btn { height: 38px; padding: 0 .65rem; font-size: .8125rem; }
+  .mr-studio__iconbtn { width: 38px; height: 38px; }
+
+  .mr-studio__body { position: relative; }
+  .mr-studio__main { padding: 0 6px; }
+  .mr-studio__stage { padding: 8px 0 calc(var(--mrs-sheet, 56px) + 24px); }
+  .mr-studio.is-sheet-open { --mrs-sheet: 46vh; }
+  .mr-studio__notes { padding: 0 .25rem; }
+
+  .mr-studio__panel {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; width: auto; max-height: 46vh;
+    border-left: 0; border-top: 1px solid var(--mrs-line); border-radius: 16px 16px 0 0;
+    background: #fff; box-shadow: 0 -6px 20px rgba(0,0,0,.14);
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+  .mr-studio.is-sheet-open .mr-studio__panel { height: 46vh; }
+  .mr-studio:not(.is-sheet-open) .mr-studio__panel .mr-studio__pane { display: none; }
+  .mr-studio.is-keyboard .mr-studio__panel { display: none; }
+  .mr-studio__rail { padding: 0 .25rem; background: #fff; border-radius: 16px 16px 0 0; }
+  .mr-studio__railbtn { min-height: 52px; padding: .6rem .25rem; }
+  .mr-studio__pane { padding: .75rem 1rem 1.5rem; }
+  .mr-studio__tiles { gap: .4rem; }
+  /* The sheet has Move up, Move down, Duplicate and Remove, so the small bar over the block is not needed. */
+  .mr-studio__tools { display: none !important; }
+  .mr-studio__tiny { width: 40px; height: 40px; }
+}
+@media (max-width: 360px) {
+  .mr-studio__redo { display: none; }
+}

@@ -113,7 +113,7 @@
     var campaign = o.campaign;
     var PARTS = MR.editorParts;
     var saved = o.saved || [];
-    var state = { sel: null, device: 'desktop', rail: 'content', tab: 'blocks', btab: 'block', adding: false, dirty: false, savedAt: null, saving: false };
+    var state = { sel: null, sheet: false, device: 'desktop', rail: 'content', tab: 'blocks', btab: 'block', adding: false, dirty: false, savedAt: null, saving: false };
     var hist = { stack: [], i: -1 };
     var map = [];                       // one entry per top-level block row
     var byRow = new Map();              // table row -> { path, block, tr }
@@ -152,7 +152,7 @@
     });
     titleEl.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); titleEl.blur(); } });
     var undoBtn = h('button', { type: 'button', class: 'mr-studio__iconbtn', 'aria-label': 'Undo', title: 'Undo', onclick: undo }, icon('undo'));
-    var redoBtn = h('button', { type: 'button', class: 'mr-studio__iconbtn', 'aria-label': 'Redo', title: 'Redo', onclick: redo }, icon('redo'));
+    var redoBtn = h('button', { type: 'button', class: 'mr-studio__iconbtn mr-studio__redo', 'aria-label': 'Redo', title: 'Redo', onclick: redo }, icon('redo'));
     var statusEl = h('span', { class: 'mr-studio__status', role: 'status', 'aria-live': 'polite' });
     var deskBtn = h('button', { type: 'button', class: 'mr-studio__iconbtn', 'aria-label': 'Desktop width', title: 'Desktop width', 'aria-pressed': 'true', onclick: function () { setDevice('desktop'); } }, icon('desktop'));
     var phoneBtn = h('button', { type: 'button', class: 'mr-studio__iconbtn', 'aria-label': 'Phone width', title: 'Phone width', 'aria-pressed': 'false', onclick: function () { setDevice('phone'); } }, icon('phone'));
@@ -180,7 +180,12 @@
     function railBtn(key, label) {
       var b = h('button', {
         type: 'button', class: 'mr-studio__railbtn', 'aria-pressed': 'false',
-        onclick: function () { state.rail = key; state.sel = null; state.adding = false; placeSel(); renderPanels(); renderRail(); drawOutline(); }
+        onclick: function () {
+          // On a phone the same tab pressed twice closes the sheet again.
+          var wasOpen = narrow() && state.sheet && state.rail === key && state.sel === null;
+          state.rail = key; state.sel = null; state.adding = false; placeSel(); renderPanels(); renderRail(); drawOutline();
+          if (narrow()) setSheet(!wasOpen);
+        }
       }, icon(key, 20), h('span', { text: label }));
       railBtns[key] = b;
       return b;
@@ -216,6 +221,38 @@
 
     root.appendChild(bar);
     root.appendChild(h('div', { class: 'mr-studio__body' }, main, panel));
+
+    /* ---------------- phones ----------------
+       Under 700 pixels the panel becomes a sheet along the bottom: the three
+       tabs are always showing, and the sheet rises when a tab is pressed or a
+       block is tapped, and drops when the email is tapped outside any block.
+       The email takes the width of the screen, so what is edited is what a
+       phone reader gets. While the keyboard is up the sheet steps aside. */
+    var narrowQuery = window.matchMedia ? window.matchMedia('(max-width: 700px)') : null;
+    function narrow() { return !!(narrowQuery && narrowQuery.matches); }
+    function applySheet() {
+      root.classList.toggle('is-narrow', narrow());
+      root.classList.toggle('is-sheet-open', narrow() && state.sheet);
+    }
+    function setSheet(on) {
+      state.sheet = !!on;
+      applySheet();
+      fit();
+      placeSel();
+      if (state.sheet && state.sel !== null) setTimeout(scrollToSel, 40);
+    }
+    function onNarrowChange() { applySheet(); fit(); placeSel(); }
+    if (narrowQuery) {
+      if (narrowQuery.addEventListener) narrowQuery.addEventListener('change', onNarrowChange);
+      else if (narrowQuery.addListener) narrowQuery.addListener(onNarrowChange);
+    }
+    function onKeyboard() {
+      var vv = window.visualViewport;
+      root.classList.toggle('is-keyboard', !!(narrow() && vv && vv.height < window.innerHeight * 0.75));
+      placeSel();
+    }
+    if (window.visualViewport) window.visualViewport.addEventListener('resize', onKeyboard);
+    applySheet();
 
     /* ---------------- history ---------------- */
     function snap() {
@@ -1680,7 +1717,8 @@
     function fit() {
       var doc = frame.contentDocument;
       if (!doc || !doc.body) return;
-      var wide = state.device === 'desktop' ? Math.max(WIDTHS.desktop, MR.resolveStyle(campaign.style).width + 60) : WIDTHS[state.device];
+      var wide = narrow() ? Math.max(260, main.clientWidth - 12)
+        : state.device === 'desktop' ? Math.max(WIDTHS.desktop, MR.resolveStyle(campaign.style).width + 60) : WIDTHS[state.device];
       frame.style.width = wide + 'px';
       var height = Math.ceil(doc.body.getBoundingClientRect().height);
       if (height > 0) frame.style.height = height + 'px';
@@ -1717,8 +1755,12 @@
       var r = e.tr.getBoundingClientRect();
       var top = frame.offsetTop + r.top;
       var m = main;
-      if (top < m.scrollTop + 60 || top + r.height > m.scrollTop + m.clientHeight - 20) {
-        m.scrollTo({ top: Math.max(0, top - 80), behavior: 'smooth' });
+      // On a phone the sheet covers the foot of the screen, so the block has to
+      // stay above it.
+      var covered = narrow() && state.sheet ? panel.offsetHeight : 0;
+      var room = m.clientHeight - covered;
+      if (top < m.scrollTop + 60 || top + r.height > m.scrollTop + room - 20) {
+        m.scrollTo({ top: Math.max(0, top - (covered ? 60 : 80)), behavior: 'smooth' });
       }
     }
 
@@ -1766,6 +1808,7 @@
       renderPanels();
       drawOutline();
       placeSel();
+      if (narrow()) setSheet(state.sel !== null);
       if (state.sel !== null && !quiet) scrollToSel();
     }
 
@@ -2374,6 +2417,11 @@
         document.removeEventListener('visibilitychange', onHide);
         window.removeEventListener('online', onOnline);
         window.removeEventListener('resize', onResize);
+        if (window.visualViewport) window.visualViewport.removeEventListener('resize', onKeyboard);
+        if (narrowQuery) {
+          if (narrowQuery.removeEventListener) narrowQuery.removeEventListener('change', onNarrowChange);
+          else if (narrowQuery.removeListener) narrowQuery.removeListener(onNarrowChange);
+        }
         document.removeEventListener('keydown', onKey);
         document.removeEventListener('click', onDocClick);
         document.removeEventListener('dragend', endDrag);

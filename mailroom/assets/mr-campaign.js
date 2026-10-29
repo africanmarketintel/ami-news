@@ -511,12 +511,12 @@
     }
 
     /* ---------------- the studio ----------------
-       The full-screen editor (mr-studio.js). It needs room: a panel, the
-       email and a bar. It is laid out well from 700 pixels wide, which takes in
-       a tablet held upright. On a narrower screen, or with ?classic=1 on the
-       address, the stacked editor above is used instead, and says so. */
+       The full-screen editor (mr-studio.js). On a phone it shows the email at
+       the width of the screen and raises a sheet from the bottom for the
+       settings of whatever is tapped. With ?classic=1 on the address, the
+       stacked editor above is used instead. */
     function studioWanted() {
-      return !!(MR.studio && MR.editorParts && !MR.qs('classic') && window.innerWidth >= 700);
+      return !!(MR.studio && MR.editorParts && !MR.qs('classic'));
     }
 
     // Where a message goes: the studio's own space when it is open, because
