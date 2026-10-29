@@ -197,3 +197,9 @@
    the display the button and table classes set. */
 .mr-subs [hidden] { display: none !important; }
 .mr-subs .dr-input { max-width: 28rem; }
+
+/* A long sample address in the sign-up list is one word with no spaces, so it
+   has to be allowed to break or the page scrolls sideways on a phone. */
+.mr-ticks li { overflow-wrap: anywhere; }
+/* The same for any long address or link inside a paragraph or list item. */
+main p, main li { overflow-wrap: anywhere; }
