@@ -192,3 +192,8 @@
 .hm-shot__frame { position: absolute; top: 0; left: 0; width: 700px; height: 1500px; border: 0; transform-origin: top left; pointer-events: none; background: #fff; box-shadow: 0 6px 22px rgba(0, 0, 0, .18); }
 .ma-scene--1 .hm-shot { width: 31%; flex: 0 0 31%; box-shadow: 0 6px 14px rgba(26, 18, 8, .18); }
 .ma-scene--1 .hm-shot.pick { animation: ma-pick 12s infinite; }
+
+/* The subscriber panel on the Lists page. The hidden attribute has to win over
+   the display the button and table classes set. */
+.mr-subs [hidden] { display: none !important; }
+.mr-subs .dr-input { max-width: 28rem; }

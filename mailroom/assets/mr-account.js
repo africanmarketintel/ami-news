@@ -1051,9 +1051,107 @@
         }
         box.appendChild(MR.h('p', { class: 'dr-small', text: 'Every address on this list also carries its own record of where it came from and the date it was added, which is the evidence a subscriber or a regulator would be shown.' }));
       }
+      box.appendChild(subscriberPanel(list));
       box.appendChild(MR.h('p', null,
         MR.h('a', { class: 'dr-button dr-button--secondary', href: 'import.html?list=' + list.id, text: 'Import subscribers' })));
       return box;
+    }
+
+    // The addresses on one list. Opened on request, fifty at a time, newest
+    // first, with a search on the address. Nothing is loaded until it is
+    // opened, so a long list does not slow the page down.
+    function subscriberPanel(list) {
+      var PAGE = 50;
+      var STATUS = {
+        subscribed: 'Subscribed', unsubscribed: 'Unsubscribed', bounced: 'Bounced',
+        complained: 'Complained', pending: 'Pending'
+      };
+      var term = '';
+      var loaded = 0;
+      var started = false;
+      var timer = null;
+      var sid = 'mr-subs-' + list.id;
+
+      var wrap = MR.h('div', { class: 'mr-subs' });
+      var toggle = MR.h('button', {
+        type: 'button', class: 'dr-button dr-button--secondary', text: 'Show subscribers',
+        'aria-expanded': 'false', 'aria-controls': sid
+      });
+      var panel = MR.h('div', { id: sid, hidden: true });
+      var search = MR.h('input', {
+        class: 'dr-input', id: sid + '-q', type: 'search', autocomplete: 'off'
+      });
+      var note = MR.h('p', { class: 'dr-small', role: 'status' });
+      var body = MR.h('tbody');
+      var table = MR.h('table', { class: 'dr-table', 'aria-label': 'Addresses on ' + list.name },
+        MR.h('thead', null, MR.h('tr', null,
+          ['Email address', 'Name', 'Status', 'Added'].map(function (h) {
+            return MR.h('th', { scope: 'col', text: h });
+          }))),
+        body);
+      var tableWrap = MR.h('div', { class: 'dr-table-wrap' }, table);
+      var more = MR.h('button', {
+        type: 'button', class: 'dr-button dr-button--secondary', text: 'Show more', hidden: true
+      });
+
+      function load(reset) {
+        if (reset) { loaded = 0; body.textContent = ''; more.hidden = true; }
+        note.textContent = 'Loading…';
+        // The pattern is the typed text with the characters the filter
+        // treats as its own taken out, so a typed asterisk or bracket
+        // cannot change what is asked for.
+        var clean = term.replace(/[*,()\\%]/g, '').trim();
+        var path = 'mailroom_subscribers?select=email,full_name,organisation,status,created_at' +
+          '&list_id=eq.' + list.id +
+          (clean ? '&email=ilike.' + encodeURIComponent('*' + clean + '*') : '') +
+          '&order=created_at.desc,email.asc&limit=' + (PAGE + 1) + '&offset=' + loaded;
+        MR.api.select(path).then(function (rows) {
+          rows = rows || [];
+          var shown = rows.slice(0, PAGE);
+          shown.forEach(function (r) {
+            body.appendChild(MR.h('tr', null,
+              MR.h('td', { text: r.email }),
+              MR.h('td', { text: [r.full_name, r.organisation].filter(Boolean).join(', ') }),
+              MR.h('td', { text: STATUS[r.status] || r.status }),
+              MR.h('td', { text: MR.date(r.created_at) })));
+          });
+          loaded += shown.length;
+          more.hidden = rows.length <= PAGE;
+          if (!loaded) {
+            note.textContent = clean ? 'No address on this list matches that search.'
+                                     : 'There are no addresses on this list yet.';
+            tableWrap.hidden = true;
+          } else {
+            tableWrap.hidden = false;
+            note.textContent = 'Showing ' + MR.number(loaded) + (more.hidden ? '.' : ' so far, newest first.');
+          }
+        }).catch(function (err) {
+          console.error(err);
+          note.textContent = 'The addresses could not be loaded.';
+        });
+      }
+
+      toggle.addEventListener('click', function () {
+        var opening = panel.hidden;
+        panel.hidden = !opening;
+        toggle.setAttribute('aria-expanded', opening ? 'true' : 'false');
+        toggle.textContent = opening ? 'Hide subscribers' : 'Show subscribers';
+        if (opening && !started) { started = true; load(true); }
+      });
+      search.addEventListener('input', function () {
+        clearTimeout(timer);
+        timer = setTimeout(function () { term = search.value; load(true); }, 300);
+      });
+      more.addEventListener('click', function () { load(false); });
+
+      panel.appendChild(MR.h('p', null,
+        MR.h('label', { class: 'dr-label', for: sid + '-q', text: 'Search by email address' }), search));
+      panel.appendChild(note);
+      panel.appendChild(tableWrap);
+      panel.appendChild(MR.h('p', null, more));
+      wrap.appendChild(MR.h('p', null, toggle));
+      wrap.appendChild(panel);
+      return wrap;
     }
 
     function consentForm(list) {
