@@ -1,14 +1,16 @@
 /* ==========================================================================
    AMI Mailroom – the plan cards on the pricing page
 
-   The cards, their prices and the Monthly / Yearly switch are written into
-   pricing.html, so the page reads in full without scripts. This file only
-   makes the switch work and sends a chosen plan to checkout.
+   The cards, the table of volumes, their prices and the Monthly / Yearly
+   switch are written into pricing.html, so the page reads in full without
+   scripts. This file only makes the switches work, adds the volume slider
+   (built from the table, so there is one list of prices on the page) and
+   sends a chosen plan to checkout.
 
-   The prices on the cards are the same numbers as in mailroom_plans
-   (price_minor for a month, price_year_minor for a year). Checkout charges
-   the numbers in the database, so if one is changed there, change the card
-   here too: the data-month and data-year attributes, in pence.
+   The prices on the cards and in the table are the same numbers as in
+   mailroom_plans (price_minor for a month, price_year_minor for a year).
+   Checkout charges the numbers in the database, so if one is changed there,
+   change the page too: the data-month and data-year attributes, in pence.
    ========================================================================== */
 (function () {
   'use strict';
@@ -19,7 +21,7 @@
     var root = document.getElementById('mr-plan-cards');
     if (!root) return;
     var msg = document.getElementById('mr-pricing-msg');
-    var toggle = root.querySelector('.mr-bill');
+    var toggles = [].slice.call(root.querySelectorAll('.mr-bill'));
     var cards = [].slice.call(root.querySelectorAll('.mr-plancard[data-plan]'));
     var interval = 'month';
 
@@ -55,19 +57,61 @@
           note.textContent = 'Or ' + gbp(y) + ' a year: 12 months for the price of 11.';
         }
       });
-      [].slice.call(toggle.querySelectorAll('.mr-bill__btn')).forEach(function (b) {
-        b.setAttribute('aria-pressed', b.getAttribute('data-interval') === interval ? 'true' : 'false');
+      toggles.forEach(function (t) {
+        [].slice.call(t.querySelectorAll('.mr-bill__btn')).forEach(function (b) {
+          b.setAttribute('aria-pressed', b.getAttribute('data-interval') === interval ? 'true' : 'false');
+        });
       });
+      drawSlider();
     }
 
-    if (toggle) {
-      toggle.hidden = false;
-      toggle.addEventListener('click', function (e) {
+    toggles.forEach(function (t) {
+      t.hidden = false;
+      t.addEventListener('click', function (e) {
         var b = e.target.closest ? e.target.closest('.mr-bill__btn') : null;
         if (!b) return;
         interval = b.getAttribute('data-interval') === 'year' ? 'year' : 'month';
         draw();
       });
+    });
+
+    // The volume slider. Its steps are the rows of the table, so the table is
+    // the one list of volumes and prices; nothing is typed twice.
+    var rows = [].slice.call(root.querySelectorAll('#mr-volume-table tbody tr[data-plan]'));
+    var slider = document.getElementById('mr-slider');
+    var input = document.getElementById('mr-slider-input');
+    var steps = rows.map(function (r) {
+      return {
+        plan: r.getAttribute('data-plan'),
+        emails: parseInt(r.getAttribute('data-emails'), 10),
+        subs: parseInt(r.getAttribute('data-subs'), 10),
+        month: parseInt(r.getAttribute('data-month'), 10),
+        year: parseInt(r.getAttribute('data-year'), 10),
+        row: r
+      };
+    });
+    function count(n) { return n.toLocaleString('en-GB'); }
+    function drawSlider() {
+      if (!slider || !input || !steps.length) return;
+      var st = steps[parseInt(input.value, 10)] || steps[0];
+      var label = count(st.emails) + ' emails a month';
+      document.getElementById('mr-slider-emails').textContent = count(st.emails);
+      input.setAttribute('aria-valuetext', label);
+      document.getElementById('mr-slider-amount').textContent = gbp(interval === 'year' ? st.year : st.month);
+      document.getElementById('mr-slider-per').textContent = interval === 'year' ? ' a year' : ' a month';
+      document.getElementById('mr-slider-note').textContent = interval === 'year'
+        ? 'Paying monthly for a year costs ' + gbp(st.month * 12) + '.'
+        : 'Or ' + gbp(st.year) + ' a year: 12 months for the price of 11.';
+      document.getElementById('mr-slider-subs').textContent = count(st.subs) + ' subscribers held';
+      var go = document.getElementById('mr-slider-choose');
+      go.setAttribute('data-choose', st.plan);
+      go.textContent = 'Choose ' + label;
+      steps.forEach(function (x) { x.row.classList.toggle('mr-volume__row--on', x === st); });
+    }
+    if (slider && input && steps.length) {
+      input.max = String(steps.length - 1);
+      slider.hidden = false;
+      input.addEventListener('input', drawSlider);
     }
 
     function choose(plan, link) {

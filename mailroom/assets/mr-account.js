@@ -156,12 +156,12 @@
   // One line under the page title saying which plan the account is on, so it
   // is never necessary to open Settings to find out.
   function planLine(account) {
-    var names = { basic: 'Basic', plus: 'Plus', max: 'Max' };
     var line = MR.h('p', { class: 'mr-planline', id: 'mr-planline' });
     var code = account.plan_code;
-    if (names[code]) {
+    var label = MR.planLabel(code);
+    if (label) {
       var billed = account.billing_interval === 'year' ? ', billed yearly' : account.billing_interval === 'month' ? ', billed monthly' : '';
-      line.appendChild(MR.h('strong', { text: 'Your plan: ' + names[code] }));
+      line.appendChild(MR.h('strong', { text: 'Your plan: ' + label }));
       line.appendChild(document.createTextNode(billed + '. '));
       if (account.billing_status === 'past_due') {
         line.appendChild(MR.h('span', { class: 'mr-planline__warn', text: 'Your last payment did not go through. ' }));
@@ -184,10 +184,9 @@
     var box = MR.h('div', { class: 'mr-aside', id: 'mr-plan' },
       MR.h('h2', { class: 'dr-h', text: 'Your plan' }));
 
-    var PLAN_NAMES = { basic: 'Basic', plus: 'Plus', max: 'Max' };
     var billed = account.billing_interval === 'year' ? 'Billed yearly' : account.billing_interval === 'month' ? 'Billed monthly' : '';
     box.appendChild(MR.h('p', null,
-      MR.h('strong', { text: (plan && plan.name) || PLAN_NAMES[account.plan_code] || (account.plan_code === 'trial' ? 'Trial' : 'Your plan') }),
+      MR.h('strong', { text: (plan && plan.name) || MR.planLabel(account.plan_code) || (account.plan_code === 'trial' ? 'Trial' : 'Your plan') }),
       plan && plan.price_minor && !billed
         ? MR.h('span', { text: ' \u00b7 ' + (plan.currency || 'GBP') + ' ' +
             (plan.price_minor / 100).toFixed(2) + (plan.interval === 'year' ? ' a year' : ' a month') })
@@ -198,7 +197,7 @@
       box.appendChild(MR.h('p', { class: 'mr-trial' },
         MR.h('strong', { text: 'Your last payment did not go through' }),
         MR.h('span', { class: 'dr-small', text: ' Stripe will try the card again. To use a different card, choose Manage billing.' })));
-    } else if (account.billing_period_end && PLAN_NAMES[account.plan_code]) {
+    } else if (account.billing_period_end && MR.planLabel(account.plan_code)) {
       box.appendChild(MR.h('p', { class: 'dr-small', text: 'Your current payment period ends on ' + MR.date(account.billing_period_end) + '.' }));
     }
 
@@ -821,12 +820,11 @@
       // arrives the banner says which plan the account is on, so the member
       // can see the payment worked. It stays on the page; nothing reloads.
       if (MR.qs('checkout') === 'success' && !MR.cfg.demo) {
-        var PAID = { basic: 'Basic', plus: 'Plus', max: 'Max' };
         var pb = MR.banner(wrap, 'Payment received',
           'Your plan updates as soon as Stripe confirms the payment, usually within a minute. This page shows it here when it does.');
         var confirmed = function (a) {
-          var name = PAID[a.plan_code];
-          pb.querySelector('.dr-banner__title').textContent = 'Payment confirmed: you are on the ' + name + ' plan';
+          var name = MR.planLabel(a.plan_code);
+          pb.querySelector('.dr-banner__title').textContent = 'Payment confirmed: your plan is ' + name;
           var line = pb.querySelector('.dr-banner__content p');
           line.textContent = name + (a.billing_interval === 'year' ? ', billed yearly' : a.billing_interval === 'month' ? ', billed monthly' : '') +
             '. You can send up to ' + MR.number(a.monthly_send_limit) + ' emails a month to up to ' +
@@ -834,7 +832,7 @@
           line.appendChild(MR.h('a', { href: 'settings.html', text: 'See your plan' }));
           line.appendChild(document.createTextNode('.'));
         };
-        if (PAID[account.plan_code]) {
+        if (MR.planLabel(account.plan_code)) {
           confirmed(account);          // already confirmed by the time the page loaded
         } else {
           var looks = 0;
@@ -848,7 +846,7 @@
             setTimeout(function () {
               MR.api.select('mailroom_accounts?select=plan_code,billing_interval,monthly_send_limit,max_subscribers&id=eq.' + account.id).then(function (rows) {
                 var a = rows && rows[0];
-                if (a && PAID[a.plan_code]) { confirmed(a); return; }
+                if (a && MR.planLabel(a.plan_code)) { confirmed(a); return; }
                 look();
               }, look);
             }, 3000);
@@ -860,7 +858,7 @@
       var intent = MR.cfg.demo ? null : MR.billing.intent();
       if (intent && account.plan_code !== intent.plan && MR.qs('checkout') !== 'success') {
         var ib = MR.banner(wrap, 'Finish choosing your plan',
-          'You chose ' + intent.plan.charAt(0).toUpperCase() + intent.plan.slice(1) + ' (' + (intent.interval === 'year' ? 'yearly' : 'monthly') + ') on the pricing page.');
+          'You chose ' + MR.planLabel(intent.plan) + ' (' + (intent.interval === 'year' ? 'yearly' : 'monthly') + ') on the pricing page.');
         var go = MR.h('button', { type: 'button', class: 'dr-button', text: 'Continue to payment' });
         var gm = MR.h('p', { class: 'dr-small', role: 'status' });
         go.addEventListener('click', function () {

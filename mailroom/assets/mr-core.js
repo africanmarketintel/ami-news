@@ -797,6 +797,15 @@
                                           offer to finish the job
 
      Each returns a promise. A rejection carries a sentence a member can read. */
+  // The paid plans by code. Basic, Plus and Max are the cards on the pricing
+  // page; the step plans are the other volumes on its slider. One list, used by
+  // the pricing page and the account pages, so a plan is never unknown to one.
+  var PLAN_LABELS = {
+    basic: 'Basic', step20k: '20,000 emails a month', plus: 'Plus', step60k: '60,000 emails a month',
+    step80k: '80,000 emails a month', step100k: '100,000 emails a month', max: 'Max'
+  };
+  MR.planLabel = function (code) { return PLAN_LABELS[code] || null; };
+
   MR.billing = (function () {
     var KEY = 'mr_plan_intent';
     function say(err) {
@@ -833,7 +842,7 @@
       intent: function () {
         try {
           var v = JSON.parse(sessionStorage.getItem(KEY) || 'null');
-          return v && /^(basic|plus|max)$/.test(v.plan) ? v : null;
+          return v && PLAN_LABELS[v.plan] ? v : null;
         } catch (e) { return null; }
       },
       forget: function () { try { sessionStorage.removeItem(KEY); } catch (e) { /* private mode */ } }
