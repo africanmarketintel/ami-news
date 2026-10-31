@@ -126,7 +126,8 @@
         list.appendChild(MR.h('li', { class: 'mr-camps__row' },
           MR.h('div', null,
             MR.h('p', { class: 'mr-camps__name' }, MR.h('a', { href: 'campaign.html?id=' + encodeURIComponent(c.id), text: MR.campaignName(c) })),
-            MR.h('p', { class: 'mr-camps__sub', text: when + (c.ref ? ' · ' + c.ref : '') })),
+            MR.h('p', { class: 'mr-camps__sub', text: when + (c.ref ? ' · ' + c.ref : '') }),
+            MR.h('p', { class: 'mr-camps__actions' }, MR.duplicateButton(c.id))),
           stats));
       });
       moreBtn.hidden = !state.more;
@@ -135,7 +136,7 @@
       var filtered = state.status || state.q;
       status.textContent = n
         ? (state.more ? n + ' campaigns shown. There are more.' : n === 1 ? '1 campaign.' : n + ' campaigns.')
-        : filtered ? 'No campaign matches. Clear the search or choose All.' : 'You have not written a campaign yet.';
+        : filtered ? 'No campaign matches. Clear the search or choose All.' : 'You have not written a campaign yet. Choose Write a campaign and start from one of the ready-made layouts.';
     }
 
     if (MR.cfg.demo) { state.tz = (MR.sampleAccount && MR.sampleAccount.timezone) || state.tz; load(true); return; }

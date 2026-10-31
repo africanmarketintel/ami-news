@@ -740,6 +740,49 @@
     });
   };
 
+  /* ---------------- using a campaign again ----------------
+     A sent campaign cannot be edited, but its words, layout and settings can
+     be copied into a new draft. The copy keeps the subject, preview text,
+     sender, list, design and blocks. It does not keep anything about the send
+     itself: no schedule, no figures, no share link, no archive reference.
+
+       MR.duplicateCampaign(id)     resolves with the new draft's row
+       MR.duplicateButton(id, kind) a button that copies the campaign and opens
+                                    the copy in the editor; kind 'button' draws
+                                    it as a button, otherwise as a link */
+  MR.duplicateCampaign = function (id) {
+    return MR.api.select('mailroom_campaigns?select=*&id=eq.' + encodeURIComponent(id)).then(function (rows) {
+      var c = rows && rows[0];
+      if (!c) throw new Error('That campaign could not be found.');
+      var copy = {
+        account_id: c.account_id, list_id: c.list_id || null,
+        sending_domain_id: c.sending_domain_id || null, subject: c.subject,
+        preheader: c.preheader || null, from_name: c.from_name, reply_to: c.reply_to,
+        body_blocks: c.body_blocks, font_family: c.font_family || 'sans',
+        header_colour: c.header_colour || null, show_browser_link: !!c.show_browser_link,
+        status: 'draft', created_by: MR.auth.userId()
+      };
+      if (c.style) copy.style = c.style;
+      return MR.api.insert('mailroom_campaigns', copy);
+    }).then(function (rows) { return rows[0]; });
+  };
+  MR.duplicateButton = function (id, kind) {
+    var label = 'Duplicate';
+    var b = MR.h('button', { type: 'button', class: kind === 'button' ? 'dr-button' : 'mr-linkbtn', text: kind === 'button' ? 'Duplicate and edit' : label });
+    var idle = b.textContent;
+    b.addEventListener('click', function () {
+      b.disabled = true; b.textContent = 'Copying\u2026';
+      MR.duplicateCampaign(id).then(function (row) {
+        location.href = 'campaign.html?id=' + encodeURIComponent(row.id) + '&copied=1';
+      }, function (err) {
+        b.disabled = false; b.textContent = idle;
+        MR.announce('The campaign could not be copied. ' + (err && err.message ? err.message : ''));
+        window.alert('The campaign could not be copied. Please try again.');
+      });
+    });
+    return b;
+  };
+
   /* ---------------- paying for a plan ----------------
      Card payment is Stripe's own page; this only starts it. The plan changes
      when Stripe confirms the payment to the mailroom-stripe function, never

@@ -47,6 +47,12 @@
     if (!wrap) return;
 
     var campaignId = MR.qs('id');
+    // Adds the Duplicate and edit button to the Already sent notice.
+    function sentNote(box) {
+      var content = box && box.querySelector('.dr-banner__content');
+      if (content && campaign.id && !MR.cfg.demo) content.appendChild(MR.h('p', null, MR.duplicateButton(campaign.id, 'button')));
+      return box;
+    }
     var account = null;
     var brand = null;
     var campaign = {
@@ -459,7 +465,9 @@
           ' ACME Limited looks at held campaigns within one working day. Fix the problem and it will be released.', 'important');
       }
       if (campaign.status === 'sent') {
-        MR.banner(wrap, 'Already sent', 'This campaign has been sent, so it can no longer be edited.');
+        sentNote(MR.banner(wrap, 'Already sent', 'This campaign has been sent, so it can no longer be edited. To use it again, make a copy and change what you need.'));
+      } else if (MR.qs('copied') === '1' && campaign.status === 'draft') {
+        MR.banner(wrap, 'Copy of an earlier campaign', 'Change the subject line and anything else you need, then send it. Nothing has been sent.');
       }
       if (account && account.status === 'suspended') {
         MR.banner(wrap, 'Sending suspended', account.suspension_reason || 'Contact ami@abta.africa.', 'important');
@@ -599,7 +607,9 @@
           ' Held campaigns are looked at within one working day. Fix the problem and it will be released.', 'important'));
       }
       if (campaign.status === 'sent') {
-        keep(MR.banner(studio.notes(), 'Already sent', 'This campaign has been sent, so it can no longer be edited.'));
+        keep(sentNote(MR.banner(studio.notes(), 'Already sent', 'This campaign has been sent, so it can no longer be edited. To use it again, make a copy and change what you need.')));
+      } else if (MR.qs('copied') === '1' && campaign.status === 'draft') {
+        keep(MR.banner(studio.notes(), 'Copy of an earlier campaign', 'Change the subject line and anything else you need, then send it. Nothing has been sent.'));
       }
       if (account && account.status === 'suspended') {
         keep(MR.banner(studio.notes(), 'Sending suspended', account.suspension_reason || 'Contact support to find out why.', 'important'));

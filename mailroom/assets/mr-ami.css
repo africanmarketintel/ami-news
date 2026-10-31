@@ -227,3 +227,15 @@ main p, main li { overflow-wrap: anywhere; }
 .mr-plancard .dr-button[aria-disabled="true"] { opacity: .6; cursor: progress; }
 .mr-pricing__msg { min-height: 1.5em; }
 .mr-pricing__msg--important { color: #b42318; font-weight: 600; }
+
+/* ---- a text-style button for small actions in a list (Duplicate) ---- */
+.mr-linkbtn {
+  min-height: 44px; padding: .5rem 0; border: 0; background: none; font: inherit; font-size: .9375rem;
+  color: var(--link, #0b6b3a); text-decoration: underline; cursor: pointer;
+}
+.mr-linkbtn:disabled { opacity: .6; cursor: progress; }
+.mr-camps__actions { margin: 0; }
+
+/* ---- the plan line under the dashboard title ---- */
+.mr-planline { margin: .25rem 0 0; font-size: 1rem; }
+.mr-planline__warn { color: #b42318; font-weight: 600; }

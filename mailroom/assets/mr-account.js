@@ -153,6 +153,33 @@
       MR.h('span', { class: 'dr-small', text: MR.number(used) + ' of ' + MR.number(allowed) + ' (' + pct + '%)' }));
   }
 
+  // One line under the page title saying which plan the account is on, so it
+  // is never necessary to open Settings to find out.
+  function planLine(account) {
+    var names = { basic: 'Basic', plus: 'Plus', max: 'Max' };
+    var line = MR.h('p', { class: 'mr-planline', id: 'mr-planline' });
+    var code = account.plan_code;
+    if (names[code]) {
+      var billed = account.billing_interval === 'year' ? ', billed yearly' : account.billing_interval === 'month' ? ', billed monthly' : '';
+      line.appendChild(MR.h('strong', { text: 'Your plan: ' + names[code] }));
+      line.appendChild(document.createTextNode(billed + '. '));
+      if (account.billing_status === 'past_due') {
+        line.appendChild(MR.h('span', { class: 'mr-planline__warn', text: 'Your last payment did not go through. ' }));
+      }
+      line.appendChild(MR.h('a', { href: 'settings.html#mr-plan', text: 'See your plan and manage billing' }));
+    } else if (code === 'trial') {
+      var ends = account.trial_ends_at ? new Date(account.trial_ends_at) : null;
+      var days = ends ? Math.max(0, Math.ceil((ends - new Date()) / 86400000)) : null;
+      line.appendChild(MR.h('strong', { text: 'Your plan: free trial' }));
+      line.appendChild(document.createTextNode(
+        days === null ? '. ' : days > 0 ? ', ' + days + (days === 1 ? ' day' : ' days') + ' left. ' : ', ended. Sending is switched off. '));
+      line.appendChild(MR.h('a', { href: 'pricing.html#plans', text: 'Choose a plan' }));
+    } else {
+      return document.createTextNode('');
+    }
+    return line;
+  }
+
   function planBox(account, plan, usage) {
     var box = MR.h('div', { class: 'mr-aside', id: 'mr-plan' },
       MR.h('h2', { class: 'dr-h', text: 'Your plan' }));
@@ -779,7 +806,8 @@
       wrap.appendChild(MR.h('div', { class: 'mr-page-head' },
         MR.h('div', null,
           MR.h('h1', { text: 'Your mailroom' }),
-          MR.h('p', { class: 'dr-lead', text: 'Everything you have sent, and what it did.' })),
+          MR.h('p', { class: 'dr-lead', text: 'Everything you have sent, and what it did.' }),
+          planLine(account)),
         MR.h('div', { class: 'mr-page-head__action' },
           MR.h('a', { class: 'dr-button', href: 'campaign.html', text: 'Write a campaign' }))));
 
@@ -959,12 +987,29 @@
 
       // Anything the automatic checks flagged against this account, so the
       // member can fix it rather than wait to be told.
+      // Notes about the wording of a single campaign stop being useful once that
+      // campaign has gone, so they are dropped from this list then. Each note
+      // that stays names the campaign it is about and links to it.
+      var CONTENT_ONLY = { subject_shouting: 1, subject_punctuation: 1, image_no_alt: 1, mostly_images: 1 };
       (MR.cfg.demo ? Promise.resolve([])
-        : MR.api.select('mailroom_risk_flags?select=kind,severity,detail,created_at&resolved_at=is.null&order=created_at.desc&limit=5'))
+        : MR.api.select('mailroom_risk_flags?select=kind,severity,detail,created_at,campaign_id,mailroom_campaigns(id,subject,status,ref)&resolved_at=is.null&order=created_at.desc&limit=20'))
         .then(function (flags) {
-          if (!flags || !flags.length) return;
+          flags = (flags || []).filter(function (f) {
+            var c = f.mailroom_campaigns;
+            return !(c && c.status === 'sent' && CONTENT_ONLY[f.kind]);
+          }).slice(0, 5);
+          if (!flags.length) return;
           var ul = MR.h('ul', { class: 'dr-list' });
-          flags.forEach(function (f) { ul.appendChild(MR.h('li', { text: MR.FLAG_TEXT[f.kind] || f.kind })); });
+          flags.forEach(function (f) {
+            var c = f.mailroom_campaigns;
+            var li = MR.h('li', null);
+            if (c && c.id) {
+              li.appendChild(MR.h('a', { href: 'campaign.html?id=' + encodeURIComponent(c.id), text: MR.campaignName(c) }));
+              li.appendChild(document.createTextNode(': '));
+            }
+            li.appendChild(document.createTextNode(MR.FLAG_TEXT[f.kind] || f.kind));
+            ul.appendChild(li);
+          });
           var box = MR.h('div', { class: 'mr-aside' },
             MR.h('h2', { class: 'dr-h', text: 'Things to look at' }), ul);
           wrap.insertBefore(box, wrap.querySelector('.mr-section-head') || null);
@@ -1027,7 +1072,8 @@
         list.appendChild(MR.h('li', { class: 'mr-camps__row' },
           MR.h('div', null,
             MR.h('p', { class: 'mr-camps__name' }, MR.h('a', { href: 'campaign.html?id=' + c.id, text: MR.campaignName(c) })),
-            MR.h('p', { class: 'mr-camps__sub', text: when + (c.ref ? ' \u00b7 ' + c.ref : '') })),
+            MR.h('p', { class: 'mr-camps__sub', text: when + (c.ref ? ' \u00b7 ' + c.ref : '') }),
+            MR.h('p', { class: 'mr-camps__actions' }, MR.duplicateButton(c.id))),
           stats));
       });
       wrap.appendChild(list);
