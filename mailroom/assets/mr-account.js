@@ -789,23 +789,43 @@
       }
 
       // Back from Stripe. The plan changes when Stripe tells the mailroom, which
-      // is normally a few seconds, so look for it for a short while and then
-      // show the page again with the new plan on it.
+      // is normally a few seconds, so look for it for a short while. When it
+      // arrives the banner says which plan the account is on, so the member
+      // can see the payment worked. It stays on the page; nothing reloads.
       if (MR.qs('checkout') === 'success' && !MR.cfg.demo) {
-        MR.banner(wrap, 'Payment received',
-          'Your plan updates as soon as Stripe confirms the payment, usually within a minute. This page refreshes by itself when it does.');
-        var looks = 0;
-        (function look() {
-          looks += 1;
-          if (looks > 20) return;
-          setTimeout(function () {
-            MR.api.select('mailroom_accounts?select=plan_code,billing_status&id=eq.' + account.id).then(function (rows) {
-              var a = rows && rows[0];
-              if (a && a.plan_code !== account.plan_code) { location.href = 'account.html'; return; }
-              look();
-            }, look);
-          }, 3000);
-        })();
+        var PAID = { basic: 'Basic', plus: 'Plus', max: 'Max' };
+        var pb = MR.banner(wrap, 'Payment received',
+          'Your plan updates as soon as Stripe confirms the payment, usually within a minute. This page shows it here when it does.');
+        var confirmed = function (a) {
+          var name = PAID[a.plan_code];
+          pb.querySelector('.dr-banner__title').textContent = 'Payment confirmed: you are on the ' + name + ' plan';
+          var line = pb.querySelector('.dr-banner__content p');
+          line.textContent = name + (a.billing_interval === 'year' ? ', billed yearly' : a.billing_interval === 'month' ? ', billed monthly' : '') +
+            '. You can send up to ' + MR.number(a.monthly_send_limit) + ' emails a month to up to ' +
+            MR.number(a.max_subscribers) + ' subscribers. ';
+          line.appendChild(MR.h('a', { href: 'settings.html', text: 'See your plan' }));
+          line.appendChild(document.createTextNode('.'));
+        };
+        if (PAID[account.plan_code]) {
+          confirmed(account);          // already confirmed by the time the page loaded
+        } else {
+          var looks = 0;
+          (function look() {
+            looks += 1;
+            if (looks > 20) {
+              pb.querySelector('.dr-banner__content p').textContent =
+                'Stripe has not confirmed the payment yet. Your plan will update as soon as it does. Check Settings in a few minutes, and email ami@abta.africa if it has not changed.';
+              return;
+            }
+            setTimeout(function () {
+              MR.api.select('mailroom_accounts?select=plan_code,billing_interval,monthly_send_limit,max_subscribers&id=eq.' + account.id).then(function (rows) {
+                var a = rows && rows[0];
+                if (a && PAID[a.plan_code]) { confirmed(a); return; }
+                look();
+              }, look);
+            }, 3000);
+          })();
+        }
       }
 
       // A plan picked on the pricing page before there was an account.
