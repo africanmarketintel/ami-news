@@ -54,74 +54,80 @@
         </ul>
         <a class="dr-button dr-button--secondary" href="create-account.html">Start the trial</a>
       </article>
-      <article class="mr-plancard" data-plan="basic" data-month="500" data-year="5500" aria-labelledby="pc-basic">
+      <article class="mr-plancard mr-plancard--band" data-band="basic" aria-labelledby="pc-basic">
         <h3 class="dr-h" id="pc-basic">Basic</h3>
-        <p class="mr-plancard__price"><span class="mr-plancard__amount">&pound;5</span><span class="mr-plancard__per"> a month</span></p>
+        <p class="mr-plancard__price"><span class="mr-plancard__from">From </span><span class="mr-plancard__amount">&pound;5</span><span class="mr-plancard__per"> a month</span></p>
         <p class="mr-plancard__note dr-small">Or &pound;55 a year: 12 months for the price of 11.</p>
+        <div class="mr-band" hidden>
+          <p class="mr-band__head"><label for="mr-band-basic">Emails a month</label> <output for="mr-band-basic" class="mr-band__emails">10,000</output></p>
+          <input type="range" id="mr-band-basic" class="mr-slider__input" min="0" max="3" step="1" value="0">
+          <p class="mr-band__ticks" aria-hidden="true"><span>10,000</span><span>40,000</span></p>
+        </div>
         <ul class="dr-list">
-          <li>10,000 emails a month</li>
-          <li>5,000 subscribers held</li>
+          <li class="mr-plancard__emails">10,000 to 40,000 emails a month</li>
+          <li class="mr-plancard__subs">5,000 to 20,000 subscribers held</li>
           <li>Your own sending domain</li>
+          <li>Email support</li>
         </ul>
-        <a class="dr-button" href="create-account.html" data-choose="basic">Choose Basic</a>
+        <a class="dr-button" href="create-account.html" data-choose="basic_10k">Choose Basic</a>
       </article>
-      <article class="mr-plancard" data-plan="plus" data-month="1200" data-year="13200" aria-labelledby="pc-plus">
+      <article class="mr-plancard mr-plancard--band" data-band="plus" aria-labelledby="pc-plus">
         <h3 class="dr-h" id="pc-plus">Plus</h3>
-        <p class="mr-plancard__price"><span class="mr-plancard__amount">&pound;12</span><span class="mr-plancard__per"> a month</span></p>
-        <p class="mr-plancard__note dr-small">Or &pound;132 a year: 12 months for the price of 11.</p>
+        <p class="mr-plancard__price"><span class="mr-plancard__from">From </span><span class="mr-plancard__amount">&pound;16</span><span class="mr-plancard__per"> a month</span></p>
+        <p class="mr-plancard__note dr-small">Or &pound;176 a year: 12 months for the price of 11.</p>
+        <div class="mr-band" hidden>
+          <p class="mr-band__head"><label for="mr-band-plus">Emails a month</label> <output for="mr-band-plus" class="mr-band__emails">50,000</output></p>
+          <input type="range" id="mr-band-plus" class="mr-slider__input" min="0" max="4" step="1" value="0">
+          <p class="mr-band__ticks" aria-hidden="true"><span>50,000</span><span>150,000</span></p>
+        </div>
         <ul class="dr-list">
-          <li>40,000 emails a month</li>
-          <li>20,000 subscribers held</li>
+          <li class="mr-plancard__emails">50,000 to 150,000 emails a month</li>
+          <li class="mr-plancard__subs">30,000 to 90,000 subscribers held</li>
           <li>Your own sending domain</li>
+          <li>Priority email support</li>
         </ul>
-        <a class="dr-button" href="create-account.html" data-choose="plus">Choose Plus</a>
+        <a class="dr-button" href="create-account.html" data-choose="plus_50k">Choose Plus</a>
       </article>
-      <article class="mr-plancard" data-plan="max" data-month="2900" data-year="31900" aria-labelledby="pc-max">
+      <article class="mr-plancard mr-plancard--band" data-band="max" aria-labelledby="pc-max">
         <h3 class="dr-h" id="pc-max">Max</h3>
-        <p class="mr-plancard__price"><span class="mr-plancard__amount">&pound;29</span><span class="mr-plancard__per"> a month</span></p>
-        <p class="mr-plancard__note dr-small">Or &pound;319 a year: 12 months for the price of 11.</p>
+        <p class="mr-plancard__price"><span class="mr-plancard__from">From </span><span class="mr-plancard__amount">&pound;46</span><span class="mr-plancard__per"> a month</span></p>
+        <p class="mr-plancard__note dr-small">Or &pound;506 a year: 12 months for the price of 11.</p>
+        <div class="mr-band" hidden>
+          <p class="mr-band__head"><label for="mr-band-max">Emails a month</label> <output for="mr-band-max" class="mr-band__emails">200,000</output></p>
+          <input type="range" id="mr-band-max" class="mr-slider__input" min="0" max="4" step="1" value="0">
+          <p class="mr-band__ticks" aria-hidden="true"><span>200,000</span><span>500,000</span></p>
+        </div>
         <ul class="dr-list">
-          <li>120,000 emails a month</li>
-          <li>100,000 subscribers held</li>
+          <li class="mr-plancard__emails">200,000 to 500,000 emails a month</li>
+          <li class="mr-plancard__subs">150,000 to 375,000 subscribers held</li>
           <li>Your own sending domain</li>
+          <li>Priority email support</li>
         </ul>
-        <a class="dr-button" href="create-account.html" data-choose="max">Choose Max</a>
+        <a class="dr-button" href="create-account.html" data-choose="max_200k">Choose Max</a>
       </article>
     </div>
     <div class="mr-volume" id="mr-volume" aria-labelledby="mv-title">
-      <h3 class="dr-h" id="mv-title">Need a different amount?</h3>
-      <p>The three plans above are three of seven volumes. Every volume has every feature. Move the slider to the number of emails you send in a month, or read the table.</p>
-      <div class="mr-slider" id="mr-slider" hidden>
-        <p class="mr-slider__head"><label for="mr-slider-input">Emails you send a month</label> <output id="mr-slider-emails" for="mr-slider-input" class="mr-slider__emails">10,000</output></p>
-        <input type="range" id="mr-slider-input" class="mr-slider__input" min="0" max="6" step="1" value="0">
-        <div class="mr-slider__ticks" aria-hidden="true"><span>10,000</span><span>20,000</span><span>40,000</span><span>60,000</span><span>80,000</span><span>100,000</span><span>120,000</span></div>
-        <div class="mr-slider__result">
-          <div class="mr-bill" role="group" aria-label="Billing period for this volume">
-            <button type="button" class="mr-bill__btn" data-interval="month" aria-pressed="true">Monthly</button>
-            <button type="button" class="mr-bill__btn" data-interval="year" aria-pressed="false">Yearly <span class="mr-bill__save">1 month free</span></button>
-          </div>
-          <p class="mr-plancard__price"><span id="mr-slider-amount">&pound;5</span><span id="mr-slider-per" class="mr-plancard__per"> a month</span></p>
-          <p class="dr-small" id="mr-slider-note" role="status"></p>
-          <ul class="dr-list">
-            <li id="mr-slider-subs">5,000 subscribers held</li>
-            <li>Your own sending domain</li>
-            <li>Every feature on this page</li>
-          </ul>
-          <a class="dr-button" href="create-account.html" data-choose="basic" id="mr-slider-choose">Choose 10,000 emails a month</a>
-        </div>
-      </div>
+      <h3 class="dr-h" id="mv-title">Every volume and its price</h3>
+      <p>Each plan has its own slider. Move it to the number of emails you send in a month, or read the table. Every plan has every feature. Plans differ in volume, subscribers held and support. The price per 1,000 emails falls at every step.</p>
       <div class="dr-table-wrap">
       <table class="dr-table" id="mr-volume-table">
-        <caption class="dr-visually-hidden">Every volume, with its price</caption>
-        <thead><tr><th scope="col">Emails a month</th><th scope="col">Subscribers held</th><th scope="col">Monthly price</th><th scope="col">Yearly price</th><th scope="col">Choose</th></tr></thead>
+        <caption class="dr-visually-hidden">Every plan and volume, with its price</caption>
+        <thead><tr><th scope="col">Plan</th><th scope="col">Emails a month</th><th scope="col">Subscribers held</th><th scope="col">Monthly price</th><th scope="col">Yearly price</th><th scope="col">Choose</th></tr></thead>
         <tbody>
-        <tr data-plan="basic" data-emails="10000" data-subs="5000" data-month="500" data-year="5500"><th scope="row">10,000</th><td>5,000</td><td>&pound;5</td><td>&pound;55</td><td><a class="dr-button dr-button--secondary" href="create-account.html" data-choose="basic" aria-label="Choose 10,000 emails a month">Choose</a></td></tr>
-        <tr data-plan="step20k" data-emails="20000" data-subs="10000" data-month="800" data-year="8800"><th scope="row">20,000</th><td>10,000</td><td>&pound;8</td><td>&pound;88</td><td><a class="dr-button dr-button--secondary" href="create-account.html" data-choose="step20k" aria-label="Choose 20,000 emails a month">Choose</a></td></tr>
-        <tr data-plan="plus" data-emails="40000" data-subs="20000" data-month="1200" data-year="13200"><th scope="row">40,000</th><td>20,000</td><td>&pound;12</td><td>&pound;132</td><td><a class="dr-button dr-button--secondary" href="create-account.html" data-choose="plus" aria-label="Choose 40,000 emails a month">Choose</a></td></tr>
-        <tr data-plan="step60k" data-emails="60000" data-subs="30000" data-month="1700" data-year="18700"><th scope="row">60,000</th><td>30,000</td><td>&pound;17</td><td>&pound;187</td><td><a class="dr-button dr-button--secondary" href="create-account.html" data-choose="step60k" aria-label="Choose 60,000 emails a month">Choose</a></td></tr>
-        <tr data-plan="step80k" data-emails="80000" data-subs="50000" data-month="2200" data-year="24200"><th scope="row">80,000</th><td>50,000</td><td>&pound;22</td><td>&pound;242</td><td><a class="dr-button dr-button--secondary" href="create-account.html" data-choose="step80k" aria-label="Choose 80,000 emails a month">Choose</a></td></tr>
-        <tr data-plan="step100k" data-emails="100000" data-subs="75000" data-month="2600" data-year="28600"><th scope="row">100,000</th><td>75,000</td><td>&pound;26</td><td>&pound;286</td><td><a class="dr-button dr-button--secondary" href="create-account.html" data-choose="step100k" aria-label="Choose 100,000 emails a month">Choose</a></td></tr>
-        <tr data-plan="max" data-emails="120000" data-subs="100000" data-month="2900" data-year="31900"><th scope="row">120,000</th><td>100,000</td><td>&pound;29</td><td>&pound;319</td><td><a class="dr-button dr-button--secondary" href="create-account.html" data-choose="max" aria-label="Choose 120,000 emails a month">Choose</a></td></tr>
+        <tr data-plan="basic_10k" data-band="basic" data-emails="10000" data-subs="5000" data-month="500" data-year="5500"><td>Basic</td><th scope="row">10,000</th><td>5,000</td><td>&pound;5</td><td>&pound;55</td><td><a class="dr-button dr-button--secondary" href="create-account.html" data-choose="basic_10k" aria-label="Choose Basic with 10,000 emails a month">Choose</a></td></tr>
+        <tr data-plan="basic_20k" data-band="basic" data-emails="20000" data-subs="10000" data-month="900" data-year="9900"><td>Basic</td><th scope="row">20,000</th><td>10,000</td><td>&pound;9</td><td>&pound;99</td><td><a class="dr-button dr-button--secondary" href="create-account.html" data-choose="basic_20k" aria-label="Choose Basic with 20,000 emails a month">Choose</a></td></tr>
+        <tr data-plan="basic_30k" data-band="basic" data-emails="30000" data-subs="15000" data-month="1200" data-year="13200"><td>Basic</td><th scope="row">30,000</th><td>15,000</td><td>&pound;12</td><td>&pound;132</td><td><a class="dr-button dr-button--secondary" href="create-account.html" data-choose="basic_30k" aria-label="Choose Basic with 30,000 emails a month">Choose</a></td></tr>
+        <tr data-plan="basic_40k" data-band="basic" data-emails="40000" data-subs="20000" data-month="1400" data-year="15400"><td>Basic</td><th scope="row">40,000</th><td>20,000</td><td>&pound;14</td><td>&pound;154</td><td><a class="dr-button dr-button--secondary" href="create-account.html" data-choose="basic_40k" aria-label="Choose Basic with 40,000 emails a month">Choose</a></td></tr>
+        <tr data-plan="plus_50k" data-band="plus" data-emails="50000" data-subs="30000" data-month="1600" data-year="17600"><td>Plus</td><th scope="row">50,000</th><td>30,000</td><td>&pound;16</td><td>&pound;176</td><td><a class="dr-button dr-button--secondary" href="create-account.html" data-choose="plus_50k" aria-label="Choose Plus with 50,000 emails a month">Choose</a></td></tr>
+        <tr data-plan="plus_75k" data-band="plus" data-emails="75000" data-subs="45000" data-month="2100" data-year="23100"><td>Plus</td><th scope="row">75,000</th><td>45,000</td><td>&pound;21</td><td>&pound;231</td><td><a class="dr-button dr-button--secondary" href="create-account.html" data-choose="plus_75k" aria-label="Choose Plus with 75,000 emails a month">Choose</a></td></tr>
+        <tr data-plan="plus_100k" data-band="plus" data-emails="100000" data-subs="60000" data-month="2600" data-year="28600"><td>Plus</td><th scope="row">100,000</th><td>60,000</td><td>&pound;26</td><td>&pound;286</td><td><a class="dr-button dr-button--secondary" href="create-account.html" data-choose="plus_100k" aria-label="Choose Plus with 100,000 emails a month">Choose</a></td></tr>
+        <tr data-plan="plus_125k" data-band="plus" data-emails="125000" data-subs="75000" data-month="3100" data-year="34100"><td>Plus</td><th scope="row">125,000</th><td>75,000</td><td>&pound;31</td><td>&pound;341</td><td><a class="dr-button dr-button--secondary" href="create-account.html" data-choose="plus_125k" aria-label="Choose Plus with 125,000 emails a month">Choose</a></td></tr>
+        <tr data-plan="plus_150k" data-band="plus" data-emails="150000" data-subs="90000" data-month="3600" data-year="39600"><td>Plus</td><th scope="row">150,000</th><td>90,000</td><td>&pound;36</td><td>&pound;396</td><td><a class="dr-button dr-button--secondary" href="create-account.html" data-choose="plus_150k" aria-label="Choose Plus with 150,000 emails a month">Choose</a></td></tr>
+        <tr data-plan="max_200k" data-band="max" data-emails="200000" data-subs="150000" data-month="4600" data-year="50600"><td>Max</td><th scope="row">200,000</th><td>150,000</td><td>&pound;46</td><td>&pound;506</td><td><a class="dr-button dr-button--secondary" href="create-account.html" data-choose="max_200k" aria-label="Choose Max with 200,000 emails a month">Choose</a></td></tr>
+        <tr data-plan="max_250k" data-band="max" data-emails="250000" data-subs="190000" data-month="5600" data-year="61600"><td>Max</td><th scope="row">250,000</th><td>190,000</td><td>&pound;56</td><td>&pound;616</td><td><a class="dr-button dr-button--secondary" href="create-account.html" data-choose="max_250k" aria-label="Choose Max with 250,000 emails a month">Choose</a></td></tr>
+        <tr data-plan="max_300k" data-band="max" data-emails="300000" data-subs="225000" data-month="6500" data-year="71500"><td>Max</td><th scope="row">300,000</th><td>225,000</td><td>&pound;65</td><td>&pound;715</td><td><a class="dr-button dr-button--secondary" href="create-account.html" data-choose="max_300k" aria-label="Choose Max with 300,000 emails a month">Choose</a></td></tr>
+        <tr data-plan="max_400k" data-band="max" data-emails="400000" data-subs="300000" data-month="8200" data-year="90200"><td>Max</td><th scope="row">400,000</th><td>300,000</td><td>&pound;82</td><td>&pound;902</td><td><a class="dr-button dr-button--secondary" href="create-account.html" data-choose="max_400k" aria-label="Choose Max with 400,000 emails a month">Choose</a></td></tr>
+        <tr data-plan="max_500k" data-band="max" data-emails="500000" data-subs="375000" data-month="9900" data-year="108900"><td>Max</td><th scope="row">500,000</th><td>375,000</td><td>&pound;99</td><td>&pound;1,089</td><td><a class="dr-button dr-button--secondary" href="create-account.html" data-choose="max_500k" aria-label="Choose Max with 500,000 emails a month">Choose</a></td></tr>
         </tbody>
       </table>
       </div>
