@@ -246,12 +246,40 @@
       if (narrowQuery.addEventListener) narrowQuery.addEventListener('change', onNarrowChange);
       else if (narrowQuery.addListener) narrowQuery.addListener(onNarrowChange);
     }
+    /* When the keyboard is up for a block on the email, the sheet steps out of
+       the way. When it is up for a box inside the sheet (subject line, preview
+       text, sender), the sheet has to stay: it is lifted to sit just above the
+       keyboard, using the visible part of the screen, and the box is scrolled
+       into view. */
+    function typingInPanel() {
+      var a = document.activeElement;
+      return !!(a && panel.contains(a) && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName));
+    }
     function onKeyboard() {
       var vv = window.visualViewport;
-      root.classList.toggle('is-keyboard', !!(narrow() && vv && vv.height < window.innerHeight * 0.75));
+      var up = !!(narrow() && vv && vv.height < window.innerHeight * 0.75);
+      var inPanel = up && typingInPanel();
+      root.classList.toggle('is-keyboard', up && !inPanel);
+      root.classList.toggle('is-panel-typing', inPanel);
+      if (inPanel) {
+        var h2 = Math.round(vv.height * 0.6);
+        panel.style.top = Math.round(vv.offsetTop + vv.height - h2) + 'px';
+        panel.style.bottom = 'auto';
+        panel.style.height = h2 + 'px';
+        panel.style.maxHeight = h2 + 'px';
+        var a = document.activeElement;
+        setTimeout(function () { try { a.scrollIntoView({ block: 'center' }); } catch (e) { /* older browsers */ } }, 60);
+      } else {
+        panel.style.top = ''; panel.style.bottom = ''; panel.style.height = ''; panel.style.maxHeight = '';
+      }
       placeSel();
     }
-    if (window.visualViewport) window.visualViewport.addEventListener('resize', onKeyboard);
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', onKeyboard);
+      window.visualViewport.addEventListener('scroll', function () { if (root.classList.contains('is-panel-typing')) onKeyboard(); });
+    }
+    panel.addEventListener('focusin', function () { setTimeout(onKeyboard, 50); setTimeout(onKeyboard, 350); });
+    panel.addEventListener('focusout', function () { setTimeout(onKeyboard, 50); });
     applySheet();
 
     /* ---------------- history ---------------- */
