@@ -204,6 +204,16 @@
         link.textContent = label;
         if (r && r.updated) {
           say('Your plan has been changed. Stripe charges or credits the difference. It can take a minute to show on your account page.');
+          // Mark the new volume as the member's own straight away, so the
+          // button on it no longer offers a switch to the plan they are on.
+          var now = steps.filter(function (st) { return st.plan === plan; })[0];
+          if (member && now) {
+            member.step = now;
+            member.interval = interval;
+            member.account.plan_code = plan;
+            member.account.billing_interval = interval;
+            describe(member.account);
+          }
         }
         labels();
       }, function (err) {
