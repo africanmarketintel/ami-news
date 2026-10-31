@@ -740,6 +740,63 @@
     });
   };
 
+  /* ---------------- paying for a plan ----------------
+     Card payment is Stripe's own page; this only starts it. The plan changes
+     when Stripe confirms the payment to the mailroom-stripe function, never
+     because a browser says it has paid.
+
+       MR.billing.start('plus', 'year')   goes to Stripe, or changes the plan on
+                                          an existing subscription
+       MR.billing.portal()                Stripe's page for card, invoices and
+                                          cancelling
+       MR.billing.remember / intent       a plan chosen before signing in, kept
+                                          for this tab so the account page can
+                                          offer to finish the job
+
+     Each returns a promise. A rejection carries a sentence a member can read. */
+  MR.billing = (function () {
+    var KEY = 'mr_plan_intent';
+    function say(err) {
+      var code = String(err && err.message || '');
+      var map = {
+        payments_not_open: 'Online payment is not open yet. To move onto a plan, email ami@abta.africa.',
+        not_signed_in: 'Sign in first, then choose a plan.',
+        account_required: 'Create your sender account first, then choose a plan.',
+        not_allowed: 'That account is not yours to change.',
+        account_closed: 'This account is closed.',
+        unknown_plan: 'That plan does not exist.',
+        plan_not_for_sale: 'That plan cannot be bought online yet. Email ami@abta.africa.',
+        already_on_this_plan: 'Your account is already on this plan.',
+        no_billing_yet: 'There is no billing to manage yet. Choose a plan first.',
+        subscription_not_found: 'Your subscription could not be found. Email ami@abta.africa.'
+      };
+      return map[code] || 'That could not be started. Please try again shortly.';
+    }
+    function go(body) {
+      return MR.fn('mailroom-billing', body).then(function (r) {
+        if (r && r.url) { location.href = r.url; return { leaving: true }; }
+        return r || {};
+      }, function (err) { throw new Error(say(err)); });
+    }
+    return {
+      message: say,
+      start: function (plan, interval) {
+        return go({ action: 'checkout', plan: plan, interval: interval === 'year' ? 'year' : 'month' });
+      },
+      portal: function () { return go({ action: 'portal' }); },
+      remember: function (plan, interval) {
+        try { sessionStorage.setItem(KEY, JSON.stringify({ plan: plan, interval: interval === 'year' ? 'year' : 'month' })); } catch (e) { /* private mode */ }
+      },
+      intent: function () {
+        try {
+          var v = JSON.parse(sessionStorage.getItem(KEY) || 'null');
+          return v && /^(basic|plus|max)$/.test(v.plan) ? v : null;
+        } catch (e) { return null; }
+      },
+      forget: function () { try { sessionStorage.removeItem(KEY); } catch (e) { /* private mode */ } }
+    };
+  })();
+
   /* ---------------- task finished ----------------
      A completed task ends on a confirmation, not back on its own form. Added
      14 October 2026: the import page reported its counts in a banner and then

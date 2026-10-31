@@ -203,3 +203,27 @@
 .mr-ticks li { overflow-wrap: anywhere; }
 /* The same for any long address or link inside a paragraph or list item. */
 main p, main li { overflow-wrap: anywhere; }
+
+/* ---- pricing: plan cards and the Monthly / Yearly switch ---- */
+.mr-bill { display: inline-flex; gap: 2px; padding: 3px; margin: .25rem 0 1.25rem; border-radius: 999px; background: #f1f1ee; }
+.mr-bill[hidden] { display: none; }
+.mr-bill__btn {
+  min-height: 44px; padding: .4rem 1.1rem; border: 0; border-radius: 999px; background: transparent;
+  font: inherit; color: inherit; cursor: pointer;
+}
+.mr-bill__btn[aria-pressed="true"] { background: #fff; font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,.18); }
+.mr-bill__save { margin-left: .35rem; font-size: .8125rem; font-weight: 600; color: #0b6b3a; }
+.mr-plancards { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1rem; margin: 0 0 1rem; }
+.mr-plancard {
+  display: flex; flex-direction: column; padding: 1.25rem; background: #fff;
+  border: 1px solid var(--border-light, #d0d2d3); border-radius: 16px;
+}
+.mr-plancard h3 { margin: 0 0 .25rem; }
+.mr-plancard__price { margin: .25rem 0; font-size: 2rem; font-weight: 700; line-height: 1.1; }
+.mr-plancard__per { font-size: .9375rem; font-weight: 400; }
+.mr-plancard__note { min-height: 2.6em; margin: 0 0 .75rem; }
+.mr-plancard ul { flex: 1; margin: 0 0 1.25rem; }
+.mr-plancard .dr-button { align-self: flex-start; }
+.mr-plancard .dr-button[aria-disabled="true"] { opacity: .6; cursor: progress; }
+.mr-pricing__msg { min-height: 1.5em; }
+.mr-pricing__msg--important { color: #b42318; font-weight: 600; }

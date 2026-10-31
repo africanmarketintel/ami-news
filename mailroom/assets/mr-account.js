@@ -157,12 +157,23 @@
     var box = MR.h('div', { class: 'mr-aside', id: 'mr-plan' },
       MR.h('h2', { class: 'dr-h', text: 'Your plan' }));
 
+    var PLAN_NAMES = { basic: 'Basic', plus: 'Plus', max: 'Max' };
+    var billed = account.billing_interval === 'year' ? 'Billed yearly' : account.billing_interval === 'month' ? 'Billed monthly' : '';
     box.appendChild(MR.h('p', null,
-      MR.h('strong', { text: (plan && plan.name) || (account.plan_code === 'trial' ? 'Trial' : 'Your plan') }),
-      plan && plan.price_minor
+      MR.h('strong', { text: (plan && plan.name) || PLAN_NAMES[account.plan_code] || (account.plan_code === 'trial' ? 'Trial' : 'Your plan') }),
+      plan && plan.price_minor && !billed
         ? MR.h('span', { text: ' \u00b7 ' + (plan.currency || 'GBP') + ' ' +
             (plan.price_minor / 100).toFixed(2) + (plan.interval === 'year' ? ' a year' : ' a month') })
-        : MR.h('span', { class: 'dr-small', text: account.plan_code === 'trial' ? ' \u00b7 14-day trial, no card' : '' })));
+        : MR.h('span', { class: 'dr-small', text: account.plan_code === 'trial' ? ' \u00b7 14-day trial, no card' : (billed ? ' \u00b7 ' + billed : '') })));
+
+    // A paid plan: when it renews, and what to do if the card failed.
+    if (account.billing_status === 'past_due') {
+      box.appendChild(MR.h('p', { class: 'mr-trial' },
+        MR.h('strong', { text: 'Your last payment did not go through' }),
+        MR.h('span', { class: 'dr-small', text: ' Stripe will try the card again. To use a different card, choose Manage billing.' })));
+    } else if (account.billing_period_end && PLAN_NAMES[account.plan_code]) {
+      box.appendChild(MR.h('p', { class: 'dr-small', text: 'Your current payment period ends on ' + MR.date(account.billing_period_end) + '.' }));
+    }
 
     // The 14-day trial. Say what happens when it ends in the same breath as
     // saying it is running: a trial nobody saw coming to an end is how you
@@ -170,21 +181,18 @@
     if (account.plan_code === 'trial' && account.trial_ends_at) {
       var ends = new Date(account.trial_ends_at);
       var daysLeft = Math.max(0, Math.ceil((ends - new Date()) / 86400000));
-      var contact = MR.h('a', { href: 'mailto:ami@abta.africa', text: 'ami@abta.africa' });
       if (daysLeft > 0) {
         box.appendChild(MR.h('p', { class: 'mr-trial', id: 'mr-trial' },
           MR.h('strong', { text: daysLeft === 1 ? 'Last day of your trial'
                                                 : daysLeft + ' days left of your trial' }),
           MR.h('span', { class: 'dr-small' },
             ' Your trial includes up to 1,000 emails in total and ends on ' + MR.date(account.trial_ends_at) +
-            '. After that sending stops until you choose a plan. Your account, lists and campaigns stay as they are. To choose a plan, email ',
-            contact, '.')));
+            '. After that sending stops until you choose a plan. Your account, lists and campaigns stay as they are.')));
       } else {
         box.appendChild(MR.h('p', { class: 'mr-trial', id: 'mr-trial' },
           MR.h('strong', { text: 'Your trial has ended' }),
           MR.h('span', { class: 'dr-small' },
-            ' Sending is switched off. Your account, lists and campaigns stay as they are. To choose a plan and start sending again, email ',
-            contact, '.')));
+            ' Sending is switched off. Your account, lists and campaigns stay as they are. Choose a plan to start sending again.')));
       }
     }
 
@@ -194,10 +202,29 @@
     box.appendChild(bar(usage.subscribers, account.max_subscribers));
 
     box.appendChild(MR.h('p', { class: 'dr-small', text: 'Whichever of the two you reach first is the one that stops a send. Sending stops at the limit rather than continuing and billing you, so nothing arrives as a surprise.' }));
-    box.appendChild(MR.h('p', null, MR.h('a', {
-      class: 'dr-button dr-button--secondary', href: 'pricing.html',
-      text: 'What the plans include'
-    })));
+    var actions = MR.h('p', null);
+    if (account.plan_code === 'trial') {
+      actions.appendChild(MR.h('a', { class: 'dr-button', href: 'pricing.html#plans', text: 'Choose a plan' }));
+      actions.appendChild(document.createTextNode(' '));
+    }
+    if (account.stripe_customer_id && !MR.cfg.demo) {
+      var manage = MR.h('button', { type: 'button', class: 'dr-button' + (account.plan_code === 'trial' ? ' dr-button--secondary' : ''), text: 'Manage billing' });
+      var manageMsg = MR.h('p', { class: 'dr-small', role: 'status' });
+      manage.addEventListener('click', function () {
+        manage.disabled = true; manageMsg.textContent = '';
+        MR.billing.portal().then(function () { /* the browser is leaving for Stripe */ }, function (err) {
+          manage.disabled = false; manageMsg.textContent = err.message;
+        });
+      });
+      actions.appendChild(manage);
+      actions.appendChild(document.createTextNode(' '));
+      actions.appendChild(MR.h('a', { class: 'dr-button dr-button--secondary', href: 'pricing.html', text: 'What the plans include' }));
+      box.appendChild(actions);
+      box.appendChild(manageMsg);
+    } else {
+      actions.appendChild(MR.h('a', { class: 'dr-button dr-button--secondary', href: 'pricing.html', text: 'What the plans include' }));
+      box.appendChild(actions);
+    }
     return box;
   }
 
@@ -759,6 +786,49 @@
       if (justCreated) {
         MR.banner(wrap, 'Account created',
           'Your next step is a list. A list can only be mailed once you have recorded how its addresses were collected, which is also your consent record. There is no daily limit: a monthly quota and the complaint thresholds are what hold a sender back.');
+      }
+
+      // Back from Stripe. The plan changes when Stripe tells the mailroom, which
+      // is normally a few seconds, so look for it for a short while and then
+      // show the page again with the new plan on it.
+      if (MR.qs('checkout') === 'success' && !MR.cfg.demo) {
+        MR.banner(wrap, 'Payment received',
+          'Your plan updates as soon as Stripe confirms the payment, usually within a minute. This page refreshes by itself when it does.');
+        var looks = 0;
+        (function look() {
+          looks += 1;
+          if (looks > 20) return;
+          setTimeout(function () {
+            MR.api.select('mailroom_accounts?select=plan_code,billing_status&id=eq.' + account.id).then(function (rows) {
+              var a = rows && rows[0];
+              if (a && a.plan_code !== account.plan_code) { location.href = 'account.html'; return; }
+              look();
+            }, look);
+          }, 3000);
+        })();
+      }
+
+      // A plan picked on the pricing page before there was an account.
+      var intent = MR.cfg.demo ? null : MR.billing.intent();
+      if (intent && account.plan_code !== intent.plan && MR.qs('checkout') !== 'success') {
+        var ib = MR.banner(wrap, 'Finish choosing your plan',
+          'You chose ' + intent.plan.charAt(0).toUpperCase() + intent.plan.slice(1) + ' (' + (intent.interval === 'year' ? 'yearly' : 'monthly') + ') on the pricing page.');
+        var go = MR.h('button', { type: 'button', class: 'dr-button', text: 'Continue to payment' });
+        var gm = MR.h('p', { class: 'dr-small', role: 'status' });
+        go.addEventListener('click', function () {
+          go.disabled = true; gm.textContent = '';
+          MR.billing.start(intent.plan, intent.interval).then(function (r) {
+            if (r && r.leaving) return;
+            MR.billing.forget();
+            go.disabled = false;
+            gm.textContent = r && r.updated ? 'Your plan has been changed.' : '';
+          }, function (err) { go.disabled = false; gm.textContent = err.message; });
+        });
+        var dismiss = MR.h('button', { type: 'button', class: 'dr-button dr-button--secondary', text: 'Not now' });
+        dismiss.addEventListener('click', function () { MR.billing.forget(); if (ib.parentNode) ib.parentNode.removeChild(ib); });
+        var bc = ib.querySelector('.dr-banner__content');
+        bc.appendChild(MR.h('p', null, go, ' ', dismiss));
+        bc.appendChild(gm);
       }
 
       var sent = campaigns.filter(function (c) { return c.status === 'sent'; });
