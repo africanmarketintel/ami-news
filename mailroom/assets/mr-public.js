@@ -1,6 +1,5 @@
 /* ==========================================================================
    AMI Mailroom – reader-facing pages
-     preferences.html?token=   choose topics and frequency, or leave
      unsubscribe.html?token=   confirmation after one click from an email
      archive.html              past campaigns
      preview.html?t=           a draft a member shared for sign-off
@@ -11,14 +10,6 @@
   'use strict';
   var MR = window.MR;
   if (!MR) return;
-
-  var TOPICS = [
-    { value: 'markets', label: 'Markets and data' },
-    { value: 'deals', label: 'Deals and investment' },
-    { value: 'policy', label: 'Policy and regulation' },
-    { value: 'events', label: 'Events and invitations' },
-    { value: 'jobs', label: 'Jobs and hiring' }
-  ];
 
   function fn(name, body, method) {
     var url = MR.cfg.url + '/functions/v1/' + name;
@@ -33,99 +24,6 @@
       });
     });
   }
-
-  /* ---------------- preference centre ---------------- */
-  function initPreferences() {
-    var wrap = document.getElementById('mr-preferences');
-    if (!wrap) return;
-    var token = MR.qs('token');
-
-    if (MR.cfg.demo) { render(MR.sampleSubscriber); return; }
-    if (!token) {
-      wrap.textContent = '';
-      wrap.appendChild(MR.h('p', { class: 'dr-empty', text: 'Open this page from the link at the bottom of one of our emails.' }));
-      return;
-    }
-
-    fetch(MR.cfg.url + '/functions/v1/mailroom-unsubscribe?token=' + encodeURIComponent(token) + '&action=get', {
-      headers: { apikey: MR.cfg.key }
-    }).then(function (r) { return r.json(); })
-      .then(function (sub) {
-        if (sub.error) throw new Error(sub.error);
-        render(sub);
-      })
-      .catch(function () {
-        wrap.textContent = '';
-        wrap.appendChild(MR.h('p', { class: 'dr-empty', text: 'That link is not valid any more. Ask the sender for a new one.' }));
-      });
-
-    function render(sub) {
-      wrap.textContent = '';
-      wrap.appendChild(MR.h('h1', { text: 'What you receive' }));
-      wrap.appendChild(MR.h('p', { class: 'dr-lead', text: sub.email }));
-      if (sub.status !== 'subscribed') {
-        MR.banner(wrap, 'You are not subscribed', 'You can start again below if you would like to.');
-      }
-
-      var form = MR.h('form', { id: 'mr-prefs-form' });
-      var chosen = sub.topics || [];
-      var fieldset = MR.h('fieldset', { class: 'dr-fieldset' },
-        MR.h('legend', { class: 'dr-fieldset__legend dr-fieldset__legend--m', text: 'Topics' }));
-      TOPICS.forEach(function (t) {
-        var box = MR.h('input', { class: 'dr-choice__input', type: 'checkbox', id: 'topic-' + t.value, checked: chosen.indexOf(t.value) > -1 });
-        fieldset.appendChild(MR.h('div', { class: 'dr-choice dr-choice--checkbox' }, box,
-          MR.h('label', { class: 'dr-choice__label', for: 'topic-' + t.value, text: t.label })));
-      });
-      form.appendChild(fieldset);
-
-      var freq = MR.h('select', { class: 'dr-select dr-input--w', id: 'mr-frequency' },
-        MR.h('option', { value: 'all', text: 'Everything they send', selected: sub.frequency === 'all' }),
-        MR.h('option', { value: 'weekly', text: 'A weekly summary at most', selected: sub.frequency === 'weekly' }),
-        MR.h('option', { value: 'monthly', text: 'A monthly summary at most', selected: sub.frequency === 'monthly' }));
-      form.appendChild(MR.h('div', { class: 'dr-form-group' },
-        MR.h('label', { class: 'dr-label', for: 'mr-frequency', text: 'How often' }), freq));
-
-      form.appendChild(MR.h('div', { class: 'dr-button-group' },
-        MR.h('button', { class: 'dr-button', type: 'submit', text: 'Save preferences' }),
-        MR.h('button', {
-          class: 'dr-button dr-button--secondary', type: 'button', text: 'Unsubscribe from this sender',
-          onclick: function () { act({ token: token, unsubscribe: true }, 'You will not hear from this sender again.'); }
-        })));
-
-      form.appendChild(MR.h('p', { class: 'dr-small' },
-        MR.h('a', {
-          href: '#', text: 'Stop all email sent through AMI Mailroom',
-          onclick: function (e) {
-            e.preventDefault();
-            if (!confirm('This stops every sender who uses AMI Mailroom from emailing you. Continue?')) return;
-            act({ token: token, unsubscribe_all: true }, 'You have been removed from every list on AMI Mailroom.');
-          }
-        })));
-
-      form.addEventListener('submit', function (e) {
-        e.preventDefault();
-        var topics = TOPICS.filter(function (t) { return document.getElementById('topic-' + t.value).checked; })
-          .map(function (t) { return t.value; });
-        act({ token: token, topics: topics, frequency: freq.value, resubscribe: sub.status !== 'subscribed' },
-          'Saved. Thank you.');
-      });
-
-      wrap.appendChild(form);
-      wrap.appendChild(MR.h('p', { class: 'dr-small', text: 'Your address is held by the sender, with ABTA as its service provider. You can ask either of us for a copy of what is held or for it to be deleted.' }));
-
-      function act(body, message) {
-        if (MR.cfg.demo) { MR.banner(wrap, 'Preview only', 'Nothing was changed.'); return; }
-        fn('mailroom-unsubscribe', body).then(function () {
-          wrap.textContent = '';
-          MR.banner(wrap, 'Done', message);
-        }).catch(function (err) {
-          MR.banner(wrap, 'That did not work', 'Please try the link in the email again.', 'important');
-          console.error(err);
-        });
-      }
-    }
-  }
-
 
   /* ---------------- the reader hub ----------------
      Every ABTA sender this address hears from, in one place. No other
@@ -189,9 +87,8 @@
           MR.h('button', {
             class: 'dr-button dr-button--danger', id: 'mr-hub-stop', type: 'button',
             onclick: function () {
-              // The same question the preferences page asks before it does the
-              // same thing. This one also adds the address to the do-not-mail
-              // list, so it is the harder of the two to take back.
+              // This also adds the address to the do-not-mail list, so it is the
+              // harder of the two to take back.
               if (!confirm('This stops every sender who uses AMI Mailroom from emailing you, and none of them can add you again. Continue?')) return;
               apply({ token: token, hub: true, unsubscribe: true },
                     'You will not hear from any sender on AMI Mailroom again.');
@@ -258,15 +155,14 @@
     var token = MR.qs('token');
     var done = MR.qs('done');
 
-    // What a reader sees once the unsubscribe has happened. Two ways onward:
-    // change what they get instead of leaving altogether, or undo a mistaken
-    // click. Both need the token, so a page reached without one offers neither.
+    // What a reader sees once the unsubscribe has happened. One way onward:
+    // undo a mistaken click. It needs the token, so a page reached without
+    // one offers nothing.
     function showDone() {
       wrap.textContent = '';
       wrap.appendChild(MR.h('h1', { text: 'You have been unsubscribed' }));
       wrap.appendChild(MR.h('p', { class: 'dr-lead', text: 'You will not receive any more campaigns from this sender.' }));
       if (!token && !MR.cfg.demo) return;
-      wrap.appendChild(MR.h('p', null, MR.h('a', { class: 'dr-link', href: 'preferences.html?token=' + encodeURIComponent(token || ''), text: 'Change what you receive instead' })));
       var undo = MR.h('div', { class: 'mr-aside', id: 'mr-resubscribe' },
         MR.h('h2', { class: 'dr-h', text: 'Unsubscribed by mistake?' }),
         MR.h('p', { class: 'dr-small', text: 'You can start receiving this sender\u2019s email again.' }));
@@ -279,7 +175,7 @@
           fn('mailroom-unsubscribe', { token: token, resubscribe: true }).then(function () {
             undo.textContent = '';
             undo.appendChild(MR.h('h2', { class: 'dr-h', text: 'You are subscribed again' }));
-            undo.appendChild(MR.h('p', { class: 'dr-small', role: 'status', text: 'You will receive this sender\u2019s email again. Use \u201cChange what you receive instead\u201d above to choose topics and how often.' }));
+            undo.appendChild(MR.h('p', { class: 'dr-small', role: 'status', text: 'You will receive this sender\u2019s email again.' }));
           }).catch(function () {
             btn.disabled = false;
             msg.textContent = 'That did not work. If you stopped all email from AMI Mailroom, the sender has to add you again. Otherwise try again, or reply to the email you received.';
@@ -439,7 +335,6 @@
   }
 
   document.addEventListener('DOMContentLoaded', function () {
-    initPreferences();
     initHub();
     initUnsubscribe();
     initArchive();
