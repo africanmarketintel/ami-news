@@ -1000,6 +1000,38 @@
       });
     }
 
+    /* The page above is shown the moment Send is pressed, when the emails are
+       only queued. This checks the campaign every few seconds, for up to ten
+       minutes, and changes the page to "Campaign sent" once it closes. If the
+       member leaves the page, or the check fails, nothing is lost: the
+       campaign closes on the server either way. */
+    function watchUntilSent(id, queued) {
+      var tries = 0, MAX = 150;
+      function look() {
+        tries += 1;
+        if (!document.body.contains(wrap) || tries > MAX) return;
+        MR.api.select('mailroom_campaigns?select=status,recipients&id=eq.' + id).then(function (rows) {
+          var c = rows && rows[0];
+          if (c && c.status === 'sent') {
+            var n = c.recipients || queued;
+            MR.done(wrap, {
+              title: 'Campaign sent',
+              lead: 'Sent to ',
+              detail: MR.number(n) + (n === 1 ? ' email' : ' emails'),
+              next: [
+                'Delivery, bounces and complaints appear on your mailroom as they come back.',
+                'Nothing more is needed from you.'
+              ],
+              actions: [['account.html', 'Go to your mailroom'], ['archive.html', 'See the archive']]
+            });
+            return;
+          }
+          setTimeout(look, 4000);
+        }, function () { setTimeout(look, 8000); });
+      }
+      setTimeout(look, 3000);
+    }
+
     function sendNow(form) {
       var errors = validate(true);
       if (showErrors(form, errors)) return;
@@ -1026,6 +1058,7 @@
             ],
             actions: [['account.html', 'Go to your mailroom'], ['archive.html', 'See the archive']]
           });
+          watchUntilSent(saved.id, r.queued || 0);
         });
       }).catch(function (err) {
         if (/held_for_review/.test(String(err.message))) {
