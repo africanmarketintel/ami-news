@@ -14,7 +14,7 @@
 <script src="../nav.js"></script>
 <script src="assets/mr-core.js"></script>
 <script src="assets/mr-sample.js"></script>
-<script src="assets/mr-plans.js"></script>
+<script src="assets/mr-pricing.js"></script>
 </head>
 <body class="mr-app">
 <a href="#main" class="dr-skip">Skip to main content</a>
@@ -36,32 +36,69 @@
   <h1>Pricing and sending rules</h1>
   <p class="dr-lead">Try it for 14 days with no card. Sending starts as soon as you confirm your email address, with no approval queue and no daily cap. Below are the plan limits, what every plan includes and every rule that can stop a campaign, so you can read it all before you agree to it.</p>
   <nav class="mr-jump" aria-label="On this page"><a href="#plans">Plans and limits</a><a href="#included">What every plan includes</a><a href="#domains">Where your email comes from</a><a href="#create">What you can create</a><a href="#replies">Where replies go</a><a href="#rules">Rules for every email</a><a href="#checks">What we check before you send</a><a href="#stopped">What can get an account stopped</a></nav>
-  <h2 id="plans">Plans and limits</h2>
-  <!-- Filled in from mailroom_plans by mr-plans.js, so a price change is a
-       database update rather than a rebuild. The table below is what somebody
-       sees if that fails, and what preview mode shows. -->
-  <div id="mr-plans">
-    <div class="dr-table-wrap">
-      <table class="dr-table">
-        <caption class="dr-visually-hidden">Plans and limits</caption>
-        <thead><tr><th scope="col">Plan</th><th scope="col">Price</th><th scope="col">Emails</th><th scope="col">Subscribers held</th></tr></thead>
-        <tbody>
-          <tr><th scope="row">14-day trial</th><td>No charge, no card</td><td>1,000 in total</td><td>500</td></tr>
-          <tr><th scope="row">Basic</th><td>&pound;5 a month or &pound;55 a year</td><td>10,000 a month</td><td>5,000</td></tr>
-          <tr><th scope="row">Plus</th><td>&pound;12 a month or &pound;132 a year</td><td>40,000 a month</td><td>20,000</td></tr>
-          <tr><th scope="row">Max</th><td>&pound;29 a month or &pound;319 a year</td><td>120,000 a month</td><td>100,000</td></tr>
-        </tbody>
-      </table>
+  <h2 id="plans">Plans and prices</h2>
+  <div id="mr-plan-cards" class="mr-pricing">
+    <div class="mr-bill" role="group" aria-label="Billing period" hidden>
+      <button type="button" class="mr-bill__btn" data-interval="month" aria-pressed="true">Monthly</button>
+      <button type="button" class="mr-bill__btn" data-interval="year" aria-pressed="false">Yearly <span class="mr-bill__save">1 month free</span></button>
     </div>
-    <p class="dr-small">The trial runs for 14 days from sign-up and sends from an address ABTA builds from your sign-up address. When it ends, sending stops and your account, lists and campaigns stay as they are. Choose a plan to start sending again. Online payment is not open yet: to move onto a plan, email <a href="mailto:ami@abta.africa">ami@abta.africa</a>.</p>
+    <div class="mr-plancards">
+      <article class="mr-plancard" aria-labelledby="pc-trial">
+        <h3 class="dr-h" id="pc-trial">14-day trial</h3>
+        <p class="mr-plancard__price">Free</p>
+        <p class="mr-plancard__note dr-small">No card needed.</p>
+        <ul class="dr-list">
+          <li>1,000 emails in total</li>
+          <li>500 subscribers held</li>
+          <li>Sends from an address ABTA builds from your sign-up address</li>
+        </ul>
+        <a class="dr-button dr-button--secondary" href="create-account.html">Start the trial</a>
+      </article>
+      <article class="mr-plancard" data-plan="basic" data-month="500" data-year="5500" aria-labelledby="pc-basic">
+        <h3 class="dr-h" id="pc-basic">Basic</h3>
+        <p class="mr-plancard__price"><span class="mr-plancard__amount">&pound;5</span><span class="mr-plancard__per"> a month</span></p>
+        <p class="mr-plancard__note dr-small">Or &pound;55 a year: 12 months for the price of 11.</p>
+        <ul class="dr-list">
+          <li>10,000 emails a month</li>
+          <li>5,000 subscribers held</li>
+          <li>Your own sending domain</li>
+        </ul>
+        <a class="dr-button" href="create-account.html" data-choose="basic">Choose Basic</a>
+      </article>
+      <article class="mr-plancard" data-plan="plus" data-month="1200" data-year="13200" aria-labelledby="pc-plus">
+        <h3 class="dr-h" id="pc-plus">Plus</h3>
+        <p class="mr-plancard__price"><span class="mr-plancard__amount">&pound;12</span><span class="mr-plancard__per"> a month</span></p>
+        <p class="mr-plancard__note dr-small">Or &pound;132 a year: 12 months for the price of 11.</p>
+        <ul class="dr-list">
+          <li>40,000 emails a month</li>
+          <li>20,000 subscribers held</li>
+          <li>Your own sending domain</li>
+        </ul>
+        <a class="dr-button" href="create-account.html" data-choose="plus">Choose Plus</a>
+      </article>
+      <article class="mr-plancard" data-plan="max" data-month="2900" data-year="31900" aria-labelledby="pc-max">
+        <h3 class="dr-h" id="pc-max">Max</h3>
+        <p class="mr-plancard__price"><span class="mr-plancard__amount">&pound;29</span><span class="mr-plancard__per"> a month</span></p>
+        <p class="mr-plancard__note dr-small">Or &pound;319 a year: 12 months for the price of 11.</p>
+        <ul class="dr-list">
+          <li>120,000 emails a month</li>
+          <li>100,000 subscribers held</li>
+          <li>Your own sending domain</li>
+        </ul>
+        <a class="dr-button" href="create-account.html" data-choose="max">Choose Max</a>
+      </article>
+    </div>
+    <p class="dr-small mr-pricing__msg" id="mr-pricing-msg" role="status"></p>
+    <p class="dr-small">Prices are in pounds sterling. Every plan has every feature listed below. Both limits apply, and whichever you reach first is the one that stops you.</p>
+    <p class="dr-small">The trial runs for 14 days from sign-up. When it ends, sending stops and your account, lists and campaigns stay as they are. Choose a plan to start sending again.</p>
+    <p class="dr-small">Card payments are taken by Stripe, so ABTA does not see or store your card number. If you have a discount code, enter it on the payment page. You can manage or cancel your plan from your <a href="account.html">account page</a>. Already have an account? <a href="sign-in.html">Sign in</a> before choosing a plan.</p>
   </div>
-  <p class="dr-small">Both limits apply, and whichever you reach first is the one that stops you.</p>
 
   <h2 id="included">What every plan includes</h2>
   <ul class="dr-list">
     <li><strong>No surprise invoice.</strong> Sending stops at the limit rather than carrying on and billing you for it. You cannot overspend here, because there is no overage to charge.</li>
-    <li><strong>Hold the whole trade list.</strong> You pay for what you send, not for names sitting in a database. Most platforms charge by the size of your list, which punishes you for keeping contacts you mail twice a year.</li>
-    <li><strong>No daily cap.</strong> Send your whole list in one go on the first day if that is what you need. Most platforms ramp you up over weeks.</li>
+    <li><strong>Hold the whole trade list.</strong> You pay for what you send, not for names sitting in a database. The subscribers limit is there so that contacts you mail twice a year can stay on your list.</li>
+    <li><strong>No daily cap.</strong> Send your whole list in one go on the first day if that is what you need.</li>
     <li><strong>Your own sending domain on every paid plan.</strong> Not an add-on, and it will not become one. A sender on their own domain carries their own delivery record, so charging to unlock it would be against everyone's interest.</li>
     <li><strong>Proof that people agreed, kept for you.</strong> Every list carries where the names came from, the wording people agreed to and the date. A signup form records it automatically. That is the question you cannot answer a year later from memory.</li>
     <li><strong>A permanent page for every campaign.</strong> Each one has an address that keeps working, so you can link it, share it and be found through it.</li>
@@ -81,7 +118,6 @@
       </tbody>
     </table>
   </div>
-  <p>Your delivery record belongs to the address you send from, so a problem on another account does not slow yours down and a problem on yours does not slow theirs.</p>
   <p>A sending domain of your own is included in every paid plan at no extra charge, and it is not sold as an add-on. A sender on their own domain carries their own delivery record, so it is in nobody's interest to charge for moving off the shared one. Trial accounts use the address ABTA builds for them, with the same content and import checks, and the trial limits cap what a single account can do.</p>
   <p><a href="domain.html">Set up a sending domain</a></p>
 
@@ -125,7 +161,7 @@
   <h2 id="stopped">What can get an account stopped</h2>
   <div class="dr-grid dr-grid--thirds">
     <div class="dr-status-card"><h3 class="dr-h">Spam reports</h3><p class="dr-price-box__amount">0.2%</p><p class="dr-small">Above this on a campaign with at least two reports, sending stops automatically. A warning shows from 0.1%.</p></div>
-    <div class="dr-status-card"><h3 class="dr-h">Addresses that do not exist</h3><p class="dr-price-box__amount">5%</p><p class="dr-small">Usually a sign of an old or bought list.</p></div>
+    <div class="dr-status-card"><h3 class="dr-h">Addresses that do not exist</h3><p class="dr-price-box__amount">5%</p><p class="dr-small">Amazon SES, which sends the email, recommends keeping bounces under 5%. A higher rate is usually a sign of an old or bought list.</p></div>
     <div class="dr-status-card"><h3 class="dr-h">Rule breaches</h3><p class="dr-price-box__amount">1</p><p class="dr-small">Asking a reader for money, or mailing a list you cannot show people agreed to join.</p></div>
   </div>
   <p>Suspension is not permanent. Tell us what went wrong and what you have changed, and ABTA can reinstate the account.</p>
