@@ -38,6 +38,7 @@
   <nav class="mr-jump" aria-label="On this page"><a href="#plans">Plans and limits</a><a href="#included">What every plan includes</a><a href="#domains">Where your email comes from</a><a href="#create">What you can create</a><a href="#replies">Where replies go</a><a href="#rules">Rules for every email</a><a href="#checks">What we check before you send</a><a href="#stopped">What can get an account stopped</a></nav>
   <h2 id="plans">Plans and prices</h2>
   <div id="mr-plan-cards" class="mr-pricing">
+    <p class="mr-planline" id="mr-yourplan" role="status" hidden></p>
     <div class="mr-bill" role="group" aria-label="Billing period" hidden>
       <button type="button" class="mr-bill__btn" data-interval="month" aria-pressed="true">Monthly</button>
       <button type="button" class="mr-bill__btn" data-interval="year" aria-pressed="false">Yearly <span class="mr-bill__save">1 month free</span></button>
@@ -67,7 +68,6 @@
           <li class="mr-plancard__emails">10,000 to 40,000 emails a month</li>
           <li class="mr-plancard__subs">5,000 to 20,000 subscribers held</li>
           <li>Your own sending domain</li>
-          <li>Email support</li>
         </ul>
         <a class="dr-button" href="create-account.html" data-choose="basic_10k">Choose Basic</a>
       </article>
@@ -84,7 +84,6 @@
           <li class="mr-plancard__emails">50,000 to 150,000 emails a month</li>
           <li class="mr-plancard__subs">30,000 to 90,000 subscribers held</li>
           <li>Your own sending domain</li>
-          <li>Priority email support</li>
         </ul>
         <a class="dr-button" href="create-account.html" data-choose="plus_50k">Choose Plus</a>
       </article>
@@ -101,14 +100,13 @@
           <li class="mr-plancard__emails">200,000 to 500,000 emails a month</li>
           <li class="mr-plancard__subs">150,000 to 375,000 subscribers held</li>
           <li>Your own sending domain</li>
-          <li>Priority email support</li>
         </ul>
         <a class="dr-button" href="create-account.html" data-choose="max_200k">Choose Max</a>
       </article>
     </div>
     <div class="mr-volume" id="mr-volume" aria-labelledby="mv-title">
       <h3 class="dr-h" id="mv-title">Every volume and its price</h3>
-      <p>Each plan has its own slider. Move it to the number of emails you send in a month, or read the table. Every plan has every feature. Plans differ in volume, subscribers held and support. The price per 1,000 emails falls at every step.</p>
+      <p>Each plan has its own slider. Move it to the number of emails you send in a month, or read the table. Every plan has every feature. Plans differ in volume and subscribers held. The price per 1,000 emails falls at every step.</p>
       <div class="dr-table-wrap">
       <table class="dr-table" id="mr-volume-table">
         <caption class="dr-visually-hidden">Every plan and volume, with its price</caption>
