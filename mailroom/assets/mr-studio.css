@@ -427,6 +427,16 @@ html.mr-studio-on body > *:not(.mr-studio):not(dialog) { display: none !importan
   .mr-studio.is-sheet-open .mr-studio__panel { height: 46vh; }
   .mr-studio:not(.is-sheet-open) .mr-studio__panel .mr-studio__pane { display: none; }
   .mr-studio.is-keyboard .mr-studio__panel { display: none; }
+  /* The Send tab is a form, so on a phone it fills the screen under the top
+     bar: its boxes sit at the top, clear of the keyboard, and nothing has to
+     move when a box is tapped. Add and Design stay as a short sheet. */
+  .mr-studio.is-sheet-open.is-rail-send .mr-studio__panel {
+    top: 52px; height: auto; max-height: none; border-radius: 0; box-shadow: none;
+  }
+  /* The tab already says Send; the heading and its line of help are dropped so
+     the subject line sits higher up the screen. */
+  .mr-studio.is-rail-send .mr-studio__pane > .mr-studio__h2,
+  .mr-studio.is-rail-send .mr-studio__pane > .mr-studio__hint { display: none; }
   .mr-studio__rail { padding: 0 .25rem; background: #fff; border-radius: 16px 16px 0 0; }
   .mr-studio__railbtn { min-height: 52px; padding: .6rem .25rem; }
   .mr-studio__pane { padding: .75rem 1rem 1.5rem; }

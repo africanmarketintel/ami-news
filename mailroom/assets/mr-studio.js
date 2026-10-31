@@ -248,9 +248,11 @@
     }
     /* When the keyboard is up for a block on the email, the sheet steps out of
        the way. When it is up for a box inside the sheet (subject line, preview
-       text, sender), the sheet has to stay: it is lifted to sit just above the
-       keyboard, using the visible part of the screen, and the box is scrolled
-       into view. */
+       text, sender), the sheet stays where it is. Nothing is moved or scrolled
+       while the keyboard opens: moving a box a phone is focusing can make the
+       phone close the keyboard again. The Send tab instead fills the screen
+       from the start (see .is-rail-send in the stylesheet), so its boxes are
+       at the top and the keyboard never covers them. */
     function typingInPanel() {
       var a = document.activeElement;
       return !!(a && panel.contains(a) && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName));
@@ -258,28 +260,11 @@
     function onKeyboard() {
       var vv = window.visualViewport;
       var up = !!(narrow() && vv && vv.height < window.innerHeight * 0.75);
-      var inPanel = up && typingInPanel();
-      root.classList.toggle('is-keyboard', up && !inPanel);
-      root.classList.toggle('is-panel-typing', inPanel);
-      if (inPanel) {
-        var h2 = Math.round(vv.height * 0.6);
-        panel.style.top = Math.round(vv.offsetTop + vv.height - h2) + 'px';
-        panel.style.bottom = 'auto';
-        panel.style.height = h2 + 'px';
-        panel.style.maxHeight = h2 + 'px';
-        var a = document.activeElement;
-        setTimeout(function () { try { a.scrollIntoView({ block: 'center' }); } catch (e) { /* older browsers */ } }, 60);
-      } else {
-        panel.style.top = ''; panel.style.bottom = ''; panel.style.height = ''; panel.style.maxHeight = '';
-      }
+      root.classList.toggle('is-keyboard', up && !typingInPanel());
       placeSel();
     }
-    if (window.visualViewport) {
-      window.visualViewport.addEventListener('resize', onKeyboard);
-      window.visualViewport.addEventListener('scroll', function () { if (root.classList.contains('is-panel-typing')) onKeyboard(); });
-    }
-    panel.addEventListener('focusin', function () { setTimeout(onKeyboard, 50); setTimeout(onKeyboard, 350); });
-    panel.addEventListener('focusout', function () { setTimeout(onKeyboard, 50); });
+    if (window.visualViewport) window.visualViewport.addEventListener('resize', onKeyboard);
+    panel.addEventListener('focusout', function () { setTimeout(onKeyboard, 80); });
     applySheet();
 
     /* ---------------- history ---------------- */
@@ -577,6 +562,7 @@
         railBtns[k].setAttribute('aria-pressed', on ? 'true' : 'false');
         railBtns[k].classList.toggle('is-on', on);
       });
+      root.classList.toggle('is-rail-send', state.rail === 'send');
     }
     function pane(name) { return { content: pContent, block: pBlock, style: pStyle, send: pSend }[name]; }
     function renderPanels() {
