@@ -1012,6 +1012,12 @@
     var box = MR.h('div', { class: 'dr-banner' + (kind === 'important' ? ' dr-banner--important' : ''), role: 'status' },
       MR.h('p', { class: 'dr-banner__title', text: title }),
       MR.h('div', { class: 'dr-banner__content' }, MR.h('p', { text: text })));
+    // The same message twice is one message: a repeat (saving again, say)
+    // replaces the earlier banner instead of stacking another beneath it.
+    [].slice.call(target.children).forEach(function (el) {
+      var t = el.classList && el.classList.contains('dr-banner') ? el.querySelector('.dr-banner__title') : null;
+      if (t && t.textContent === title) target.removeChild(el);
+    });
     target.insertBefore(box, target.firstChild);
     box.scrollIntoView({ block: 'center', behavior: 'smooth' });
     return box;

@@ -86,15 +86,17 @@
       return;
     }
 
+    // Each list is limited to this account. An administrator can read every
+    // account's rows, so without the filter their pickers show other accounts'.
     MR.requireAccount(wrap).then(function (a) {
       account = a;
       return Promise.all([
-        MR.api.select('mailroom_lists?select=id,name,consent_status'),
+        MR.api.select('mailroom_lists?select=id,name,consent_status&account_id=eq.' + a.id),
         campaignId ? MR.api.select('mailroom_campaigns?select=*&id=eq.' + campaignId) : Promise.resolve([]),
-        MR.api.select('mailroom_domains?select=id,domain,from_local,is_default,sending_status,kind&status=eq.verified'),
+        MR.api.select('mailroom_domains?select=id,domain,from_local,is_default,sending_status,kind&status=eq.verified&account_id=eq.' + a.id),
         MR.api.select('mailroom_brand?select=*&account_id=eq.' + a.id),
         MR.api.select('mailroom_saved_blocks?select=*&order=name'),
-        MR.api.select('mailroom_reply_addresses?select=email,status&status=eq.verified&order=email')
+        MR.api.select('mailroom_reply_addresses?select=email,status&status=eq.verified&order=email&account_id=eq.' + a.id)
       ]);
     }).then(function (res) {
       lists = res[0] || [];
@@ -175,6 +177,12 @@
     // confirmed by a click, then the alias made for it, then anything else
     // that is verified.
     function pickDefaultDomain() {
+      // A draft can name a domain this account cannot send from (one that
+      // belongs to another account, or is no longer verified). Drop it, so
+      // the picker shows what will really be used and the send is not refused.
+      if (campaign.sending_domain_id && !domains.some(function (d) { return d.id === campaign.sending_domain_id; })) {
+        campaign.sending_domain_id = null;
+      }
       if (campaign.sending_domain_id) return;
       var preferred = domains.filter(function (d) { return d.is_default; })[0] ||
         domains.filter(function (d) { return d.kind === 'own_domain'; })[0] ||

@@ -127,7 +127,7 @@
       var plan = MR.planLabel(a.plan_code);
       if (plan) {
         text = 'Your plan: ' + plan + (a.billing_interval === 'year' ? ', billed yearly. ' : a.billing_interval === 'month' ? ', billed monthly. ' : '. ') +
-          'Choosing another volume changes your plan. Stripe charges or credits the difference.';
+          'Choosing another volume changes your plan. Moving up charges the difference to your card now. Moving down credits it against your next invoice.';
       } else if (a.plan_code === 'trial') {
         var ts = MR.trialState(a);
         text = ts.state === 'not_offered'
@@ -204,7 +204,7 @@
         link.textContent = label;
         if (r && r.updated) {
           MR.billing.forget();
-          say('Your plan has been changed. Stripe charges or credits the difference. It can take a minute to show on your account page.');
+          say('Your plan has been changed. Moving up charges the difference to your card now. Moving down credits it against your next invoice. It can take a minute to show on your account page.');
           // Mark the new volume as the member's own straight away, so the
           // button on it no longer offers a switch to the plan they are on.
           var now = steps.filter(function (st) { return st.plan === plan; })[0];
@@ -248,8 +248,11 @@
     // A signed-in member sees which volume is theirs. The page reads the same
     // without this, so a failure is not reported.
     if (!MR.cfg.demo && MR.auth && MR.auth.signedIn() && MR.api && MR.api.select) {
-      MR.api.select('mailroom_accounts?select=id,plan_code,billing_interval,billing_status,trial_ends_at,created_at&limit=1').then(function (rows) {
-        var a = rows && rows[0];
+      // The same link the account page uses, so this is the member's own
+      // account. Reading mailroom_accounts directly can return another
+      // account to an administrator, who is allowed to see them all.
+      MR.api.select('mailroom_account_users?select=account_id,mailroom_accounts(id,plan_code,billing_interval,billing_status,trial_ends_at,created_at)&limit=1').then(function (rows) {
+        var a = rows && rows[0] && rows[0].mailroom_accounts;
         if (!a) return;
         member = { account: a, step: null, interval: a.billing_interval === 'year' ? 'year' : 'month' };
         steps.forEach(function (st) { if (st.plan === a.plan_code) member.step = st; });
