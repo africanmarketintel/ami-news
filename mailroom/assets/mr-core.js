@@ -797,14 +797,22 @@
                                           offer to finish the job
 
      Each returns a promise. A rejection carries a sentence a member can read. */
-  // The paid plans by code. Basic, Plus and Max are the cards on the pricing
-  // page; the step plans are the other volumes on its slider. One list, used by
-  // the pricing page and the account pages, so a plan is never unknown to one.
-  var PLAN_LABELS = {
-    basic: 'Basic', step20k: '20,000 emails a month', plus: 'Plus', step60k: '60,000 emails a month',
-    step80k: '80,000 emails a month', step100k: '100,000 emails a month', max: 'Max'
+  // The name of a paid plan, from its code. A plan is Basic, Plus or Max at one
+  // volume, written <plan>_<thousands>k (plus_75k is "Plus, 75,000 emails a
+  // month"). The earlier codes, no longer sold, keep their names so an account
+  // still on one reads correctly. One function, used by the pricing page and
+  // the account pages, so a plan is never unknown to one of them.
+  var LEGACY_PLANS = {
+    basic: 'Basic', plus: 'Plus', max: 'Max', step20k: '20,000 emails a month', step60k: '60,000 emails a month',
+    step80k: '80,000 emails a month', step100k: '100,000 emails a month'
   };
-  MR.planLabel = function (code) { return PLAN_LABELS[code] || null; };
+  MR.planLabel = function (code) {
+    code = String(code || '');
+    if (LEGACY_PLANS[code]) return LEGACY_PLANS[code];
+    var m = /^(basic|plus|max)_(\d{1,4})k$/.exec(code);
+    if (!m) return null;
+    return m[1].charAt(0).toUpperCase() + m[1].slice(1) + ', ' + (parseInt(m[2], 10) * 1000).toLocaleString('en-GB') + ' emails a month';
+  };
 
   MR.billing = (function () {
     var KEY = 'mr_plan_intent';
@@ -842,7 +850,7 @@
       intent: function () {
         try {
           var v = JSON.parse(sessionStorage.getItem(KEY) || 'null');
-          return v && PLAN_LABELS[v.plan] ? v : null;
+          return v && MR.planLabel(v.plan) ? v : null;
         } catch (e) { return null; }
       },
       forget: function () { try { sessionStorage.removeItem(KEY); } catch (e) { /* private mode */ } }

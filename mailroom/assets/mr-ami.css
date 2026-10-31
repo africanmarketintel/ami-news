@@ -240,28 +240,21 @@ main p, main li { overflow-wrap: anywhere; }
 .mr-planline { margin: .25rem 0 0; font-size: 1rem; }
 .mr-planline__warn { color: #b42318; font-weight: 600; }
 
-/* ---- pricing: the volume slider and the table of volumes ---- */
+/* ---- pricing: a volume slider inside each plan card, and the table of volumes ---- */
+.mr-plancards { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.mr-band { margin: .25rem 0 1rem; }
+.mr-band[hidden] { display: none; }
+.mr-band__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .25rem; margin: 0; font-size: .9375rem; font-weight: 600; }
+.mr-band__emails { font-size: 1.125rem; font-weight: 700; }
+.mr-slider__input { width: 100%; height: 44px; margin: 0; accent-color: #0b6b3a; cursor: pointer; }
+.mr-band__ticks { display: flex; justify-content: space-between; margin: 0; font-size: .8125rem; color: #4b4b4b; }
 .mr-volume { margin: 1.5rem 0 1rem; padding: 1.25rem; background: #fff; border: 1px solid var(--border-light, #d0d2d3); border-radius: 16px; }
 .mr-volume h3 { margin: 0 0 .25rem; }
-.mr-slider { margin: 1rem 0 1.5rem; }
-.mr-slider[hidden] { display: none; }
-.mr-slider__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .5rem; margin: 0 0 .25rem; font-weight: 600; }
-.mr-slider__emails { font-size: 1.5rem; font-weight: 700; }
-.mr-slider__input { width: 100%; height: 44px; margin: 0; accent-color: #0b6b3a; cursor: pointer; }
-.mr-slider__ticks { display: grid; grid-template-columns: repeat(7, 1fr); margin: 0 0 1rem; font-size: .8125rem; text-align: center; color: #4b4b4b; }
-.mr-slider__result { padding: 1rem 1.25rem; background: #f8f8f5; border-radius: 16px; }
-.mr-slider__result .mr-bill { margin-bottom: .75rem; }
-.mr-slider__result .dr-list { margin: 0 0 1rem; }
 #mr-volume-table th, #mr-volume-table td { white-space: nowrap; }
 .mr-volume__row--on th, .mr-volume__row--on td { background: #f1f6f2; }
 @media (max-width: 560px) {
-  .mr-slider__ticks span { visibility: hidden; }
-  .mr-slider__ticks span:first-child, .mr-slider__ticks span:last-child { visibility: visible; }
-  .mr-slider__ticks span:first-child { text-align: left; }
-  .mr-slider__ticks span:last-child { text-align: right; }
-  .mr-slider__result .mr-bill__save { display: none; }
-  /* Three columns fit a phone; the slider above shows subscribers and has the Choose button. */
-  #mr-volume-table th:nth-child(2), #mr-volume-table td:nth-child(2),
-  #mr-volume-table th:nth-child(5), #mr-volume-table td:nth-child(5) { display: none; }
+  /* Four columns fit a phone; each card above has the Choose button. */
+  #mr-volume-table th:nth-child(3), #mr-volume-table td:nth-child(3),
+  #mr-volume-table th:nth-child(6), #mr-volume-table td:nth-child(6) { display: none; }
   #mr-volume-table th, #mr-volume-table td { white-space: normal; padding-left: .4rem; padding-right: .4rem; }
 }
