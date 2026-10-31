@@ -110,8 +110,27 @@
       link.classList.toggle('mr-current', current);
       if (current) link.setAttribute('aria-disabled', 'true'); else link.removeAttribute('aria-disabled');
     }
+    // A small green tag beside the name of the plan the member is on, the same
+    // tag the rest of the Mailroom uses for a confirmed state.
+    function tagFor(c) {
+      var title = c.el.querySelector('h3');
+      if (!title) return;
+      var tag = title.querySelector('.mr-yourtag');
+      var mine = !!(member && member.step && c.steps.indexOf(member.step) > -1);
+      if (mine && !tag) {
+        title.appendChild(document.createTextNode(' '));
+        tag = document.createElement('span');
+        tag.className = 'dr-tag dr-tag--green mr-yourtag';
+        tag.textContent = 'Your plan';
+        title.appendChild(tag);
+      } else if (!mine && tag) {
+        if (tag.previousSibling && tag.previousSibling.nodeType === 3) title.removeChild(tag.previousSibling);
+        title.removeChild(tag);
+      }
+    }
     function labels() {
       cards.forEach(function (c) {
+        tagFor(c);
         if (c.go) setLabel(c.go, labelFor(current(c), c.label), isCurrent(current(c)));
       });
       steps.forEach(function (st) {
