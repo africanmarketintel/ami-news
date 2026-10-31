@@ -734,7 +734,11 @@
       body: JSON.stringify(body || {})
     }).then(function (r) {
       return r.json().then(function (b) {
-        if (!r.ok) throw new Error(b.error || 'Request failed');
+        if (!r.ok) {
+          var failure = new Error(b.error || 'Request failed');
+          failure.detail = b;
+          throw failure;
+        }
         return b;
       });
     });
@@ -814,6 +818,23 @@
     return m[1].charAt(0).toUpperCase() + m[1].slice(1) + ', ' + (parseInt(m[2], 10) * 1000).toLocaleString('en-GB') + ' emails a month';
   };
 
+  // Where an account stands on the free trial. 'running' has days left (or
+  // none known), 'ended' ran its 14 days, and 'not_offered' means a trial was
+  // already used with this email address, so the account was made with the
+  // trial already over (the database sets its end a second before it was
+  // created). Used by the pricing page and the account pages so they say the
+  // same thing. Returns null for an account that is not on the trial plan.
+  MR.trialState = function (account) {
+    if (!account || account.plan_code !== 'trial') return null;
+    var ends = account.trial_ends_at ? new Date(account.trial_ends_at) : null;
+    if (!ends) return { state: 'running', days: null };
+    var days = Math.ceil((ends - new Date()) / 86400000);
+    if (days > 0) return { state: 'running', days: days };
+    var made = account.created_at ? new Date(account.created_at) : null;
+    if (made && (ends - made) < 3600000) return { state: 'not_offered', days: 0 };
+    return { state: 'ended', days: 0 };
+  };
+
   MR.billing = (function () {
     var KEY = 'mr_plan_intent';
     function say(err) {
@@ -828,8 +849,13 @@
         plan_not_for_sale: 'That plan cannot be bought online yet. Email ami@abta.africa.',
         already_on_this_plan: 'Your account is already on this plan.',
         no_billing_yet: 'There is no billing to manage yet. Choose a plan first.',
-        subscription_not_found: 'Your subscription could not be found. Email ami@abta.africa.'
+        subscription_not_found: 'Your subscription could not be found. Email ami@abta.africa.',
+        too_many_subscribers: 'You hold more subscribers than this volume allows. Remove subscribers or choose a larger volume.'
       };
+      if (code === 'too_many_subscribers' && err && err.detail) {
+        return 'You hold ' + Number(err.detail.held).toLocaleString('en-GB') + ' subscribers and this volume holds up to ' +
+          Number(err.detail.max).toLocaleString('en-GB') + '. Remove subscribers or choose a larger volume.';
+      }
       return map[code] || 'That could not be started. Please try again shortly.';
     }
     function go(body) {

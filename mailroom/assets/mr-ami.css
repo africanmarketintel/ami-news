@@ -252,6 +252,9 @@ main p, main li { overflow-wrap: anywhere; }
 .mr-volume h3 { margin: 0 0 .25rem; }
 #mr-volume-table th, #mr-volume-table td { white-space: nowrap; }
 .mr-volume__row--on th, .mr-volume__row--on td { background: #f1f6f2; }
+.mr-volume__row--current td:first-child { box-shadow: inset 3px 0 0 #0b6b3a; }
+.mr-plancard .dr-button.mr-current, #mr-volume-table .dr-button.mr-current { cursor: default; opacity: .7; }
+#mr-yourplan { margin: 0 0 1rem; font-weight: 600; }
 @media (max-width: 560px) {
   /* Four columns fit a phone; each card above has the Choose button. */
   #mr-volume-table th:nth-child(3), #mr-volume-table td:nth-child(3),

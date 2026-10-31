@@ -168,11 +168,16 @@
       }
       line.appendChild(MR.h('a', { href: 'settings.html#mr-plan', text: 'See your plan and manage billing' }));
     } else if (code === 'trial') {
-      var ends = account.trial_ends_at ? new Date(account.trial_ends_at) : null;
-      var days = ends ? Math.max(0, Math.ceil((ends - new Date()) / 86400000)) : null;
-      line.appendChild(MR.h('strong', { text: 'Your plan: free trial' }));
-      line.appendChild(document.createTextNode(
-        days === null ? '. ' : days > 0 ? ', ' + days + (days === 1 ? ' day' : ' days') + ' left. ' : ', ended. Sending is switched off. '));
+      var ts = MR.trialState(account);
+      if (ts.state === 'not_offered') {
+        line.appendChild(MR.h('strong', { text: 'Your plan: no trial' }));
+        line.appendChild(document.createTextNode('. A free trial has already been used with this email address, so sending is switched off. '));
+      } else {
+        var days = ts.days;
+        line.appendChild(MR.h('strong', { text: 'Your plan: free trial' }));
+        line.appendChild(document.createTextNode(
+          days === null ? '. ' : days > 0 ? ', ' + days + (days === 1 ? ' day' : ' days') + ' left. ' : ', ended. Sending is switched off. '));
+      }
       line.appendChild(MR.h('a', { href: 'pricing.html#plans', text: 'Choose a plan' }));
     } else {
       return document.createTextNode('');
@@ -190,7 +195,9 @@
       plan && plan.price_minor && !billed
         ? MR.h('span', { text: ' \u00b7 ' + (plan.currency || 'GBP') + ' ' +
             (plan.price_minor / 100).toFixed(2) + (plan.interval === 'year' ? ' a year' : ' a month') })
-        : MR.h('span', { class: 'dr-small', text: account.plan_code === 'trial' ? ' \u00b7 14-day trial, no card' : (billed ? ' \u00b7 ' + billed : '') })));
+        : MR.h('span', { class: 'dr-small', text: account.plan_code === 'trial'
+            ? (MR.trialState(account).state === 'not_offered' ? ' \u00b7 no trial' : ' \u00b7 14-day trial, no card')
+            : (billed ? ' \u00b7 ' + billed : '') })));
 
     // A paid plan: when it renews, and what to do if the card failed.
     if (account.billing_status === 'past_due') {
@@ -214,6 +221,11 @@
           MR.h('span', { class: 'dr-small' },
             ' Your trial includes up to 1,000 emails in total and ends on ' + MR.date(account.trial_ends_at) +
             '. After that sending stops until you choose a plan. Your account, lists and campaigns stay as they are.')));
+      } else if (MR.trialState(account).state === 'not_offered') {
+        box.appendChild(MR.h('p', { class: 'mr-trial', id: 'mr-trial' },
+          MR.h('strong', { text: 'No free trial on this account' }),
+          MR.h('span', { class: 'dr-small' },
+            ' A free trial has already been used with this email address. Sending is switched off until you choose a plan. Your account, lists and campaigns stay as they are.')));
       } else {
         box.appendChild(MR.h('p', { class: 'mr-trial', id: 'mr-trial' },
           MR.h('strong', { text: 'Your trial has ended' }),
@@ -226,6 +238,22 @@
     box.appendChild(bar(usage.emails, account.monthly_send_limit));
     box.appendChild(MR.h('h3', { class: 'dr-h', text: 'Subscribers held' }));
     box.appendChild(bar(usage.subscribers, account.max_subscribers));
+
+    // Near a limit on a paid plan: say so while there is still time to move up.
+    var emailShare = account.monthly_send_limit ? usage.emails / account.monthly_send_limit : 0;
+    var subShare = account.max_subscribers ? usage.subscribers / account.max_subscribers : 0;
+    var nearest = Math.max(emailShare, subShare);
+    if (account.plan_code !== 'trial' && nearest >= 0.8) {
+      var which = emailShare >= subShare ? 'emails this month' : 'subscribers held';
+      box.appendChild(MR.h('p', { class: 'mr-trial', id: 'mr-upgrade' },
+        MR.h('strong', { text: nearest >= 1 ? 'You have reached a limit on your plan'
+                                            : 'You have used ' + Math.round(nearest * 100) + '% of your ' + which }),
+        MR.h('span', { class: 'dr-small', text: nearest >= 1 ? ' Sending stops at the limit. Move to a larger volume to carry on. '
+                                                              : ' Move to a larger volume before you reach it. ' }),
+        account.plan_code === 'max_500k'
+          ? MR.h('a', { href: 'mailto:ami@abta.africa', text: 'Email us about higher volumes' })
+          : MR.h('a', { href: 'pricing.html#plans', text: 'See larger volumes' })));
+    }
 
     box.appendChild(MR.h('p', { class: 'dr-small', text: 'Whichever of the two you reach first is the one that stops a send. Sending stops at the limit rather than continuing and billing you, so nothing arrives as a surprise.' }));
     var actions = MR.h('p', null);
