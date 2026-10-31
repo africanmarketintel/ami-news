@@ -252,6 +252,7 @@
   /* ── Adverts from Supabase (table ad_slots) ──────────────────────────── */
   var PAGE_TYPE = isArticle ? 'article' : isDeals ? 'deals'
     : ((location.pathname.split('/').pop() || 'index.html').replace(/\.html$/, '') || 'index') === 'index' ? 'home' : 'section';
+  window.AMI_PAGE_TYPE = PAGE_TYPE;   // read by the anonymous counts in nav.js
   var adRows = null;      // null until the table has been read, then a list (possibly empty)
   var adChosen = {};      // slot kind -> the advert chosen for this page view
   var adSeen = {};        // advert ids already counted as viewed
@@ -280,7 +281,12 @@
     return chosen;
   }
 
-  function adParams(r, kind) { return { ad_id: r.id, ad_slot: kind, page_type: PAGE_TYPE }; }
+  // The advert's readable name comes from the utm_content tag on its link, for example mpu-visual-blue.
+  function adName(r) {
+    try { return new URL(r.href).searchParams.get('utm_content') || r.alt || r.id; } catch (e) { return r.id; }
+  }
+  function adParams(r, kind) { return { ad_id: r.id, ad_name: adName(r), ad_slot: kind, page_type: PAGE_TYPE }; }
+  function count(name, r) { if (typeof window.amiCount === 'function') window.amiCount(name, r.id); }
 
   function fillAd(el, kind) {
     var r = pickAd(kind);
@@ -298,18 +304,30 @@
     });
     img.src = r.image_url;
     a.appendChild(img);
-    a.addEventListener('click', function () { track('ad_click', adParams(r, kind)); });
+    function clicked() { track('ad_click', adParams(r, kind)); count('ad_click', r); }
+    a.addEventListener('click', clicked);
+    a.addEventListener('auxclick', function (e) { if (e.button === 1) clicked(); });   // middle click opens a new tab
     el.className = 'ami-ad ami-ad--filled ami-ad--' + kind;
     el.textContent = '';
     el.appendChild(a);
     if ('IntersectionObserver' in window) {
+      // Industry standard (MRC and IAB): a viewed advert has at least half its area on screen
+      // for one continuous second, in a tab the visitor is looking at.
+      var vt = null;
+      var tick = function () {
+        vt = null;
+        if (adSeen[r.id] || !/ami-ad--filled/.test(el.className)) return;
+        if (document.hidden) { vt = setTimeout(tick, 1000); return; }
+        adSeen[r.id] = 1;
+        track('ad_view', adParams(r, kind));
+        count('ad_view', r);
+        io.disconnect();
+      };
       var io = new IntersectionObserver(function (es) {
         es.forEach(function (e) {
-          if (e.isIntersecting && e.intersectionRatio >= 0.5 && !adSeen[r.id]) {
-            adSeen[r.id] = 1;
-            track('ad_view', adParams(r, kind));
-            io.disconnect();
-          }
+          if (adSeen[r.id]) return;
+          if (e.isIntersecting && e.intersectionRatio >= 0.5) { if (!vt) vt = setTimeout(tick, 1000); }
+          else if (vt) { clearTimeout(vt); vt = null; }
         });
       }, { threshold: 0.5 });
       io.observe(el);

@@ -595,6 +595,43 @@ footer.ami-foot .ami-foot__linkbtn:hover,footer.ami-foot .ami-foot__linkbtn:focu
     if (window.__amiGaLoaded && typeof window.gtag === 'function') window.gtag('event', name, params || {});
   };
 
+  // ── Anonymous counts (no cookie, no IP address, no user ID) ───────────────
+  // Adds one to a daily tally in Supabase (table ami_counts, see docs/ad-counts.sql).
+  // Nothing in a count identifies a visitor. A visitor who chose "Turn off" is not
+  // counted unless COUNT_OPTED_OUT is true. Confirm with the lawyer before changing it.
+  const COUNT_OPTED_OUT = false;
+  // Visit any page with ?ami_nocount=1 on your own devices to leave yourself out of the
+  // counts. Use ?ami_nocount=0 to put yourself back in.
+  const COUNT_SKIP = (function () {
+    try {
+      if (/[?&]ami_nocount=1(&|$)/.test(window.location.search)) localStorage.setItem('ami_nocount', '1');
+      if (/[?&]ami_nocount=0(&|$)/.test(window.location.search)) localStorage.removeItem('ami_nocount');
+      return localStorage.getItem('ami_nocount') === '1';
+    } catch (e) { return false; }
+  })();
+  function looksLikeBot() {
+    return navigator.webdriver === true ||
+      /bot\/|\bbot\b|crawl|spider|slurp|headless|lighthouse|pagespeed|preview/i.test(navigator.userAgent || '');
+  }
+  function deviceKind() {
+    const w = window.innerWidth || 1280;
+    return w < 768 ? 'phone' : w < 1260 ? 'tablet' : 'desktop';
+  }
+  // kind: ad_view, ad_click, cookie_ok or cookie_off. adId is only used for adverts.
+  window.amiCount = function (kind, adId) {
+    try {
+      if (COUNT_SKIP || looksLikeBot()) return;
+      if (typeof SUPABASE_URL !== 'string' || typeof SUPABASE_ANON !== 'string' ||
+          SUPABASE_URL.indexOf('https://') !== 0 || SUPABASE_ANON.length < 20) return;
+      if (!COUNT_OPTED_OUT && kind !== 'cookie_off' && gaChoice() === 'denied') return;
+      fetch(SUPABASE_URL + '/rest/v1/rpc/ami_count', {
+        method: 'POST', keepalive: true,
+        headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer ' + SUPABASE_ANON, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ p_kind: kind, p_ad_id: adId || null, p_page: window.AMI_PAGE_TYPE || 'other', p_device: deviceKind() })
+      }).catch(function () { /* counting must never break the page */ });
+    } catch (e) { /* ignore */ }
+  };
+
   function gaSetChoice(v) {
     try {
       localStorage.setItem(GA_CHOICE_KEY, JSON.stringify({ v: v, until: Date.now() + GA_CHOICE_DAYS * 864e5 }));
@@ -659,8 +696,8 @@ footer.ami-foot .ami-foot__linkbtn:hover,footer.ami-foot .ami-foot__linkbtn:focu
       + '<a href="' + R + 'privacy.html#analytics">Privacy</a></p>'
       + '<button type="button" class="ok">' + (notice ? 'OK' : 'Accept') + '</button>'
       + '<button type="button" class="no">' + (notice ? 'Turn off' : 'Decline') + '</button>';
-    n.querySelector('.ok').addEventListener('click', function () { gaSetChoice('granted'); });
-    n.querySelector('.no').addEventListener('click', function () { gaSetChoice('denied'); });
+    n.querySelector('.ok').addEventListener('click', function () { window.amiCount('cookie_ok'); gaSetChoice('granted'); });
+    n.querySelector('.no').addEventListener('click', function () { window.amiCount('cookie_off'); gaSetChoice('denied'); });
     document.body.appendChild(n);
     document.body.style.paddingBottom = n.offsetHeight + 'px';
   }
