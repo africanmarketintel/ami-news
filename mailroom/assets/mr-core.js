@@ -876,7 +876,15 @@
       intent: function () {
         try {
           var v = JSON.parse(sessionStorage.getItem(KEY) || 'null');
-          return v && MR.planLabel(v.plan) ? v : null;
+          if (!v) return null;
+          // Only a plan that can be bought today. A plan code from an earlier
+          // version of the pricing page ('basic', 'plus') is no longer sold,
+          // so it is dropped instead of being offered and refused.
+          if (!/^(basic|plus|max)_[0-9]{1,4}k$/.test(String(v.plan || ''))) {
+            sessionStorage.removeItem(KEY);
+            return null;
+          }
+          return MR.planLabel(v.plan) ? v : null;
         } catch (e) { return null; }
       },
       forget: function () { try { sessionStorage.removeItem(KEY); } catch (e) { /* private mode */ } }
