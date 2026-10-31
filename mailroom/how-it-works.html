@@ -15,6 +15,117 @@
 <script src="assets/mr-core.js"></script>
 <script src="assets/mr-sample.js"></script>
 
+
+<style>
+.hw{color:var(--ink)}
+.hw-eyebrow{font-size:.8rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--brand);margin:0 0 .5rem}
+.hw-hero{padding-block:2.5rem 1rem}
+.hw-hero h1{max-width:30ch;margin-bottom:.75rem}
+.hw-hero .dr-lead{max-width:64ch;margin-bottom:1.25rem}
+.hw-actions{display:flex;flex-wrap:wrap;gap:.75rem 1rem;align-items:center}
+.hw-note{font-size:.95rem;color:var(--secondary);margin:.9rem 0 0}
+.hw-track{list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.6rem;margin:1.75rem 0 0;padding:0}
+.hw-track a{display:flex;flex-direction:column;gap:.5rem;height:100%;padding:.85rem .9rem;background:#fff;border:1px solid var(--border-light);border-top:4px solid var(--brand);border-radius:6px;color:var(--ink);text-decoration:none;font-weight:600;font-size:.95rem;line-height:1.25}
+.hw-track a:hover{background:var(--brand-tint)}
+.hw-n{display:inline-grid;place-items:center;flex:none;width:2rem;height:2rem;border-radius:50%;background:var(--brand);color:#fff;font-weight:700;font-size:1rem}
+.hw-steps{margin-top:1.5rem}
+.hw-step{display:grid;grid-template-columns:minmax(0,1fr);gap:1.25rem;align-items:center;padding-block:2.25rem;border-top:1px solid var(--border-light);scroll-margin-top:1rem}
+.hw-copy h2{font-size:1.75rem;line-height:1.15;margin:.75rem 0 .6rem}
+.hw-copy p{margin:0 0 .6rem;max-width:46ch}
+.hw-art{position:relative;display:flex;align-items:center;justify-content:center;min-height:280px;padding:2rem 1.25rem 1.5rem;background:var(--brand-tint);border-radius:16px}
+.hw-tag{position:absolute;top:.7rem;right:.9rem;font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--secondary)}
+.hw-card{width:100%;max-width:340px;padding:1rem 1.1rem;background:#fff;border:1px solid var(--border-light);border-radius:10px;box-shadow:0 8px 20px rgba(26,18,8,.12);font-size:.9rem;line-height:1.35}
+.hw-card h3{font-size:1rem;margin:0 0 .7rem}
+.hw-field{margin-bottom:.65rem}
+.hw-field small{display:block;color:var(--secondary);font-size:.78rem;margin-bottom:.2rem}
+.hw-input{border:1.5px solid var(--ink);border-radius:4px;padding:.4rem .6rem;background:#fff;font-size:.9rem}
+.hw-btn{display:block;text-align:center;background:var(--gold-light);color:var(--ink);font-weight:700;border-radius:999px;padding:.55rem 1rem;margin-top:.5rem;font-size:.9rem}
+.hw-chip{display:inline-flex;align-items:center;gap:.35rem;border:1.5px solid var(--ink);border-radius:999px;padding:.2rem .7rem;background:#fff;font-size:.8rem;font-weight:600;line-height:1.3}
+.hw-chip--ok{border-color:var(--brand);color:var(--brand-hover)}
+.hw-chip svg{flex:none}
+.hw-row{display:flex;gap:.6rem;align-items:flex-start;padding:.55rem 0;border-top:1px solid var(--border-light)}
+.hw-row:first-of-type{border-top:0}
+.hw-row svg{color:var(--brand);flex:none;margin-top:.15rem}
+.hw-row small{display:block;color:var(--secondary);font-size:.76rem}
+.hw-lock{margin:.7rem 0 0;padding:.5rem .65rem;background:var(--page-alt);border-radius:6px;font-size:.8rem;color:var(--ink)}
+.hw-ed{display:grid;grid-template-columns:72px minmax(0,1fr);gap:.7rem;width:100%;max-width:380px}
+.hw-pal{display:flex;flex-direction:column;gap:.45rem}
+.hw-pal .hw-chip{justify-content:center;padding:.3rem .2rem;border-radius:8px}
+.hw-canvas{background:#fff;border:1px solid var(--border-light);border-radius:10px;box-shadow:0 8px 20px rgba(26,18,8,.12);padding:.7rem}
+.hw-pic{height:78px;border-radius:6px;background:linear-gradient(135deg,#f9c53d 0%,#c9a84c 45%,#1e6b3c 100%);margin-bottom:.6rem;position:relative;overflow:hidden}
+.hw-pic::after{content:"";position:absolute;right:16px;top:12px;width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.85)}
+.hw-h{height:12px;width:70%;background:var(--ink);border-radius:3px;margin-bottom:.5rem}
+.hw-l{height:7px;background:var(--border-light);border-radius:3px;margin-bottom:.35rem}
+.hw-l--s{width:60%}
+.hw-phone{width:216px;padding:.9rem .65rem .8rem;background:#fff;border:6px solid var(--header);border-radius:28px;box-shadow:0 10px 24px rgba(26,18,8,.2);font-size:.78rem;line-height:1.3}
+.hw-phone .hw-from{font-weight:700;margin-bottom:.15rem}
+.hw-phone .hw-addr{color:var(--secondary);font-size:.72rem;margin-bottom:.55rem}
+.hw-banner{display:flex;gap:.35rem;align-items:center;background:var(--brand-tint);color:var(--brand-hover);border-radius:6px;padding:.35rem .5rem;font-weight:600;margin-bottom:.55rem;font-size:.74rem}
+.hw-unsub{margin-top:.7rem;padding-top:.5rem;border-top:1px solid var(--border-light);font-size:.72rem;color:var(--secondary)}
+.hw-unsub u{color:var(--ink);font-weight:600}
+.hw-art--wide{flex-direction:column;gap:1rem}
+.hw-pair{display:flex;flex-wrap:wrap;gap:1.1rem;align-items:center;justify-content:center;width:100%}
+.hw-pair .hw-ed{width:auto;flex:1 1 250px;max-width:300px}
+.hw-phone--sm{width:178px;padding:.6rem .45rem .5rem;font-size:.72rem}
+.hw-after{border-top:1px solid var(--border-light)}
+.hw-hero__grid{display:grid;grid-template-columns:minmax(0,1fr);gap:1.75rem;align-items:center}
+.hw-trio{display:flex;gap:.6rem;align-items:center;justify-content:center;max-width:440px;margin:0 auto;width:100%}
+.hw-trio .hm-shot{flex:0 0 31%;box-shadow:0 6px 14px rgba(26,18,8,.18)}
+.hw-trio .hw-pick{transform:translateY(-10px) scale(1.06);box-shadow:0 10px 22px rgba(26,18,8,.25);z-index:1}
+.hw-photo{display:block;width:100%;height:auto;border-radius:6px 6px 0 0}
+.hw-band{background:#0f6b60;color:#fff;text-align:center;padding:.65rem .6rem .8rem;border-radius:0 0 6px 6px}
+.hw-band b{display:block;font:700 1.05rem/1.1 var(--font);letter-spacing:.03em;margin-bottom:.45rem}
+.hw-band .hw-l{background:rgba(255,255,255,.6);margin-left:auto;margin-right:auto;width:80%}
+.hw-band .hw-l--s{width:55%}
+.hw-btn-w{display:inline-block;background:#fff;color:var(--ink);font-weight:700;font-size:.72rem;border-radius:3px;padding:.3rem .9rem;margin-top:.35rem}
+.hw-crop{position:relative;overflow:hidden;aspect-ratio:356/445;border-radius:4px;background:#dcefea}
+.hw-crop img{position:absolute;display:block;max-width:none;width:134.8%;height:auto;left:-17.4%;top:-10.3%}
+.hw-crop .hw-pin{position:absolute;margin:0;transform:translate(-50%,-50%);box-shadow:0 0 0 2px #fff;width:1.35rem;height:1.35rem;font-size:.78rem}
+.hw-phone--lg{width:250px;padding:.55rem .45rem .5rem}
+.hw-sched{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:1rem;justify-content:center}
+.hw-results{width:100%;max-width:340px}
+.hw-bar{display:grid;grid-template-columns:92px minmax(0,1fr) 34px;gap:.5rem;align-items:center;margin:.45rem 0;font-size:.85rem}
+.hw-bar i{display:block;height:12px;border-radius:6px;background:var(--brand)}
+.hw-bar i.warn{background:var(--gold-dark)}
+.hw-bar b{text-align:right}
+.hw-bar-track{background:var(--page-alt);border-radius:6px}
+.hw-open{margin:.8rem 0 0;font-size:.8rem;color:var(--secondary)}
+.hw-section{padding-block:2.5rem;border-top:1px solid var(--border-light)}
+.hw-section>h2{font-size:1.9rem;margin:0 0 .5rem}
+.hw-section>p.hw-intro{max-width:56ch;margin:0 0 1.5rem}
+.hw-receive{display:grid;grid-template-columns:minmax(0,1fr);gap:2rem;align-items:center}
+.hw-pin{display:inline-grid;place-items:center;flex:none;width:1.25rem;height:1.25rem;border-radius:50%;background:var(--gold-light);color:var(--ink);font:700 .72rem/1 var(--font);font-style:normal;margin-right:.3rem}
+.hw-calls{list-style:none;margin:0;padding:0;display:grid;gap:1rem}
+.hw-calls li{display:flex;gap:.8rem;align-items:flex-start;margin:0}
+.hw-calls .hw-n{background:var(--gold-light);color:var(--ink)}
+.hw-calls p{margin:0}
+.hw-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem}
+.hw-box{background:#fff;border:1px solid var(--border-light);border-top:4px solid var(--brand);border-radius:6px;padding:1.1rem 1.2rem}
+.hw-box h3{font-size:1.15rem;margin:0 0 .5rem}
+.hw-box p{margin:0 0 .6rem;font-size:.97rem}
+.hw-box p:last-child{margin-bottom:0}
+.hw-cta{margin-top:1rem;padding:2.25rem 1.5rem;background:var(--header);color:#fff;border-radius:16px;text-align:center}
+.hw-cta h2{color:#fff;font-size:1.75rem;margin:0 0 .5rem}
+.hw-cta p{margin:0 auto 1.25rem;max-width:46ch;color:#e9efe9}
+.hw-cta .dr-button{margin:0}
+.hw-cta .hw-small{margin:1rem auto 0;font-size:.95rem;text-align:center}
+.hw .hw-cta .hw-small a{color:#fff !important;text-decoration:underline}
+@media(min-width:900px){
+ .hw-hero__grid{grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:2.5rem}
+ .hw-step{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:3.5rem}
+ .hw-step:nth-child(even) .hw-copy{order:2}
+ .hw-receive{grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:3rem}
+ .hw-cta{padding:3rem 2rem}
+}
+@media(max-width:760px){
+ .hw-track{grid-template-columns:minmax(0,1fr);gap:.4rem}
+ .hw-track a{flex-direction:row;align-items:center;gap:.7rem;border-top-width:1px;border-left:4px solid var(--brand)}
+ .hw-hero{padding-top:1.5rem}
+ .hw-trio{max-width:340px}
+ .hw-art{min-height:0}
+}
+</style>
+
 </head>
 <body class="mr-app">
 <a href="#main" class="dr-skip">Skip to main content</a>
@@ -30,27 +141,175 @@
   </div>
 </header>
 
-<main id="main">
+<main id="main" class="hw">
 
-<div class="dr-width dr-narrow">
-  <h1>What you can do with AMI Mailroom</h1>
-  <p class="dr-lead">Send email to people who asked for it, and keep the proof that they did. Here is how it works for the people who send and the people who receive.</p>
-  <h2>If you send email</h2>
-  <ol class="dr-steps">
-    <li><h3>Sign up</h3><p>Tell us who you are and how your list was collected. A postal address is optional. Verify your email address and you can send: nobody approves you first.</p></li>
-    <li><h3>Record how people agreed to hear from you</h3><p>For each list: how the addresses were collected, what people agreed to, and when. A list without that cannot be mailed.</p></li>
-    <li><h3>Write the campaign</h3><p>Blocks, not a page builder, so what arrives is light, accessible and works with images off.</p></li>
-    <li><h3>Test, then send</h3><p>Send a test to your own team, check it on a phone and with images off, then send, or pick a date and a time and leave it to go on its own. There is no daily cap: a list of three thousand can go out on your first day, within your monthly allowance.</p></li>
-    <li><h3>Read the results</h3><p>Delivered, bounced, clicked, unsubscribed and complaints. Open rates are not shown, because mail privacy features make them unreliable.</p></li>
+<div class="dr-width hw-hero">
+  <div class="hw-hero__grid">
+    <div class="hw-hero__text">
+      <p class="hw-eyebrow">How it works</p>
+      <h1>From sign-up to sent in three steps</h1>
+      <p class="dr-lead">Send email to people who asked for it, and keep the proof that they did.</p>
+      <div class="hw-actions">
+        <a class="dr-button dr-button--start" href="create-account.html">Start your 14-day trial</a>
+        <a class="dr-button dr-button--secondary" href="templates.html">See the templates</a>
+      </div>
+      <p class="hw-note">14-day trial, no card needed.</p>
+    </div>
+    <div class="hw-trio" aria-hidden="true">
+      <div class="hm-shot" style="--bg:#efd56b"><img src="assets/home/heroclass.jpg" width="480" height="615" alt=""></div>
+      <div class="hm-shot hw-pick" style="--bg:#b4b57a"><img src="assets/home/herojoin.jpg" width="480" height="615" alt=""></div>
+      <div class="hm-shot" style="--bg:#8091bd"><img src="assets/home/herosale.jpg" width="480" height="615" alt=""></div>
+    </div>
+  </div>
+  <ol class="hw-track" aria-label="The three steps">
+    <li><a href="#step-1"><span class="hw-n">1</span>Sign up</a></li>
+    <li><a href="#step-2"><span class="hw-n">2</span>Add your people</a></li>
+    <li><a href="#step-3"><span class="hw-n">3</span>Write and send</a></li>
   </ol>
-  <h2>If you receive email</h2>
-  <p>Every campaign carries the sender's name (and postal address, if you have added one), and an unsubscribe link that works in one click.</p>
-  <p>Unsubscribing stops that sender. A reader can also ask ABTA to stop all AMI Mailroom email to their address.</p>
-  <p>If an email asks you for money or you never signed up, reply to it or write to ami@abta.africa. ABTA can suspend the sender.</p>
-  <h2>Who runs it</h2>
-  <p>ABTA operates the platform and is accountable for what leaves its sending domain. You can also send from a domain of your own, which keeps your delivery record separate from every other sender: see <a href="domain.html">where your email comes from</a>. Nobody approves your campaigns. Instead the platform checks each one automatically before it goes, holds you to a monthly allowance, watches complaint and bounce rates, and suspends an account automatically when those rates pass the level mailbox providers accept.</p>
-  <p>A campaign is held for a person to look at only when a check finds something serious: a request for money, or an image with no description. ABTA looks at held campaigns within one working day.</p>
-  <p>ABTA does not write members' campaigns and does not own their lists. For a member's subscriber data ABTA acts as a processor, and the member is the controller. The <a href="legal/data-processing.html">data processing terms</a> set that out.</p>
+</div>
+
+<div class="dr-width">
+<div class="hw-steps">
+
+  <section class="hw-step" id="step-1" aria-labelledby="s1">
+    <div class="hw-copy">
+      <span class="hw-n" aria-hidden="true">1</span>
+      <h2 id="s1">Sign up</h2>
+      <p>Tell us who you are and confirm that your list came from people who gave you their address. A postal address is optional.</p>
+      <p>Confirm your email address with a code and you can send.</p>
+    </div>
+    <div class="hw-art" aria-hidden="true">
+      <span class="hw-tag">Example</span>
+      <div class="hw-card">
+        <h3>Create a sender account</h3>
+        <div class="hw-field"><small>Your name or organisation name</small><div class="hw-input">Acme Studio</div></div>
+        <div class="hw-field"><small>Email address</small><div class="hw-input">hello@acme.studio</div></div>
+        <span class="hw-btn">Create account</span>
+        <p style="margin:.7rem 0 0"><span class="hw-chip hw-chip--ok"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg> Code sent to confirm your address</span></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="hw-step" id="step-2" aria-labelledby="s2">
+    <div class="hw-copy">
+      <span class="hw-n" aria-hidden="true">2</span>
+      <h2 id="s2">Add your people</h2>
+      <p>Upload a file or use a signup form on your website. For each list, record how the addresses were collected, what people agreed to and when.</p>
+      <p>A list without that record cannot be mailed.</p>
+    </div>
+    <div class="hw-art" aria-hidden="true">
+      <span class="hw-tag">Example</span>
+      <div class="hw-card">
+        <h3>Newsletter subscribers</h3>
+        <div class="hw-row"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b>How collected</b><small>Sign-up form on our website</small></div></div>
+        <div class="hw-row"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b>What they agreed to</b><small>A monthly newsletter</small></div></div>
+        <div class="hw-row"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b>When</b><small>12 October 2026</small></div></div>
+        <p class="hw-lock">No record, no mailing.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="hw-step" id="step-3" aria-labelledby="s3">
+    <div class="hw-copy">
+      <span class="hw-n" aria-hidden="true">3</span>
+      <h2 id="s3">Write and send</h2>
+      <p>Start from one of more than 300 ready-made templates. Edit the text, pictures and buttons, and search free photos and GIFs without leaving the editor.</p>
+      <p>Send a test to your own team and check it on a phone and with images off. Then send now, or pick a date and time and leave it to go on its own. There is no daily limit, only your monthly allowance.</p>
+    </div>
+    <div class="hw-art hw-art--wide" aria-hidden="true">
+      <span class="hw-tag">Example</span>
+      <div class="hw-pair">
+        <div class="hw-ed">
+          <div class="hw-pal"><span class="hw-chip">Text</span><span class="hw-chip">Picture</span><span class="hw-chip">Button</span></div>
+          <div class="hw-canvas">
+            <img class="hw-photo" src="assets/home/hero-pic.jpg" width="520" height="243" alt="" loading="lazy">
+            <div class="hw-band"><b>JOIN US</b><span class="hw-l"></span><span class="hw-l hw-l--s"></span><span class="hw-btn-w">Register</span></div>
+          </div>
+        </div>
+        <div class="hw-phone hw-phone--sm">
+          <div class="hw-banner"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg> Test email sent to you</div>
+          <div class="hw-crop"><img src="assets/home/herojoin.jpg" width="480" height="615" alt="" loading="lazy"></div>
+        </div>
+      </div>
+      <div class="hw-sched"><span class="hw-chip hw-chip--ok">Send now</span><span class="hw-chip">Pick a date and time</span></div>
+    </div>
+  </section>
+
+</div>
+</div>
+
+<div class="dr-width">
+  <section class="hw-step hw-after" id="results" aria-labelledby="s4">
+    <div class="hw-copy">
+      <p class="hw-eyebrow">After you send</p>
+      <h2 id="s4">Read the results</h2>
+      <p>See how many emails were delivered, bounced, clicked, unsubscribed and reported as complaints.</p>
+      <p>Open rates are not shown, because mail privacy features make them unreliable.</p>
+    </div>
+    <div class="hw-art" aria-hidden="true">
+      <span class="hw-tag">Example figures</span>
+      <div class="hw-card hw-results">
+        <h3>Spring newsletter</h3>
+        <div class="hw-bar"><span>Delivered</span><span class="hw-bar-track"><i style="width:96%"></i></span><b>480</b></div>
+        <div class="hw-bar"><span>Clicked</span><span class="hw-bar-track"><i style="width:14%"></i></span><b>71</b></div>
+        <div class="hw-bar"><span>Bounced</span><span class="hw-bar-track"><i class="warn" style="width:4%"></i></span><b>6</b></div>
+        <div class="hw-bar"><span>Unsubscribed</span><span class="hw-bar-track"><i class="warn" style="width:2%"></i></span><b>3</b></div>
+        <div class="hw-bar"><span>Complaints</span><span class="hw-bar-track"><i class="warn" style="width:1%"></i></span><b>0</b></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="dr-width">
+  <section class="hw-section" aria-labelledby="recv">
+    <h2 id="recv">If you receive email</h2>
+    <p class="hw-intro">Every campaign shows who sent it and lets you stop it.</p>
+    <div class="hw-receive">
+      <div class="hw-art" aria-hidden="true" style="min-height:0">
+        <span class="hw-tag">Example</span>
+        <div class="hw-phone hw-phone--lg">
+          <div class="hw-crop">
+            <img src="assets/home/herojoin.jpg" width="480" height="615" alt="" loading="lazy">
+            <i class="hw-pin" style="left:45%;top:6%">1</i>
+            <i class="hw-pin" style="left:76%;top:92%">2</i>
+            <i class="hw-pin" style="left:96%;top:88%">3</i>
+          </div>
+        </div>
+      </div>
+      <ol class="hw-calls">
+        <li><span class="hw-n" aria-hidden="true">1</span><p><strong>The sender is named.</strong> Every campaign carries the sender's name, and their postal address if they have added one.</p></li>
+        <li><span class="hw-n" aria-hidden="true">2</span><p><strong>One click stops it.</strong> The unsubscribe link works in one click and stops that sender. You can also ask ABTA to stop all AMI Mailroom email to your address.</p></li>
+        <li><span class="hw-n" aria-hidden="true">3</span><p><strong>Tell us if something is wrong.</strong> If an email asks you for money or you never signed up, reply to it or write to <a href="mailto:ami@abta.africa">ami@abta.africa</a>. ABTA can suspend the sender.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="hw-section" aria-labelledby="who">
+    <h2 id="who">Who runs it</h2>
+    <p class="hw-intro">ABTA operates the platform and is accountable for what leaves its sending domain.</p>
+    <div class="hw-cards">
+      <div class="hw-box">
+        <h3>Checked automatically</h3>
+        <p>The platform checks each campaign before it goes, holds you to a monthly allowance and watches complaint and bounce rates. It suspends an account automatically when those rates pass the level mailbox providers accept.</p>
+      </div>
+      <div class="hw-box">
+        <h3>Held only when serious</h3>
+        <p>A campaign is held for a person to look at only when a check finds something serious: a request for money, or an image with no description. ABTA looks at held campaigns within one working day.</p>
+      </div>
+      <div class="hw-box">
+        <h3>Your list stays yours</h3>
+        <p>ABTA does not write members' campaigns and does not own their lists. For a member's subscriber data ABTA acts as a processor and the member is the controller. The <a href="legal/data-processing.html">data processing terms</a> set that out.</p>
+        <p>You can also send from a domain of your own: see <a href="domain.html">where your email comes from</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="hw-cta" aria-labelledby="cta">
+    <h2 id="cta">Send your first campaign</h2>
+    <p>Create a sender account, add the people who asked to hear from you and start from a template that is already written.</p>
+    <a class="dr-button dr-button--start" href="create-account.html">Start your 14-day trial</a>
+    <p class="hw-small">No card needed. <a href="pricing.html">See pricing and sending rules</a></p>
+  </section>
 </div>
 
 </main>
