@@ -16,7 +16,11 @@
         MR.h('a', { class: 'dr-button dr-button--secondary', href: 'create-account.html', text: 'Create a sender account' })));
       return Promise.reject(new Error('signed out'));
     }
-    return MR.api.select('mailroom_account_users?select=account_id,role,mailroom_accounts(*)')
+    // Only this person's own links. An administrator is allowed to read every
+    // link, so without the filter the first row could be another account's,
+    // and each page could open a different account.
+    var mine = MR.auth.userId() ? '&user_id=eq.' + encodeURIComponent(MR.auth.userId()) : '';
+    return MR.api.select('mailroom_account_users?select=account_id,role,mailroom_accounts(*)' + mine + '&order=created_at')
       .then(function (rows) {
         if (!rows || !rows.length) {
           wrap.textContent = '';
@@ -25,6 +29,7 @@
           wrap.appendChild(MR.h('p', null, MR.h('a', { class: 'dr-button', href: 'create-account.html', text: 'Create a sender account' })));
           throw new Error('no account');
         }
+        MR.scopeAccount = rows[0].account_id;
         return rows[0].mailroom_accounts;
       });
   };
@@ -525,7 +530,8 @@
     // nothing to create. They go to their mailroom, both when they arrive here
     // already signed in and when the code they enter signs them in.
     var hasAccount = function () {
-      return MR.api.select('mailroom_account_users?select=account_id&limit=1')
+      var mine = MR.auth.userId() ? '&user_id=eq.' + encodeURIComponent(MR.auth.userId()) : '';
+      return MR.api.select('mailroom_account_users?select=account_id' + mine + '&limit=1')
         .then(function (rows) { return !!(rows && rows.length); })
         .catch(function () { return false; });
     };

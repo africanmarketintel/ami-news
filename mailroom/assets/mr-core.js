@@ -682,8 +682,18 @@
     });
   }
 
+  // Rows that belong to one account. Administrators are allowed to read every
+  // account's rows, so a member page asks only for the account it has open.
+  // requireAccount sets MR.scopeAccount; the administrator page never does,
+  // so it still sees everything.
+  var ACCOUNT_TABLES = /^mailroom_(lists|subscribers|campaigns|domains|reply_addresses|brand|images|saved_blocks|forms|api_keys|webhooks|risk_flags)\?/;
+  MR.scopeAccount = null;
+
   MR.api = {
     select: function (path) {
+      if (MR.scopeAccount && ACCOUNT_TABLES.test(path) && !/[?&]account_id=/.test(path)) {
+        path += '&account_id=eq.' + encodeURIComponent(MR.scopeAccount);
+      }
       return request(path, { headers: headers() });
     },
     // opts.query adds a query string, opts.upsert writes over a row that

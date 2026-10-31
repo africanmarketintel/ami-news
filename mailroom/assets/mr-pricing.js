@@ -251,7 +251,8 @@
       // The same link the account page uses, so this is the member's own
       // account. Reading mailroom_accounts directly can return another
       // account to an administrator, who is allowed to see them all.
-      MR.api.select('mailroom_account_users?select=account_id,mailroom_accounts(id,plan_code,billing_interval,billing_status,trial_ends_at,created_at)&limit=1').then(function (rows) {
+      var mine = MR.auth.userId() ? '&user_id=eq.' + encodeURIComponent(MR.auth.userId()) : '';
+      MR.api.select('mailroom_account_users?select=account_id,mailroom_accounts(id,plan_code,billing_interval,billing_status,trial_ends_at,created_at)' + mine + '&order=created_at&limit=1').then(function (rows) {
         var a = rows && rows[0] && rows[0].mailroom_accounts;
         if (!a) return;
         member = { account: a, step: null, interval: a.billing_interval === 'year' ? 'year' : 'month' };
