@@ -1202,7 +1202,35 @@
         var subscribed = (rows || []).filter(function (r) { return r.status === 'subscribed'; }).length;
         count.textContent = MR.number(subscribed) + ' subscribed, ' +
           MR.number((rows || []).length - subscribed) + ' not mailable';
+        // Only a list with nobody on it can be deleted here. Removing a list
+        // that has people on it would also remove each address and its record
+        // of where it came from, including who had unsubscribed.
+        if (!(rows || []).length) addDelete();
       }).catch(function () { count.textContent = 'The subscriber count could not be loaded.'; });
+
+      var deleteHolder = MR.h('p', null);
+      function addDelete() {
+        var btn = MR.h('button', {
+          type: 'button', class: 'dr-button dr-button--secondary', text: 'Delete this empty list',
+          onclick: function () {
+            if (MR.cfg.demo) { MR.banner(wrap, 'Preview only', 'Nothing was deleted.'); return; }
+            if (!confirm('Delete the empty list \u201c' + list.name + '\u201d? This cannot be undone. Campaigns that used it are kept.')) return;
+            btn.disabled = true;
+            MR.api.select('mailroom_subscribers?select=id&list_id=eq.' + list.id + '&limit=1').then(function (again) {
+              if ((again || []).length) throw new Error('not_empty');
+              return MR.api.remove('mailroom_lists', 'id=eq.' + list.id);
+            }).then(function () { location.reload(); })
+              .catch(function (err) {
+                btn.disabled = false;
+                alert(err && err.message === 'not_empty'
+                  ? 'That list has people on it now, so it was not deleted.'
+                  : 'The list could not be deleted.');
+                console.error(err);
+              });
+          }
+        });
+        deleteHolder.appendChild(btn);
+      }
 
       if (list.consent_status === 'unconfirmed') {
         box.appendChild(consentForm(list));
@@ -1226,6 +1254,7 @@
       box.appendChild(subscriberPanel(list));
       box.appendChild(MR.h('p', null,
         MR.h('a', { class: 'dr-button dr-button--secondary', href: 'import.html?list=' + list.id, text: 'Import subscribers' })));
+      box.appendChild(deleteHolder);
       return box;
     }
 
