@@ -195,7 +195,7 @@
       var label = link.textContent;
       link.setAttribute('aria-disabled', 'true');
       link.setAttribute('data-busy', 'true');
-      link.textContent = 'Opening the payment page…';
+      link.textContent = member && member.step ? 'Changing your plan…' : 'Opening the payment page…';
       say('');
       MR.billing.start(plan, interval).then(function (r) {
         if (r && r.leaving) return;
@@ -222,6 +222,12 @@
       if (a.getAttribute('aria-disabled') === 'true') return;
       choose(a.getAttribute('data-choose'), a);
     });
+
+    // The table of every volume is the page's version for readers without
+    // scripts, and the source the sliders are built from. Once the sliders
+    // work it is hidden: the cards show the same prices.
+    var table = document.getElementById('mr-volume');
+    if (table && cards.some(function (c) { return c.live; })) table.style.display = 'none';
 
     if (MR.qs && MR.qs('checkout') === 'cancelled') {
       say('Payment cancelled. Nothing was charged.');
