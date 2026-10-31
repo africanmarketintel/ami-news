@@ -105,6 +105,11 @@
       savedBlocks = res[4] || [];
       replyAddresses = (res[5] || []).map(function (r) { return r.email; });
       if (res[1] && res[1][0]) campaign = res[1][0];
+      // A draft saved before lists were limited to the open account can point
+      // at a list from another account. Drop it so the member picks again.
+      if (campaign.list_id && !lists.some(function (l) { return l.id === campaign.list_id; })) {
+        campaign.list_id = '';
+      }
       return ensureAlias();
     }).then(function () {
       pickDefaultDomain();
@@ -1105,7 +1110,9 @@
       if (/reply_to_not_verified|reply-to address has not been confirmed/i.test(m)) return 'The reply-to address has not been confirmed. Confirm it in Settings, then send.';
       if (/domain_not_verified|not verified yet/i.test(m)) return 'That sending domain is not verified yet. Publish its DNS records, then check it on the sending domains page.';
       if (/domain_suspended|Sending from/i.test(m)) return 'Sending from that domain is suspended. Check the sending domains page for the reason.';
-      if (/domain_not_yours|does not belong to this account/i.test(m)) return 'That sending domain does not belong to your account.';
+      if (/That list does not belong/i.test(m)) return 'That list belongs to a different account. Choose one of your own lists in "Send to".';
+      if (/domain_not_yours|sending domain does not belong/i.test(m)) return 'That sending domain does not belong to your account.';
+      if (/does not belong to this account/i.test(m)) return 'Part of this campaign belongs to a different account. Reload the page and choose the list and sending domain again.';
       if (/trial has ended/i.test(m)) return 'Your 14-day trial has ended, so sending is switched off. Your campaigns and lists are safe. Email ami@abta.africa to choose a plan.';
       if (/trial ends before/i.test(m)) return 'Your trial ends before that time. Choose an earlier time, or email ami@abta.africa to choose a plan.';
       if (/trial covers/i.test(m)) return 'The trial covers 1,000 emails in total. Email ami@abta.africa to choose a plan and send more.';
