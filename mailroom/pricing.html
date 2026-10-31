@@ -88,6 +88,45 @@
         <a class="dr-button" href="create-account.html" data-choose="max">Choose Max</a>
       </article>
     </div>
+    <div class="mr-volume" id="mr-volume" aria-labelledby="mv-title">
+      <h3 class="dr-h" id="mv-title">Need a different amount?</h3>
+      <p>The three plans above are three of seven volumes. Every volume has every feature. Move the slider to the number of emails you send in a month, or read the table.</p>
+      <div class="mr-slider" id="mr-slider" hidden>
+        <p class="mr-slider__head"><label for="mr-slider-input">Emails you send a month</label> <output id="mr-slider-emails" for="mr-slider-input" class="mr-slider__emails">10,000</output></p>
+        <input type="range" id="mr-slider-input" class="mr-slider__input" min="0" max="6" step="1" value="0">
+        <div class="mr-slider__ticks" aria-hidden="true"><span>10,000</span><span>20,000</span><span>40,000</span><span>60,000</span><span>80,000</span><span>100,000</span><span>120,000</span></div>
+        <div class="mr-slider__result">
+          <div class="mr-bill" role="group" aria-label="Billing period for this volume">
+            <button type="button" class="mr-bill__btn" data-interval="month" aria-pressed="true">Monthly</button>
+            <button type="button" class="mr-bill__btn" data-interval="year" aria-pressed="false">Yearly <span class="mr-bill__save">1 month free</span></button>
+          </div>
+          <p class="mr-plancard__price"><span id="mr-slider-amount">&pound;5</span><span id="mr-slider-per" class="mr-plancard__per"> a month</span></p>
+          <p class="dr-small" id="mr-slider-note" role="status"></p>
+          <ul class="dr-list">
+            <li id="mr-slider-subs">5,000 subscribers held</li>
+            <li>Your own sending domain</li>
+            <li>Every feature on this page</li>
+          </ul>
+          <a class="dr-button" href="create-account.html" data-choose="basic" id="mr-slider-choose">Choose 10,000 emails a month</a>
+        </div>
+      </div>
+      <div class="dr-table-wrap">
+      <table class="dr-table" id="mr-volume-table">
+        <caption class="dr-visually-hidden">Every volume, with its price</caption>
+        <thead><tr><th scope="col">Emails a month</th><th scope="col">Subscribers held</th><th scope="col">Monthly price</th><th scope="col">Yearly price</th><th scope="col">Choose</th></tr></thead>
+        <tbody>
+        <tr data-plan="basic" data-emails="10000" data-subs="5000" data-month="500" data-year="5500"><th scope="row">10,000</th><td>5,000</td><td>&pound;5</td><td>&pound;55</td><td><a class="dr-button dr-button--secondary" href="create-account.html" data-choose="basic" aria-label="Choose 10,000 emails a month">Choose</a></td></tr>
+        <tr data-plan="step20k" data-emails="20000" data-subs="10000" data-month="800" data-year="8800"><th scope="row">20,000</th><td>10,000</td><td>&pound;8</td><td>&pound;88</td><td><a class="dr-button dr-button--secondary" href="create-account.html" data-choose="step20k" aria-label="Choose 20,000 emails a month">Choose</a></td></tr>
+        <tr data-plan="plus" data-emails="40000" data-subs="20000" data-month="1200" data-year="13200"><th scope="row">40,000</th><td>20,000</td><td>&pound;12</td><td>&pound;132</td><td><a class="dr-button dr-button--secondary" href="create-account.html" data-choose="plus" aria-label="Choose 40,000 emails a month">Choose</a></td></tr>
+        <tr data-plan="step60k" data-emails="60000" data-subs="30000" data-month="1700" data-year="18700"><th scope="row">60,000</th><td>30,000</td><td>&pound;17</td><td>&pound;187</td><td><a class="dr-button dr-button--secondary" href="create-account.html" data-choose="step60k" aria-label="Choose 60,000 emails a month">Choose</a></td></tr>
+        <tr data-plan="step80k" data-emails="80000" data-subs="50000" data-month="2200" data-year="24200"><th scope="row">80,000</th><td>50,000</td><td>&pound;22</td><td>&pound;242</td><td><a class="dr-button dr-button--secondary" href="create-account.html" data-choose="step80k" aria-label="Choose 80,000 emails a month">Choose</a></td></tr>
+        <tr data-plan="step100k" data-emails="100000" data-subs="75000" data-month="2600" data-year="28600"><th scope="row">100,000</th><td>75,000</td><td>&pound;26</td><td>&pound;286</td><td><a class="dr-button dr-button--secondary" href="create-account.html" data-choose="step100k" aria-label="Choose 100,000 emails a month">Choose</a></td></tr>
+        <tr data-plan="max" data-emails="120000" data-subs="100000" data-month="2900" data-year="31900"><th scope="row">120,000</th><td>100,000</td><td>&pound;29</td><td>&pound;319</td><td><a class="dr-button dr-button--secondary" href="create-account.html" data-choose="max" aria-label="Choose 120,000 emails a month">Choose</a></td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="dr-small">The yearly price is 11 times the monthly price. Both limits apply: whichever of emails and subscribers you reach first is the one that stops you.</p>
+    </div>
     <p class="dr-small mr-pricing__msg" id="mr-pricing-msg" role="status"></p>
     <p class="dr-small">Prices are in pounds sterling. Every plan has every feature listed below. Both limits apply, and whichever you reach first is the one that stops you.</p>
     <p class="dr-small">The trial runs for 14 days from sign-up. When it ends, sending stops and your account, lists and campaigns stay as they are. Choose a plan to start sending again.</p>
