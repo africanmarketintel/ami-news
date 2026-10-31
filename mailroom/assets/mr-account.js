@@ -883,7 +883,11 @@
       }
 
       // A plan picked on the pricing page before there was an account.
+      // Only for an account that has not picked a plan yet. A plan remembered
+      // in this tab goes stale once the account is on a paid plan, so it is
+      // dropped rather than offered again.
       var intent = MR.cfg.demo ? null : MR.billing.intent();
+      if (intent && MR.planLabel(account.plan_code)) { MR.billing.forget(); intent = null; }
       if (intent && account.plan_code !== intent.plan && MR.qs('checkout') !== 'success') {
         var ib = MR.banner(wrap, 'Finish choosing your plan',
           'You chose ' + MR.planLabel(intent.plan) + ' (' + (intent.interval === 'year' ? 'yearly' : 'monthly') + ') on the pricing page.');
