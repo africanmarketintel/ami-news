@@ -372,12 +372,12 @@
         replySelect.addEventListener('change', function () { campaign.reply_to = replySelect.value; });
         form.appendChild(MR.h('div', { class: 'dr-form-group' },
           MR.h('label', { class: 'dr-label', for: 'c-reply', text: 'Replies go to' }),
-          MR.h('span', { class: 'dr-hint' }, 'Replies come to you, not to ACME Limited. ',
+          MR.h('span', { class: 'dr-hint' }, 'Replies come to you, not to us. ',
             MR.h('a', { href: 'settings.html', text: 'Add another address' })),
           replySelect));
       } else {
         form.appendChild(field('c-reply', 'Replies go to', campaign.reply_to, function (v) { campaign.reply_to = v; },
-          'Replies come to you, not to ACME Limited. This address has to be confirmed on your account page before you can send.'));
+          'Replies come to you, not to us. This address has to be confirmed on your account page before you can send.'));
       }
 
       if (withStyle) {
