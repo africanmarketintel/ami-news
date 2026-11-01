@@ -475,7 +475,7 @@
       if (campaign.status === 'held') {
         MR.banner(wrap, 'Held for review',
           (campaign.held_reason || 'A check flagged this campaign.') +
-          ' ACME Limited looks at held campaigns within one working day. Fix the problem and it will be released.', 'important');
+          ' We look at held campaigns within one working day. Fix the problem and it will be released.', 'important');
       }
       if (campaign.status === 'sent') {
         sentNote(MR.banner(wrap, 'Already sent', 'This campaign has been sent, so it can no longer be edited. To use it again, make a copy and change what you need.'));
