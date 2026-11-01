@@ -1019,6 +1019,7 @@
             ', usually within a minute. Open it on a phone as well as a laptop, and try it with images turned off.');
         });
       }).catch(function (err) {
+        if (planBlock(err)) { console.error(err); return; }
         MR.banner(notes(), 'Test not sent', message(err), 'important');
         console.error(err);
       });
