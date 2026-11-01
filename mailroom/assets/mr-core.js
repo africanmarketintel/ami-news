@@ -861,7 +861,8 @@
         no_billing_yet: 'There is no billing to manage yet. Choose a plan first.',
         subscription_not_found: 'Your subscription could not be found. Email ami@abta.africa.',
         too_many_subscribers: 'You hold more subscribers than this volume allows. Remove subscribers or choose a larger volume.',
-        payment_failed: 'The payment did not go through, so your plan has not changed. Choose Manage billing on your account page to check or change your card, then try again.'
+        payment_failed: 'The payment did not go through, so your plan has not changed. Choose Manage billing on your account page to check or change your card, then try again.',
+        payment_needs_confirmation: 'Your bank needs you to confirm this payment, which cannot be done on this page yet, so your plan has not changed. Email ami@abta.africa and we will help you change plan.'
       };
       if (code === 'too_many_subscribers' && err && err.detail) {
         return 'You hold ' + Number(err.detail.held).toLocaleString('en-GB') + ' subscribers and this volume holds up to ' +
