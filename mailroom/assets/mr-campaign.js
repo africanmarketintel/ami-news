@@ -1093,7 +1093,7 @@
             lead: 'This campaign has not gone out',
             next: [
               'A check flagged it, so it is waiting for a person to look at it.',
-              'ACME Limited reviews held campaigns within one working day.',
+              'We review held campaigns within one working day.',
               'You will be told what to change, if anything.'
             ],
             actions: [['account.html', 'Go to your mailroom']]
