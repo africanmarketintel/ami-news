@@ -230,12 +230,14 @@
         box.appendChild(MR.h('p', { class: 'mr-trial', id: 'mr-trial' },
           MR.h('strong', { text: 'No free trial on this account' }),
           MR.h('span', { class: 'dr-small' },
-            ' A free trial has already been used with this email address. Sending is switched off until you choose a plan. Your account, lists and campaigns stay as they are.')));
+            ' A free trial has already been used with this email address. Sending is switched off until you choose a plan. Your account, lists and campaigns stay as they are. '),
+          MR.h('a', { href: 'pricing.html', text: 'Choose a plan.' })));
       } else {
         box.appendChild(MR.h('p', { class: 'mr-trial', id: 'mr-trial' },
           MR.h('strong', { text: 'Your trial has ended' }),
           MR.h('span', { class: 'dr-small' },
-            ' Sending is switched off. Your account, lists and campaigns stay as they are. Choose a plan to start sending again.')));
+            ' Sending is switched off. Your account, lists and campaigns stay as they are. '),
+          MR.h('a', { href: 'pricing.html', text: 'Choose a plan to start sending again.' })));
       }
     }
 
@@ -790,6 +792,10 @@
   function initDashboard() {
     var wrap = document.getElementById('mr-dashboard');
     if (!wrap) return;
+    if (!MR.cfg.demo) {
+      wrap.textContent = '';
+      wrap.appendChild(MR.h('p', { class: 'dr-loading', role: 'status', text: 'Loading\u2026' }));
+    }
 
     // In preview mode the same render runs on the sample data, so the page a
     // member is sent to when a reply-to address is refused is not a blank one.
@@ -1142,6 +1148,12 @@
   function initLists() {
     var wrap = document.getElementById('mr-lists');
     if (!wrap || MR.cfg.demo) return;
+
+    // The page ships with sample content so a visitor without an account can
+    // see what it does. A signed-in member must not see it while their own
+    // loads, so it is replaced straight away.
+    wrap.textContent = '';
+    wrap.appendChild(MR.h('p', { class: 'dr-loading', role: 'status', text: 'Loading\u2026' }));
 
     MR.requireAccount(wrap).then(function (account) {
       return MR.api.select('mailroom_lists?select=*&order=created_at.desc').then(function (lists) {

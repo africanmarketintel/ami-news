@@ -960,6 +960,7 @@
           actions: [['account.html', 'Go to your mailroom'], ['campaign.html', 'Write another campaign']]
         });
       }).catch(function (err) {
+        if (planBlock(err)) { console.error(err); return; }
         showErrors(form, [{ id: 'c-date', message: message(err) }]);
         console.error(err);
       });
@@ -1098,9 +1099,32 @@
           });
           return;
         }
+        if (planBlock(err)) { console.error(err); return; }
         showErrors(form, [{ id: 'c-subject', message: message(err) }]);
         console.error(err);
       });
+    }
+
+    // A trial that has ended or is used up is not a fault in one field: show it
+    // as a message with a button to the pricing page, where a plan is chosen and paid for.
+    function planBlock(err) {
+      var m = String(err && err.message || '');
+      if (!/trial has ended|trial ends before|trial covers/i.test(m)) return false;
+      var target = notes();
+      var title = 'Choose a plan to send';
+      [].slice.call(target.children).forEach(function (el) {
+        var t = el.classList && el.classList.contains('dr-banner') ? el.querySelector('.dr-banner__title') : null;
+        if (t && t.textContent === title) target.removeChild(el);
+      });
+      var box = MR.h('div', { class: 'dr-banner dr-banner--important', role: 'alert' },
+        MR.h('p', { class: 'dr-banner__title', text: title }),
+        MR.h('div', { class: 'dr-banner__content' },
+          MR.h('p', { text: message(err) }),
+          MR.h('p', null, MR.h('a', { class: 'dr-button', href: 'pricing.html', text: 'Choose a plan' }))));
+      target.insertBefore(box, target.firstChild);
+      if (studio) studio.openSend();
+      box.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      return true;
     }
 
     function message(err) {
@@ -1113,9 +1137,9 @@
       if (/That list does not belong/i.test(m)) return 'That list belongs to a different account. Choose one of your own lists in "Send to".';
       if (/domain_not_yours|sending domain does not belong/i.test(m)) return 'That sending domain does not belong to your account.';
       if (/does not belong to this account/i.test(m)) return 'Part of this campaign belongs to a different account. Reload the page and choose the list and sending domain again.';
-      if (/trial has ended/i.test(m)) return 'Your 14-day trial has ended, so sending is switched off. Your campaigns and lists are safe. Email ami@abta.africa to choose a plan.';
-      if (/trial ends before/i.test(m)) return 'Your trial ends before that time. Choose an earlier time, or email ami@abta.africa to choose a plan.';
-      if (/trial covers/i.test(m)) return 'The trial covers 1,000 emails in total. Email ami@abta.africa to choose a plan and send more.';
+      if (/trial has ended/i.test(m)) return 'Your 14-day trial has ended, so sending is switched off. Your campaigns and lists are safe. Choose a plan on the Pricing page to start sending again.';
+      if (/trial ends before/i.test(m)) return 'Your trial ends before that time. Choose an earlier time, or choose a plan on the Pricing page.';
+      if (/trial covers/i.test(m)) return 'The trial covers 1,000 emails in total. Choose a plan on the Pricing page to send more.';
       if (/monthly limit/i.test(m)) return 'This send would pass your monthly limit.';
       if (/invalid_test_address/i.test(m)) return 'One of those is not a valid email address. Check them and try again.';
       if (/too_many_test_addresses/i.test(m)) return 'A test can go to five addresses at most.';
