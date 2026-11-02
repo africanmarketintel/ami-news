@@ -590,7 +590,6 @@
       if (/too_soon/.test(m)) return 'A code was sent a moment ago. Give it a minute, then check your junk folder.';
       if (/could_not_send/.test(m)) return 'We could not send the code. Try again shortly.';
       if (/too_many_addresses/.test(m)) return 'An account can hold three confirmed addresses. Remove one first.';
-      if (/^plan$/.test(m)) return 'An exact address on a domain of your own comes with any paid plan. A free address such as Gmail works on every plan.';
       if (/^plan$/.test(m)) {
         var built = domains.filter(function (d) { return d.kind === 'alias'; })[0];
         return (built ? 'You can already send from ' + MR.domainLabel(built) + ', and replies come to you. ' : 'You can already send from the address we built for you, and replies come to you. ') +
