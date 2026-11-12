@@ -353,3 +353,24 @@ html body .toast[style*="201, 168, 76"] { border-color: #333333 !important; colo
    so no white strip shows between the footer and the bar once the notice is closed */
 html { background-color: #1A237E !important; }
 html body { background-clip: content-box !important; }
+
+/* 26. Membership page (membership.html): Inter type, Deep Indigo for the yearly plan, Emerald Green ticks */
+html body #page-title-display {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif !important;
+  font-size: 42px !important; font-weight: 600 !important; letter-spacing: -.02em !important;
+}
+html body p[style*="Playfair"] { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif !important; }
+html body .plan-box .pprice {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif !important;
+  font-weight: 600 !important; letter-spacing: -.02em !important;
+}
+html body .plan-box.featured { border-top-color: #1A237E !important; }
+html body .plan-box.featured .plan-cta { background: #1A237E !important; color: #FFFFFF !important; }
+html body .plan-box .plan-cta:hover { background: #1A237E !important; color: #FFFFFF !important; }
+html body .plan-box.featured .plan-cta:hover { background: #F4A300 !important; color: #333333 !important; }
+html body .plan-badge {
+  background: #1A237E !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif !important;
+}
+html body .plan-box ul li::before,
+html body .plan-features li::before { color: #008060 !important; }
