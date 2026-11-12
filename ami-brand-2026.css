@@ -234,3 +234,30 @@ html body .newsletter-widget .nw-sub {
   margin: 0 -24px 18px !important;
   padding: 0 24px 22px !important;
 }
+
+/* 19. Deal Tracker cards (deals.html): indigo bar, Inter type, brand-colour deal type tags */
+html body .deal-card { border-left-color: #1A237E !important; }
+html body .deal-card [style*="Playfair"] {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  letter-spacing: -.01em !important;
+  color: #333333 !important;
+}
+html body .deal-card [style*="Spectral"],
+html body .deal-card [style*="DM Mono"] {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif !important;
+}
+html body .deal-card [style*="DM Mono"] { letter-spacing: .04em !important; }
+html body .deal-type-badge {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif !important;
+  font-weight: 600 !important;
+  letter-spacing: .06em !important;
+  background: #1A237E !important;
+  color: #FFFFFF !important;
+}
+html body .deal-type-badge.infrastructure { background: #F4A300 !important; color: #333333 !important; }
+html body .deal-type-badge.ma { background: #008060 !important; color: #FFFFFF !important; }
+html body .deal-type-badge.debt { background: #333333 !important; color: #FFFFFF !important; }
+html body .deal-type-badge.dfi { background: #8E2F3E !important; color: #FFFFFF !important; }
+html body .deal-type-badge.exit { background: #666666 !important; color: #FFFFFF !important; }
