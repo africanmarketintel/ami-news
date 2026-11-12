@@ -211,3 +211,24 @@ html body .archive-header {
 }
 html body .archive-title { color: #1A237E !important; font-weight: 600 !important; letter-spacing: .08em !important; }
 html body .archive-count { color: #666666 !important; }
+
+/* 17. Headline size: Inter is wider than the old serif, so headlines are 8% smaller to wrap as before */
+html body :is(h1, h2, h3, h4):not(.section-title) > .lay-a {
+  font-size: 92% !important;
+  letter-spacing: -.01em !important;
+}
+
+/* 18. Africa Week in Review box: Deep Indigo top section (title and description), white form area */
+html body .newsletter-widget { overflow: hidden !important; }
+html body .newsletter-widget .nw-title {
+  background: #1A237E !important;
+  color: #FFFFFF !important;
+  margin: -24px -24px 0 !important;
+  padding: 24px 24px 6px !important;
+}
+html body .newsletter-widget .nw-sub {
+  background: #1A237E !important;
+  color: #FFFFFF !important;
+  margin: 0 -24px 18px !important;
+  padding: 0 24px 22px !important;
+}
