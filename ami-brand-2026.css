@@ -273,3 +273,21 @@ html body .af-headline { font-size: 38px !important; font-weight: 600 !important
 html body .article-full .ra { font-size: 17.5px !important; font-weight: 600 !important; }
 html body .more-from__title { font-size: 20px !important; font-weight: 600 !important; }
 html body .card-headline { font-size: 15px !important; font-weight: 600 !important; }
+
+/* 21. "This article is free" box at the end of free articles: Deep Indigo, white text, white outline button */
+html body #amiFreeNote > div { border-top: 0 !important; }
+html body #amiFreeNote > div > div { background: #1A237E !important; }
+html body #amiFreeNote > div > div > div {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif !important;
+  font-size: 11px !important; font-weight: 600 !important; letter-spacing: .14em !important; color: #E0E0E0 !important;
+}
+html body #amiFreeNote > div > div > p {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif !important;
+  font-style: normal !important; font-weight: 400 !important; color: #FFFFFF !important;
+}
+html body #amiFreeNote > div > div > a {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif !important;
+  background: transparent !important; color: #FFFFFF !important; border: 2px solid #FFFFFF !important;
+  padding: 9px 22px !important; font-size: 12px !important; font-weight: 600 !important; letter-spacing: .09em !important;
+}
+html body #amiFreeNote > div > div > a:hover { background: #FFFFFF !important; color: #1A237E !important; }
