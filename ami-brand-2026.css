@@ -145,20 +145,22 @@ html body .page-btn { border-color: #CCCCCC; color: #666666; }
 html body .page-btn:hover { color: #1A237E; border-color: #1A237E; }
 html body .page-btn.active { background: #1A237E; border-color: #1A237E; color: #FFFFFF; }
 
-/* 11. Footer: white, indigo headings, charcoal links */
-html body footer.ami-foot { background: #FFFFFF !important; color: #333333; }
-html body footer.ami-foot h2 { color: #1A237E; }
+/* 11. Footer: Deep Indigo ground (matches masthead and abta.africa), white text, Gold Ochre top line and hover */
+html body footer.ami-foot { background: #1A237E !important; color: #FFFFFF; border-top: 3px solid #F4A300 !important; }
+html body footer.ami-foot h2 { color: #FFFFFF; }
 html body footer.ami-foot a,
 html body footer.ami-foot p,
-html body footer.ami-foot .ami-foot__linkbtn { color: #333333; }
+html body footer.ami-foot .ami-foot__linkbtn { color: #FFFFFF; }
 html body footer.ami-foot a:hover,
 html body footer.ami-foot a:focus,
 html body footer.ami-foot .ami-foot__linkbtn:hover,
-html body footer.ami-foot .ami-foot__linkbtn:focus { color: #8E2F3E; }
-html body footer.ami-foot .ami-foot__rule { background: #CCCCCC; }
-html body footer.ami-foot .ami-foot__legal p { color: #666666; }
-html body footer.ami-foot .ami-foot__verify { border-color: #333333; color: #333333; }
-html body footer.ami-foot .ami-foot__verify:hover { background: #F7F7F7; }
+html body footer.ami-foot .ami-foot__linkbtn:focus { color: #F4A300; }
+html body footer.ami-foot .ami-foot__rule { background: rgba(255, 255, 255, .3); }
+html body footer.ami-foot .ami-foot__legal p,
+html body footer.ami-foot .ami-foot__credit,
+html body footer.ami-foot .ami-foot__credit a { color: #E0E0E0; }
+html body footer.ami-foot .ami-foot__verify { background: transparent; border-color: #FFFFFF; color: #FFFFFF; }
+html body footer.ami-foot .ami-foot__verify:hover { background: #FFFFFF; color: #1A237E; }
 
 /* 12. Type: Inter until Museo Sans is licensed (ABTA Brand Guidelines) */
 html body,
