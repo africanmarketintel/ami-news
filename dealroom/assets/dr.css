@@ -515,3 +515,24 @@ a:hover, .dr-link:hover { color: var(--brand-hover); text-decoration-thickness: 
   text-transform: uppercase; color: var(--brand); text-decoration: none; white-space: nowrap;
 }
 .dr-card__interest:hover, .dr-card__interest:focus-visible { text-decoration: underline; color: var(--brand-hover); }
+
+/* ABTA brand colours 2026: Deep Indigo */
+:root {
+  --ink: #333333;
+  --secondary: #666666;
+  --page-alt: #F7F7F7;
+  --brand: #1A237E;
+  --brand-hover: #8E2F3E;
+  --brand-tint: #EEF0FA;
+  --header: #1A237E;
+  --gold: #F4A300;
+  --gold-light: #F4A300;
+  --gold-dark: #8E2F3E;
+  --border: #CCCCCC;
+  --border-light: #E0E0E0;
+  --input: #333333;
+}
+.dr-hero::before { display: none; }
+.dr-hero__sub, .dr-trust { color: #E0E0E0; }
+.dr-card__visual[data-sector], .dr-detail-visual { background: #1A237E !important; }
+.dr-tag--green, .dr-tracker li.is-done { background: #008060; color: #FFFFFF; }
