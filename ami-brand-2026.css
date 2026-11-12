@@ -191,3 +191,23 @@ html body .ami-cookie { background: #FFFFFF !important; color: #333333 !importan
 html body .ami-cookie a { color: #1A237E !important; }
 html body .ami-cookie .ok { background: #1A237E !important; color: #FFFFFF !important; border-color: #1A237E !important; }
 html body .ami-cookie .no { background: #FFFFFF !important; color: #1A237E !important; border-color: #1A237E !important; }
+
+/* 15. Headlines, standfirsts and newsletter title in Inter, matching the approved design */
+html body .lay-a,
+html body .lay-sf,
+html body .nw-title,
+html body .lay-h1,
+html body .lay-it .lay-a {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif !important;
+}
+
+/* 16. "All Articles" bar on archive pages: plain indigo rule, no old terracotta side bar */
+html body .archive-header {
+  border: 0 !important;
+  border-bottom: 2px solid #1A237E !important;
+  background: #FFFFFF !important;
+  margin: 0 0 14px !important;
+  padding: 10px 0 !important;
+}
+html body .archive-title { color: #1A237E !important; font-weight: 600 !important; letter-spacing: .08em !important; }
+html body .archive-count { color: #666666 !important; }
