@@ -261,3 +261,15 @@ html body .deal-type-badge.ma { background: #008060 !important; color: #FFFFFF !
 html body .deal-type-badge.debt { background: #333333 !important; color: #FFFFFF !important; }
 html body .deal-type-badge.dfi { background: #8E2F3E !important; color: #FFFFFF !important; }
 html body .deal-type-badge.exit { background: #666666 !important; color: #FFFFFF !important; }
+
+/* 20. Article page (article.html): headlines in Inter to match the rest of the site */
+html body .af-headline,
+html body .article-full .ra,
+html body .more-from__title,
+html body .card-headline {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif !important;
+}
+html body .af-headline { font-size: 38px !important; font-weight: 600 !important; letter-spacing: -.02em !important; }
+html body .article-full .ra { font-size: 17.5px !important; font-weight: 600 !important; }
+html body .more-from__title { font-size: 20px !important; font-weight: 600 !important; }
+html body .card-headline { font-size: 15px !important; font-weight: 600 !important; }
