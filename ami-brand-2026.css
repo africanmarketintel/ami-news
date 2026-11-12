@@ -291,3 +291,65 @@ html body #amiFreeNote > div > div > a {
   padding: 9px 22px !important; font-size: 12px !important; font-weight: 600 !important; letter-spacing: .09em !important;
 }
 html body #amiFreeNote > div > div > a:hover { background: #FFFFFF !important; color: #1A237E !important; }
+
+/* 22. Mobile menu: white menu button on the blue band, Deep Indigo slide-out panel, Gold Ochre headings */
+html body .ami-menu-btn { color: #FFFFFF !important; }
+html body .ami-menu { background: #1A237E !important; }
+html body .ami-menu__head,
+html body .ami-menu-search,
+html body .ami-menu a { border-bottom-color: rgba(255, 255, 255, .25) !important; }
+html body .ami-menu__title,
+html body .ami-menu h3 { color: #F4A300 !important; }
+html body .ami-menu a,
+html body .ami-menu-search,
+html body .ami-menu__close { color: #FFFFFF !important; }
+html body .ami-menu a:hover,
+html body .ami-menu a:focus,
+html body .ami-menu-search:hover { color: #F4A300 !important; }
+
+/* 23. Subscriber login box (login.js): white card, Deep Indigo accents, Gold Ochre button, Inter type */
+html body #amiLoginOverlay { background: rgba(51, 51, 51, .8) !important; }
+html body #amiLoginOverlay,
+html body #amiLoginOverlay * { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif !important; }
+html body #amiLoginOverlay > div { background: #FFFFFF !important; border-top-color: #1A237E !important; }
+html body #amiLoginOverlay div[style*="Playfair"] { color: #333333 !important; font-weight: 600 !important; }
+html body #amiLoginOverlay div[style*="width:3px"] { background: #1A237E !important; }
+html body #amiLoginOverlay p { color: #666666 !important; }
+html body #amiLoginOverlay label { color: #333333 !important; }
+html body #amiLoginOverlay input:not([type=checkbox]) { border-color: #CCCCCC !important; color: #333333 !important; }
+html body #amiLoginOverlay input:not([type=checkbox]):focus { border-color: #1A237E !important; }
+html body #amiLoginOverlay input[type=checkbox] { accent-color: #1A237E !important; }
+html body #amiLoginOverlay div[style*="border-bottom:1px solid"] { border-bottom-color: #CCCCCC !important; }
+html body #amiTabSignIn,
+html body #amiTabSetup { color: #666666 !important; border-bottom: 2px solid transparent !important; }
+html body #amiTabSignIn[style*="600"],
+html body #amiTabSetup[style*="600"] { color: #1A237E !important; border-bottom: 2px solid #1A237E !important; }
+html body #amiLoginOverlay button[style*="text-decoration:underline"] { color: #1A237E !important; }
+html body #amiLoginOverlay button[aria-label="Close"] { color: #666666 !important; }
+html body #amiSignInBtn,
+html body #amiSetupBtn,
+html body #amiResetBtn { background: #F4A300 !important; color: #333333 !important; }
+html body #amiSignInBtn:hover,
+html body #amiSetupBtn:hover,
+html body #amiResetBtn:hover { background: #1A237E !important; color: #FFFFFF !important; }
+html body #amiSignInError,
+html body #amiSetupError,
+html body #amiResetError { background: #F7F7F7 !important; border-left-color: #8E2F3E !important; color: #8E2F3E !important; }
+html body #amiSetupSuccess,
+html body #amiResetSuccess,
+html body #amiSetupWelcome { background: #F7F7F7 !important; border-color: #CCCCCC !important; border-left-color: #008060 !important; color: #333333 !important; }
+html body #amiSetupInfoBanner { background: #F7F7F7 !important; border-left-color: #1A237E !important; color: #333333 !important; }
+html body #amiSetupInfoBanner a { color: #1A237E !important; }
+
+/* 24. Pop-up messages (toasts): white with Deep Indigo border so they show on blue and white; maroon for errors */
+html body .toast {
+  background: #FFFFFF !important; border: 2px solid #1A237E !important; color: #1A237E !important;
+  font-weight: 600 !important; box-shadow: 0 6px 24px rgba(0, 0, 0, .3) !important;
+}
+html body .toast[style*="244, 67, 54"] { border-color: #8E2F3E !important; color: #8E2F3E !important; }
+html body .toast[style*="201, 168, 76"] { border-color: #333333 !important; color: #333333 !important; }
+
+/* 25. Bottom of page: the space kept clear for the newsletter bar and analytics notice takes the footer's blue,
+   so no white strip shows between the footer and the bar once the notice is closed */
+html { background-color: #1A237E !important; }
+html body { background-clip: content-box !important; }
