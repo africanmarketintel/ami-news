@@ -238,7 +238,7 @@
     return p.join(' &middot; ');
   }
   function tag(a) { return a.is_locked ? '<span class="lay-tag">Premium</span>' : ''; }
-  function kick(a) { return a.section ? '<p class="lay-kick">' + a.section + '</p>' : ''; }
+  function kick(a) { return a.section ? '<p class="lay-kick" data-sec="' + a.section + '">' + a.section + '</p>' : ''; }
   function link(a, txt) { return '<a class="lay-a" href="' + url(a) + '">' + (txt || a.headline) + '</a>'; }
   // The main picture at the top of the page (the largest thing on screen) loads straight away
   // with high priority. Pictures further down wait until the reader scrolls near them.
@@ -537,7 +537,7 @@
       } else {
         var top4 = page.slice(0, 4), rest = page.slice(4);
         html = '<div class="lay-c4">' + top4.map(function (a) {
-          return '<div>' + img(a, 120) + kick(a).replace('<p class="lay-kick">', '<p class="lay-kick" style="margin-top:10px">') +
+          return '<div>' + img(a, 120) + kick(a).replace('<p class="lay-kick"', '<p style="margin-top:10px" class="lay-kick"') +
             '<h3>' + link(a) + tag(a) + '</h3><p class="lay-meta">' + metaLine(a) + '</p></div>';
         }).join('') + '</div>' + (rest.length ? '<div class="lay-list">' + rest.map(li).join('') + '</div>' : '');
       }

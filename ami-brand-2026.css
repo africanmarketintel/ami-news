@@ -1,0 +1,193 @@
+/* AMI home page – ABTA brand colours (October 2026 review)
+   Loaded by index.html only, after the page's own <style> block.
+   Palette (ABTA Brand Guidelines):
+     Deep Indigo #1A237E  Gold Ochre #F4A300  Emerald Green #008060  Rich Maroon #8E2F3E
+     Charcoal #333333  Grey #666666  Light Gray #F7F7F7  Cerebral Gray #CCCCCC  White #FFFFFF
+   Rules:
+     - Blue grounds carry white text. Buttons on blue are white outline with white text.
+     - Gold Ochre is never used as text on white (contrast 2.1:1). On white it is a fill with charcoal text.
+     - Maroon and emerald are never used as text on blue.
+   Font: Inter stands in until Museo Sans is licensed. */
+
+/* 1. Tokens used by the page's own CSS */
+:root {
+  --gold: #F4A300;
+  --gold-light: #F4A300;
+  --gold-pale: #EEF0FA;
+  --terra: #8E2F3E;
+  --terra-dark: #8E2F3E;
+  --green: #008060;
+  --green-mid: #008060;
+  --ink: #333333;
+  --ink-mid: #333333;
+  --ink-soft: #666666;
+  --cream: #FFFFFF;
+  --cream-dark: #F7F7F7;
+  --border: #CCCCCC;
+  --bg: #FFFFFF;
+  --surface: #FFFFFF;
+  --text: #333333;
+  --text-soft: #666666;
+  --nav-bg: #1A237E;
+  --nav-text: #FFFFFF;
+  --header-bg: #F7F7F7;
+  --divider: #CCCCCC;
+  --card-bg: #FFFFFF;
+}
+html body { background: #FFFFFF; }
+
+/* 2. Exchange-rate strip: Charcoal, all white */
+html body .ami-strip { background: #333333 !important; color: #FFFFFF !important; }
+html body .ami-strip__i b,
+html body .ami-strip__i { color: #FFFFFF !important; }
+html body .ami-strip__lead,
+html body .ami-strip__src,
+html body .ami-strip__src a { color: #E0E0E0 !important; }
+
+/* 3. Masthead: Deep Indigo, white wordmark */
+html body header.masthead { background: #1A237E !important; border-bottom: 1px solid rgba(255, 255, 255, .2) !important; }
+html body header.masthead .masthead-name,
+html body header.masthead .masthead-name span { color: #FFFFFF !important; }
+html body header.masthead .masthead-cta a.dr-nav__account,
+html body header.masthead .masthead-cta #amiNavLoginBtn { color: #FFFFFF !important; }
+
+/* 4. Buttons on blue: white outline, white text */
+html body header.masthead .btn-subscribe {
+  background: transparent !important;
+  color: #FFFFFF !important;
+  border: 2px solid #FFFFFF !important;
+  transition: background .2s, color .2s;
+}
+html body header.masthead .btn-subscribe:hover,
+html body header.masthead .btn-subscribe:focus-visible {
+  background: #FFFFFF !important;
+  color: #1A237E !important;
+}
+
+/* 5. Navigation band: Deep Indigo, white text, gold ochre on hover and for the current page */
+html body .ami-band {
+  background: #1A237E !important;
+  border-top: 1px solid rgba(255, 255, 255, .2) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, .2) !important;
+}
+html body .ami-band__name,
+html body .ami-band__nav a,
+html body .ami-band__switch a,
+html body .ami-band__drop > button { color: #FFFFFF !important; }
+html body .ami-band__nav a:hover,
+html body .ami-band__nav a:focus,
+html body .ami-band__switch a:hover,
+html body .ami-band__switch a:focus,
+html body .ami-band__drop > button:hover { color: #F4A300 !important; }
+html body .ami-band__nav a[aria-current="page"],
+html body .ami-band__switch a[aria-current="page"] { box-shadow: inset 0 -2px 0 #F4A300 !important; }
+html body .ami-band__sep { background: rgba(255, 255, 255, .3) !important; }
+html body .ami-band__menu { background: #1A237E !important; border-color: rgba(255, 255, 255, .3) !important; }
+html body .ami-band .ami-search-btn,
+html body .ami-band .ami-search-btn svg { color: #FFFFFF !important; stroke: #FFFFFF; }
+
+/* 6. Advert bands */
+html body .ami-adband { background: #F7F7F7 !important; border-bottom-color: #CCCCCC !important; }
+
+/* 7. Headlines and text */
+html body .ami-lay a.lay-a { color: #333333; }
+html body .ami-lay a.lay-a:hover { color: #1A237E; text-decoration: underline; }
+html body .ami-lay .lay-h1 a.lay-a,
+html body .ami-lay .lay-h1 { color: #1A237E; }
+html body .lay-sf { color: #666666; }
+html body .lay-meta { color: #666666; }
+html body .lay-cap { background: #FFFFFF; }
+html body .lay-tag { background: #1A237E; color: #FFFFFF; }
+html body .lay-rail__h { color: #1A237E; }
+html body .ami-lay .lay-lead > div,
+html body .ami-lay .lay-c4 > div,
+html body .ami-lay .lay-sub3 > div { border-left-color: #CCCCCC; }
+
+/* 8. Section colour coding (labels use data-sec, set in layout.js) */
+html body .lay-kick { color: #8E2F3E; font-weight: 700; }
+html body .lay-kick[data-sec="Energy"],
+html body .lay-kick[data-sec="Markets"] { color: #008060; }
+html body .lay-kick[data-sec="Economy"],
+html body .lay-kick[data-sec="Tech"] { color: #1A237E; }
+html body .lay-kick[data-sec="Politics"] { color: #333333; }
+
+/* Section headings and "All ..." links, matched on their page links */
+html body .ami-lay .section-header { border-top-color: #CCCCCC; }
+html body .ami-lay .section-header .section-title { color: #1A237E; font-weight: 700; }
+html body .ami-lay .section-header .section-title:not(:has(a)) { border-bottom: 3px solid #F4A300; display: inline-block; padding-bottom: 4px; }
+html body .section-title a[href*="deals"], html body .lay-blk__more a[href*="deals"] { color: #8E2F3E; }
+html body .section-title a[href*="energy"], html body .lay-blk__more a[href*="energy"],
+html body .section-title a[href*="markets"], html body .lay-blk__more a[href*="markets"] { color: #008060; }
+html body .section-title a[href*="economy"], html body .lay-blk__more a[href*="economy"],
+html body .section-title a[href*="tech"], html body .lay-blk__more a[href*="tech"] { color: #1A237E; }
+html body .section-title a[href*="politics"], html body .lay-blk__more a[href*="politics"] { color: #333333; }
+html body .lay-blk__more a { font-weight: 700; }
+html body .ami-lay .section-header .view-more { color: #1A237E; }
+html body .ami-lay .section-header .view-more:hover { color: #8E2F3E; }
+
+/* 9. Newsletter box: white, indigo border, gold ochre button */
+html body .newsletter-widget { background: #FFFFFF !important; border: 2px solid #1A237E !important; }
+html body .newsletter-widget::before { color: rgba(26, 35, 126, .08) !important; }
+html body .newsletter-widget h3,
+html body .newsletter-widget [class*="title"],
+html body .newsletter-widget [class*="head"] { color: #1A237E !important; }
+html body .newsletter-widget p,
+html body .newsletter-widget label,
+html body .newsletter-widget small { color: #333333 !important; }
+html body .newsletter-widget input {
+  background: #F7F7F7 !important; border: 1px solid #CCCCCC !important; color: #333333 !important;
+}
+html body .newsletter-widget .nw-btn { background: #F4A300 !important; color: #333333 !important; }
+html body .newsletter-widget .nw-btn:hover { background: #FFFFFF !important; box-shadow: inset 0 0 0 2px #F4A300; }
+
+/* 10. Pagination: current page is an indigo circle with a white number */
+html body .page-btn { border-color: #CCCCCC; color: #666666; }
+html body .page-btn:hover { color: #1A237E; border-color: #1A237E; }
+html body .page-btn.active { background: #1A237E; border-color: #1A237E; color: #FFFFFF; }
+
+/* 11. Footer: white, indigo headings, charcoal links */
+html body footer.ami-foot { background: #FFFFFF !important; color: #333333; }
+html body footer.ami-foot h2 { color: #1A237E; }
+html body footer.ami-foot a,
+html body footer.ami-foot p,
+html body footer.ami-foot .ami-foot__linkbtn { color: #333333; }
+html body footer.ami-foot a:hover,
+html body footer.ami-foot a:focus,
+html body footer.ami-foot .ami-foot__linkbtn:hover,
+html body footer.ami-foot .ami-foot__linkbtn:focus { color: #8E2F3E; }
+html body footer.ami-foot .ami-foot__rule { background: #CCCCCC; }
+html body footer.ami-foot .ami-foot__legal p { color: #666666; }
+html body footer.ami-foot .ami-foot__verify { border-color: #333333; color: #333333; }
+html body footer.ami-foot .ami-foot__verify:hover { background: #F7F7F7; }
+
+/* 12. Type: Inter until Museo Sans is licensed (ABTA Brand Guidelines) */
+html body,
+html body .ami-lay,
+html body header.masthead .masthead-name,
+html body .ami-band__name,
+html body .ami-bar__msg b {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif !important;
+  --lay-serif: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --lay-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+html body header.masthead .masthead-name { font-weight: 700 !important; letter-spacing: -.01em !important; }
+
+/* 13. Newsletter bar (bottom of screen): Deep Indigo, white outline button */
+html body .ami-bar { background: #1A237E !important; color: #FFFFFF !important; border-top: 3px solid #F4A300 !important; }
+html body .ami-bar input[type=email] { border-color: #FFFFFF !important; background: #FFFFFF !important; color: #333333 !important; }
+html body .ami-bar button[type=submit] {
+  background: transparent !important; color: #FFFFFF !important; border: 2px solid #FFFFFF !important;
+}
+html body .ami-bar button[type=submit]:hover { background: #FFFFFF !important; color: #1A237E !important; }
+html body .ami-bar__consent { color: #E0E0E0 !important; }
+html body .ami-bar__consent input { accent-color: #F4A300 !important; }
+html body .ami-bar__consent a,
+html body .ami-bar a { color: #FFFFFF !important; text-decoration: underline; }
+html body .ami-bar__close { color: #FFFFFF !important; }
+html body .ami-bar__status.err { color: #FFFFFF !important; }
+
+/* 14. Analytics notice: white with indigo controls */
+html body .ami-cookie { background: #FFFFFF !important; color: #333333 !important; border-top: 3px solid #1A237E !important; }
+html body .ami-cookie a { color: #1A237E !important; }
+html body .ami-cookie .ok { background: #1A237E !important; color: #FFFFFF !important; border-color: #1A237E !important; }
+html body .ami-cookie .no { background: #FFFFFF !important; color: #1A237E !important; border-color: #1A237E !important; }
